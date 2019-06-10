@@ -19,10 +19,10 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthStatusAction, ConversationIdAction, ValidateAndExtractHeadersStatusAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedStatusRequest, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, Mrn}
 import uk.gov.hmrc.customs.declarations.information.services.DeclarationStatusService
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
@@ -30,8 +30,8 @@ import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DeclarationStatusController @Inject()(val validateAndExtractHeadersStatusAction: ValidateAndExtractHeadersStatusAction,
-                                            val authAction: AuthStatusAction,
+class DeclarationStatusController @Inject()(val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
+                                            val authAction: AuthAction,
                                             val conversationIdAction: ConversationIdAction,
                                             val declarationStatusService: DeclarationStatusService,
                                             val logger: InformationLogger)
@@ -40,11 +40,11 @@ class DeclarationStatusController @Inject()(val validateAndExtractHeadersStatusA
   def get(mrn: String): Action[AnyContent] = (
     Action andThen
       conversationIdAction andThen
-      validateAndExtractHeadersStatusAction andThen
+      validateAndExtractHeadersAction andThen
       authAction
     ).async {
 
-      implicit asr: AuthorisedStatusRequest[AnyContent] =>
+      implicit asr: AuthorisedRequest[AnyContent] =>
 
         logger.debug(s"Declaration status request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 

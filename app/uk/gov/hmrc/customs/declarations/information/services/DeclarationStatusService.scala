@@ -24,7 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Mrn
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedStatusRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
                                          uniqueIdsService: UniqueIdsService)
                                         (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
 
-  def send[A](mrn: Mrn)(implicit asr: AuthorisedStatusRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
+  def send[A](mrn: Mrn)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
@@ -72,7 +72,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
     }
   }
   
-  private def logError[A](errorResponse: ErrorResponse)(implicit asr: AuthorisedStatusRequest[A]): Unit = {
+  private def logError[A](errorResponse: ErrorResponse)(implicit asr: AuthorisedRequest[A]): Unit = {
     logger.error(s"declaration status call returning error response '${errorResponse.message}' and status code ${errorResponse.httpStatusCode}")
   }
 

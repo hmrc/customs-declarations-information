@@ -18,7 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.xml
 
 import javax.inject.Singleton
 import org.joda.time.DateTime
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedStatusRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, CorrelationId, DeclarationManagementInformationRequestId, Mrn}
 
 import scala.xml.NodeSeq
@@ -33,7 +33,7 @@ class MdgPayloadDecorator() {
                 mrn: Mrn,
                 dmirId: DeclarationManagementInformationRequestId,
                 apiSubscriptionFieldsResponse: ApiSubscriptionFieldsResponse)
-               (implicit asr: AuthorisedStatusRequest[A]): NodeSeq = {
+               (implicit asr: AuthorisedRequest[A]): NodeSeq = {
     <n1:queryDeclarationInformationRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/"
     xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1" xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/"

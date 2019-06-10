@@ -17,12 +17,7 @@
 package uk.gov.hmrc.customs.declarations.information.model
 
 case class InformationConfig(apiSubscriptionFieldsBaseUrl: String,
-                             customsNotificationBaseBaseUrl: String,
-                             customsDeclarationsMetricsBaseBaseUrl: String,
-                             customsNotificationBearerToken: String,
                              declarationStatusRequestDaysLimit: Int)
-
-case class NrsConfig(nrsEnabled: Boolean, nrsApiKey: String,  nrsUrl: String)
 
 case class InformationCircuitBreakerConfig(numberOfCallsToTriggerStateChange: Int,
                                            unavailablePeriodDurationInMillis: Int,

@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedStatusRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.MdgPayloadDecorator
 import uk.gov.hmrc.http._
@@ -51,7 +51,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
               dmirId: DeclarationManagementInformationRequestId,
               apiVersion: ApiVersion,
               apiSubscriptionFieldsResponse: ApiSubscriptionFieldsResponse,
-              mrn: Mrn)(implicit asr: AuthorisedStatusRequest[A]): Future[HttpResponse] = {
+              mrn: Mrn)(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
@@ -75,7 +75,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     )
   }
 
-  private def post[A](xml: NodeSeq, url: String, correlationId: CorrelationId)(implicit asr: AuthorisedStatusRequest[A], hc: HeaderCarrier) = {
+  private def post[A](xml: NodeSeq, url: String, correlationId: CorrelationId)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
     logger.debug(s"Sending request to $url. Headers ${hc.headers} Payload: ${xml.toString()}")
 
     http.POSTString[HttpResponse](url, xml.toString())

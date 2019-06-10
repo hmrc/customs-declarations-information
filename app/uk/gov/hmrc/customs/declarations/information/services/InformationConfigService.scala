@@ -20,18 +20,13 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.api.common.config.{ConfigValidatedNelAdaptor, CustomsValidatedNel}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{InformationCircuitBreakerConfig, InformationConfig, NrsConfig}
+import uk.gov.hmrc.customs.declarations.information.model.{InformationCircuitBreakerConfig, InformationConfig}
 
 @Singleton
 class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelAdaptor, logger: InformationLogger) {
 
   private val root = configValidatedNel.root
-  private val nrsService = configValidatedNel.service("nrs")
-  private val upscanService = configValidatedNel.service("upscan-initiate")
-  private val customsNotificationsService = configValidatedNel.service("customs-notification")
   private val apiSubscriptionFieldsService = configValidatedNel.service("api-subscription-fields")
-  private val fileTransmissionService = configValidatedNel.service("file-transmission")
-  private val customsDeclarationsMetricsService = configValidatedNel.service("customs-declarations-metrics")
 
   private val numberOfCallsToTriggerStateChangeNel = root.int("circuitBreaker.numberOfCallsToTriggerStateChange")
   private val unavailablePeriodDurationInMillisNel = root.int("circuitBreaker.unavailablePeriodDurationInMillis")
@@ -39,40 +34,19 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
 
   private val declarationStatusRequestDaysLimit = root.int("declarationStatus.requestDaysLimit")
 
-  private val bearerTokenNel = customsNotificationsService.string("bearer-token")
-  private val customsNotificationsServiceUrlNel = customsNotificationsService.serviceUrl
   private val apiSubscriptionFieldsServiceUrlNel = apiSubscriptionFieldsService.serviceUrl
-  private val customsDeclarationsMetricsServiceUrlNel = customsDeclarationsMetricsService.serviceUrl
-
-  private val nrsEnabled = root.boolean("nrs.enabled")
-  private val nrsApiKey = root.string("nrs.apikey")
-  private val nrsWaitTimeMillis = root.int("nrs.waittime.millis")
-  private val nrsUrl = nrsService.serviceUrl
-
-  private val upscanInitiateUrl = upscanService.serviceUrl
-  private val upscanCallbackUrl = root.string("upscan-callback.url")
-  private val fileUploadUpscanCallbackUrl = root.string("file-upload-upscan-callback.url")
-  private val fileGroupSizeMaximum = root.int("fileUpload.fileGroupSize.maximum")
-  private val fileTransmissionUrl = fileTransmissionService.serviceUrl
-  private val fileTransmissionCallbackUrl =  root.string("file-transmission-callback.url")
-  private val upscanInitiateMaximumFileSize = root.int("fileUpload.fileSize.maximum")
 
   private val validatedInformationConfig: CustomsValidatedNel[InformationConfig] = (
-    apiSubscriptionFieldsServiceUrlNel, customsNotificationsServiceUrlNel, customsDeclarationsMetricsServiceUrlNel, bearerTokenNel, declarationStatusRequestDaysLimit
+    apiSubscriptionFieldsServiceUrlNel, declarationStatusRequestDaysLimit
   ) mapN InformationConfig
 
   private val validatedDeclarationsCircuitBreakerConfig: CustomsValidatedNel[InformationCircuitBreakerConfig] = (
     numberOfCallsToTriggerStateChangeNel, unavailablePeriodDurationInMillisNel, unstablePeriodDurationInMillisNel
   ) mapN InformationCircuitBreakerConfig
 
-  private val validatedNrsConfig: CustomsValidatedNel[NrsConfig] = (
-    nrsEnabled, nrsApiKey, nrsUrl
-  ) mapN NrsConfig
-
   private val customsConfigHolder =
     (validatedInformationConfig,
-      validatedDeclarationsCircuitBreakerConfig,
-      validatedNrsConfig
+      validatedDeclarationsCircuitBreakerConfig
     ) mapN CustomsConfigHolder fold(
       fe = { nel =>
         // error case exposes nel (a NotEmptyList)
@@ -87,9 +61,6 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
 
   val declarationsCircuitBreakerConfig: InformationCircuitBreakerConfig = customsConfigHolder.declarationsCircuitBreakerConfig
 
-  val nrsConfig: NrsConfig = customsConfigHolder.validatedNrsConfig
-
   private case class CustomsConfigHolder(declarationsConfig: InformationConfig,
-                                         declarationsCircuitBreakerConfig: InformationCircuitBreakerConfig,
-                                         validatedNrsConfig: NrsConfig)
+                                         declarationsCircuitBreakerConfig: InformationCircuitBreakerConfig)
 }

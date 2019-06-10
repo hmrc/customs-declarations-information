@@ -18,10 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.model
 
 import java.util.UUID
 
-import org.joda.time.LocalDate
 import play.api.libs.json._
-import uk.gov.hmrc.auth.core.retrieve._
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole}
 
 case class RequestedVersion(versionNumber: String, configPrefix: Option[String])
 
@@ -31,48 +28,6 @@ case class Eori(value: String) extends AnyVal {
 object Eori {
   implicit val writer: Writes[Eori] = Writes[Eori] { x => JsString(x.value) }
   implicit val reader: Reads[Eori] = Reads.of[String].map(new Eori(_))
-}
-
-case class BadgeIdentifierEoriPair(badgeIdentifier: BadgeIdentifier, eori: Eori)
-
-case class NrSubmissionId(nrSubmissionId: UUID) extends AnyVal {
-  override def toString: String = nrSubmissionId.toString
-}
-
-object NrSubmissionId {
-  implicit val format: OFormat[NrSubmissionId] = Json.format[NrSubmissionId]
-}
-
-case class NrsRetrievalData(internalId: Option[String],
-  externalId: Option[String],
-  agentCode: Option[String],
-  credentials: Credentials,
-  confidenceLevel: ConfidenceLevel,
-  nino: Option[String],
-  saUtr: Option[String],
-  name: Name,
-  dateOfBirth: Option[LocalDate],
-  email: Option[String],
-  agentInformation: AgentInformation,
-  groupIdentifier: Option[String],
-  credentialRole: Option[CredentialRole],
-  mdtpInformation: Option[MdtpInformation],
-  itmpName: ItmpName,
-  itmpDateOfBirth: Option[LocalDate],
-  itmpAddress: ItmpAddress,
-  affinityGroup: Option[AffinityGroup],
-  credentialStrength: Option[String],
-  loginTimes: LoginTimes)
-
-object NrsRetrievalData {
-  implicit val credentialsFormat: OFormat[Credentials] = Json.format[Credentials]
-  implicit val nameFormat: OFormat[Name] = Json.format[Name]
-  implicit val agentInformationFormat: OFormat[AgentInformation] = Json.format[AgentInformation]
-  implicit val mdtpInformationFormat: OFormat[MdtpInformation] = Json.format[MdtpInformation]
-  implicit val itmpNameFormat: OFormat[ItmpName] = Json.format[ItmpName]
-  implicit val itmpAddressFormat: OFormat[ItmpAddress] = Json.format[ItmpAddress]
-  implicit val loginTimesFormat: OFormat[LoginTimes] = Json.format[LoginTimes]
-  implicit val nrsRetrievalData: OFormat[NrsRetrievalData] = Json.format[NrsRetrievalData]
 }
 
 case class ClientId(value: String) extends AnyVal {
@@ -111,38 +66,6 @@ object SubscriptionFieldsId {
   implicit val reader: Reads[SubscriptionFieldsId] = Reads.of[UUID].map(new SubscriptionFieldsId(_))
 }
 
-case class DeclarationId(value: String) extends AnyVal{
-  override def toString: String = value.toString
-}
-object DeclarationId {
-  implicit val writer: Writes[DeclarationId] = Writes[DeclarationId] { x => JsString(x.value) }
-  implicit val reader: Reads[DeclarationId] = Reads.of[String].map(new DeclarationId(_))
-}
-
-case class DocumentationType(value: String) extends AnyVal{
-  override def toString: String = value.toString
-}
-
-object DocumentationType {
-  implicit val writer: Writes[DocumentationType] = Writes[DocumentationType] { x => JsString(x.value) }
-  implicit val reader: Reads[DocumentationType] = Reads.of[String].map(new DocumentationType(_))
-}
-
-case class FileSequenceNo(value: Int) extends AnyVal{
-  override def toString: String = value.toString
-}
-object FileSequenceNo {
-  implicit val writer: Writes[FileSequenceNo] = Writes[FileSequenceNo] { x =>
-    val d: BigDecimal = x.value
-    JsNumber(d)
-  }
-  implicit val reader: Reads[FileSequenceNo] = Reads.of[Int].map(new FileSequenceNo(_))
-}
-
-case class FileGroupSize(value: Int) extends AnyVal{
-  override def toString: String = value.toString
-}
-
 sealed trait ApiVersion {
   val value: String
   val configPrefix: String
@@ -152,63 +75,11 @@ object VersionOne extends ApiVersion{
   override val value: String = "1.0"
   override val configPrefix: String = ""
 }
-object VersionTwo extends ApiVersion{
-  override val value: String = "2.0"
-  override val configPrefix: String = "v2."
-}
-object VersionThree extends ApiVersion{
-  override val value: String = "3.0"
-  override val configPrefix: String = "v3."
-}
 
 sealed trait AuthorisedAs {
-  val retrievalData: Option[NrsRetrievalData]
 }
-sealed trait AuthorisedAsCsp extends AuthorisedAs {
-  val badgeIdentifier: BadgeIdentifier
-  val retrievalData: Option[NrsRetrievalData]
-}
-case class Csp(badgeIdentifier: BadgeIdentifier, retrievalData: Option[NrsRetrievalData]) extends AuthorisedAsCsp
-case class CspWithEori(badgeIdentifier: BadgeIdentifier, eori: Eori, retrievalData: Option[NrsRetrievalData]) extends AuthorisedAsCsp
-case class NonCsp(eori: Eori, retrievalData: Option[NrsRetrievalData]) extends AuthorisedAs
-
-case class UpscanInitiatePayload(callbackUrl: String, maximumFileSize: Int)
-
-object UpscanInitiatePayload {
-  implicit val format: OFormat[UpscanInitiatePayload] = Json.format[UpscanInitiatePayload]
-}
-
-case class AuthorisedRetrievalData(retrievalJSONBody: String)
-
-case class UpscanInitiateResponsePayload(reference: String, uploadRequest: UpscanInitiateUploadRequest)
-
-object UpscanInitiateUploadRequest {
-  implicit val format: OFormat[UpscanInitiateUploadRequest] = Json.format[UpscanInitiateUploadRequest]
-}
-
-case class UpscanInitiateUploadRequest
-(
-  href: String,
-  fields: Map[String, String]
-)
-
-object UpscanInitiateResponsePayload {
-  implicit val format: OFormat[UpscanInitiateResponsePayload] = Json.format[UpscanInitiateResponsePayload]
-}
-
-case class NrsMetadata(businessId: String, notableEvent: String, payloadContentType: String, payloadSha256Checksum: String,
-                       userSubmissionTimestamp: String, identityData: NrsRetrievalData, userAuthToken: String, headerData: JsValue,
-                       searchKeys: JsValue, nrsSubmissionId: String)
-
-object NrsMetadata {
-  implicit val format: OFormat[NrsMetadata] = Json.format[NrsMetadata]
-}
-
-case class NrsPayload(payload: String, metadata: NrsMetadata)
-
-object NrsPayload {
-  implicit val format: OFormat[NrsPayload] = Json.format[NrsPayload]
-}
+case class Csp(badgeIdentifier: BadgeIdentifier) extends AuthorisedAs
+case class CspWithEori(badgeIdentifier: BadgeIdentifier, eori: Eori) extends AuthorisedAs
 
 private object NotAvailable { val na = Some("NOT AVAILABLE") }
 

@@ -39,14 +39,14 @@ trait ApiSubscriptionFieldsService {
 
   implicit def ec: ExecutionContext
 
-  private val apiContextEncoded = URLEncoder.encode("customs/declarations", "UTF-8")
+  private val apiContextEncoded = URLEncoder.encode("customs/declarations-information/status-request", "UTF-8")
 
   def futureApiSubFieldsId[A](c: ClientId)
                              (implicit vpr: HasConversationId with HasAuthorisedAs with ExtractedHeaders, hc: HeaderCarrier): Future[Either[Result, ApiSubscriptionFieldsResponse]] = {
     (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, vpr.requestedApiVersion)) map {
       response: ApiSubscriptionFieldsResponse =>
         vpr.authorisedAs match {
-          case Csp(_, _) | CspWithEori(_, _, _) =>
+          case Csp(_) | CspWithEori(_, _) =>
             if (response.fields.authenticatedEori.exists(_.trim.nonEmpty)) {
               Right(response)
             } else {

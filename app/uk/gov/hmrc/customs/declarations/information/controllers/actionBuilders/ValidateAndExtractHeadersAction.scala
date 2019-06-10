@@ -18,35 +18,32 @@ package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{ActionRefiner, _}
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
-import uk.gov.hmrc.http.HttpErrorFunctions
 
 import scala.concurrent.Future
 
 /** Action builder that validates headers.
-  * <ol>
-  * <li/>Input - `ConversationIdRequest`
-  * <li/>Output - `ValidatedHeadersRequest`
-  * <li/>Error - 4XX Result if there is a header validation error. This terminates the action builder pipeline.
-  * </ol>
+  * <li/>INPUT - `ConversationIdRequest`
+  * <li/>OUTPUT - `ValidatedHeadersRequest`
+  * <li/>ERROR - 4XX Result if is a header validation error. This terminates the action builder pipeline.
   */
 @Singleton
 class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator,
                                                 logger: InformationLogger)
-  extends ActionRefiner[ConversationIdRequest, ValidatedHeadersRequest] with HttpErrorFunctions {
-    actionName =>
+  extends ActionRefiner[ConversationIdRequest, ValidatedHeadersRequest] {
+  actionName =>
 
-    override def refine[A](cr: ConversationIdRequest[A]): Future[Either[Result, ValidatedHeadersRequest[A]]] = Future.successful {
-      implicit val id: ConversationIdRequest[A] = cr
+  override def refine[A](cr: ConversationIdRequest[A]): Future[Either[Result, ValidatedHeadersRequest[A]]] = Future.successful {
+    implicit val id: ConversationIdRequest[A] = cr
 
-      validator.validateHeaders(cr) match {
-        case Left(result) =>
-          Left(result.XmlResult.withConversationId)
-        case Right(extracted) =>
-          val vhr = ValidatedHeadersRequest(cr.conversationId, extracted.requestedApiVersion, extracted.clientId, cr.request)
-          Right(vhr)
-      }
+    validator.validateHeaders(cr) match {
+      case Left(result) =>
+        Left(result.XmlResult.withConversationId)
+      case Right(extracted) =>
+        val vhr = ValidatedHeadersRequest(cr.conversationId, extracted.requestedApiVersion,extracted.badgeIdentifier, extracted.clientId, cr.request)
+        Right(vhr)
     }
+  }
 }
