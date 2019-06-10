@@ -79,7 +79,6 @@ object VersionOne extends ApiVersion{
 sealed trait AuthorisedAs {
 }
 case class Csp(badgeIdentifier: BadgeIdentifier) extends AuthorisedAs
-case class CspWithEori(badgeIdentifier: BadgeIdentifier, eori: Eori) extends AuthorisedAs
 
 private object NotAvailable { val na = Some("NOT AVAILABLE") }
 

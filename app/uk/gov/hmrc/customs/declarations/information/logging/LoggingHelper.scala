@@ -19,8 +19,8 @@ package uk.gov.hmrc.customs.declarations.information.logging
 import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
 import play.api.mvc.Request
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
+import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasAuthorisedAs, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, CspWithEori}
 
 object LoggingHelper {
   private val headerSet = Set(CONTENT_TYPE.toLowerCase, ACCEPT.toLowerCase, XConversationIdHeaderName.toLowerCase, XClientIdHeaderName.toLowerCase, XBadgeIdentifierHeaderName.toLowerCase)
@@ -60,7 +60,6 @@ object LoggingHelper {
       case a: HasAuthorisedAs =>
         a.authorisedAs match {
           case Csp(badgeIdentifier) => s"[authorisedAs=Csp($badgeIdentifier)]"
-          case CspWithEori(eori, badgeIdentifier) => s"[authorisedAs=CspWithEori($eori, $badgeIdentifier)]"
         }
       case _ => ""
     }

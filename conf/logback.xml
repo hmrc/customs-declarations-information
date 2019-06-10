@@ -2,14 +2,14 @@
 <configuration>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/customs-file-upload.log</file>
+        <file>logs/customs-declarations-information.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%date{ISO8601} level=[%level] logger=[%logger] thread=[%thread] message=[%message] %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
         </encoder>
     </appender>
 
     <appender name="FILE_JSON" class="ch.qos.logback.core.FileAppender">
-        <file>logs/customs-file-upload-json.log</file>
+        <file>logs/customs-declarations-information-json.log</file>
         <encoder class="uk.gov.hmrc.play.logging.JsonEncoder"/>
     </appender>
 
@@ -58,7 +58,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="customs-file-upload" level="${logger.customs-file-upload:-DEBUG}"/>
+    <logger name="customs-declarations-information" level="${logger.customs-declarations-information:-DEBUG}"/>
 
     <root level="ERROR">
         <appender-ref ref="FILE"/>

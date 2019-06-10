@@ -59,7 +59,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
 
     val declarationStatusPayload = mdgPayloadDecorator.wrap(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId)).map{
-      response => logger.debug(s"status response: ${response.body}")
+      response => logger.debugFull(s"status response: ${response.body}")
       response
     }
   }

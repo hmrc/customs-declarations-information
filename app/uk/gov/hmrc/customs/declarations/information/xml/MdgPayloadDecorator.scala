@@ -26,8 +26,6 @@ import scala.xml.NodeSeq
 @Singleton
 class MdgPayloadDecorator() {
 
-  private val newLineAndIndentation = "\n        "
-
   def wrap[A](correlationId: CorrelationId,
                 date: DateTime,
                 mrn: Mrn,
