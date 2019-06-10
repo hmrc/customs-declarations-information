@@ -1,0 +1,33 @@
+@import play.api.libs.json.Json
+
+@(mayBeV1WhitelistedApplicationIds:  Option[Seq[String]])
+
+{
+  "scopes": [
+    {
+      "key": "write:customs-declarations-information",
+      "name": "Request the status of a declaration",
+      "description": "Request the status of a declaration"
+    }
+  ],
+  "api": {
+    "name": "Declaration Information  API",
+    "description": "Allows CSPs retrieve declaration status information",
+    "context": "customs/declarations-information",
+    "versions": [
+      {
+        "version": "1.0",
+        "status": "BETA",
+        "endpointsEnabled": true,
+        "access": {
+            @mayBeV1WhitelistedApplicationIds.fold(""" "type": "PUBLIC" """)( ids =>
+                s"""
+                    "type": "PRIVATE",
+                    "whitelistedApplicationIds": ${Json.toJson(ids)}
+                """
+            )
+        }
+      }
+    ]
+  }
+}
