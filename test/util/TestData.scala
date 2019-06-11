@@ -87,7 +87,7 @@ object TestData {
     override def dmir: DeclarationManagementInformationRequestId = dmirId
   }
 
-  val TestFakeRequest = FakeRequest().withHeaders(("Authorization", "bearer-token"))
+  val TestFakeRequest = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
 
   val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequest)
   val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId)

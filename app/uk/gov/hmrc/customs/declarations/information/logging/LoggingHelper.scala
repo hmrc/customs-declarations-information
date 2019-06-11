@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.customs.declarations.information.logging
 
-import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
+import play.api.http.HeaderNames.ACCEPT
 import play.api.mvc.Request
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasAuthorisedAs, HasConversationId}
 
 object LoggingHelper {
-  private val headerSet = Set(CONTENT_TYPE.toLowerCase, ACCEPT.toLowerCase, XConversationIdHeaderName.toLowerCase, XClientIdHeaderName.toLowerCase, XBadgeIdentifierHeaderName.toLowerCase)
+  private val headerSet = Set(ACCEPT.toLowerCase, XConversationIdHeaderName.toLowerCase, XClientIdHeaderName.toLowerCase, XBadgeIdentifierHeaderName.toLowerCase)
 
   def formatError(msg: String, r: HasConversationId): String = {
     formatMessage(msg, r)
