@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.model
+package util
 
-import java.util.UUID
-
-import play.api.libs.json.{Format, Json}
-
-case class ApiSubscriptionFieldsResponse(fieldsId: UUID)
-
-object ApiSubscriptionFieldsResponse {
-  implicit val format: Format[ApiSubscriptionFieldsResponse] = Json.format[ApiSubscriptionFieldsResponse]
+object CustomsDeclarationsExternalServicesConfig {
+  val MdgStatusDeclarationServiceContext = "/mdgStatusDecService/submit"
+  val ApiSubscriptionFieldsContext = "/api-subscription-fields/field"
+  val AuditContext = "/write/audit.*"
 }
-

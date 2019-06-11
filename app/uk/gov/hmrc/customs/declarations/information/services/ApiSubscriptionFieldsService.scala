@@ -20,11 +20,11 @@ import java.net.URLEncoder
 
 import play.api.mvc.Result
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasAuthorisedAs, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasConversationId}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,20 +42,9 @@ trait ApiSubscriptionFieldsService {
   private val apiContextEncoded = URLEncoder.encode("customs/declarations-information/status-request", "UTF-8")
 
   def futureApiSubFieldsId[A](c: ClientId)
-                             (implicit vpr: HasConversationId with HasAuthorisedAs with ExtractedHeaders, hc: HeaderCarrier): Future[Either[Result, ApiSubscriptionFieldsResponse]] = {
-    (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, vpr.requestedApiVersion)) map {
-      response: ApiSubscriptionFieldsResponse =>
-        vpr.authorisedAs match {
-          case Csp(_) =>
-            if (response.fields.authenticatedEori.exists(_.trim.nonEmpty)) {
-              Right(response)
-            } else {
-              logger.error(s"authenticatedEori for CSP not returned from api subscription fields for client id: ${c.value}")
-              Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-            }
-          case _ =>
-            Right(response)
-        }
+                             (implicit vpr: HasConversationId with ExtractedHeaders, hc: HeaderCarrier): Future[Either[Result, ApiSubscriptionFieldsResponse]] = {
+    (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, vpr.requestedApiVersion)) map { response =>
+      Right(response)
     }).recover {
       case NonFatal(e) =>
         logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)

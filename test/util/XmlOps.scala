@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.model
+package util
 
-import java.util.UUID
+import org.scalatest.Assertions
 
-import play.api.libs.json.{Format, Json}
+import scala.util.control.NonFatal
+import scala.xml._
 
-case class ApiSubscriptionFieldsResponse(fieldsId: UUID)
+object XmlOps {
 
-object ApiSubscriptionFieldsResponse {
-  implicit val format: Format[ApiSubscriptionFieldsResponse] = Json.format[ApiSubscriptionFieldsResponse]
+  def stringToXml(s: String): Node = {
+    val xml = try {
+      XML.loadString(s)
+    } catch {
+      case NonFatal(thr) => Assertions.fail("Not an xml: " + s, thr)
+    }
+    Utility.trim(xml)
+  }
+
+  def stringToXml(ns: NodeSeq): Node = {
+    stringToXml(ns.toString())
+  }
+
 }
-

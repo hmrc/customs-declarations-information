@@ -17,8 +17,7 @@
 package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
 import javax.inject.{Inject, Singleton}
-import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
-import play.api.http.MimeTypes
+import play.api.http.HeaderNames.ACCEPT
 import play.api.mvc.Headers
 import play.mvc.Http.Status.BAD_REQUEST
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
@@ -33,7 +32,6 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
 
   private lazy val xBadgeIdentifierRegex = "^[0-9A-Z]{6,12}$".r
   private val validAcceptHeader: String = "application/vnd.hmrc.1.0+xml"
-  private lazy val validContentTypeHeaders = Seq(MimeTypes.XML, MimeTypes.XML + ";charset=utf-8", MimeTypes.XML + "; charset=utf-8")
   private lazy val xClientIdRegex = "^\\S+$".r
 
   def validateHeaders[A](implicit conversationIdRequest: ConversationIdRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
@@ -41,21 +39,17 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
 
     def hasAccept = validateHeader(ACCEPT, validAcceptHeader.equalsIgnoreCase, ErrorAcceptHeaderInvalid)
 
-    def hasContentType = validateHeader(CONTENT_TYPE, s => validContentTypeHeaders.contains(s.toLowerCase()), ErrorContentTypeHeaderInvalid)
-
     def hasXClientId = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
 
     def hasBadgeIdentifier = validateHeader(XBadgeIdentifierHeaderName, xBadgeIdentifierRegex.findFirstIn(_).nonEmpty, ErrorResponse(BAD_REQUEST, BadRequestCode, s"$XBadgeIdentifierHeaderName header is missing or invalid"))
 
     val theResult: Either[ErrorResponse, ExtractedHeaders] = for {
       acceptValue <- hasAccept.right
-      contentTypeValue <- hasContentType.right
       xClientIdValue <- hasXClientId.right
       badgeIdentifier <- hasBadgeIdentifier.right
     } yield {
       logger.debug(
         s"\n$ACCEPT header passed validation: $acceptValue"
-          + s"\n$CONTENT_TYPE header passed validation: $contentTypeValue"
           + s"\n$XClientIdHeaderName header passed validation: $xClientIdValue"
           + s"\n$XBadgeIdentifierHeaderName header passed validation: $badgeIdentifier")
       ExtractedHeadersImpl(VersionOne, BadgeIdentifier(badgeIdentifier), ClientId(xClientIdValue))
