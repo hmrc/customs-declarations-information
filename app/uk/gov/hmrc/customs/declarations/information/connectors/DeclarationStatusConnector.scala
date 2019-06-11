@@ -27,7 +27,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.MdgPayloadDecorator
+import uk.gov.hmrc.customs.declarations.information.xml.MdgPayloadCreator
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -38,7 +38,7 @@ import scala.xml.NodeSeq
 @Singleton
 class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val logger: InformationLogger,
-                                           val mdgPayloadDecorator: MdgPayloadDecorator,
+                                           val mdgPayloadDecorator: MdgPayloadCreator,
                                            val serviceConfigProvider: ServiceConfigProvider,
                                            val config: InformationConfigService)
                                           (implicit ec: ExecutionContext)
@@ -57,7 +57,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
 
-    val declarationStatusPayload = mdgPayloadDecorator.wrap(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)
+    val declarationStatusPayload = mdgPayloadDecorator.create(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId)).map{
       response => logger.debugFull(s"status response: ${response.body}")
       response

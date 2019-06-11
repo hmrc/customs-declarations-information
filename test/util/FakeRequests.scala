@@ -18,13 +18,13 @@ package util
 
 import play.api.http.HeaderNames.AUTHORIZATION
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{CONTENT_TYPE, POST}
+import play.api.test.Helpers.POST
 import util.RequestHeaders._
 import util.TestData.cspBearerToken
 
 object FakeRequests {
 
-  lazy val ValidDeclarationStatusRequest = FakeRequest().withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*)
+  lazy val ValidDeclarationStatusRequest = FakeRequest().withHeaders(ValidHeaders.toSeq: _*)
 
   implicit class FakeRequestOps[R](val fakeRequest: FakeRequest[R]) extends AnyVal {
     def fromCsp: FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $cspBearerToken")

@@ -24,9 +24,9 @@ import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFields
 import scala.xml.NodeSeq
 
 @Singleton
-class MdgPayloadDecorator() {
+class MdgPayloadCreator() {
 
-  def wrap[A](correlationId: CorrelationId,
+  def create[A](correlationId: CorrelationId,
                 date: DateTime,
                 mrn: Mrn,
                 dmirId: DeclarationManagementInformationRequestId,
