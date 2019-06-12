@@ -33,7 +33,7 @@ class InformationLoggerSpec extends UnitSpec with MockitoSugar {
     val mockCdsLogger: CdsLogger = mock[CdsLogger]
     val logger = new InformationLogger(mockCdsLogger)
     implicit val implicitVpr: AuthorisedRequest[AnyContentAsEmpty.type] = ConversationIdRequest(conversationId, FakeRequest()
-      .withHeaders("Accept" -> "Some-Accept"))
+      .withHeaders("Content-Type" -> "Some-Content-Type"))
       .toValidatedHeadersRequest(TestExtractedHeaders)
       .toAuthorisedRequest
 
@@ -59,7 +59,7 @@ class InformationLoggerSpec extends UnitSpec with MockitoSugar {
       logger.debugFull("msg")
 
       PassByNameVerifier(mockCdsLogger, "debug")
-        .withByNameParam("[conversationId=38400000-8cf0-11bd-b23e-10b96e4ef00d] msg headers=Map(Accept -> Some-Accept)")
+        .withByNameParam("[conversationId=38400000-8cf0-11bd-b23e-10b96e4ef00d] msg headers=Map(Content-Type -> Some-Content-Type)")
         .verify()
     }
     "info(s: => String)" in new SetUp {

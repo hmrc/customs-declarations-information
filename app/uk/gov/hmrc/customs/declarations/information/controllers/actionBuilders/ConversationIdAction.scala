@@ -26,8 +26,8 @@ import scala.concurrent.Future
 
 @Singleton
 class ConversationIdAction @Inject()(val correlationIdService: UniqueIdsService,
-                                     val timeService: DateTimeService,
-                                     val logger: InformationLogger) extends ActionTransformer[Request, ConversationIdRequest] {
+                                     val logger: InformationLogger)
+  extends ActionTransformer[Request, ConversationIdRequest] {
 
   override def transform[A](request: Request[A]): Future[ConversationIdRequest[A]] = {
 

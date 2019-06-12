@@ -38,7 +38,7 @@ import scala.xml.NodeSeq
 @Singleton
 class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val logger: InformationLogger,
-                                           val mdgPayloadDecorator: MdgPayloadCreator,
+                                           val mdgPayloadCreator: MdgPayloadCreator,
                                            val serviceConfigProvider: ServiceConfigProvider,
                                            val config: InformationConfigService)
                                           (implicit ec: ExecutionContext)
@@ -57,7 +57,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
 
-    val declarationStatusPayload = mdgPayloadDecorator.create(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)
+    val declarationStatusPayload = mdgPayloadCreator.create(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId)).map{
       response => logger.debugFull(s"status response: ${response.body}")
       response
