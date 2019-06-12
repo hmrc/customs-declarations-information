@@ -54,7 +54,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   protected lazy val mockPayloadDecorator: MdgPayloadCreator = mock[MdgPayloadCreator]
   protected lazy val mockDateTimeProvider: DateTimeService = mock[DateTimeService]
   protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
-  protected lazy val mockDeclarationsConfigService: InformationConfigService = mock[InformationConfigService]
+  protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
   protected val mrn = Mrn("theMrn")
 
   trait SetUp {

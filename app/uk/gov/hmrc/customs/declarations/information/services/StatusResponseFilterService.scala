@@ -22,8 +22,8 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import scala.xml._
 
 @Singleton
-class StatusResponseFilterService @Inject() (declarationsLogger: InformationLogger,
-                                             declarationsConfigService: InformationConfigService) {
+class StatusResponseFilterService @Inject() (informationLogger: InformationLogger,
+                                             informationConfigService: InformationConfigService) {
 
   private val newLineAndIndentation = Text("\n        ")
 

@@ -40,13 +40,13 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
     apiSubscriptionFieldsServiceUrlNel, declarationStatusRequestDaysLimit
   ) mapN InformationConfig
 
-  private val validatedDeclarationsCircuitBreakerConfig: CustomsValidatedNel[InformationCircuitBreakerConfig] = (
+  private val validatedInformationCircuitBreakerConfig: CustomsValidatedNel[InformationCircuitBreakerConfig] = (
     numberOfCallsToTriggerStateChangeNel, unavailablePeriodDurationInMillisNel, unstablePeriodDurationInMillisNel
   ) mapN InformationCircuitBreakerConfig
 
   private val customsConfigHolder =
     (validatedInformationConfig,
-      validatedDeclarationsCircuitBreakerConfig
+      validatedInformationCircuitBreakerConfig
     ) mapN CustomsConfigHolder fold(
       fe = { nel =>
         // error case exposes nel (a NotEmptyList)
@@ -57,10 +57,10 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
       fa = identity
     )
 
-  val declarationsConfig: InformationConfig = customsConfigHolder.declarationsConfig
+  val informationConfig: InformationConfig = customsConfigHolder.informationConfig
 
-  val declarationsCircuitBreakerConfig: InformationCircuitBreakerConfig = customsConfigHolder.declarationsCircuitBreakerConfig
+  val informationCircuitBreakerConfig: InformationCircuitBreakerConfig = customsConfigHolder.informationCircuitBreakerConfig
 
-  private case class CustomsConfigHolder(declarationsConfig: InformationConfig,
-                                         declarationsCircuitBreakerConfig: InformationCircuitBreakerConfig)
+  private case class CustomsConfigHolder(informationConfig: InformationConfig,
+                                         informationCircuitBreakerConfig: InformationCircuitBreakerConfig)
 }

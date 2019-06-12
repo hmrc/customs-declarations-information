@@ -21,9 +21,9 @@ import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.Mrn
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, Mrn}
 import uk.gov.hmrc.customs.declarations.information.services.DeclarationStatusService
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 

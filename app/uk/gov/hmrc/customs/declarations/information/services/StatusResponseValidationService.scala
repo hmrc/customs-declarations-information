@@ -27,7 +27,7 @@ import scala.util.Try
 import scala.xml.NodeSeq
 
 @Singleton
-class StatusResponseValidationService @Inject() (declarationsLogger: InformationLogger, declarationsConfigService: InformationConfigService) {
+class StatusResponseValidationService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
 
   val IMPORT_MOVEMENT_TYPE : String = "IM"
   val EXPORT_MOVEMENT_TYPE : String = "EX"
@@ -64,7 +64,7 @@ class StatusResponseValidationService @Inject() (declarationsLogger: Information
 
   private def validateBadgeIdentifier(declarationNode: NodeSeq, badgeIdentifier: BadgeIdentifier): Either[ErrorResponse, Boolean] = {
     extractField(declarationNode, "communicationAddress").fold[Either[ErrorResponse, Boolean]]({
-      declarationsLogger.errorWithoutRequestContext("Status response BadgeId field is missing")
+      informationLogger.errorWithoutRequestContext("Status response BadgeId field is missing")
       Left(ErrorResponse.errorBadRequest("Badge Identifier is missing or invalid"))
     })({ communicationAddress =>
       if(badgeIdentifier.value.toUpperCase != extractBadgeIdentifier(communicationAddress.head).toUpperCase){
@@ -77,14 +77,14 @@ class StatusResponseValidationService @Inject() (declarationsLogger: Information
 
   private def validateAcceptanceDate(declarationNode: NodeSeq): Either[ErrorResponse, Boolean] =
     extractField(declarationNode, "acceptanceDate").fold[Either[ErrorResponse, Boolean]]({
-    declarationsLogger.errorWithoutRequestContext("Status response acceptanceDate field is missing")
+    informationLogger.errorWithoutRequestContext("Status response acceptanceDate field is missing")
     validateCreationDate(declarationNode)
   })(acceptanceDate => {
     val parsedDateTime = Try(ISO_UTC_DateTimeFormat_noMillis.parseDateTime(acceptanceDate.head)).toOption
     val isDateValid = parsedDateTime.fold(false)(validDateTime => validDateTime.isAfter(getValidDateTimeUsingConfig))
     if (!isDateValid) {
-      declarationsLogger.debugWithoutRequestContext(s"Status response acceptanceDate failed validation $acceptanceDate")
-      Left(ErrorResponse.errorBadRequest(s"Declaration acceptance date is greater than ${declarationsConfigService.declarationsConfig.declarationStatusRequestDaysLimit} days old"))
+      informationLogger.debugWithoutRequestContext(s"Status response acceptanceDate failed validation $acceptanceDate")
+      Left(ErrorResponse.errorBadRequest(s"Declaration acceptance date is greater than ${informationConfigService.informationConfig.declarationStatusRequestDaysLimit} days old"))
     } else{
       Right(true)
     }
@@ -93,14 +93,14 @@ class StatusResponseValidationService @Inject() (declarationsLogger: Information
   //TODO: Improve re-usability here
   private def validateCreationDate(declarationNode: NodeSeq): Either[ErrorResponse, Boolean] =
     extractField(declarationNode, "creationDate").fold[Either[ErrorResponse, Boolean]]({
-      declarationsLogger.errorWithoutRequestContext("Status response creationDate field is missing")
+      informationLogger.errorWithoutRequestContext("Status response creationDate field is missing")
       Left(ErrorResponse.errorBadRequest("Declaration acceptanceDate and creationDate fields are missing"))
     })(creationDate => {
       val parsedDateTime = Try(ISO_UTC_DateTimeFormat_noMillis.parseDateTime(creationDate.head)).toOption
       val isDateValid = parsedDateTime.fold(false)(validDateTime => validDateTime.isAfter(getValidDateTimeUsingConfig))
       if (!isDateValid) {
-        declarationsLogger.debugWithoutRequestContext(s"Status response creationDate failed validation $creationDate")
-        Left(ErrorResponse.errorBadRequest(s"Declaration creation date is greater than ${declarationsConfigService.declarationsConfig.declarationStatusRequestDaysLimit} days old"))
+        informationLogger.debugWithoutRequestContext(s"Status response creationDate failed validation $creationDate")
+        Left(ErrorResponse.errorBadRequest(s"Declaration creation date is greater than ${informationConfigService.informationConfig.declarationStatusRequestDaysLimit} days old"))
       } else{
         Right(true)
       }
@@ -161,7 +161,7 @@ class StatusResponseValidationService @Inject() (declarationsLogger: Information
   }
 
   private def getValidDateTimeUsingConfig = {
-    DateTime.now(DateTimeZone.UTC).minusDays(declarationsConfigService.declarationsConfig.declarationStatusRequestDaysLimit)
+    DateTime.now(DateTimeZone.UTC).minusDays(informationConfigService.informationConfig.declarationStatusRequestDaysLimit)
   }
 
   private def extractField(declarationNode: NodeSeq, nodeName: String): Option[Seq[String]] = {

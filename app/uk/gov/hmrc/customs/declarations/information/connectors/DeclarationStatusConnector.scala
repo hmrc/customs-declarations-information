@@ -92,9 +92,9 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
   override protected def circuitBreakerConfig: CircuitBreakerConfig =
     CircuitBreakerConfig(
       serviceName = configKey,
-      numberOfCallsToTriggerStateChange = config.declarationsCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
-      unavailablePeriodDuration = config.declarationsCircuitBreakerConfig.unavailablePeriodDurationInMillis,
-      unstablePeriodDuration = config.declarationsCircuitBreakerConfig.unstablePeriodDurationInMillis
+      numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
+      unavailablePeriodDuration = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis,
+      unstablePeriodDuration = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
     )
 
   override protected def breakOnException(t: Throwable): Boolean = t match {

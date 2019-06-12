@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.services.InformationConfigSe
 import uk.gov.hmrc.play.test.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 
-class DeclarationsConfigServiceSpec extends UnitSpec with MockitoSugar {
+class InformationConfigServiceSpec extends UnitSpec with MockitoSugar {
   private val validAppConfig: Config = ConfigFactory.parseString(
     """
       |microservice.services.api-subscription-fields.host=some-host
@@ -51,10 +51,10 @@ class DeclarationsConfigServiceSpec extends UnitSpec with MockitoSugar {
     "return config as object model when configuration is valid" in {
       val configService = customsConfigService(validServicesConfiguration)
 
-      configService.declarationsConfig.apiSubscriptionFieldsBaseUrl shouldBe "http://some-host:1111/some-context"
-      configService.declarationsCircuitBreakerConfig.numberOfCallsToTriggerStateChange shouldBe 5
-      configService.declarationsCircuitBreakerConfig.unavailablePeriodDurationInMillis shouldBe 1000
-      configService.declarationsCircuitBreakerConfig.unstablePeriodDurationInMillis shouldBe 1000
+      configService.informationConfig.apiSubscriptionFieldsBaseUrl shouldBe "http://some-host:1111/some-context"
+      configService.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange shouldBe 5
+      configService.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis shouldBe 1000
+      configService.informationCircuitBreakerConfig.unstablePeriodDurationInMillis shouldBe 1000
     }
 
     "throw an exception when configuration is invalid, that contains AGGREGATED error messages" in {

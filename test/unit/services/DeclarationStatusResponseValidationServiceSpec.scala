@@ -48,7 +48,7 @@ class DeclarationStatusResponseValidationServiceSpec extends UnitSpec with Mocki
 
     protected lazy val service = new StatusResponseValidationService(mockLogger, mockInformationConfigService)
 
-    when(mockInformationConfigService.declarationsConfig).thenReturn(mockInformationConfig)
+    when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
     when(mockInformationConfig.declarationStatusRequestDaysLimit).thenReturn(statusRequestDaysLimit)
   }
 

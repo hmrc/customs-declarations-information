@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with Eventually {
 
   private val mockWsPost = mock[HttpClient]
-  private val mockLogger = stubDeclarationsLogger
+  private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock[ServiceConfigProvider]
   private val mockInformationConfigService = mock[InformationConfigService]
   private val mockMdgPayloadCreator = mock[MdgPayloadCreator]
@@ -60,7 +60,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   override protected def beforeEach() {
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
-    when(mockInformationConfigService.declarationsCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
+    when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
     when(mockMdgPayloadCreator.create(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)(asr)).thenReturn(util.StatusTestXMLData.expectedDeclarationStatusPayload)
   }
 

@@ -39,7 +39,7 @@ class InformationLoggerSpec extends UnitSpec with MockitoSugar {
 
   }
 
-  "DeclarationsLogger" should {
+  "InformationLogger" should {
     "debug(s: => String)" in new SetUp {
       logger.debug("msg")
 

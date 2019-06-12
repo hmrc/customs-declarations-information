@@ -43,21 +43,21 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
 
   private val mockWSGetImpl = mock[HttpClient]
   private val mockLogger = mock[InformationLogger]
-  private val mockDeclarationsConfigService = mock[InformationConfigService]
-  private val mockDeclarationsConfig = mock[InformationConfig]
+  private val mockInformationConfigService = mock[InformationConfigService]
+  private val mockInformationConfig = mock[InformationConfig]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr = TestData.TestAuthorisedRequest
 
-  private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockDeclarationsConfigService)
+  private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockInformationConfigService)
 
   private val httpException = new NotFoundException("Emulated 404 response from a web call")
   private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
 
   override protected def beforeEach() {
-    reset(mockLogger, mockWSGetImpl, mockDeclarationsConfigService)
+    reset(mockLogger, mockWSGetImpl, mockInformationConfigService)
 
-    when(mockDeclarationsConfigService.declarationsConfig).thenReturn(mockDeclarationsConfig)
-    when(mockDeclarationsConfig.apiSubscriptionFieldsBaseUrl).thenReturn(s"http://$Host:$Port$ApiSubscriptionFieldsContext")
+    when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
+    when(mockInformationConfig.apiSubscriptionFieldsBaseUrl).thenReturn(s"http://$Host:$Port$ApiSubscriptionFieldsContext")
   }
 
   "ApiSubscriptionFieldsConnector" can {

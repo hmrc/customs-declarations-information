@@ -68,7 +68,7 @@ object TestData {
 
   lazy val mockUuidService: UuidService = mock[UuidService]
 
-  lazy val stubDeclarationsLogger = new StubInformationLogger(mock[CdsLogger])
+  lazy val stubInformationLogger = new StubInformationLogger(mock[CdsLogger])
 
   object TestModule extends AbstractModule {
     def configure(): Unit = {
