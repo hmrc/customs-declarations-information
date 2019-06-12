@@ -71,7 +71,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
         Future.successful(Left(result))
     }
   }
-  
+
   private def logError[A](errorResponse: ErrorResponse)(implicit asr: AuthorisedRequest[A]): Unit = {
     logger.error(s"declaration status call returning error response '${errorResponse.message}' and status code ${errorResponse.httpStatusCode}")
   }

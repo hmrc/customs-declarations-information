@@ -101,5 +101,5 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     case _: BadRequestException | _: NotFoundException | _: Upstream4xxResponse => false
     case _ => true
   }
-  
+
 }

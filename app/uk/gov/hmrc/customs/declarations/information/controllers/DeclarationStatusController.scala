@@ -51,7 +51,7 @@ class DeclarationStatusController @Inject()(val validateAndExtractHeadersAction:
         declarationStatusService.send(Mrn(mrn)) map {
           case Right(res) =>
             val id = new HasConversationId {
-              override val conversationId: ConversationId = asr.conversationId
+              override val conversationId = asr.conversationId
             }
             logger.info(s"Declaration status request processed successfully.")(id)
             logger.debug(s"Returning filtered declaration status request with status code 200 and body\n ${res.body}")(id)

@@ -56,7 +56,7 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
     }
     theResult
   }
-  
+
   private def validateHeader[A](headerName: String, rule: String => Boolean, errorResponse: ErrorResponse)
                                  (implicit conversationIdRequest: ConversationIdRequest[A], h: Headers): Either[ErrorResponse, String] = {
     val left = Left(errorResponse)
@@ -76,5 +76,5 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
         if (rule(v)) Right(v) else leftWithLogContainingValue(headerName, v)
     }
   }
-  
+
 }

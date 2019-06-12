@@ -49,7 +49,7 @@ object ActionBuilderModelHelper {
       vhr.request
     )
   }
- 
+
 }
 
 trait HasRequest[A] {

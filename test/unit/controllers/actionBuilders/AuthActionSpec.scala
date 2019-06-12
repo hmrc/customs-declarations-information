@@ -20,10 +20,12 @@ import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status.UNAUTHORIZED
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.AnyContentAsEmpty
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalServerError
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode}
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.AuthAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -33,7 +35,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import util.TestData.TestValidatedHeadersRequest
 import util.{AuthConnectorStubbing, TestData}
 
-class AuthStatusActionSpec extends UnitSpec
+class AuthActionSpec extends UnitSpec
   with MockitoSugar
   with TableDrivenPropertyChecks
   with BeforeAndAfterEach {
@@ -51,7 +53,7 @@ class AuthStatusActionSpec extends UnitSpec
     reset(mockAuthenticationConnector)
   }
 
-  "AuthStatusAction" can {
+  "AuthAction" can {
     "for Declaration Status request" should {
 
       val authAction = new AuthAction(mockAuthenticationConnector, mockImportsLogger)
@@ -65,11 +67,19 @@ class AuthStatusActionSpec extends UnitSpec
         verifyCspAuthorisationCalled(1)
       }
 
-      "return ErrorResponse with ConversationId when not authorised by auth API" in new SetUp {
+      "return InternalError with ConversationId when auth call fails" in new SetUp {
         authoriseCspError()
 
         private val actual = await(authAction.refine(validatedHeadersRequest))
         actual shouldBe Left(ErrorInternalServerError.XmlResult.withHeaders(CustomHeaderNames.XConversationIdHeaderName -> TestData.conversationIdValue))
+        verifyCspAuthorisationCalled(1)
+      }
+
+      "return ErrorResponse with ConversationId when not authorised by auth API" in new SetUp {
+        unauthoriseCsp()
+
+        private val actual = await(authAction.refine(validatedHeadersRequest))
+        actual shouldBe Left(ErrorResponse(UNAUTHORIZED, UnauthorizedCode, "Unauthorised request").XmlResult.withHeaders(CustomHeaderNames.XConversationIdHeaderName -> TestData.conversationIdValue))
         verifyCspAuthorisationCalled(1)
       }
     }
