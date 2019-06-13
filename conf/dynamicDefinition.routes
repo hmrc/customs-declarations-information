@@ -1,0 +1,2 @@
+GET    /api/definition                              @uk.gov.hmrc.customs.declarations.information.controllers.InformationDocumentationController.definition()
+GET    /api/conf/:version/*file                     @uk.gov.hmrc.customs.declarations.information.controllers.InformationDocumentationController.conf(version, file)
