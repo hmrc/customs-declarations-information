@@ -30,12 +30,12 @@ import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DeclarationStatusController @Inject()(val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
-                                            val authAction: AuthAction,
-                                            val conversationIdAction: ConversationIdAction,
-                                            val declarationStatusService: DeclarationStatusService,
-                                            val logger: InformationLogger)
-                                           (implicit val ec: ExecutionContext) extends BaseController {
+class InformationController @Inject()(val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
+                                      val authAction: AuthAction,
+                                      val conversationIdAction: ConversationIdAction,
+                                      val declarationStatusService: DeclarationStatusService,
+                                      val logger: InformationLogger)
+                                     (implicit val ec: ExecutionContext) extends BaseController {
 
   def get(mrn: String): Action[AnyContent] = (
     Action andThen
@@ -46,14 +46,14 @@ class DeclarationStatusController @Inject()(val validateAndExtractHeadersAction:
 
       implicit asr: AuthorisedRequest[AnyContent] =>
 
-        logger.debug(s"Declaration status request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
+        logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
         declarationStatusService.send(Mrn(mrn)) map {
           case Right(res) =>
             val id = new HasConversationId {
               override val conversationId = asr.conversationId
             }
-            logger.info(s"Declaration status request processed successfully.")(id)
+            logger.info(s"Declaration information request processed successfully.")(id)
             logger.debug(s"Returning filtered declaration status request with status code 200 and body\n ${res.body}")(id)
             Ok(res.body).withConversationId(id).as(ContentTypes.XML)
           case Left(errorResult) =>

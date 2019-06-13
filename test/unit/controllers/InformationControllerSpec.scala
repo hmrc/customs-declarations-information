@@ -32,7 +32,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
-import uk.gov.hmrc.customs.declarations.information.controllers.DeclarationStatusController
+import uk.gov.hmrc.customs.declarations.information.controllers.InformationController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, HeaderValidator, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
@@ -49,7 +49,7 @@ import util.{AuthConnectorStubbing, StatusTestXMLData}
 import scala.concurrent.Future
 import scala.xml.NodeSeq
 
-class DeclarationStatusControllerSpec extends UnitSpec
+class InformationControllerSpec extends UnitSpec
   with Matchers with MockitoSugar with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
@@ -75,7 +75,7 @@ class DeclarationStatusControllerSpec extends UnitSpec
     protected val stubDeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockStatusResponseValidationService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockStatusConnector, mockDateTimeService, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
-    protected val controller: DeclarationStatusController = new DeclarationStatusController(
+    protected val controller: InformationController = new InformationController(
       stubValidateAndExtractHeadersAction,
       stubAuthStatusAction,
       stubConversationIdAction,
