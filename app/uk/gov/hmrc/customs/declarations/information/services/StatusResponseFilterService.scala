@@ -92,7 +92,7 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   }
 
   private def buildPath(sourceXml: NodeSeq, label: String): NodeSeq = {
-    sourceXml \ "responseDetail" \ "declarationStatusResponse" \ "declaration" \ label
+    sourceXml \ "responseDetail" \ "declarationManagementInformationResponse" \ "declaration" \ label
   }
 
   private def extract(sourceXml: NodeSeq, path: NodeSeq): (Option[String], Option[MetaData]) = {
