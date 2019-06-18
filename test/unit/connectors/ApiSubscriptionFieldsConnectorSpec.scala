@@ -16,6 +16,8 @@
 
 package unit.connectors
 
+import java.util.UUID
+
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -25,8 +27,8 @@ import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFi
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, InformationConfig}
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, NotFoundException}
+import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpReads, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
@@ -45,12 +47,14 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val mockLogger = mock[InformationLogger]
   private val mockInformationConfigService = mock[InformationConfigService]
   private val mockInformationConfig = mock[InformationConfig]
+  private val mockUuidService = mock[UuidService]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr = TestData.TestAuthorisedRequest
 
-  private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockInformationConfigService)
+  private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockUuidService, mockLogger, mockInformationConfigService)
 
-  private val httpException = new NotFoundException("Emulated 404 response from a web call")
+  private val notFoundException = new NotFoundException("Emulated 404 response from a web call")
+  private val badRequestException = new BadRequestException("Emulated 400 response from a web call")
   private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
 
   override protected def beforeEach() {
@@ -72,6 +76,18 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
       }
     }
 
+    "when making a request that returns a NOT FOUND exception" should {
+      "successfully return a randomly generated fieldsId" in {
+        val futureResponse = Future.failed(notFoundException)
+        when(mockUuidService.uuid()).thenReturn(UUID.fromString(subscriptionFieldsIdString))
+        when(mockWSGetImpl.GET[ApiSubscriptionFieldsResponse](
+          ameq(expectedUrl))
+          (any[HttpReads[ApiSubscriptionFieldsResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(futureResponse)
+
+        awaitRequest shouldBe apiSubscriptionFieldsResponse
+      }
+    }
+
     "when making an failing request" should {
       "propagate an underlying error when api subscription fields call fails with a non-http exception" in {
         returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))
@@ -83,14 +99,14 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
         caught shouldBe TestData.emulatedServiceFailure
       }
 
-      "wrap an underlying error when api subscription fields call fails with an http exception" in {
-        returnResponseForRequest(Future.failed(httpException))
+      "wrap an underlying error when api subscription fields call fails with a bad request exception" in {
+        returnResponseForRequest(Future.failed(badRequestException))
 
         val caught = intercept[RuntimeException] {
           awaitRequest
         }
 
-        caught.getCause shouldBe httpException
+        caught.getCause shouldBe badRequestException
       }
     }
   }
