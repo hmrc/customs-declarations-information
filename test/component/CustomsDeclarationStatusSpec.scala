@@ -44,7 +44,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   private val mrn = "some-mrn"
   private val endpoint = s"/status-request/mrn/$mrn"
 
-  private val ISO_UTC_DateTimeFormat_noMillis: DateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC()
+  private val ISO_UTC_DateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime.withZoneUTC()
 
   private val apiSubscriptionKeyForXClientId =
     ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information%2Fstatus-request", version = VersionOne)
@@ -104,7 +104,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe validResponse(acceptanceDateVal.toString(ISO_UTC_DateTimeFormat_noMillis))
+      contentAsString(result) shouldBe validResponse(acceptanceDateVal.toString(ISO_UTC_DateTimeFormat))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCspNoNrs())
