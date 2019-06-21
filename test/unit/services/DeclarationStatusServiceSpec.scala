@@ -33,7 +33,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.xml.MdgPayloadCreator
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData.{correlationId, _}
@@ -89,8 +89,25 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       verify(mockDeclarationStatusConnector).send(dateTime, correlationId, dmirId, VersionOne, apiSubscriptionFieldsResponse, mrn)(TestAuthorisedRequest)
     }
 
+    "return 404 error response when MDG call fails with 404" in new SetUp() {
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId],
+        any[ApiVersion],
+        any[ApiSubscriptionFieldsResponse],
+        meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new RuntimeException(new NotFoundException("nothing here"))))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse.ErrorNotFound.XmlResult.withConversationId)
+    }
+
     "return 500 error response when MDG call fails" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId], any[ApiVersion], any[ApiSubscriptionFieldsResponse], meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId],
+        any[ApiVersion],
+        any[ApiSubscriptionFieldsResponse],
+        meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
