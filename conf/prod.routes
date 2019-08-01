@@ -1,6 +1,6 @@
 ->          /                             health.Routes
 ->          /                             dynamicDefinition.Routes
 
-GET         /status-request/mrn/:mrn      @uk.gov.hmrc.customs.declarations.information.controllers.InformationController.get(mrn)
+GET         /status-request/mrn/:mrn/status      @uk.gov.hmrc.customs.declarations.information.controllers.InformationController.get(mrn)
 
 GET         /admin/metrics                @com.kenshoo.play.metrics.MetricsController.metrics

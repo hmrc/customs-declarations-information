@@ -42,7 +42,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with AuthService {
 
   private val mrn = "some-mrn"
-  private val endpoint = s"/status-request/mrn/$mrn"
+  private val endpoint = s"/status-request/mrn/$mrn/status"
 
   private val ISO_UTC_DateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime.withZoneUTC()
 

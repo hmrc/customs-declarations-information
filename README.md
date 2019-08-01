@@ -7,11 +7,11 @@ This endpoint is available to CSP users only. The CSP user must supply a movemen
 
 
 ## GET Status Request 
- ### `GET /status-request/mrn/{valid mrn}`
+ ### `GET /status-request/mrn/{valid mrn}/status`
 
  ### curl command
  ```
-  curl -v -X GET "http://localhost:9000/status-request/mrn/{valid mrn}" \
+  curl -v -X GET "http://localhost:9000/status-request/mrn/{valid mrn}/status" \
    -H 'Accept: application/vnd.hmrc.1.0+xml' \
    -H 'Authorization: Bearer {ADD VALID TOKEN}' \
    -H 'X-Badge-Identifier: {Badge Id}' \
