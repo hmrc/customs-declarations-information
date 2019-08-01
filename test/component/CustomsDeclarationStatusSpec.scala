@@ -42,12 +42,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with AuthService {
 
   private val mrn = "some-mrn"
-  private val endpoint = s"/status-request/mrn/$mrn/status"
+  private val endpoint = s"/mrn/$mrn/status"
 
   private val ISO_UTC_DateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime.withZoneUTC()
 
   private val apiSubscriptionKeyForXClientId =
-    ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information%2Fstatus-request", version = VersionOne)
+    ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information", version = VersionOne)
 
   private def validResponse(acceptanceDateVal : String) =
     raw"""<v1:DeclarationStatusResponse 
