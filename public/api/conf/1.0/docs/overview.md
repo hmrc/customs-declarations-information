@@ -1,3 +1,5 @@
-This API permits requesting the status of a declaration.
+Use this API to get the status of a declaration.
 
-This endpoint is available to CSP users only. The CSP user must supply a movement reference number (MRN) as a parameter in the request URL. The endpoint returns a set of latest status details for the MRN.
+It is only available to CSP users.
+
+A declaration can be identified by a movement reference number (MRN).

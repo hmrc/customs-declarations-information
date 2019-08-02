@@ -104,6 +104,7 @@ that `default` configuration is declared directly inside the `customs-declaratio
 
 #### RESPONSE
 
+
     The service customs-declarations-information is now configured to use the default environment
 
 ### Get the current configuration for a service
