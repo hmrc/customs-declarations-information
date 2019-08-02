@@ -7,11 +7,11 @@ This endpoint is available to CSP users only. The CSP user must supply a movemen
 
 
 ## GET Status Request 
- ### `GET /status-request/mrn/{valid mrn}`
+ ### `GET /mrn/{valid mrn}/status`
 
  ### curl command
  ```
-  curl -v -X GET "http://localhost:9000/status-request/mrn/{valid mrn}" \
+  curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/status" \
    -H 'Accept: application/vnd.hmrc.1.0+xml' \
    -H 'Authorization: Bearer {ADD VALID TOKEN}' \
    -H 'X-Badge-Identifier: {Badge Id}' \
@@ -37,7 +37,7 @@ Please note that version `1.0` is used as an example in the commands given and y
 
 Please note that value `d65f2252-9fcf-4f04-9445-5971021226bb` is used as an example in the commands given and you should insert the UUID value which suits your needs.
 
-    curl -v -X PUT "http://localhost:9650/field/application/d65f2252-9fcf-4f04-9445-5971021226bb/context/customs%2Fdeclarations-information%2Fstatus-request/version/1.0" -H "Cache-Control: no-cache" -H "Content-Type: application/json" -d '{ "fields" : { "" : "" } }'
+    curl -v -X PUT "http://localhost:9650/field/application/d65f2252-9fcf-4f04-9445-5971021226bb/context/customs%2Fdeclarations-information/version/1.0" -H "Cache-Control: no-cache" -H "Content-Type: application/json" -d '{ "fields" : { "" : "" } }'
 
 We then have to manually reset the `fieldId` field to match the id expected by the downstream services. In a MongoDB command
 window paste the following, one after the other.
@@ -45,7 +45,7 @@ window paste the following, one after the other.
     use api-subscription-fields
 
     db.subscriptionFields.update(
-        { "clientId" : "d65f2252-9fcf-4f04-9445-5971021226bb", "apiContext" : "customs/declarations-information/status-request", "apiVersion" : "1.0" },
+        { "clientId" : "d65f2252-9fcf-4f04-9445-5971021226bb", "apiContext" : "customs/declarations-information", "apiVersion" : "1.0" },
         { $set:
             {"fieldsId" : "d65f2252-9fcf-4f04-9445-5971021226bb"}
         }

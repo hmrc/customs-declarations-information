@@ -39,7 +39,7 @@ trait ApiSubscriptionFieldsService {
 
   implicit def ec: ExecutionContext
 
-  private val apiContextEncoded = URLEncoder.encode("customs/declarations-information/status-request", "UTF-8")
+  private val apiContextEncoded = URLEncoder.encode("customs/declarations-information", "UTF-8")
 
   def futureApiSubFieldsId[A](c: ClientId)
                              (implicit vpr: HasConversationId with ExtractedHeaders, hc: HeaderCarrier): Future[Either[Result, ApiSubscriptionFieldsResponse]] = {

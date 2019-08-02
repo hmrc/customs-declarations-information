@@ -23,14 +23,14 @@ documentation:
     content: !include docs/testing.md
 
 /customs/declarations-information:
-  /status-request:
-    /mrn:
-      /{mrn}:
-        uriParameters:
-          mrn:
-            description: Movement Reference Number
-            type: string
-            example: "ABC123"
+  /mrn:
+    /{mrn}:
+      uriParameters:
+        mrn:
+          description: Movement Reference Number
+          type: string
+          example: "ABC123"
+      /status:
         get:
           displayName: Request the status of a declaration
           description: Allows requesting the status of a declaration. This endpoint is available to CSP users only. The CSP user must supply a movement reference number (MRN) as a parameter in the request URL. The endpoint returns a set of latest status details for the MRN.
