@@ -21,8 +21,8 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.UNAUTHORIZED
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.AnyContentAsEmpty
+import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode}
@@ -44,6 +44,7 @@ class AuthActionSpec extends UnitSpec
 
   private val mockAuthenticationConnector: AuthConnector = mock[AuthConnector]
   private val mockImportsLogger= mock[InformationLogger]
+  private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   trait SetUp extends AuthConnectorStubbing {
     override val mockAuthConnector: AuthConnector = mockAuthenticationConnector

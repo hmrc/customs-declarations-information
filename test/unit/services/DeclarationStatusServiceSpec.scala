@@ -24,7 +24,7 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, Result}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -56,6 +56,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
   protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
   protected val mrn = Mrn("theMrn")
+  protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)

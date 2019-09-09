@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /** Action builder that validates headers.
   * <li/>INPUT - `ConversationIdRequest`
@@ -32,9 +32,11 @@ import scala.concurrent.Future
 @Singleton
 class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator,
                                                 logger: InformationLogger)
+                                               (implicit ec: ExecutionContext)
   extends ActionRefiner[ConversationIdRequest, ValidatedHeadersRequest] {
   actionName =>
 
+  override def executionContext: ExecutionContext = ec
   override def refine[A](cr: ConversationIdRequest[A]): Future[Either[Result, ValidatedHeadersRequest[A]]] = Future.successful {
     implicit val id: ConversationIdRequest[A] = cr
 

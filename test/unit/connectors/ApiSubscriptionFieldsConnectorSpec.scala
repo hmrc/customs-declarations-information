@@ -23,8 +23,8 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
@@ -50,6 +50,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val mockUuidService = mock[UuidService]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr = TestData.TestAuthorisedRequest
+  private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockUuidService, mockLogger, mockInformationConfigService)
 

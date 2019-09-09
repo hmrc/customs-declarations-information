@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.model.Mrn
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services.DeclarationStatusService
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
@@ -34,8 +34,9 @@ class InformationController @Inject()(val validateAndExtractHeadersAction: Valid
                                       val authAction: AuthAction,
                                       val conversationIdAction: ConversationIdAction,
                                       val declarationStatusService: DeclarationStatusService,
+                                      val cc: ControllerComponents,
                                       val logger: InformationLogger)
-                                     (implicit val ec: ExecutionContext) extends BaseController {
+                                     (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
   def get(mrn: String): Action[AnyContent] = (
     Action andThen
