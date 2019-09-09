@@ -22,13 +22,15 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConversationIdAction @Inject()(val correlationIdService: UniqueIdsService,
                                      val logger: InformationLogger)
+                                    (implicit ec: ExecutionContext)
   extends ActionTransformer[Request, ConversationIdRequest] {
 
+  override def executionContext: ExecutionContext = ec
   override def transform[A](request: Request[A]): Future[ConversationIdRequest[A]] = {
 
     val r = ConversationIdRequest(correlationIdService.conversation, request)

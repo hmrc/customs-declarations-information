@@ -53,7 +53,7 @@ lazy val microservice = (project in file("."))
     commonSettings,
     unitTestSettings,
     integrationTestSettings,
-    acceptanceTestSettings,
+    componentTestSettings,
     playPublishingSettings,
     allTest,
     scoverageSettings,
@@ -85,7 +85,7 @@ lazy val integrationTestSettings =
       testGrouping in CdsIntegrationTest := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
     )
 
-lazy val acceptanceTestSettings =
+lazy val componentTestSettings =
   inConfig(ComponentTest)(Defaults.testTasks) ++
     Seq(
       testOptions in ComponentTest := Seq(Tests.Filter(onPackageName("component"))),
@@ -110,7 +110,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
       ,"Reverse.*"
       ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
       ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
-      ,".*(AuthService|BuildInfo|Routes).*"
+      ,".*(Reverse|AuthService|BuildInfo|Routes).*"
     ).mkString(";"),
   coverageMinimum := 96,
   coverageFailOnMinimum := true,

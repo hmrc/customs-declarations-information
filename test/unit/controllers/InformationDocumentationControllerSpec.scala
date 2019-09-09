@@ -16,6 +16,7 @@
 
 package unit.controllers
 
+import controllers.Assets
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -39,7 +40,7 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
     "api.access.version-1.0.whitelistedApplicationIds.1" -> "v1AppId-2")
 
   private def getApiDefinitionWith(configMap: Map[String, Any]) =
-    new InformationDocumentationController(mockService, play.api.Configuration.from(configMap), mockLogger)
+    new InformationDocumentationController(mock[Assets], Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
       .definition()
 
   override def beforeEach() {

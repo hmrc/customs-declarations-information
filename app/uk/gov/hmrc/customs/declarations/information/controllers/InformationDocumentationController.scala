@@ -16,20 +16,22 @@
 
 package uk.gov.hmrc.customs.declarations.information.controllers
 
+import controllers.Assets
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.api.http.{HttpErrorHandler, MimeTypes}
-import play.api.mvc.{Action, AnyContent}
+import play.api.http.MimeTypes
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.customs.api.common.controllers.DocumentationController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
 @Singleton
-class InformationDocumentationController @Inject()(httpErrorHandler: HttpErrorHandler,
+class InformationDocumentationController @Inject()(assets: Assets,
+                                                   cc: ControllerComponents,
                                                    configuration: Configuration,
                                                    logger: InformationLogger)
-  extends DocumentationController(httpErrorHandler) {
+  extends DocumentationController(assets, cc) {
 
-  private lazy val mayBeV1WhitelistedApplicationIds = configuration.getStringSeq("api.access.version-1.0.whitelistedApplicationIds")
+  private lazy val mayBeV1WhitelistedApplicationIds = configuration.getOptional[Seq[String]]("api.access.version-1.0.whitelistedApplicationIds")
 
   def definition(): Action[AnyContent] = Action {
     logger.debugWithoutRequestContext("InformationDocumentationController definition endpoint has been called")

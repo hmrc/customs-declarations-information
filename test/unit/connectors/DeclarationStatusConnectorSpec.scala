@@ -21,8 +21,8 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{AnyContent, Request}
+import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -45,6 +45,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val mockServiceConfigProvider = mock[ServiceConfigProvider]
   private val mockInformationConfigService = mock[InformationConfigService]
   private val mockMdgPayloadCreator = mock[MdgPayloadCreator]
+  private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
 

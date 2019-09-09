@@ -20,7 +20,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.test.Helpers
 import uk.gov.hmrc.play.test.UnitSpec
 import util.XmlValidationService
 
@@ -34,13 +34,14 @@ class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with Befo
   protected val propertyName: String = "xsd.locations.statusqueryresponse"
 
   protected val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd")
+  protected implicit val ec = Helpers.stubControllerComponents().executionContext
   
   def xmlValidationService: XmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
 
   override protected def beforeEach() {
     reset(mockConfiguration)
-    when(mockConfiguration.getStringSeq(propertyName)).thenReturn(Some(xsdLocations))
-    when(mockConfiguration.getInt("xml.max-errors")).thenReturn(None)
+    when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
+    when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
   }
 
   "A status query response" should {

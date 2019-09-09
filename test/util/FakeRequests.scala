@@ -32,7 +32,7 @@ object FakeRequests {
 
     def withCustomToken(token: String): FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $token")
 
-    def postTo(endpoint: String): FakeRequest[R] = fakeRequest.copyFakeRequest(method = POST, uri = endpoint)
+    def postTo(endpoint: String): FakeRequest[R] = fakeRequest.withMethod(POST).withTarget(fakeRequest.target.withPath(endpoint))
   }
 
 }
