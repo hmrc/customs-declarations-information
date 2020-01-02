@@ -23,7 +23,6 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve._
 import util.TestData
 
 trait AuthService {
@@ -35,19 +34,7 @@ trait AuthService {
 
   private def bearerTokenMatcher(bearerToken: String)= equalTo("Bearer " + bearerToken)
 
-  private def authRequestJson(predicate: Predicate, retrievals: Retrieval[_]*): String = {
-    val predicateJsArray = predicateToJson(predicate)
-    val js =
-      s"""
-         |{
-         |  "authorise": $predicateJsArray,
-         |  "retrieve": [${retrievals.flatMap(_.propertyNames).map(Json.toJson(_)).mkString(",")}]
-         |}
-    """.stripMargin
-    js
-  }
-
-  private def authRequestJsonWithoutRetrievals(predicate: Predicate): String = {
+  private def authRequestJson(predicate: Predicate): String = {
     val predicateJsArray = predicateToJson(predicate)
     val js =
       s"""
@@ -66,7 +53,7 @@ trait AuthService {
     }
   }
 
-  def authServiceAuthorizesCSPNoNrs(bearerToken: String = TestData.cspBearerToken): Unit = {
+  def authServiceAuthorizesCSP(bearerToken: String = TestData.cspBearerToken): Unit = {
     stubFor(post(authUrlMatcher)
       .withRequestBody(equalToJson(authRequestJson(cspAuthorisationPredicate)))
       .withHeader(AUTHORIZATION, bearerTokenMatcher(bearerToken))
@@ -78,10 +65,6 @@ trait AuthService {
     )
   }
 
-  def verifyAuthServiceCalledForCspWithoutRetrievals(bearerToken: String = TestData.cspBearerToken): Unit = {
-    verifyCspAuthServiceCalled(bearerToken, authRequestJsonWithoutRetrievals(cspAuthorisationPredicate))
-  }
-
   private def verifyCspAuthServiceCalled(bearerToken: String, body: String): Unit = {
     verify(1, postRequestedFor(authUrlMatcher)
       .withRequestBody(equalToJson(body))
@@ -89,7 +72,7 @@ trait AuthService {
     )
   }
 
-  def verifyAuthServiceCalledForCspNoNrs(bearerToken: String = TestData.cspBearerToken): Unit = {
+  def verifyAuthServiceCalledForCsp(bearerToken: String = TestData.cspBearerToken): Unit = {
     verify(1, postRequestedFor(authUrlMatcher)
       .withRequestBody(equalToJson(authRequestJson(cspAuthorisationPredicate)))
       .withHeader(AUTHORIZATION, bearerTokenMatcher(bearerToken))

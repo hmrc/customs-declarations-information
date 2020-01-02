@@ -41,7 +41,9 @@ trait ApiSubscriptionFieldsTestData {
        |  "apiVersion": "1.0",
        |  "fieldsId":"$subscriptionFieldsIdString",
        |  "fields":{
-       |    "":""
+       |    "callback-id":"http://localhost",
+       |    "token":"abc123",
+       |    "authenticatedEori":"$declarantEoriValue"
        |  }
        |}""".stripMargin
 

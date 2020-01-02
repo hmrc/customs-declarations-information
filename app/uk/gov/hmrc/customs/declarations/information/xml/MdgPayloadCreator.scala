@@ -46,7 +46,7 @@ class MdgPayloadCreator() {
       as match {
         case NonCsp(eori) =>
           <v1:authenticatedPartyID>{eori.value}</v1:authenticatedPartyID> // originatingPartyID is only required for CSPs
-        case Csp(badgeId, eori) =>
+        case Csp(_, badgeId) =>
           val badgeIdentifierElement: NodeSeq = {badgeId.fold(NodeSeq.Empty)(badge => <v1:badgeIdentifier>{badge.toString}</v1:badgeIdentifier>)}
           Seq[NodeSeq](
             badgeIdentifierElement, Text(newLineAndIndentation),

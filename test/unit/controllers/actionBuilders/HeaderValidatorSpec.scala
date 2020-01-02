@@ -68,12 +68,6 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
       "fail when request is for V2" in new SetUp {
         validate(conversationIdRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.2.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
-      "fail when request has invalid X-Badge-Identifier header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + X_BADGE_IDENTIFIER_HEADER_INVALID_TOO_SHORT)) shouldBe Left(ErrorInvalidBadgeIdentifierHeader)
-      }
-      "fail when request has missing X-Badge-Identifier header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders - X_BADGE_IDENTIFIER_NAME)) shouldBe Left(ErrorInvalidBadgeIdentifierHeader)
-      }
     }
   }
 

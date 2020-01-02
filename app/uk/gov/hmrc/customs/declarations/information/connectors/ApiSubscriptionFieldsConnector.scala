@@ -43,11 +43,6 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
 
     http.GET[ApiSubscriptionFieldsResponse](url)
       .recoverWith {
-//TODO why generate a fieldsId?
-//        case _: NotFoundException =>
-//          val generatedFieldsId = uuidService.uuid()
-//          logger.debug(s"no subscription fields entry found so generating fieldsId $generatedFieldsId")
-//          Future.successful(ApiSubscriptionFieldsResponse(generatedFieldsId))
         case httpError: HttpException =>
           logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
           Future.failed(new RuntimeException(httpError))

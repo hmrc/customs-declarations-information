@@ -32,6 +32,8 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ConversationIdRequest, ExtractedHeadersImpl}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
+import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
+import util.TestData.declarantEori
 
 object TestData {
   val conversationIdValue = "38400000-8cf0-11bd-b23e-10b96e4ef00d"
@@ -90,13 +92,20 @@ object TestData {
 
   val TestFakeRequest = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
 
+  def testFakeRequestWithBadgeIdEoriPair(badgeIdString: String = badgeIdentifier.value,
+                                         eoriString: String = declarantEori.value): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest().withHeaders(X_BADGE_IDENTIFIER_NAME -> badgeIdString, X_SUBMITTER_IDENTIFIER_NAME -> eoriString)
+  
   val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequest)
   val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
   val TestAuthorisedRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
 
-  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
+  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
   val TestValidatedHeadersRequestNoBadge = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val validatedHeadersRequestWithValidBadgeIdEoriPair =
+    ConversationIdRequest(conversationId, testFakeRequestWithBadgeIdEoriPair()).toValidatedHeadersRequest(TestExtractedHeaders)
 
 }
 
@@ -111,6 +120,9 @@ object RequestHeaders {
   val X_BADGE_IDENTIFIER_HEADER_INVALID_CHARS: (String, String) = X_BADGE_IDENTIFIER_NAME -> "Invalid^&&("
   val X_BADGE_IDENTIFIER_HEADER_INVALID_TOO_SHORT: (String, String) = X_BADGE_IDENTIFIER_NAME -> "12345"
   val X_BADGE_IDENTIFIER_HEADER_INVALID_LOWERCASE: (String, String) = X_BADGE_IDENTIFIER_NAME -> "BadgeId123"
+
+  val X_SUBMITTER_IDENTIFIER_NAME = "X-Submitter-Identifier"
+  val X_SUBMITTER_IDENTIFIER_HEADER: (String, String) = X_SUBMITTER_IDENTIFIER_NAME -> declarantEori.value
 
   val X_CLIENT_ID_NAME = "X-Client-ID"
   val X_CLIENT_ID_HEADER: (String, String) = X_CLIENT_ID_NAME -> ApiSubscriptionFieldsTestData.xClientId

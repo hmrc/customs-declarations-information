@@ -97,7 +97,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     }
 
     "when making an failing request" should {
-      "propagate an underlying error when nrs service call fails with a non-http exception" in {
+      "propagate an underlying error when service call fails with a non-http exception" in {
         returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))
 
         val caught = intercept[TestData.EmulatedServiceFailure] {
@@ -106,7 +106,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
         caught shouldBe TestData.emulatedServiceFailure
       }
 
-      "wrap an underlying error when nrs service call fails with an http exception" in {
+      "wrap an underlying error when service call fails with an http exception" in {
         returnResponseForRequest(Future.failed(httpException))
 
         val caught = intercept[RuntimeException] {

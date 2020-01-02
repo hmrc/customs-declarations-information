@@ -77,18 +77,6 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
       }
     }
 
-    "when making a request that returns a NOT FOUND exception" should {
-      "successfully return a randomly generated fieldsId" in {
-        val futureResponse = Future.failed(notFoundException)
-        when(mockUuidService.uuid()).thenReturn(UUID.fromString(subscriptionFieldsIdString))
-        when(mockWSGetImpl.GET[ApiSubscriptionFieldsResponse](
-          ameq(expectedUrl))
-          (any[HttpReads[ApiSubscriptionFieldsResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(futureResponse)
-
-        awaitRequest shouldBe apiSubscriptionFieldsResponse
-      }
-    }
-
     "when making an failing request" should {
       "propagate an underlying error when api subscription fields call fails with a non-http exception" in {
         returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))

@@ -56,7 +56,7 @@ class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
     val eventualAuth: Future[Either[ErrorResponse, IsCsp]] =
         authorised(Enrolment(customsDeclarationEnrolment) and AuthProviders(PrivilegedApplication)) {
           Future.successful[Either[ErrorResponse, IsCsp]] {
-            logger.debug(s"Successfully authorised CSP PrivilegedApplication with $customsDeclarationEnrolment enrolment without retrievals")
+            logger.debug(s"Successfully authorised CSP PrivilegedApplication with $customsDeclarationEnrolment enrolment")
             Right(true)
           }
         }

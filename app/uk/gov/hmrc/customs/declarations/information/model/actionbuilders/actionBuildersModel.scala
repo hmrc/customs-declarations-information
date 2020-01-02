@@ -39,9 +39,9 @@ object ActionBuilderModelHelper {
 
   implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) {
     def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
-    
+
     def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
-    
+
     private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
