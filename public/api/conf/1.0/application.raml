@@ -43,7 +43,7 @@ documentation:
             X-Badge-Identifier:
                 description: Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
                 type: string
-                required: true
+                required: false
                 example: ABC123
           (annotations.scope): "write:customs-declarations-information"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]

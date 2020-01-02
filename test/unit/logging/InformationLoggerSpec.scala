@@ -21,6 +21,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ConversationIdRequest}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -35,7 +36,7 @@ class InformationLoggerSpec extends UnitSpec with MockitoSugar {
     implicit val implicitVpr: AuthorisedRequest[AnyContentAsEmpty.type] = ConversationIdRequest(conversationId, FakeRequest()
       .withHeaders("Content-Type" -> "Some-Content-Type"))
       .toValidatedHeadersRequest(TestExtractedHeaders)
-      .toAuthorisedRequest
+      .toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
 
   }
 

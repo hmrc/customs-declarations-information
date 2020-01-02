@@ -35,8 +35,8 @@ import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionF
 import uk.gov.hmrc.customs.declarations.information.controllers.InformationController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, HeaderValidator, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.model._
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.test.UnitSpec
@@ -59,19 +59,21 @@ class InformationControllerSpec extends UnitSpec
     protected val mockStatusResponseValidationService: StatusResponseValidationService = mock[StatusResponseValidationService]
     protected val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
     protected val mockInformationLogger: InformationLogger = mock[InformationLogger]
+    protected val headerValidator = new HeaderValidator(mockInformationLogger)
     protected val mockCdsLogger: CdsLogger = mock[CdsLogger]
     protected val mockErrorResponse: ErrorResponse = mock[ErrorResponse]
     protected val mockResult: Result = mock[Result]
     protected val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
+    protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
     protected val stubHttpResponse = HttpResponse(responseStatus = Status.OK, responseJson = None, responseString = Some(StatusTestXMLData.generateDeclarationStatusResponse().toString))
 
     protected val mockStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
+    protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
     protected val mockDateTimeService: DateTimeService = mock[DateTimeService]
     protected val dateTime = new DateTime()
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
-    protected val stubAuthStatusAction: AuthAction = new AuthAction (mockAuthConnector, mockInformationLogger)
+    protected val stubAuthStatusAction: AuthAction = new AuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger), mockInformationLogger)
     protected val stubDeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockStatusResponseValidationService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockStatusConnector, mockDateTimeService, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
@@ -124,7 +126,7 @@ class InformationControllerSpec extends UnitSpec
 
       val result: Result = awaitSubmit(ValidDeclarationStatusRequest.withHeaders(ValidDeclarationStatusRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       result shouldBe errorResultBadgeIdentifier
-      verifyZeroInteractions(mockStatusConnector)
+      verifyNoMoreInteractions(mockStatusConnector)
     }
 
     "respond with status 500 for a request with a missing X-Client-ID" in new SetUp() {
@@ -132,7 +134,7 @@ class InformationControllerSpec extends UnitSpec
 
       val result: Result = awaitSubmit(ValidDeclarationStatusRequest.withHeaders(ValidDeclarationStatusRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
-      verifyZeroInteractions(mockStatusConnector)
+      verifyNoMoreInteractions(mockStatusConnector)
     }
 
     "respond with status 400 for a request with an invalid X-Badge-Identifier" in new SetUp() {
@@ -141,7 +143,7 @@ class InformationControllerSpec extends UnitSpec
       val result: Result = awaitSubmit(ValidDeclarationStatusRequest.withHeaders((ValidHeaders + X_BADGE_IDENTIFIER_HEADER_INVALID_CHARS).toSeq: _*))
 
       result shouldBe errorResultBadgeIdentifier
-      verifyZeroInteractions(mockStatusConnector)
+      verifyNoMoreInteractions(mockStatusConnector)
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {

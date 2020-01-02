@@ -23,7 +23,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorGenericBadR
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.Mrn
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, Mrn}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 
@@ -53,7 +53,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
         connector.send(dateTime, correlationId, dmirId, asr.requestedApiVersion, sfId, mrn)
           .map(response => {
             val xmlResponseBody = XML.loadString(response.body)
-            statusResponseValidationService.validate(xmlResponseBody, asr.badgeIdentifier) match {
+            statusResponseValidationService.validate(xmlResponseBody, asr.authorisedAs.asInstanceOf[Csp].badgeIdentifier.get) match {
               case Right(_) => Right(filterResponse(response, xmlResponseBody))
               case Left(errorResponse) =>
                 logError(errorResponse)

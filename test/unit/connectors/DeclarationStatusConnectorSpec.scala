@@ -54,7 +54,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId, Csp(badgeIdentifier), mock[Request[AnyContent]])
+  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   private val httpException = new NotFoundException("Emulated 404 response from a web call")
 

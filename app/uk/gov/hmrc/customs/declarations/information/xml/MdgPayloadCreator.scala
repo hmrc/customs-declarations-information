@@ -19,12 +19,14 @@ package uk.gov.hmrc.customs.declarations.information.xml
 import javax.inject.Singleton
 import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, CorrelationId, DeclarationManagementInformationRequestId, Mrn}
+import uk.gov.hmrc.customs.declarations.information.model._
 
-import scala.xml.NodeSeq
+import scala.xml.{NodeSeq, Text}
 
 @Singleton
 class MdgPayloadCreator() {
+
+  private val newLineAndIndentation = "\n        "
 
   def create[A](correlationId: CorrelationId,
                 date: DateTime,
@@ -40,7 +42,19 @@ class MdgPayloadCreator() {
         <n1:clientID>{apiSubscriptionFieldsResponse.fieldsId.toString}</n1:clientID>
         <n1:conversationID>{asr.conversationId.toString}</n1:conversationID>
         <n1:correlationID>{correlationId.toString}</n1:correlationID>
-        <n1:badgeIdentifier>{asr.badgeIdentifier.toString}</n1:badgeIdentifier>
+        {val as = asr.authorisedAs
+
+      as match {
+        case NonCsp(eori) =>
+          <v1:authenticatedPartyID>{eori.value}</v1:authenticatedPartyID> // originatingPartyID is only required for CSPs
+        case Csp(badgeId, eori) =>
+          val badgeIdentifierElement: NodeSeq = {badgeId.fold(NodeSeq.Empty)(badge => <v1:badgeIdentifier>{badge.toString}</v1:badgeIdentifier>)}
+          Seq[NodeSeq](
+            badgeIdentifierElement, Text(newLineAndIndentation),
+            <v1:originatingPartyID>{Csp.originatingPartyId(as.asInstanceOf[Csp])}</v1:originatingPartyID>, Text(newLineAndIndentation),
+            <v1:authenticatedPartyID>{apiSubscriptionFieldsResponse.fields.authenticatedEori.get}</v1:authenticatedPartyID>)
+      }
+        }
         <n1:dateTimeStamp>{date.toString}</n1:dateTimeStamp>
       </n1:requestCommon>
       <n1:requestDetail>

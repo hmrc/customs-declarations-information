@@ -18,6 +18,8 @@ package uk.gov.hmrc.customs.declarations.information.model
 
 import java.util.UUID
 
+import play.api.libs.json.{JsString, Reads, Writes}
+
 case class RequestedVersion(versionNumber: String, configPrefix: Option[String])
 
 case class ClientId(value: String) extends AnyVal {
@@ -26,6 +28,14 @@ case class ClientId(value: String) extends AnyVal {
 
 case class ConversationId(uuid: UUID) extends AnyVal {
   override def toString: String = uuid.toString
+}
+
+case class Eori(value: String) extends AnyVal {
+  override def toString: String = value.toString
+}
+object Eori {
+  implicit val writer: Writes[Eori] = Writes[Eori] { x => JsString(x.value) }
+  implicit val reader: Reads[Eori] = Reads.of[String].map(new Eori(_))
 }
 
 case class Mrn(value: String) extends AnyVal {
@@ -56,4 +66,12 @@ object VersionOne extends ApiVersion{
 
 sealed trait AuthorisedAs {
 }
-case class Csp(badgeIdentifier: BadgeIdentifier) extends AuthorisedAs
+sealed trait AuthorisedAsCsp extends AuthorisedAs {
+  val eori: Option[Eori]
+  val badgeIdentifier: Option[BadgeIdentifier]
+}
+case class Csp(eori: Option[Eori], badgeIdentifier: Option[BadgeIdentifier]) extends AuthorisedAsCsp
+object Csp {
+  def originatingPartyId(csp: Csp): String = csp.eori.fold(csp.badgeIdentifier.get.toString)(e => e.toString)
+}
+case class NonCsp(eori: Eori) extends AuthorisedAs

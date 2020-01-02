@@ -25,8 +25,8 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
 import uk.gov.hmrc.circuitbreaker.UnhealthyServiceException
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
@@ -45,7 +45,8 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private val numberOfCallsToTriggerStateChange = 5
   private val unavailablePeriodDurationInMillis = 1000
-  private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId, Csp(badgeIdentifier), mock[Request[AnyContent]])
+  private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
+    ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
   private implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(incomingAuthToken)))
 
   override protected def beforeAll() {

@@ -30,12 +30,11 @@ import uk.gov.hmrc.customs.declarations.information.model.VersionOne
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl}
 import uk.gov.hmrc.play.test.UnitSpec
 import util.RequestHeaders._
-import util.TestData.badgeIdentifier
 import util.{ApiSubscriptionFieldsTestData, TestData}
 
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
 
-  private val extractedHeaders = ExtractedHeadersImpl(VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId)
+  private val extractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   private val ErrorInvalidBadgeIdentifierHeader: ErrorResponse = ErrorResponse(BAD_REQUEST, BadRequestCode, s"X-Badge-Identifier header is missing or invalid")
 
   trait SetUp {

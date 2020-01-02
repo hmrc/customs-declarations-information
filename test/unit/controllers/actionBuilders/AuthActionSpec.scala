@@ -27,12 +27,14 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode}
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.AuthAction
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, HeaderValidator}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ValidatedHeadersRequest
+import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.play.test.UnitSpec
-import util.TestData.TestValidatedHeadersRequest
+import util.TestData.{TestValidatedHeadersRequest, badgeIdentifier}
 import util.{AuthConnectorStubbing, TestData}
 
 class AuthActionSpec extends UnitSpec
@@ -43,11 +45,13 @@ class AuthActionSpec extends UnitSpec
   private lazy val validatedHeadersRequest: ValidatedHeadersRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest
 
   private val mockAuthenticationConnector: AuthConnector = mock[AuthConnector]
-  private val mockImportsLogger= mock[InformationLogger]
+  private val mockLogger= mock[InformationLogger]
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   trait SetUp extends AuthConnectorStubbing {
     override val mockAuthConnector: AuthConnector = mockAuthenticationConnector
+    protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockLogger)
+    protected val headerValidator = new HeaderValidator(mockLogger)
   }
 
   override protected def beforeEach(): Unit = {
@@ -57,18 +61,20 @@ class AuthActionSpec extends UnitSpec
   "AuthAction" can {
     "for Declaration Status request" should {
 
-      val authAction = new AuthAction(mockAuthenticationConnector, mockImportsLogger)
+//      val authAction = new AuthAction(customsAuthService, mockAuthenticationConnector, mockInformationLogger)
 
       "return AuthorisedRequest for CSP when authorised by auth API" in new SetUp {
+        val authAction = new AuthAction(customsAuthService, headerValidator, mockLogger)
         authoriseCsp()
 
         private val actual = await(authAction.refine(validatedHeadersRequest))
 
-        actual shouldBe Right(validatedHeadersRequest.toAuthorisedRequest)
+        actual shouldBe Right(validatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier))))
         verifyCspAuthorisationCalled(1)
       }
 
       "return InternalError with ConversationId when auth call fails" in new SetUp {
+        val authAction = new AuthAction(customsAuthService, headerValidator, mockLogger)
         authoriseCspError()
 
         private val actual = await(authAction.refine(validatedHeadersRequest))
@@ -77,6 +83,7 @@ class AuthActionSpec extends UnitSpec
       }
 
       "return ErrorResponse with ConversationId when not authorised by auth API" in new SetUp {
+        val authAction = new AuthAction(customsAuthService, headerValidator, mockLogger)
         unauthoriseCsp()
 
         private val actual = await(authAction.refine(validatedHeadersRequest))

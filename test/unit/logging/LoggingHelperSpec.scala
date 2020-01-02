@@ -24,7 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderName
 import uk.gov.hmrc.customs.declarations.information.logging.LoggingHelper
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{ClientId, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{ClientId, Csp, VersionOne}
 import uk.gov.hmrc.play.test.UnitSpec
 import util.TestData._
 
@@ -45,7 +45,7 @@ class LoggingHelperSpec extends UnitSpec with MockitoSugar {
         "IGNORE" -> "IGNORE"
       )
     )
-  private val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, badgeIdentifier, ClientId("some-client-id"), requestMock)
+  private val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("some-client-id"), requestMock)
 
   "LoggingHelper" should {
 
@@ -54,7 +54,7 @@ class LoggingHelperSpec extends UnitSpec with MockitoSugar {
     }
 
     "testFormatInfo with authorisation" in {
-      LoggingHelper.formatInfo("Info message", validatedHeadersRequest.toAuthorisedRequest) shouldBe expectedMessage("Info message", "[authorisedAs=Csp(BADGEID123)]")
+      LoggingHelper.formatInfo("Info message", validatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))) shouldBe expectedMessage("Info message", "[authorisedAs=Csp(Some(ZZ123456789000), Some(BADGEID123))]")
     }
 
     "testFormatError" in {

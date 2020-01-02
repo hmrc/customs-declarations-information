@@ -28,28 +28,28 @@ object ActionBuilderModelHelper {
     }
   }
 
-  implicit class CorrelationIdsRequestOps[A](val cir: ConversationIdRequest[A]) extends AnyVal {
+  implicit class UniqueIdsRequestOps[A](val cir: ConversationIdRequest[A]) extends AnyVal {
     def toValidatedHeadersRequest(eh: ExtractedHeaders): ValidatedHeadersRequest[A] = ValidatedHeadersRequest(
       cir.conversationId,
       eh.requestedApiVersion,
-      eh.badgeIdentifier,
       eh.clientId,
       cir.request
     )
   }
 
-  implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) extends AnyVal {
-
-    def toAuthorisedRequest: AuthorisedRequest[A] = AuthorisedRequest(
+  implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) {
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+    
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+    
+    private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
-      vhr.badgeIdentifier,
       vhr.clientId,
-      Csp(vhr.badgeIdentifier),
+      authorisedAs,
       vhr.request
     )
   }
-
 }
 
 trait HasRequest[A] {
@@ -63,17 +63,17 @@ trait HasConversationId {
 trait ExtractedHeaders {
   val requestedApiVersion: ApiVersion
   val clientId: ClientId
-  val badgeIdentifier: BadgeIdentifier
 }
 
 trait HasAuthorisedAs {
   val authorisedAs: AuthorisedAs
 }
 
-case class ExtractedHeadersImpl(requestedApiVersion: ApiVersion,
-                                badgeIdentifier: BadgeIdentifier,
-                                clientId: ClientId)
-  extends ExtractedHeaders
+trait HasBadgeIdentifier {
+  val badgeIdentifier: BadgeIdentifier
+}
+
+case class ExtractedHeadersImpl(requestedApiVersion: ApiVersion, clientId: ClientId) extends ExtractedHeaders
 
 /*
  * We need multiple WrappedRequest classes to reflect additions to context during the request processing pipeline.
@@ -84,20 +84,20 @@ case class ExtractedHeadersImpl(requestedApiVersion: ApiVersion,
  */
 
 case class ConversationIdRequest[A](conversationId: ConversationId,
-                                    request: Request[A])
-  extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId
+                                    request: Request[A]
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId
 
+// Available after ValidatedHeadersAction builder
 case class ValidatedHeadersRequest[A](conversationId: ConversationId,
                                       requestedApiVersion: ApiVersion,
-                                      badgeIdentifier: BadgeIdentifier,
                                       clientId: ClientId,
-                                      request: Request[A])
-  extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders
+                                      request: Request[A]
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders
 
+// Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,
                                 requestedApiVersion: ApiVersion,
-                                badgeIdentifier: BadgeIdentifier,
                                 clientId: ClientId,
                                 authorisedAs: AuthorisedAs,
-                                request: Request[A])
-  extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs
+                                request: Request[A]
+) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs

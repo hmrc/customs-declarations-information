@@ -24,11 +24,12 @@ import org.joda.time.DateTime
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.HeaderNames._
 import play.api.inject.guice.GuiceableModule
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeadersImpl}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ConversationIdRequest, ExtractedHeadersImpl}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
 
@@ -61,6 +62,11 @@ object TestData {
   val invalidBadgeIdentifier: BadgeIdentifier = BadgeIdentifier(invalidBadgeIdentifierValue)
   val badgeIdentifier: BadgeIdentifier = BadgeIdentifier(validBadgeIdentifierValue)
 
+  val declarantEoriValue = "ZZ123456789000"
+  val declarantEori = Eori(declarantEoriValue)
+  val invalidDeclarantEoriValue = "ZZ123456789000123456789"
+  val invalidDeclarantEori = Eori(invalidDeclarantEoriValue)
+
   val cspBearerToken = "CSP-Bearer-Token"
   val invalidBearerToken = "InvalidBearerToken"
 
@@ -91,11 +97,11 @@ object TestData {
   val TestFakeRequest = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
 
   val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequest)
-  val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId)
+  val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
-  val TestAuthorisedRequest = TestValidatedHeadersRequest.toAuthorisedRequest
+  val TestAuthorisedRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
 
-  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toAuthorisedRequest
+  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
   val TestValidatedHeadersRequestNoBadge = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
 
 }
