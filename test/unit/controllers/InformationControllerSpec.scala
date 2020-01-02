@@ -94,7 +94,7 @@ class InformationControllerSpec extends UnitSpec
       controller.get(mrnValue).apply(request)
     }
 
-    when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId], any[ApiVersion], any[ApiSubscriptionFieldsResponse], meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+    when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[ApiSubscriptionFieldsResponse], meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
     when(mockStatusResponseFilterService.transform(any[NodeSeq])).thenReturn(<xml>some xml</xml>)
@@ -149,7 +149,6 @@ class InformationControllerSpec extends UnitSpec
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
       when(mockStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
-        meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId],
         any[ApiVersion],
         any[ApiSubscriptionFieldsResponse],
         meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]]))

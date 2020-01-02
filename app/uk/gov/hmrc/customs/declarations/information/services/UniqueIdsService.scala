@@ -18,7 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.services
 
 import com.google.inject.Singleton
 import javax.inject.Inject
-import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId, DeclarationManagementInformationRequestId}
+import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
 
 
 @Singleton
@@ -27,7 +27,4 @@ class UniqueIdsService @Inject()(uuidService: UuidService) {
   def conversation: ConversationId = ConversationId(uuidService.uuid())
 
   def correlation: CorrelationId = CorrelationId(uuidService.uuid())
-
-  def dmir: DeclarationManagementInformationRequestId = DeclarationManagementInformationRequestId(uuidService.uuid())
-
 }

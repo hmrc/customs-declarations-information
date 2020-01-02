@@ -41,7 +41,7 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
   "MdgPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
-    def createPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, dmirId, apiSubscriptionFieldsResponse)
+    def createPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, apiSubscriptionFieldsResponse)
 
     "set the clientID" in {
       val result = createPayload()
@@ -81,14 +81,6 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
       val rd = result \\ "dateTimeStamp"
 
       rd.head.text shouldBe "2017-06-08T13:55:00.000Z"
-    }
-
-    "set the dmirId" in {
-      val result = createPayload()
-
-      val rd = result \\ "id"
-
-      rd.head.text shouldBe "1b0a48a8-1259-42c9-9d6a-e797b919eb16"
     }
 
     "set the timeStamp" in {

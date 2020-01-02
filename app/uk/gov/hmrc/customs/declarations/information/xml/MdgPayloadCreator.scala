@@ -31,7 +31,6 @@ class MdgPayloadCreator() {
   def create[A](correlationId: CorrelationId,
                 date: DateTime,
                 mrn: Mrn,
-                dmirId: DeclarationManagementInformationRequestId,
                 apiSubscriptionFieldsResponse: ApiSubscriptionFieldsResponse)
                (implicit asr: AuthorisedRequest[A]): NodeSeq = {
     <n1:queryDeclarationInformationRequest
@@ -59,7 +58,6 @@ class MdgPayloadCreator() {
       </n1:requestCommon>
       <n1:requestDetail>
         <n1:declarationManagementInformationRequest>
-          <tns_1:id>{dmirId.toString}</tns_1:id>
           <tns_1:timeStamp>{date.toString}</tns_1:timeStamp>
           <xsd_1:reference>{mrn.toString}</xsd_1:reference>
         </n1:declarationManagementInformationRequest>

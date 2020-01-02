@@ -61,7 +61,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
     when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
-      meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId], any[ApiVersion], any[ApiSubscriptionFieldsResponse],
+      any[ApiVersion], any[ApiSubscriptionFieldsResponse],
       meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(mockHttpResponse))
     when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
@@ -87,13 +87,12 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
 
       val result: Either[Result, HttpResponse] = send()
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, dmirId, VersionOne, apiSubscriptionFieldsResponse, mrn)(TestAuthorisedRequest)
+      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn)(TestAuthorisedRequest)
     }
 
     "return 404 error response when MDG call fails with 404" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
-        meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId],
         any[ApiVersion],
         any[ApiSubscriptionFieldsResponse],
         meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new RuntimeException(new NotFoundException("nothing here"))))
@@ -105,7 +104,6 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
     "return 500 error response when MDG call fails" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
-        meq[UUID](dmirId.uuid).asInstanceOf[DeclarationManagementInformationRequestId],
         any[ApiVersion],
         any[ApiSubscriptionFieldsResponse],
         meq[String](mrn.value).asInstanceOf[Mrn])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))

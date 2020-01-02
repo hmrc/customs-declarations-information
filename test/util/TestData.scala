@@ -42,10 +42,6 @@ object TestData {
   val correlationIdUuid: UUID = fromString(correlationIdValue)
   val correlationId = CorrelationId(correlationIdUuid)
 
-  val dmirIdValue = "1b0a48a8-1259-42c9-9d6a-e797b919eb16"
-  val dmirIdUuid: UUID = fromString(dmirIdValue)
-  val dmirId = DeclarationManagementInformationRequestId(dmirIdUuid)
-
   val mrnValue = "theMrn"
   val mrn = Mrn(mrnValue)
 
@@ -90,8 +86,6 @@ object TestData {
     override def conversation: ConversationId = conversationId
 
     override def correlation: CorrelationId = correlationId
-
-    override def dmir: DeclarationManagementInformationRequestId = dmirId
   }
 
   val TestFakeRequest = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))

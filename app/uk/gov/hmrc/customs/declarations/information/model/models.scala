@@ -46,10 +46,6 @@ case class CorrelationId(uuid: UUID) extends AnyVal {
   override def toString: String = uuid.toString
 }
 
-case class DeclarationManagementInformationRequestId(uuid: UUID) extends AnyVal {
-  override def toString: String = uuid.toString
-}
-
 case class BadgeIdentifier(value: String) extends AnyVal {
   override def toString: String = value.toString
 }

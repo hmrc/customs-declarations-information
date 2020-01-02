@@ -62,7 +62,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockMdgPayloadCreator.create(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)(asr)).thenReturn(util.StatusTestXMLData.expectedDeclarationStatusPayload)
+    when(mockMdgPayloadCreator.create(correlationId, date, mrn, apiSubscriptionFieldsResponse)(asr)).thenReturn(util.StatusTestXMLData.expectedDeclarationStatusPayload)
   }
 
   "DeclarationStatusConnector" can {
@@ -121,7 +121,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
         when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(null)
 
         val caught = intercept[IllegalArgumentException] {
-          await(connector.send(date, correlationId, dmirId, VersionOne, apiSubscriptionFieldsResponse, mrn))
+          await(connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn))
         }
         caught.getMessage shouldBe "config not found"
       }
@@ -129,7 +129,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   }
 
   private def awaitRequest = {
-    await(connector.send(date, correlationId, dmirId, VersionOne, apiSubscriptionFieldsResponse, mrn))
+    await(connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn))
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {

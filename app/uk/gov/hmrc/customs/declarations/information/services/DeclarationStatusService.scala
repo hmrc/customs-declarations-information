@@ -46,11 +46,10 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
-    val dmirId = uniqueIdsService.dmir
 
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
-        connector.send(dateTime, correlationId, dmirId, asr.requestedApiVersion, sfId, mrn)
+        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, mrn)
           .map(response => {
             val xmlResponseBody = XML.loadString(response.body)
             statusResponseValidationService.validate(xmlResponseBody, asr.authorisedAs.asInstanceOf[Csp].badgeIdentifier.get) match {
