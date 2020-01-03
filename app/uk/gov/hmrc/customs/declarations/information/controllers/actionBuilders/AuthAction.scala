@@ -54,7 +54,7 @@ class AuthAction @Inject()(customsAuthService: CustomsAuthService,
 
   protected[this] def executionContext: ExecutionContext = ec
 
-  private def errorResponseMissingIdentifiers = errorBadRequest(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName are missing")
+  private def errorResponseMissingIdentifiers = errorBadRequest(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName headers are missing")
 
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val implicitVhr: ValidatedHeadersRequest[A] = vhr

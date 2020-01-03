@@ -52,6 +52,11 @@ trait AuthConnectorStubbing extends UnitSpec with MockitoSugar {
       .thenReturn(Future.failed(authException))
   }
 
+  def unauthoriseNonCspOnly(authException: AuthorisationException = new InsufficientEnrolments): Unit = {
+    when(mockAuthConnector.authorise(ameq(nonCspAuthPredicate), ameq(Retrievals.authorisedEnrolments))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.failed(authException))
+  }
+
   def verifyCspAuthorisationCalled(numberOfTimes: Int): Future[Unit] = {
     verify(mockAuthConnector, times(numberOfTimes))
       .authorise(ameq(cspAuthPredicate), ameq(EmptyRetrieval))(any[HeaderCarrier], any[ExecutionContext])
@@ -66,4 +71,15 @@ trait AuthConnectorStubbing extends UnitSpec with MockitoSugar {
       .thenReturn(Enrolments(Set(customsEnrolment)))
   }
 
+  def verifyNonCspAuthorisationCalled(numberOfTimes: Int): Future[Enrolments] = {
+    verify(mockAuthConnector, times(numberOfTimes))
+      .authorise(ameq(nonCspAuthPredicate), ameq(Retrievals.authorisedEnrolments))(any[HeaderCarrier], any[ExecutionContext])
+  }
+
+  def authoriseNonCspOnlyError(): Unit = {
+    when(mockAuthConnector.authorise(ameq(nonCspAuthPredicate), ameq(Retrievals.authorisedEnrolments))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.failed(TestData.emulatedServiceFailure))
+  }
+
+  def verifyNonCspAuthorisationNotCalled: Future[Enrolments] = verifyNonCspAuthorisationCalled(0)
 }

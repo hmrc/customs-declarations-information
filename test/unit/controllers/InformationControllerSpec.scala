@@ -102,7 +102,7 @@ class InformationControllerSpec extends UnitSpec
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
   //TODO add non-CSP tests
   "DeclarationStatusController" should {
@@ -123,7 +123,7 @@ class InformationControllerSpec extends UnitSpec
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
-    "respond with status 400 for a CSP request with both a missing X-Badge-Identifier and a missing X-Submitter-Identifier " in new SetUp() {
+    "respond with status 400 for a CSP request with both a missing X-Badge-Identifier and a missing X-Submitter-Identifier" in new SetUp() {
       authoriseCsp()
 
       val result: Result = awaitSubmit(ValidDeclarationStatusRequest.withHeaders(ValidDeclarationStatusRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
