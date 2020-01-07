@@ -66,6 +66,7 @@ object TestData {
   val invalidDeclarantEori = Eori(invalidDeclarantEoriValue)
 
   val cspBearerToken = "CSP-Bearer-Token"
+  val nonCspBearerToken = "Software-House-Bearer-Token"
   val invalidBearerToken = "InvalidBearerToken"
 
   type EmulatedServiceFailure = UnsupportedOperationException

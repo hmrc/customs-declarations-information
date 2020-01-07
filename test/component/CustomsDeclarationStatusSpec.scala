@@ -26,13 +26,13 @@ import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, VersionOne}
 import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.ValidHeaders
+import util.TestData.nonCspBearerToken
 import util.XmlOps.stringToXml
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, MdgStatusDeclarationService}
-import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTestXMLData}
+import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTestXMLData, TestData}
 
 import scala.concurrent.Future
 
-//TODO need to add non-CSP test
 class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with AuditService
   with ExpectedTestResponses
@@ -76,7 +76,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       |</v1:DeclarationStatusResponse>
       |""".stripMargin
 
-  val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromCsp
+  val validCspRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromCsp
+  val validNonCspRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromNonCsp
 
   override protected def beforeAll() {
     startMockServer()
@@ -100,7 +101,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then("a response with a 200 (OK) status is received")
       status(result) shouldBe OK
@@ -127,7 +128,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then(s"a response with a 400 status is received")
       status(result) shouldBe BAD_REQUEST
@@ -145,7 +146,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then(s"a response with a 400 status is received")
       status(result) shouldBe BAD_REQUEST
@@ -163,13 +164,40 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then(s"a response with a 400 status is received")
       status(result) shouldBe BAD_REQUEST
 
       And("the response body is a \"invalid xml\" XML")
       stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorBadgeIdMissingOrInvalid)
+    }
+  }
+
+  feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
+    scenario("An authorised non-CSP successfully requests a status") {
+      Given("A non-CSP wants the status of a declaration")
+      startMdgStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the non-CSP is authorised with its privileged application")
+      authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
+      authServiceAuthorizesNonCspWithEori()
+
+      When("a GET request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validNonCspRequest).value
+
+      Then("a response with a 200 (OK) status is received")
+      status(result) shouldBe OK
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe validResponse(acceptanceDateVal.toString(ISO_UTC_DateTimeFormat))
+
+      And("the request was authorised with AuthService")
+      eventually(verifyAuthServiceCalledForNonCsp())
+
+      And("v1 config was used")
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext))))
     }
   }
 

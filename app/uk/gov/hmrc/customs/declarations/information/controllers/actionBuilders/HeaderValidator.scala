@@ -37,7 +37,7 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
   private val errorResponseBadgeIdentifierHeaderMissing = errorBadRequest(s"$XBadgeIdentifierHeaderName header is missing or invalid")
   private val errorResponseEoriIdentifierHeaderMissingOrInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is missing or invalid")
   private val errorResponseEoriIdentifierHeaderInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is invalid")
-  
+
   def validateHeaders[A](implicit conversationIdRequest: ConversationIdRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
     implicit val headers: Headers = conversationIdRequest.headers
 
