@@ -16,6 +16,7 @@
 
 package unit.controllers.actionBuilders
 
+import org.mockito.ArgumentMatchers.any
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.ACCEPT
@@ -26,16 +27,16 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.HeaderValidator
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.VersionOne
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.{Eori, VersionOne}
 import uk.gov.hmrc.play.test.UnitSpec
+import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
-import util.TestData.badgeIdentifier
 import util.{ApiSubscriptionFieldsTestData, TestData}
 
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
 
-  private val extractedHeaders = ExtractedHeadersImpl(VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId)
+  private val extractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   private val ErrorInvalidBadgeIdentifierHeader: ErrorResponse = ErrorResponse(BAD_REQUEST, BadRequestCode, s"X-Badge-Identifier header is missing or invalid")
 
   trait SetUp {
@@ -52,6 +53,33 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
       "be successful for a valid request with accept header for V1" in new SetUp {
         validate(conversationIdRequest(ValidHeaders)) shouldBe Right(extractedHeaders)
       }
+      "allow an empty header" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> ""))) shouldBe Right(None)
+      }
+      "allow only spaces in the header but treat as empty" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "       "))) shouldBe Right(None)
+      }
+      "allow headers with leading spaces" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "  0123456789"))) shouldBe Right(Some(Eori("  0123456789")))
+      }
+      "allow headers with trailing spaces" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "0123456789    "))) shouldBe Right(Some(Eori("0123456789    ")))
+      }
+      "allow headers with embedded spaces" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "01234  56789"))) shouldBe Right(Some(Eori("01234  56789")))
+      }
+      "allow special characters" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "!£$%^&*()-_=+/<>@"))) shouldBe Right(Some(Eori("!£$%^&*()-_=+/<>@")))
+      }
+      "log info level when valid" in new SetUp {
+        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "ABCABC")))
+
+        PassByNameVerifier(loggerMock, "info")
+          .withByNameParam[String]("X-Submitter-Identifier header passed validation: ABCABC")
+          .withParamMatcher[HasConversationId](any[HasConversationId])
+          .verify()
+      }
+      
     }
     "in unhappy path, validation" should {
       "fail when request is missing accept header" in new SetUp {
@@ -68,12 +96,6 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
       }
       "fail when request is for V2" in new SetUp {
         validate(conversationIdRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.2.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
-      }
-      "fail when request has invalid X-Badge-Identifier header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + X_BADGE_IDENTIFIER_HEADER_INVALID_TOO_SHORT)) shouldBe Left(ErrorInvalidBadgeIdentifierHeader)
-      }
-      "fail when request has missing X-Badge-Identifier header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders - X_BADGE_IDENTIFIER_NAME)) shouldBe Left(ErrorInvalidBadgeIdentifierHeader)
       }
     }
   }

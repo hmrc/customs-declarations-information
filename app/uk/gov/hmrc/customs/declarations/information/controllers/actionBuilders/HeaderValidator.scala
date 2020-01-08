@@ -19,13 +19,12 @@ package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 import javax.inject.{Inject, Singleton}
 import play.api.http.HeaderNames.ACCEPT
 import play.api.mvc.Headers
-import play.mvc.Http.Status.BAD_REQUEST
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl}
-import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ClientId, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders._
+import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ClientId, Eori, VersionOne}
 
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {
@@ -33,6 +32,11 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
   private lazy val xBadgeIdentifierRegex = "^[0-9A-Z]{6,12}$".r
   private val validAcceptHeader: String = "application/vnd.hmrc.1.0+xml"
   private lazy val xClientIdRegex = "^\\S+$".r
+  private lazy val InvalidEoriHeaderRegex = "(^[\\s]*$|^.{18,}$)".r
+
+  private val errorResponseBadgeIdentifierHeaderMissing = errorBadRequest(s"$XBadgeIdentifierHeaderName header is missing or invalid")
+  private val errorResponseEoriIdentifierHeaderMissingOrInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is missing or invalid")
+  private val errorResponseEoriIdentifierHeaderInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is invalid")
 
   def validateHeaders[A](implicit conversationIdRequest: ConversationIdRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
     implicit val headers: Headers = conversationIdRequest.headers
@@ -41,18 +45,14 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
 
     def hasXClientId = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
 
-    def hasBadgeIdentifier = validateHeader(XBadgeIdentifierHeaderName, xBadgeIdentifierRegex.findFirstIn(_).nonEmpty, ErrorResponse(BAD_REQUEST, BadRequestCode, s"$XBadgeIdentifierHeaderName header is missing or invalid"))
-
     val theResult: Either[ErrorResponse, ExtractedHeaders] = for {
       acceptValue <- hasAccept.right
       xClientIdValue <- hasXClientId.right
-      badgeIdentifier <- hasBadgeIdentifier.right
     } yield {
       logger.debug(
         s"\n$ACCEPT header passed validation: $acceptValue"
-          + s"\n$XClientIdHeaderName header passed validation: $xClientIdValue"
-          + s"\n$XBadgeIdentifierHeaderName header passed validation: $badgeIdentifier")
-      ExtractedHeadersImpl(VersionOne, BadgeIdentifier(badgeIdentifier), ClientId(xClientIdValue))
+          + s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
+      ExtractedHeadersImpl(VersionOne, ClientId(xClientIdValue))
     }
     theResult
   }
@@ -77,4 +77,50 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
     }
   }
 
+  def eitherBadgeIdentifier[A](allowNone: Boolean)(implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, Option[BadgeIdentifier]] = {
+    val maybeBadgeId: Option[String] = vhr.request.headers.toSimpleMap.get(XBadgeIdentifierHeaderName)
+
+    if (allowNone && maybeBadgeId.isEmpty) {
+      logger.info(s"$XBadgeIdentifierHeaderName header empty and allowed")
+      Right(None)
+    } else {
+      maybeBadgeId.filter(xBadgeIdentifierRegex.findFirstIn(_).nonEmpty).map(b => {
+        logger.info(s"$XBadgeIdentifierHeaderName header passed validation: $b")
+        Some(BadgeIdentifier(b))
+      }
+      ).toRight[ErrorResponse] {
+        logger.error(s"$XBadgeIdentifierHeaderName invalid or not present for CSP")
+        errorResponseBadgeIdentifierHeaderMissing
+      }
+    }
+  }
+
+  private def validEori(eori: String) = InvalidEoriHeaderRegex.findFirstIn(eori).isEmpty
+
+  private def convertEmptyHeaderToNone(eori: Option[String]) = {
+    if (eori.isDefined && eori.get.trim.isEmpty) {
+      eori map (_.trim) filterNot (_.isEmpty)
+    } else {
+      eori
+    }
+  }
+
+  def eoriMustBeValidIfPresent[A](implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, Option[Eori]] = {
+    val maybeEoriHeader: Option[String] = vhr.request.headers.toSimpleMap.get(XSubmitterIdentifierHeaderName)
+    logger.debug(s"maybeEori => $maybeEoriHeader")
+    val maybeEori = convertEmptyHeaderToNone(maybeEoriHeader)
+
+    maybeEori match {
+      case Some(eori) => if (validEori(eori)) {
+        logger.info(s"$XSubmitterIdentifierHeaderName header passed validation: $eori")
+        Right(Some(Eori(eori)))
+      } else {
+        logger.error(s"$XSubmitterIdentifierHeaderName header is invalid for CSP: $eori")
+        Left(errorResponseEoriIdentifierHeaderInvalid)
+      }
+      case None =>
+        logger.info(s"$XSubmitterIdentifierHeaderName header not present or is empty")
+        Right(None)
+    }
+  }
 }

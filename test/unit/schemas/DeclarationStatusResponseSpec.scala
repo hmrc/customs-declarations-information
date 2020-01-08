@@ -26,6 +26,7 @@ import util.XmlValidationService
 
 import scala.xml.{Elem, Node, SAXException}
 
+//TODO update depending on any response changes
 class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   protected val mockConfiguration = mock[Configuration]

@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConversationIdAction @Inject()(val correlationIdService: UniqueIdsService,
+class ConversationIdAction @Inject()(val uniqueIdsService: UniqueIdsService,
                                      val logger: InformationLogger)
                                     (implicit ec: ExecutionContext)
   extends ActionTransformer[Request, ConversationIdRequest] {
@@ -33,7 +33,7 @@ class ConversationIdAction @Inject()(val correlationIdService: UniqueIdsService,
   override def executionContext: ExecutionContext = ec
   override def transform[A](request: Request[A]): Future[ConversationIdRequest[A]] = {
 
-    val r = ConversationIdRequest(correlationIdService.conversation, request)
+    val r = ConversationIdRequest(uniqueIdsService.conversation, request)
     logger.debugFull("In ConversationIdAction")(r)
 
     Future.successful(r)

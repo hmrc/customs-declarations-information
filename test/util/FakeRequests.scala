@@ -21,7 +21,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.POST
 import util.RequestHeaders._
-import util.TestData.cspBearerToken
+import util.TestData.{cspBearerToken, nonCspBearerToken}
 
 object FakeRequests {
 
@@ -29,6 +29,8 @@ object FakeRequests {
 
   implicit class FakeRequestOps[R](val fakeRequest: FakeRequest[R]) extends AnyVal {
     def fromCsp: FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $cspBearerToken")
+
+    def fromNonCsp: FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $nonCspBearerToken")
 
     def withCustomToken(token: String): FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $token")
 

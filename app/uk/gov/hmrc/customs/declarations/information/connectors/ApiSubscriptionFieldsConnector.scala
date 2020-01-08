@@ -21,11 +21,10 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiSubscriptionKey}
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
-
 
 @Singleton
 class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
@@ -44,10 +43,6 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
 
     http.GET[ApiSubscriptionFieldsResponse](url)
       .recoverWith {
-        case _: NotFoundException =>
-          val generatedFieldsId = uuidService.uuid()
-          logger.debug(s"no subscription fields entry found so generating fieldsId $generatedFieldsId")
-          Future.successful(ApiSubscriptionFieldsResponse(generatedFieldsId))
         case httpError: HttpException =>
           logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
           Future.failed(new RuntimeException(httpError))

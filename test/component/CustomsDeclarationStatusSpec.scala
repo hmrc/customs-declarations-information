@@ -26,9 +26,10 @@ import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, VersionOne}
 import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.ValidHeaders
+import util.TestData.nonCspBearerToken
 import util.XmlOps.stringToXml
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, MdgStatusDeclarationService}
-import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTestXMLData}
+import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTestXMLData, TestData}
 
 import scala.concurrent.Future
 
@@ -49,6 +50,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   private val apiSubscriptionKeyForXClientId =
     ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information", version = VersionOne)
 
+  //TODO update this response
   private def validResponse(acceptanceDateVal : String) =
     raw"""<v1:DeclarationStatusResponse 
       |xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v1 ../Schemas/declarationInformationRetrievalStatusResponse.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:_3="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:_2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:v1="http://gov.uk/customs/declarationInformationRetrieval/status/v1">
@@ -74,7 +76,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       |</v1:DeclarationStatusResponse>
       |""".stripMargin
 
-  val validRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromCsp
+  val validCspRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromCsp
+  val validNonCspRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromNonCsp
 
   override protected def beforeAll() {
     startMockServer()
@@ -88,17 +91,17 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     stopMockServer()
   }
 
-  feature("Declaration API authorises status requests from CSPs with v1.0 accept header") {
+  feature("Declaration Information API authorises status requests from CSPs with v1.0 accept header") {
     scenario("An authorised CSP successfully requests a status") {
       Given("A CSP wants the status of a declaration")
       startMdgStatusService()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSPNoNrs()
+      authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then("a response with a 200 (OK) status is received")
       status(result) shouldBe OK
@@ -107,14 +110,14 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       contentAsString(result) shouldBe validResponse(acceptanceDateVal.toString(ISO_UTC_DateTimeFormat))
 
       And("the request was authorised with AuthService")
-      eventually(verifyAuthServiceCalledForCspNoNrs())
+      eventually(verifyAuthServiceCalledForCsp())
 
       And("v1 config was used")
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext))))
     }
   }
 
-  feature("Declaration API handles status request errors from CSPs as expected") {
+  feature("Declaration Information API handles status request errors from CSPs as expected") {
 
     scenario("Response status 400 when Date of declaration is older than configured allowed value") {
       Given("the API is available")
@@ -122,10 +125,10 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSPNoNrs()
+      authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then(s"a response with a 400 status is received")
       status(result) shouldBe BAD_REQUEST
@@ -134,16 +137,16 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorInvalidDate)
     }
 
-    scenario("Response status 400 when Declaration Management Information Response does not contain a valid communicationAddress") {
+    scenario("Response status 400 when Declaration Information response does not contain a valid communicationAddress") {
       Given("the API is available")
       startMdgStatusService(body = StatusTestXMLData.statusResponseDeclarationNoCommunicationAddress)
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSPNoNrs()
+      authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then(s"a response with a 400 status is received")
       status(result) shouldBe BAD_REQUEST
@@ -152,22 +155,49 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorBadgeIdMissingOrInvalid)
     }
 
-    scenario("Response status 400 when Declaration Management Information Response does contains different Badge Identifier") {
+    scenario("Response status 400 when Declaration Information response does contains different badge identifier") {
       Given("the API is available")
       startMdgStatusService(body = StatusTestXMLData.generateDeclarationStatusResponse(communicationAddress = "hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:IWONTMATCH"))
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSPNoNrs()
+      authServiceAuthorizesCSP()
 
       When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validRequest).value
+      val result: Future[Result] = route(app = app, validCspRequest).value
 
       Then(s"a response with a 400 status is received")
       status(result) shouldBe BAD_REQUEST
 
       And("the response body is a \"invalid xml\" XML")
       stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorBadgeIdMissingOrInvalid)
+    }
+  }
+
+  feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
+    scenario("An authorised non-CSP successfully requests a status") {
+      Given("A non-CSP wants the status of a declaration")
+      startMdgStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the non-CSP is authorised with its privileged application")
+      authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
+      authServiceAuthorizesNonCspWithEori()
+
+      When("a GET request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validNonCspRequest).value
+
+      Then("a response with a 200 (OK) status is received")
+      status(result) shouldBe OK
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe validResponse(acceptanceDateVal.toString(ISO_UTC_DateTimeFormat))
+
+      And("the request was authorised with AuthService")
+      eventually(verifyAuthServiceCalledForNonCsp())
+
+      And("v1 config was used")
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext))))
     }
   }
 

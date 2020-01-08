@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.Result
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorGenericBadRequest
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.Mrn
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, Csp, Mrn}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,14 +46,18 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
-    val dmirId = uniqueIdsService.dmir
 
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
-        connector.send(dateTime, correlationId, dmirId, asr.requestedApiVersion, sfId, mrn)
+        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, mrn)
           .map(response => {
             val xmlResponseBody = XML.loadString(response.body)
-            statusResponseValidationService.validate(xmlResponseBody, asr.badgeIdentifier) match {
+            val badgeId = asr.authorisedAs match {
+              case Csp(_, badgeIdentifier) => badgeIdentifier.get
+              //TODO temporary addition to minimise changes in this ticket. Removed in next ticket.
+              case _ => BadgeIdentifier("BADGEID123")
+            }
+            statusResponseValidationService.validate(xmlResponseBody, badgeId) match {
               case Right(_) => Right(filterResponse(response, xmlResponseBody))
               case Left(errorResponse) =>
                 logError(errorResponse)

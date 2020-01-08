@@ -21,7 +21,7 @@ import java.util.UUID
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest._
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId, DeclarationManagementInformationRequestId}
+import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 
 class UniqueIdsServiceTest extends WordSpec with MockitoSugar with Matchers with BeforeAndAfterEach {
@@ -43,11 +43,6 @@ class UniqueIdsServiceTest extends WordSpec with MockitoSugar with Matchers with
 
     "return a conversationId" in {
       uniqueIdsService.conversation shouldBe a[ConversationId]
-      verify(mockUuidService, times(1)).uuid()
-    }
-
-    "return a dmir" in {
-      uniqueIdsService.dmir shouldBe a[DeclarationManagementInformationRequestId]
       verify(mockUuidService, times(1)).uuid()
     }
   }

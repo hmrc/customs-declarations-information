@@ -3,7 +3,7 @@
 
 This API permits requesting the status of a declaration.
 
-This endpoint is available to CSP users only. The CSP user must supply a movement reference number (MRN) as a parameter in the request URL. The endpoint returns a set of latest status details for the MRN.
+The user must supply a movement reference number (MRN) as a parameter in the request URL. The endpoint returns a set of latest status details for the MRN.
 
 
 ## GET Status Request 
@@ -15,9 +15,10 @@ This endpoint is available to CSP users only. The CSP user must supply a movemen
    -H 'Accept: application/vnd.hmrc.1.0+xml' \
    -H 'Authorization: Bearer {ADD VALID TOKEN}' \
    -H 'X-Badge-Identifier: {Badge Id}' \
+   -H 'X-Submitter-Identifier: {Submitter Id}' \
    -H 'X-Client-ID: {Valid Client Id}' \
    -H 'cache-control: no-cache' 
- 
+
  ```
 ---
 
@@ -27,7 +28,7 @@ This endpoint is available to CSP users only. The CSP user must supply a movemen
 The `X-Client-ID` header, together with the application context and version are used
  to call the `api-subscription-fields` service to get the unique `fieldsId` UUID to pass on to the backend request (where it is known as `clientID`).
 
-So there is now a direct dependency on the `api-subscription-fields` service. Note the service to get the `fieldsId` is not currently stubbed. 
+So there is a direct dependency on the `api-subscription-fields` service. Note the service to get the `fieldsId` is not currently stubbed. 
 
 ### Seeding Data in `api-subscription-fields` for local end to end testing
 

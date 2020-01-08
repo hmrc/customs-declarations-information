@@ -24,13 +24,16 @@ import org.joda.time.DateTime
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.HeaderNames._
 import play.api.inject.guice.GuiceableModule
+import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeadersImpl}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ConversationIdRequest, ExtractedHeadersImpl}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
+import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
+import util.TestData.declarantEori
 
 object TestData {
   val conversationIdValue = "38400000-8cf0-11bd-b23e-10b96e4ef00d"
@@ -40,10 +43,6 @@ object TestData {
   val correlationIdValue = "e61f8eee-812c-4b8f-b193-06aedc60dca2"
   val correlationIdUuid: UUID = fromString(correlationIdValue)
   val correlationId = CorrelationId(correlationIdUuid)
-
-  val dmirIdValue = "1b0a48a8-1259-42c9-9d6a-e797b919eb16"
-  val dmirIdUuid: UUID = fromString(dmirIdValue)
-  val dmirId = DeclarationManagementInformationRequestId(dmirIdUuid)
 
   val mrnValue = "theMrn"
   val mrn = Mrn(mrnValue)
@@ -61,7 +60,13 @@ object TestData {
   val invalidBadgeIdentifier: BadgeIdentifier = BadgeIdentifier(invalidBadgeIdentifierValue)
   val badgeIdentifier: BadgeIdentifier = BadgeIdentifier(validBadgeIdentifierValue)
 
+  val declarantEoriValue = "ZZ123456789000"
+  val declarantEori = Eori(declarantEoriValue)
+  val invalidDeclarantEoriValue = "ZZ123456789000123456789"
+  val invalidDeclarantEori = Eori(invalidDeclarantEoriValue)
+
   val cspBearerToken = "CSP-Bearer-Token"
+  val nonCspBearerToken = "Software-House-Bearer-Token"
   val invalidBearerToken = "InvalidBearerToken"
 
   type EmulatedServiceFailure = UnsupportedOperationException
@@ -84,19 +89,50 @@ object TestData {
     override def conversation: ConversationId = conversationId
 
     override def correlation: CorrelationId = correlationId
-
-    override def dmir: DeclarationManagementInformationRequestId = dmirId
   }
 
   val TestFakeRequest = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
 
+  def testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString: Option[String] = Some(badgeIdentifier.value),
+                                              maybeEoriString: Option[String] = Some(declarantEori.value)): FakeRequest[AnyContentAsEmpty.type] = {
+    val headers = Headers(maybeBadgeIdString.fold(("",""))(badgeId => (X_BADGE_IDENTIFIER_NAME, badgeId)), maybeEoriString.fold(("",""))(eori => (X_SUBMITTER_IDENTIFIER_NAME, eori)))
+    FakeRequest().withHeaders(headers.remove("")) //better to not add empty string tuple in first place
+  }
+  
   val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequest)
-  val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId)
+  val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
-  val TestAuthorisedRequest = TestValidatedHeadersRequest.toAuthorisedRequest
+  val TestAuthorisedRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
 
-  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toAuthorisedRequest
-  val TestValidatedHeadersRequestNoBadge = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
+  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
+  val TestValidatedHeadersRequestNoBadgeIdNoEori = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithValidBadgeIdEoriPair =
+    ConversationIdRequest(conversationId, testFakeRequestWithMaybeBadgeIdEoriPair()).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithValidBadgeIdAndNoEori =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeEoriString = None)).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithValidEoriAndNoBadgeId =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString = None)).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithInvalidBadgeIdTooLongAndEori =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString = Some("INVALID_BADGE_IDENTIFIER_TO_LONG"))).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithInvalidBadgeIdTooShortAndEori =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString = Some("SHORT"))).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithInvalidBadgeIdInvalidCharsAndEori =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString = Some("(*&*(^&*&%"))).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithInvalidBadgeIdLowercaseAndEori =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString = Some("lowercase"))).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithInvalidEoriTooLongAndBadgeId =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeEoriString = Some("INVALID_EORI_TO_LONG"))).toValidatedHeadersRequest(TestExtractedHeaders)
+
+  lazy val TestValidatedHeadersRequestWithInvalidEoriInvalidCharsAndBadgeId =
+    ConversationIdRequest(conversationId,testFakeRequestWithMaybeBadgeIdEoriPair(maybeEoriString = Some("(*&*(^&*&%"))).toValidatedHeadersRequest(TestExtractedHeaders)
 
 }
 
@@ -111,6 +147,9 @@ object RequestHeaders {
   val X_BADGE_IDENTIFIER_HEADER_INVALID_CHARS: (String, String) = X_BADGE_IDENTIFIER_NAME -> "Invalid^&&("
   val X_BADGE_IDENTIFIER_HEADER_INVALID_TOO_SHORT: (String, String) = X_BADGE_IDENTIFIER_NAME -> "12345"
   val X_BADGE_IDENTIFIER_HEADER_INVALID_LOWERCASE: (String, String) = X_BADGE_IDENTIFIER_NAME -> "BadgeId123"
+
+  val X_SUBMITTER_IDENTIFIER_NAME = "X-Submitter-Identifier"
+  val X_SUBMITTER_IDENTIFIER_HEADER: (String, String) = X_SUBMITTER_IDENTIFIER_NAME -> declarantEori.value
 
   val X_CLIENT_ID_NAME = "X-Client-ID"
   val X_CLIENT_ID_HEADER: (String, String) = X_CLIENT_ID_NAME -> ApiSubscriptionFieldsTestData.xClientId

@@ -54,7 +54,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, badgeIdentifier, ApiSubscriptionFieldsTestData.clientId, Csp(badgeIdentifier), mock[Request[AnyContent]])
+  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   private val httpException = new NotFoundException("Emulated 404 response from a web call")
 
@@ -62,7 +62,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockMdgPayloadCreator.create(correlationId, date, mrn, dmirId, apiSubscriptionFieldsResponse)(asr)).thenReturn(util.StatusTestXMLData.expectedDeclarationStatusPayload)
+    when(mockMdgPayloadCreator.create(correlationId, date, mrn, apiSubscriptionFieldsResponse)(asr)).thenReturn(util.StatusTestXMLData.expectedDeclarationStatusPayload)
   }
 
   "DeclarationStatusConnector" can {
@@ -97,7 +97,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     }
 
     "when making an failing request" should {
-      "propagate an underlying error when nrs service call fails with a non-http exception" in {
+      "propagate an underlying error when service call fails with a non-http exception" in {
         returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))
 
         val caught = intercept[TestData.EmulatedServiceFailure] {
@@ -106,7 +106,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
         caught shouldBe TestData.emulatedServiceFailure
       }
 
-      "wrap an underlying error when nrs service call fails with an http exception" in {
+      "wrap an underlying error when service call fails with an http exception" in {
         returnResponseForRequest(Future.failed(httpException))
 
         val caught = intercept[RuntimeException] {
@@ -121,7 +121,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
         when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(null)
 
         val caught = intercept[IllegalArgumentException] {
-          await(connector.send(date, correlationId, dmirId, VersionOne, apiSubscriptionFieldsResponse, mrn))
+          await(connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn))
         }
         caught.getMessage shouldBe "config not found"
       }
@@ -129,7 +129,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   }
 
   private def awaitRequest = {
-    await(connector.send(date, correlationId, dmirId, VersionOne, apiSubscriptionFieldsResponse, mrn))
+    await(connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn))
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
