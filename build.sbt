@@ -1,13 +1,12 @@
 import AppDependencies._
 import com.typesafe.sbt.packager.MappingsHelper._
-import org.scalastyle.sbt.ScalastylePlugin._
 import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import sbt._
-import uk.gov.hmrc.gitstamp.GitStampPlugin._
-import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings, targetJvm}
+import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
 import uk.gov.hmrc.PublishingSettings._
 import uk.gov.hmrc.SbtAutoBuildPlugin
+import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
@@ -51,6 +50,7 @@ lazy val microservice = (project in file("."))
   .enablePlugins(SbtArtifactory)
   .configs(testConfig: _*)
   .settings(
+    commonSettings,
     unitTestSettings,
     integrationTestSettings,
     componentTestSettings,
@@ -94,6 +94,8 @@ lazy val componentTestSettings =
       parallelExecution in ComponentTest := false,
       addTestReportOption(ComponentTest, "component-reports")
     )
+
+lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
 
 lazy val playPublishingSettings: Seq[sbt.Setting[_]] = sbtrelease.ReleasePlugin.releaseSettings ++
   Seq(credentials += SbtCredentials) ++
