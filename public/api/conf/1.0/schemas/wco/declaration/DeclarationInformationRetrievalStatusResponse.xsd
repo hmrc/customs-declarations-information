@@ -1,58 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="http://gov.uk/customs/declarationInformationRetrieval/status/v1"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
-           xmlns:otn="urn:wco:datamodel:WCO:RES-DMS:2" xmlns:odds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-           xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
-           targetNamespace="http://gov.uk/customs/declarationInformationRetrieval/status/v1"
-           elementFormDefault="qualified" version="1.0">
+<xs:schema
+  targetNamespace="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+  xmlns="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+  xmlns:odds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+  xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+  xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+  elementFormDefault="qualified" version="1.0">
 
-  <xs:import namespace="urn:wco:datamodel:WCO:Response_DS:DMS:2" schemaLocation="WCO_DS/WCO_RES_DS_2_DMS.xsd" />
   <xs:import namespace="urn:wco:datamodel:WCO:DEC-DMS:2" schemaLocation="WCO_DEC_2_DMS.xsd" />
+  <xs:import namespace="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" schemaLocation="WCO_DS/WCO_DEC_DS_2_DMS.xsd" />
+  <xs:import namespace="urn:wco:datamodel:WCO:Response_DS:DMS:2" schemaLocation="WCO_DS/WCO_RES_DS_2_DMS.xsd" />
   <xs:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" schemaLocation="UNECE/UnqualifiedDataType_6_DMS.xsd" />
 
-  <!-- =============================================================================================== -->
+  <!-- ======================================================================================================= -->
   <!-- Declaration Information Retrieval Status Response -->
-  <!-- Allows a CSP to request the status of an individual declaration, identified by MRN -->
-  <!-- =============================================================================================== -->
+  <!-- Informs a user of the status of all matching declarations as identified by either MRN, UCR, DUCR or IRN -->
+  <!-- ======================================================================================================= -->
+
   <xs:element name="DeclarationStatusResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="Declaration">
+        <xs:element name="DeclarationStatusDetails" minOccurs="1" maxOccurs="unbounded">
           <xs:complexType>
-            <xs:complexContent>
-              <xs:extension base="TraderNotificationResponseDeclaration">
-                <xs:sequence>
-                  <xs:element name="CreationDateTime" minOccurs="0">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="EN">
-                        <Format>an..35</Format>
-                        <DictionaryEntryName>Declaration. Creation. Date Time
-                        </DictionaryEntryName>
-                        <NamedComplexType>DeclarationCreationDateTimeType
-                        </NamedComplexType>
-                        <XMLTag>CreationDateTime</XMLTag>
-                      </xs:documentation>
-                    </xs:annotation>
-                    <xs:complexType>
-                      <xs:choice>
-                        <xs:element name="DateTimeString">
+            <xs:sequence>
+              <xs:element name="Declaration">
+                <xs:complexType>
+                  <xs:complexContent>
+                    <xs:extension base="TraderNotificationResponseDeclaration">
+                      <xs:sequence>
+                        <xs:element name="ReceivedDateTime" minOccurs="0">
+                          <xs:annotation>
+                            <xs:documentation xml:lang="EN">
+                              <Format>an..35</Format>
+                              <DictionaryEntryName>Declaration. Received. Date Time
+                              </DictionaryEntryName>
+                              <NamedComplexType>DeclarationReceivedDateTimeType
+                              </NamedComplexType>
+                              <XMLTag>ReceivedDateTime</XMLTag>
+                            </xs:documentation>
+                          </xs:annotation>
                           <xs:complexType>
-                            <xs:simpleContent>
-                              <xs:restriction base="udt:DateTimeType">
-                                <xs:maxLength value="35" />
-                              </xs:restriction>
-                            </xs:simpleContent>
+                            <xs:choice>
+                              <xs:element name="DateTimeString">
+                                <xs:complexType>
+                                  <xs:simpleContent>
+                                    <xs:restriction base="udt:DateTimeType">
+                                      <xs:maxLength value="35" />
+                                    </xs:restriction>
+                                  </xs:simpleContent>
+                                </xs:complexType>
+                              </xs:element>
+                            </xs:choice>
                           </xs:complexType>
                         </xs:element>
-                      </xs:choice>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-              </xs:extension>
-            </xs:complexContent>
+                        <xs:element name="GoodsReleasedDateTime" minOccurs="0">
+                          <xs:annotation>
+                            <xs:documentation xml:lang="EN">
+                              <Format>an..35</Format>
+                              <DictionaryEntryName>Good Released Date Time
+                              </DictionaryEntryName>
+                              <NamedComplexType>GoodsReleasedDateTimeType
+                                </NamedComplexType>
+                                <XMLTag>GoodsReleasedDateTime</XMLTag>
+                            </xs:documentation>
+                          </xs:annotation>
+                          <xs:complexType>
+                            <xs:choice>
+                              <xs:element name="DateTimeString">
+                                <xs:complexType>
+                                  <xs:simpleContent>
+                                    <xs:restriction base="udt:DateTimeType">
+                                      <xs:maxLength value="35" />
+                                    </xs:restriction>
+                                  </xs:simpleContent>
+                                </xs:complexType>
+                               </xs:element>
+                            </xs:choice>
+                          </xs:complexType>
+                        </xs:element>
+                        <xs:element name="ROE" minOccurs="0" maxOccurs="1">
+                          <xs:annotation>
+                            <xs:documentation xml:lang="EN">
+                              <Format>an..2</Format>
+                              <DictionaryEntryName>Customs Route. Code
+                              </DictionaryEntryName>
+                              <NamedComplexType>CustomsRouteType</NamedComplexType>
+                              <XMLTag>CustomsRoute</XMLTag>
+                            </xs:documentation>
+                          </xs:annotation>
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:maxLength value="2" />
+                              <xs:minLength value="1" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="ICS" minOccurs="1" maxOccurs="1">
+                          <xs:annotation>
+                            <xs:documentation xml:lang="EN">
+                              <Format>an..2</Format>
+                              <DictionaryEntryName>ICS. Code</DictionaryEntryName>
+                              <NamedComplexType>IcsCodeType</NamedComplexType>
+                              <XMLTag>IcsCode</XMLTag>
+                            </xs:documentation>
+                          </xs:annotation>
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:maxLength value="2" />
+                              <xs:minLength value="1" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="IRC" minOccurs="0" maxOccurs="1">
+                          <xs:annotation>
+                            <xs:documentation xml:lang="EN">
+                              <Format>n..3</Format>
+                              <DictionaryEntryName>IRC. Code</DictionaryEntryName>
+                              <NamedComplexType>IrcCodeType</NamedComplexType>
+                              <XMLTag>IrcCode</XMLTag>
+                            </xs:documentation>
+                          </xs:annotation>
+                          <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                              <xs:maxLength value="3" />
+                              <xs:minLength value="3" />
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:element>
+                      </xs:sequence>
+                    </xs:extension>
+                  </xs:complexContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element ref="od:Declaration" minOccurs="0" />
+            </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element ref="od:Declaration" minOccurs="0" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -62,8 +147,10 @@
       <xs:documentation xml:lang="EN">
         <WCOID>42A</WCOID>
         <WCOName>Declaration</WCOName>
-        <WCODescription>Any statement or action, in any form prescribed or accepted by
-          the Governmental Agency, giving information or particulars required by the
+        <WCODescription>Any statement or action, in any form prescribed or
+          accepted by
+          the Governmental Agency, giving information or particulars required by
+          the
           Governmental Agency
         </WCODescription>
       </xs:documentation>
@@ -78,8 +165,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="AcceptanceDateTime" type="otnds:DeclarationAcceptanceDateTimeType"
-                  minOccurs="0">
+      <xs:element name="AcceptanceDateTime" type="otnds:DeclarationAcceptanceDateTimeType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="EN">
             <WCOFormat>an..35</WCOFormat>
@@ -91,14 +177,17 @@
           <xs:documentation xml:lang="EN">
             <WCOID>023</WCOID>
             <WCOName>Document acceptance date</WCOName>
-            <WCODescription>Date on which a document has been or will be accepted in
+            <WCODescription>
+              Date on which a document has been or will be
+              accepted in
               accordance with Governmental legislation
             </WCODescription>
           </xs:documentation>
           <xs:documentation>
             <DictionaryEntryName>Declaration. Acceptance. Date Time
             </DictionaryEntryName>
-            <NamedComplexType>DeclarationAcceptanceDateTimeType</NamedComplexType>
+            <NamedComplexType>DeclarationAcceptanceDateTimeType
+            </NamedComplexType>
             <XMLTag>AcceptanceDateTime</XMLTag>
             <UniquePositionID>339</UniquePositionID>
             <WCOUsageDeclarationIM>X</WCOUsageDeclarationIM>
@@ -107,8 +196,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="CancellationDateTime" type="otnds:DeclarationCancellationDateTimeType"
-                  minOccurs="0">
+      <xs:element name="CancellationDateTime" type="otnds:DeclarationCancellationDateTimeType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="EN">
             <WCOFormat>an..35</WCOFormat>
@@ -120,21 +208,22 @@
           <xs:documentation xml:lang="EN">
             <WCOID>373</WCOID>
             <WCOName>Document/message cancellation date and time</WCOName>
-            <WCODescription>Date and time when the document/message was cancelled
+            <WCODescription>Date and time when the document/message was
+              cancelled
             </WCODescription>
           </xs:documentation>
           <xs:documentation>
             <DictionaryEntryName>Declaration. Cancellation. Date Time
             </DictionaryEntryName>
-            <NamedComplexType>DeclarationCancellationDateTimeType</NamedComplexType>
+            <NamedComplexType>DeclarationCancellationDateTimeType
+            </NamedComplexType>
             <XMLTag>CancellationDateTime</XMLTag>
             <UniquePositionID>349</UniquePositionID>
             <WCOUsage_Response>X</WCOUsage_Response>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="FunctionalReferenceID" type="otnds:DeclarationFunctionalReferenceIDType"
-                  minOccurs="0">
+      <xs:element name="FunctionalReferenceID" type="otnds:DeclarationFunctionalReferenceIDType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="EN">
             <WCOFormat>an..35</WCOFormat>
@@ -146,8 +235,8 @@
           <xs:documentation xml:lang="EN">
             <WCOID>D026</WCOID>
             <WCOName>Functional reference number</WCOName>
-            <WCODescription>Reference number identifying a specific information
-              exchange
+            <WCODescription>Reference number identifying a specific
+              information exchange
             </WCODescription>
           </xs:documentation>
           <xs:documentation>
@@ -166,8 +255,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ID" type="otnds:DeclarationIdentificationIDType"
-                  minOccurs="0">
+      <xs:element name="ID" type="otnds:DeclarationIdentificationIDType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="EN">
             <WCOFormat>an..70</WCOFormat>
@@ -185,7 +273,8 @@
           <xs:documentation>
             <DictionaryEntryName>Declaration. Identification. Identifier
             </DictionaryEntryName>
-            <NamedComplexType>DeclarationIdentificationIDType</NamedComplexType>
+            <NamedComplexType>DeclarationIdentificationIDType
+            </NamedComplexType>
             <XMLTag>ID</XMLTag>
             <UniquePositionID>336</UniquePositionID>
             <WCOUsageDeclarationIM>X</WCOUsageDeclarationIM>
@@ -198,8 +287,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="RejectionDateTime" type="otnds:DeclarationRejectionDateTimeType"
-                  minOccurs="0">
+      <xs:element name="RejectionDateTime" type="otnds:DeclarationRejectionDateTimeType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="EN">
             <WCOFormat>an..35</WCOFormat>
@@ -211,21 +299,22 @@
           <xs:documentation xml:lang="EN">
             <WCOID>374</WCOID>
             <WCOName>Document/message rejection date and time</WCOName>
-            <WCODescription>Date and time when the document/message was rejected
+            <WCODescription>Date and time when the document/message was
+              rejected
             </WCODescription>
           </xs:documentation>
           <xs:documentation>
             <DictionaryEntryName>Declaration. Rejection. Date Time
             </DictionaryEntryName>
-            <NamedComplexType>DeclarationRejectionDateTimeType</NamedComplexType>
+            <NamedComplexType>DeclarationRejectionDateTimeType
+            </NamedComplexType>
             <XMLTag>RejectionDateTime</XMLTag>
             <UniquePositionID>350</UniquePositionID>
             <WCOUsage_Response>X</WCOUsage_Response>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="VersionID" type="otnds:DeclarationVersionIDType"
-                  minOccurs="0">
+      <xs:element name="VersionID" type="otnds:DeclarationVersionIDType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="EN">
             <WCOFormat>an..9</WCOFormat>
@@ -237,8 +326,8 @@
           <xs:documentation xml:lang="EN">
             <WCOID>383</WCOID>
             <WCOName>Version number</WCOName>
-            <WCODescription>The sequential number that determines the version of a
-              specific document/message number
+            <WCODescription>The sequential number that determines the version
+              of a specific document/message number
             </WCODescription>
           </xs:documentation>
           <xs:documentation>
@@ -259,7 +348,8 @@
           <xs:documentation xml:lang="EN">
             <WCOID>50A</WCOID>
             <WCOName>DutyTaxFee</WCOName>
-            <WCODescription> Calculation one instance one duty, one tax, one fee
+            <WCODescription>
+              Calculation one instance one duty, one tax, one fee
               Comment: Each instance of this class is to be used for a single
               occurence of duty, tax or fee
             </WCODescription>
@@ -278,7 +368,8 @@
                 <xs:documentation xml:lang="EN">
                   <WCOID>94A</WCOID>
                   <WCOName>Payment</WCOName>
-                  <WCODescription>Information about payment details</WCODescription>
+                  <WCODescription>Information about payment details
+                  </WCODescription>
                 </xs:documentation>
                 <xs:documentation>
                   <WCOUsageDeclarationIM>X</WCOUsageDeclarationIM>
@@ -287,8 +378,7 @@
               </xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element name="ReferenceID" type="otnds:PaymentReferenceIDType"
-                              minOccurs="0">
+                  <xs:element name="ReferenceID" type="otnds:PaymentReferenceIDType" minOccurs="0">
                     <xs:annotation>
                       <xs:documentation xml:lang="EN">
                         <WCOID>014</WCOID>
@@ -310,8 +400,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
-                  <xs:element name="TaxAssessedAmount" type="otnds:PaymentTaxAssessedAmountType"
-                              minOccurs="0">
+                  <xs:element name="TaxAssessedAmount" type="otnds:PaymentTaxAssessedAmountType" minOccurs="0">
                     <xs:annotation>
                       <xs:documentation xml:lang="EN">
                         <WCOID>120</WCOID>
@@ -336,8 +425,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
-                  <xs:element name="DueDateTime" type="otnds:PaymentDueDateTimeType"
-                              minOccurs="0">
+                  <xs:element name="DueDateTime" type="otnds:PaymentDueDateTimeType" minOccurs="0">
                     <xs:annotation>
                       <xs:documentation xml:lang="EN">
                         <WCOID>376</WCOID>
@@ -359,8 +447,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
-                  <xs:element name="PaymentAmount" type="otnds:PaymentPaymentAmountType"
-                              minOccurs="0">
+                  <xs:element name="PaymentAmount" type="otnds:PaymentPaymentAmountType" minOccurs="0">
                     <xs:annotation>
                       <xs:documentation xml:lang="EN">
                         <WCOID>378</WCOID>
@@ -382,8 +469,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:element>
-                  <xs:element name="ObligationGuarantee" minOccurs="0"
-                              maxOccurs="unbounded">
+                  <xs:element name="ObligationGuarantee" minOccurs="0" maxOccurs="unbounded">
                     <xs:annotation>
                       <xs:documentation>
                         <WCOID>90A</WCOID>
@@ -399,8 +485,7 @@
                     </xs:annotation>
                     <xs:complexType>
                       <xs:sequence>
-                        <xs:element name="ReferenceID"
-                                    type="otnds:ObligationGuaranteeReferenceIDType" minOccurs="0">
+                        <xs:element name="ReferenceID" type="otnds:ObligationGuaranteeReferenceIDType" minOccurs="0">
                           <xs:annotation>
                             <xs:documentation xml:lang="EN">
                               <WCOID>100</WCOID>
@@ -441,7 +526,8 @@
           <xs:documentation xml:lang="EN">
             <WCOID>67A</WCOID>
             <WCOName>GoodsShipment</WCOName>
-            <WCODescription>Details about the movement and the handling of goods
+            <WCODescription>Details about the movement and the handling of
+              goods
               shipped together on one or more means of transport between original
               consignor and final consignee
             </WCODescription>
@@ -453,8 +539,7 @@
         </xs:annotation>
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="GovernmentAgencyGoodsItem" minOccurs="0"
-                        maxOccurs="unbounded">
+            <xs:element name="GovernmentAgencyGoodsItem" minOccurs="0" maxOccurs="unbounded">
               <xs:annotation>
                 <xs:documentation xml:lang="EN">
                   <WCOID>68A</WCOID>
@@ -469,8 +554,7 @@
               </xs:annotation>
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element name="SequenceNumeric"
-                              type="otnds:GovernmentAgencyGoodsItemSequenceNumericType" minOccurs="1">
+                  <xs:element name="SequenceNumeric" type="otnds:GovernmentAgencyGoodsItemSequenceNumericType" minOccurs="1">
                     <xs:annotation>
                       <xs:documentation xml:lang="EN">
                         <WCOID>006</WCOID>
@@ -528,9 +612,7 @@
                           </xs:annotation>
                           <xs:complexType>
                             <xs:sequence>
-                              <xs:element name="AdValoremTaxBaseAmount"
-                                          type="otnds:DutyTaxFeeAdValoremTaxBaseAmountType"
-                                          minOccurs="0">
+                              <xs:element name="AdValoremTaxBaseAmount" type="otnds:DutyTaxFeeAdValoremTaxBaseAmountType" minOccurs="0">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOID>116</WCOID>
@@ -557,8 +639,7 @@
                                   </xs:documentation>
                                 </xs:annotation>
                               </xs:element>
-                              <xs:element name="DeductAmount"
-                                          type="otnds:DutyTaxFeeDeductAmountType" minOccurs="0">
+                              <xs:element name="DeductAmount" type="otnds:DutyTaxFeeDeductAmountType" minOccurs="0">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOID>111</WCOID>
@@ -583,8 +664,7 @@
                                   </xs:documentation>
                                 </xs:annotation>
                               </xs:element>
-                              <xs:element name="DutyRegimeCode"
-                                          type="otnds:DutyTaxFeeDutyRegimeCodeType" minOccurs="0">
+                              <xs:element name="DutyRegimeCode" type="otnds:DutyTaxFeeDutyRegimeCodeType" minOccurs="0">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOCodeRemarks>EDIFACT codes (9213) or user
@@ -613,9 +693,7 @@
                                   </xs:documentation>
                                 </xs:annotation>
                               </xs:element>
-                              <xs:element name="SpecificTaxBaseQuantity"
-                                          type="otnds:DutyTaxFeeSpecificTaxBaseQuantityType"
-                                          minOccurs="0">
+                              <xs:element name="SpecificTaxBaseQuantity" type="otnds:DutyTaxFeeSpecificTaxBaseQuantityType" minOccurs="0">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOID>129</WCOID>
@@ -643,8 +721,7 @@
                                   </xs:documentation>
                                 </xs:annotation>
                               </xs:element>
-                              <xs:element name="TaxRateNumeric"
-                                          type="otnds:DutyTaxFeeTaxRateNumericType" minOccurs="0">
+                              <xs:element name="TaxRateNumeric" type="otnds:DutyTaxFeeTaxRateNumericType" minOccurs="0">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOID>115</WCOID>
@@ -670,8 +747,7 @@
                                   </xs:documentation>
                                 </xs:annotation>
                               </xs:element>
-                              <xs:element name="TypeCode" type="otnds:DutyTaxFeeTypeCodeType"
-                                          minOccurs="0">
+                              <xs:element name="TypeCode" type="otnds:DutyTaxFeeTypeCodeType" minOccurs="0">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOCodeRemarks>EDIFACT codes (5153) or user
@@ -699,8 +775,7 @@
                                   </xs:documentation>
                                 </xs:annotation>
                               </xs:element>
-                              <xs:element name="Payment" minOccurs="0"
-                                          maxOccurs="1">
+                              <xs:element name="Payment" minOccurs="0" maxOccurs="1">
                                 <xs:annotation>
                                   <xs:documentation xml:lang="EN">
                                     <WCOID>94A</WCOID>
@@ -715,8 +790,7 @@
                                 </xs:annotation>
                                 <xs:complexType>
                                   <xs:sequence>
-                                    <xs:element name="TaxAssessedAmount"
-                                                type="otnds:PaymentTaxAssessedAmountType" minOccurs="0">
+                                    <xs:element name="TaxAssessedAmount" type="otnds:PaymentTaxAssessedAmountType" minOccurs="0">
                                       <xs:annotation>
                                         <xs:documentation xml:lang="EN">
                                           <WCOID>120</WCOID>
@@ -746,8 +820,7 @@
                                         </xs:documentation>
                                       </xs:annotation>
                                     </xs:element>
-                                    <xs:element name="PaymentAmount"
-                                                type="otnds:PaymentPaymentAmountType" minOccurs="0">
+                                    <xs:element name="PaymentAmount" type="otnds:PaymentPaymentAmountType" minOccurs="0">
                                       <xs:annotation>
                                         <xs:documentation xml:lang="EN">
                                           <WCOID>378</WCOID>
@@ -787,5 +860,4 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-
 </xs:schema>

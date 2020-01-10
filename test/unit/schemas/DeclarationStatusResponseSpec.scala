@@ -34,9 +34,10 @@ class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with Befo
 
   protected val propertyName: String = "xsd.locations.statusqueryresponse"
 
-  protected val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd")
+  protected val xsdLocations: Seq[String] = Seq(
+    "/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
-  
+
   def xmlValidationService: XmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
 
   override protected def beforeEach() {
@@ -75,33 +76,57 @@ class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with Befo
 
   private val InvalidDeclarationStatusQueryResponseXML = <taggie>content</taggie>
 
-  private val ValidDeclarationStatusQueryResponseXML: Elem =
-    <v1:DeclarationStatusResponse
-    xmlns:v1="http://gov.uk/customs/declarationInformationRetrieval/status/v1"
-    xmlns:_2="urn:wco:datamodel:WCO:DEC-DMS:2"
-    xmlns:_3="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+  private val ValidDeclarationStatusQueryResponseXML: Elem = {
+    <p:DeclarationStatusResponse
+    xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+    xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+    xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+    xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v1">
-      <v1:Declaration>
-        <v1:AcceptanceDateTime>
-          <_3:DateTimeString formatCode="304">20190428183130+01</_3:DateTimeString>
-        </v1:AcceptanceDateTime>
-        <v1:ID>18GB9JLC3CU1LFGVR2</v1:ID>
-        <v1:VersionID>1</v1:VersionID>
-        <v1:CreationDateTime>
-          <v1:DateTimeString formatCode="304">20190428183129+01</v1:DateTimeString>
-        </v1:CreationDateTime>
-      </v1:Declaration>
-      <_2:Declaration>
-        <_2:FunctionCode>9</_2:FunctionCode>
-        <_2:TypeCode>IMZ</_2:TypeCode>
-        <_2:GoodsItemQuantity unitCode="NPR">100</_2:GoodsItemQuantity>
-        <_2:TotalPackageQuantity>10</_2:TotalPackageQuantity>
-        <_2:Submitter>
-          <_2:ID>GB123456789012000</_2:ID>
-        </_2:Submitter>
-      </_2:Declaration>
-    </v1:DeclarationStatusResponse>
+    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
+
+      <p:DeclarationStatusDetails>
+        <p:Declaration>
+          <p:AcceptanceDateTime>
+            <p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
+          </p:AcceptanceDateTime>
+          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
+          <p:VersionID>1</p:VersionID>
+          <p:ReceivedDateTime>
+            <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
+          </p:ReceivedDateTime>
+          <p:GoodsReleasedDateTime>
+            <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
+          </p:GoodsReleasedDateTime>
+          <p:ROE>6</p:ROE>
+          <p:ICS>15</p:ICS>
+          <p:IRC>000</p:IRC>
+        </p:Declaration>
+        <p2:Declaration>
+          <p2:FunctionCode>9</p2:FunctionCode>
+          <p2:TypeCode>IMZ</p2:TypeCode>
+          <p2:GoodsItemQuantity unitCode="NPR">100</p2:GoodsItemQuantity>
+          <p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
+          <p2:Submitter>
+            <p2:ID>GB123456789012000</p2:ID>
+          </p2:Submitter>
+          <p2:GoodsShipment>
+            <p2:PreviousDocument>
+              <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
+              <p2:TypeCode>DCR</p2:TypeCode>
+            </p2:PreviousDocument>
+            <p2:PreviousDocument>
+              <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
+              <p2:TypeCode>MCR</p2:TypeCode>
+            </p2:PreviousDocument>
+            <p2:UCR>
+              <p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
+            </p2:UCR>
+          </p2:GoodsShipment>
+        </p2:Declaration>
+      </p:DeclarationStatusDetails>
+    </p:DeclarationStatusResponse>
+  }
 
   private val FullDeclarationStatusQueryResponseXML: Elem = <n1:queryDeclarationInformationResponse
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
