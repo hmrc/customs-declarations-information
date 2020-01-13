@@ -47,7 +47,6 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestAuthorisedRequest
 
   protected lazy val mockStatusResponseFilterService: StatusResponseFilterService = mock[StatusResponseFilterService]
-  protected lazy val mockStatusResponseValidationService: StatusResponseValidationService = mock[StatusResponseValidationService]
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
   protected lazy val mockLogger: InformationLogger = mock[InformationLogger]
   protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
@@ -69,7 +68,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
     when(mockStatusResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
 
-    protected lazy val service: DeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockStatusResponseValidationService, mockApiSubscriptionFieldsConnector,
+    protected lazy val service: DeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockApiSubscriptionFieldsConnector,
       mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
@@ -78,13 +77,11 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationStatusConnector, mockHttpResponse, mockStatusResponseFilterService, mockStatusResponseValidationService)
+    reset(mockDateTimeProvider, mockDeclarationStatusConnector, mockHttpResponse, mockStatusResponseFilterService)
   }
   "BusinessService" should {
 
     "send xml to connector" in new SetUp() {
-      when(mockStatusResponseValidationService.validate(any[NodeSeq], meq(validBadgeIdentifierValue).asInstanceOf[BadgeIdentifier])).thenReturn(Right(true))
-
       val result: Either[Result, HttpResponse] = send()
       result.right.get.body shouldBe "<xml>transformed</xml>"
       verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn)(TestAuthorisedRequest)
@@ -110,13 +107,6 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-    }
-
-    "return 400 when validationService fails validation" in new SetUp() {
-
-      val result: Either[Result, HttpResponse] = send()
-      result shouldBe Left(ErrorResponse.ErrorGenericBadRequest.XmlResult.withConversationId)
-
     }
   }
 }

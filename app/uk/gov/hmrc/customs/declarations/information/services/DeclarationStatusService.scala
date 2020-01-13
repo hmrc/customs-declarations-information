@@ -34,7 +34,6 @@ import scala.xml.{Elem, PrettyPrinter, TopScope, XML}
 
 @Singleton
 class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResponseFilterService,
-                                         statusResponseValidationService: StatusResponseValidationService,
                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                          override val logger: InformationLogger,
                                          connector: DeclarationStatusConnector,
@@ -48,24 +47,13 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
     val correlationId = uniqueIdsService.correlation
 
     futureApiSubFieldsId(asr.clientId) flatMap {
+
       case Right(sfId) =>
+
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, mrn)
           .map(response => {
             val xmlResponseBody = XML.loadString(response.body)
-            val badgeId = asr.authorisedAs match {
-              case Csp(_, badgeIdentifier) => badgeIdentifier.get
-              //TODO temporary addition to minimise changes in this ticket. Removed in next ticket.
-              case _ => BadgeIdentifier("BADGEID123")
-            }
-            statusResponseValidationService.validate(xmlResponseBody, badgeId) match {
-              case Right(_) => Right(filterResponse(response, xmlResponseBody))
-              case Left(errorResponse) =>
-                logError(errorResponse)
-                Left(errorResponse.XmlResult.withConversationId)
-              case _ =>
-                logError(ErrorGenericBadRequest)
-                Left(ErrorGenericBadRequest.XmlResult.withConversationId)
-            }
+            Right(filterResponse(response, xmlResponseBody)).asInstanceOf[Either[Result, HttpResponse]]
           }).recover{
           case e: RuntimeException if e.getCause.isInstanceOf[NotFoundException] =>
             logger.error(s"declaration status call failed with 404: ${e.getMessage}", e)
@@ -74,6 +62,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
             logger.error(s"declaration status call failed: ${e.getMessage}", e)
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
         }
+
       case Left(result) =>
         Future.successful(Left(result))
     }

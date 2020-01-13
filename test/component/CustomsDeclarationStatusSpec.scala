@@ -117,63 +117,6 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API handles status request errors from CSPs as expected") {
-
-    scenario("Response status 400 when Date of declaration is older than configured allowed value") {
-      Given("the API is available")
-      startMdgStatusService(body = StatusTestXMLData.generateDeclarationStatusResponse(acceptanceOrCreationDate = DateTime.now().minusYears(1)))
-      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
-
-      And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSP()
-
-      When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validCspRequest).value
-
-      Then(s"a response with a 400 status is received")
-      status(result) shouldBe BAD_REQUEST
-
-      And("the response body is a \"invalid xml\" XML")
-      stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorInvalidDate)
-    }
-
-    scenario("Response status 400 when Declaration Information response does not contain a valid communicationAddress") {
-      Given("the API is available")
-      startMdgStatusService(body = StatusTestXMLData.statusResponseDeclarationNoCommunicationAddress)
-      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
-
-      And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSP()
-
-      When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validCspRequest).value
-
-      Then(s"a response with a 400 status is received")
-      status(result) shouldBe BAD_REQUEST
-
-      And("the response body is a \"invalid xml\" XML")
-      stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorBadgeIdMissingOrInvalid)
-    }
-
-    scenario("Response status 400 when Declaration Information response does contains different badge identifier") {
-      Given("the API is available")
-      startMdgStatusService(body = StatusTestXMLData.generateDeclarationStatusResponse(communicationAddress = "hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:IWONTMATCH"))
-      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
-
-      And("the CSP is authorised with its privileged application")
-      authServiceAuthorizesCSP()
-
-      When("a GET request with data is sent to the API")
-      val result: Future[Result] = route(app = app, validCspRequest).value
-
-      Then(s"a response with a 400 status is received")
-      status(result) shouldBe BAD_REQUEST
-
-      And("the response body is a \"invalid xml\" XML")
-      stringToXml(contentAsString(result)) shouldBe stringToXml(BadStatusResponseErrorBadgeIdMissingOrInvalid)
-    }
-  }
-
   feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
     scenario("An authorised non-CSP successfully requests a status") {
       Given("A non-CSP wants the status of a declaration")
