@@ -16,14 +16,23 @@
 
 package util
 
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatter, ISODateTimeFormat}
-import org.joda.time.{DateTime, DateTimeZone}
+
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder}
+import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
 
 import scala.xml.{Elem, NodeSeq}
 
 object StatusTestXMLData {
 
-  private val dateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC()
+  private val dateTimeFormat = new DateTimeFormatterBuilder()
+    .appendYear(4, 4)
+    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
+    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
+    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
+    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
+    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
+    .appendTimeZoneOffset("Z", false, 2, 2)
+    .toFormatter;
 
   val ImportTradeMovementType: String = "IM4567"
   val DeclarationType: String = "declaration type"

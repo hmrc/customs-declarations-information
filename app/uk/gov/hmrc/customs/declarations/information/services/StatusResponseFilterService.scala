@@ -25,6 +25,19 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 @Singleton
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
 
+  private def createNamespaceTransformer(targetPrefix: String): RuleTransformer = {
+    new RuleTransformer( new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case e: Elem => e.copy(prefix = targetPrefix)
+        case `n` => n
+      }
+    })
+  }
+
+  private val dirNamespaceReWriter = createNamespaceTransformer("p")
+  private val wcoResponseNamespaceReWriter = createNamespaceTransformer("p1")
+  private val wcoNamespaceReWriter = createNamespaceTransformer("p2")
+
   def transform(xml: NodeSeq): NodeSeq = {
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
 
@@ -51,73 +64,20 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
 
   private def transformDeclarationStatusDetail(mdgDeclaration: NodeSeq, wcoDeclaration: NodeSeq): NodeSeq = {
 
-    val maybeReceivedDateTime = extract(mdgDeclaration \ "ReceivedDateTime")
-    val maybeGoodsReleasedDateTime = extract(mdgDeclaration \ "GoodsReleasedDateTime")
-    val maybeAcceptanceDateTime = extract(mdgDeclaration \ "AcceptanceDateTime")
-    val maybeROE = extract(mdgDeclaration \ "ROE")
-    val maybeICS = extract(mdgDeclaration \ "ICS")
-    val maybeIRC = extract(mdgDeclaration \ "IRC")
-    val maybeID = extract(mdgDeclaration \ "ID")
-    val maybeVersionId = extract(mdgDeclaration \ "VersionID")
-
     <p:DeclarationStatusDetails>
       <p:Declaration>
-        {
-          outputDateTimeStringTypeElement(<p:ReceivedDateTime></p:ReceivedDateTime>, maybeReceivedDateTime) ++
-          outputDateTimeStringTypeElement(<p:GoodsReleasedDateTime></p:GoodsReleasedDateTime>, maybeGoodsReleasedDateTime) ++
-          outputDateTimeStringTypeElement(<p:AcceptanceDateTime></p:AcceptanceDateTime>, maybeAcceptanceDateTime) ++
-          outputStringTypeElement(<p:ROE></p:ROE>, maybeROE) ++
-          outputStringTypeElement(<p:ICS></p:ICS>, maybeICS) ++
-          outputStringTypeElement(<p:IRC></p:IRC>, maybeIRC) ++
-          outputStringTypeElement(<p:ID></p:ID>, maybeID) ++
-          outputStringTypeElement(<p:VersionID></p:VersionID>, maybeVersionId)
-        }
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "GoodsReleasedDateTime")}
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "ROE")}
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "ICS")}
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "IRC")}
+        <p:AcceptanceDateTime>
+          {wcoResponseNamespaceReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString")}
+        </p:AcceptanceDateTime>
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "ID")}
+        {dirNamespaceReWriter.transform(mdgDeclaration \ "VersionID")}
       </p:Declaration>
       {wcoNamespaceReWriter.transform(wcoDeclaration)}
     </p:DeclarationStatusDetails>
-  }
-
-  private def outputStringTypeElement(element: Elem, maybeValueAndMetaDataPair: (Option[String], Option[MetaData])): NodeSeq = {
-    maybeValueAndMetaDataPair._1.fold(NodeSeq.Empty){value =>
-      element.copy(child = Text(value))
-    }
-  }
-
-  private def outputDateTimeStringTypeElement(parentElement: Elem, maybeValueAndMetaDataPair: (Option[String], Option[MetaData])): NodeSeq = {
-    println(s">> $maybeValueAndMetaDataPair")
-    maybeValueAndMetaDataPair._1.fold(NodeSeq.Empty){value =>
-      val content = <p:DateTimeString formatCode={outputAttribute(maybeValueAndMetaDataPair._2, "formatCode")}>{value}</p:DateTimeString>
-      parentElement.copy(child = Seq[Node](content))
-    }
-  }
-
-  private def outputAttribute(maybeAttributes: Option[MetaData], attributeLabel: String): Option[Text] = {
-    maybeAttributes.fold[Option[Text]](None){attr =>
-      attr.get(attributeLabel).fold[Option[Text]](None){attrValue =>
-        Some(Text(attrValue.text))
-      }
-    }
-  }
-
-  private def createNamespaceTransformer(targetPrefix: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
-      override def transform(n: Node): Seq[Node] = n match {
-        case e: Elem => e.copy(prefix = targetPrefix)
-        case `n` => n
-      }
-    })
-  }
-
-  private val cdiNamespaceReWriter = createNamespaceTransformer("p")
-  private val wcoNamespaceReWriter = createNamespaceTransformer("p2")
-
-
-  private def extract(path: NodeSeq): (Option[String], Option[MetaData]) = {
-    if (path.nonEmpty && path.head.nonEmpty) {
-      (Some(path.head.text.trim()), Some(path.head.attributes))
-    }
-    else {
-      (None, None)
-    }
   }
 }
