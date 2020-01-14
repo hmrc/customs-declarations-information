@@ -16,6 +16,7 @@
 
 package unit.services
 
+import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -29,6 +30,7 @@ import scala.xml.NodeSeq
 class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSugar {
 
   private val acceptanceDateVal = DateTime.now(DateTimeZone.UTC)
+  private val dateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC()
 
   trait SetUp {
 
@@ -37,14 +39,89 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
 
     val service = new StatusResponseFilterService(mockInformationLogger, mockInformationConfigService)
 
-    def createStatusResponseWithAllValues(): NodeSeq = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = acceptanceDateVal))
+    val statusResponseWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = acceptanceDateVal))
   }
 
   "Status Response Filter Service" should {
 
-    "create the version number" in new SetUp {
+    "outup xml" in new SetUp {
+      /*println(generateDeclarationStatusResponse())
+      println("============")*/
+//      println(statusResponseWithAllValues)
+
+      val pp = new scala.xml.PrettyPrinter(1024, 4)
+      println(pp.format(statusResponseWithAllValues.head))
+    }
+
+    //TODO: make date values different for each node
+    /*"ensure ReceivedDateTime is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "ReceivedDateTime" \\ "DateTimeString"
+
+      node.text shouldBe acceptanceDateVal.toString(dateTimeFormat)
+      node.head.attribute("formatCode").get.text shouldBe "string"
+    }
+
+    "ensure GoodsReleasedDateTime is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "GoodsReleasedDateTime" \\ "DateTimeString"
+
+      node.text shouldBe "2001-12-17T09:30:47Z"
+      node.head.attribute("formatCode").get.text shouldBe "string"
+    }
+
+    "ensure ROE is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "ROE"
+
+      node.text shouldBe "6"
+    }
+
+    "ensure ICS is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "ICS"
+
+      node.text shouldBe "15"
+    }
+
+    "ensure IRC is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "IRC"
+
+      node.text shouldBe "000"
+    }
+
+    "ensure AcceptanceDateTime is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "GoodsReleasedDateTime" \\ "DateTimeString"
+
+      node.text shouldBe "2001-12-17T09:30:47Z"
+      node.head.attribute("formatCode").get.text shouldBe "string"
+    }
+
+    "ensure AcceptanceDateTime formatCode is correct" in new SetUp {
+    }
+
+    "ensure ID is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "ID"
+
+      node.text shouldBe "18GB9JLC3CU1LFGVR2"
+    }
+
+    "ensure VersionID is present" in new SetUp {
+      private val node = statusResponseWithAllValues \\ "VersionID"
+
+      node.text shouldBe "1"
+    }*/
+
+    "ensure transformer can handle different namespace prefix values" ignore new SetUp {
+
+    }
+
+    "ensure transformer can handle multiple declaration status details" ignore new SetUp {
+
+    }
+
+    //TODO: Remove old commented out code
+   /* "create the version number" in new SetUp {
       private val response = createStatusResponseWithAllValues()
       private val node = response \\ "VersionID"
+
+      println(generateDeclarationStatusResponse())
 
       node.text shouldBe "0"
     }
@@ -118,7 +195,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
       private val node = response \\ "Submitter" \ "ID"
 
       node shouldBe empty
-    }
+    }*/
 
   }
 }

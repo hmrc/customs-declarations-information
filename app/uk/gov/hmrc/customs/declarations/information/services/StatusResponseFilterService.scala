@@ -20,52 +20,75 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
 import scala.xml._
+import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 @Singleton
-class StatusResponseFilterService @Inject() (informationLogger: InformationLogger,
-                                             informationConfigService: InformationConfigService) {
-
-  private val newLineAndIndentation = Text("\n        ")
+class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
 
   def transform(xml: NodeSeq): NodeSeq = {
-    val maybeAcceptanceDateTime = extract(xml, buildPath(xml, "acceptanceDate"))
-    val maybeMrn = extract(xml, buildPath(xml, "reference"))
-    val maybeVersionId = extract(xml, buildPath(xml, "versionNumber"))
-    val maybeCreationDateTime = extract(xml, buildPath(xml, "receiveDate"))
-    val maybeTradeMovementType = extract(xml, buildPath(xml, "tradeMovementType"))
-    val maybeType = extract(xml, buildPath(xml, "type"))
-    val maybeTypeCode = (maybeTradeMovementType._1 ++ maybeType._1).reduceOption(_ + _)
-    val maybeGoodsItemQuantity: (Option[String], Option[MetaData]) = extract(xml, buildPath(xml, "goodsItemCount"))
-    val maybeTotalPackageQuantity = extract(xml, buildPath(xml, "packageCount"))
-    val maybeSubmitterId = extractSubmitterId(xml)
+    val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
 
-    <v1:DeclarationStatusResponse xmlns:v1="http://gov.uk/customs/declarationInformationRetrieval/status/v1"
-                                                 xmlns:_2="urn:wco:datamodel:WCO:DEC-DMS:2"
-                                                 xmlns:_3="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-                                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                                 xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v1 ../Schemas/declarationInformationRetrievalStatusResponse.xsd">
-      <v1:Declaration>{maybeAcceptanceDateTime._1.fold(NodeSeq.Empty)(acceptanceDateTime => Seq[Node](newLineAndIndentation,
-        <v1:AcceptanceDateTime>
-          <_3:DateTimeString formatCode={outputAttribute(maybeAcceptanceDateTime._2, "formatCode")}>{acceptanceDateTime}</_3:DateTimeString>
-        </v1:AcceptanceDateTime>
-      ))}{maybeVersionId._1.fold(NodeSeq.Empty)(versionId => Seq[Node](newLineAndIndentation,
-        <v1:VersionID>{versionId}</v1:VersionID>))}{maybeMrn._1.fold(NodeSeq.Empty)(mrn => Seq[Node](newLineAndIndentation,
-        <v1:ID>{mrn}</v1:ID>))}{maybeCreationDateTime._1.fold(NodeSeq.Empty)(creationDateTime => Seq[Node](newLineAndIndentation,
-        <v1:CreationDateTime>
-          <v1:DateTimeString formatCode={outputAttribute(maybeCreationDateTime._2, "formatCode")}>{creationDateTime}</v1:DateTimeString>
-        </v1:CreationDateTime>
-      ))}</v1:Declaration>
-      <_2:Declaration>
-        <_2:FunctionCode>9</_2:FunctionCode>{maybeTypeCode.fold(NodeSeq.Empty)(typeCode => Seq[Node](newLineAndIndentation,
-        <_2:TypeCode>{typeCode}</_2:TypeCode>))}{maybeGoodsItemQuantity._1.fold(NodeSeq.Empty)(goodItemQuantity => Seq[Node](newLineAndIndentation,
-        <_2:GoodsItemQuantity unitType={outputAttribute(maybeGoodsItemQuantity._2, "unitType")}>{goodItemQuantity}</_2:GoodsItemQuantity>))}{maybeTotalPackageQuantity._1.fold(NodeSeq.Empty)(totalPackageQuantity => Seq[Node](newLineAndIndentation,
-        <_2:TotalPackageQuantity>{totalPackageQuantity}</_2:TotalPackageQuantity>))}{maybeSubmitterId.fold(NodeSeq.Empty)(submitterId => Seq[Node](newLineAndIndentation,
-        <_2:Submitter>
-          <_2:ID>{submitterId}</_2:ID>
-        </_2:Submitter>
-      ))}
-      </_2:Declaration>
-    </v1:DeclarationStatusResponse>
+    <p:DeclarationStatusResponse
+      xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31"
+      xmlns:clm63055="urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B"
+      xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+      xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+      xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+      xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd ">
+
+      {decStatusDetails.map{ node =>
+        val declarations = node \ "Declaration"
+        val mdgDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
+        val wcoDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
+
+        transformDeclarationStatusDetail(mdgDeclaration, wcoDeclaration)
+      }}
+    </p:DeclarationStatusResponse>
+  }
+
+  private def transformDeclarationStatusDetail(mdgDeclaration: NodeSeq, wcoDeclaration: NodeSeq): NodeSeq = {
+
+    val maybeReceivedDateTime = extract(mdgDeclaration \ "ReceivedDateTime")
+    val maybeGoodsReleasedDateTime = extract(mdgDeclaration \ "GoodsReleasedDateTime")
+    val maybeAcceptanceDateTime = extract(mdgDeclaration \ "AcceptanceDateTime")
+    val maybeROE = extract(mdgDeclaration \ "ROE")
+    val maybeICS = extract(mdgDeclaration \ "ICS")
+    val maybeIRC = extract(mdgDeclaration \ "IRC")
+    val maybeID = extract(mdgDeclaration \ "ID")
+    val maybeVersionId = extract(mdgDeclaration \ "VersionID")
+
+    <p:DeclarationStatusDetails>
+      <p:Declaration>
+        {
+          outputDateTimeStringTypeElement(<p:ReceivedDateTime></p:ReceivedDateTime>, maybeReceivedDateTime) ++
+          outputDateTimeStringTypeElement(<p:GoodsReleasedDateTime></p:GoodsReleasedDateTime>, maybeGoodsReleasedDateTime) ++
+          outputDateTimeStringTypeElement(<p:AcceptanceDateTime></p:AcceptanceDateTime>, maybeAcceptanceDateTime) ++
+          outputStringTypeElement(<p:ROE></p:ROE>, maybeROE) ++
+          outputStringTypeElement(<p:ICS></p:ICS>, maybeICS) ++
+          outputStringTypeElement(<p:IRC></p:IRC>, maybeIRC) ++
+          outputStringTypeElement(<p:ID></p:ID>, maybeID) ++
+          outputStringTypeElement(<p:VersionID></p:VersionID>, maybeVersionId)
+        }
+      </p:Declaration>
+      {wcoNamespaceReWriter.transform(wcoDeclaration)}
+    </p:DeclarationStatusDetails>
+  }
+
+  private def outputStringTypeElement(element: Elem, maybeValueAndMetaDataPair: (Option[String], Option[MetaData])): NodeSeq = {
+    maybeValueAndMetaDataPair._1.fold(NodeSeq.Empty){value =>
+      element.copy(child = Text(value))
+    }
+  }
+
+  private def outputDateTimeStringTypeElement(parentElement: Elem, maybeValueAndMetaDataPair: (Option[String], Option[MetaData])): NodeSeq = {
+    println(s">> $maybeValueAndMetaDataPair")
+    maybeValueAndMetaDataPair._1.fold(NodeSeq.Empty){value =>
+      val content = <p:DateTimeString formatCode={outputAttribute(maybeValueAndMetaDataPair._2, "formatCode")}>{value}</p:DateTimeString>
+      parentElement.copy(child = Seq[Node](content))
+    }
   }
 
   private def outputAttribute(maybeAttributes: Option[MetaData], attributeLabel: String): Option[Text] = {
@@ -76,32 +99,25 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
     }
   }
 
-  private def extractSubmitterId(sourceXml: NodeSeq): Option[String] = {
-    val tbParty = buildPath(sourceXml,"parties").filter{ party => (party \ "type").text == "TB" }
-
-    if (tbParty.nonEmpty && (tbParty \ "partyIdentification" \ "number").head.nonEmpty) {
-      val id = (tbParty \ "partyIdentification" \ "number").head
-      if (id.nonEmpty) {
-        Some(id.text)
-      } else {
-        None
+  private def createNamespaceTransformer(targetPrefix: String): RuleTransformer = {
+    new RuleTransformer( new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case e: Elem => e.copy(prefix = targetPrefix)
+        case `n` => n
       }
-    } else {
-      None
-    }
+    })
   }
 
-  private def buildPath(sourceXml: NodeSeq, label: String): NodeSeq = {
-    sourceXml \ "responseDetail" \ "declarationManagementInformationResponse" \ "declaration" \ label
-  }
+  private val cdiNamespaceReWriter = createNamespaceTransformer("p")
+  private val wcoNamespaceReWriter = createNamespaceTransformer("p2")
 
-  private def extract(sourceXml: NodeSeq, path: NodeSeq): (Option[String], Option[MetaData]) = {
+
+  private def extract(path: NodeSeq): (Option[String], Option[MetaData]) = {
     if (path.nonEmpty && path.head.nonEmpty) {
-      (Some(path.head.text), Some(path.head.attributes))
+      (Some(path.head.text.trim()), Some(path.head.attributes))
     }
     else {
       (None, None)
     }
   }
-
 }

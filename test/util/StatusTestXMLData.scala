@@ -23,6 +23,8 @@ import scala.xml.{Elem, NodeSeq}
 
 object StatusTestXMLData {
 
+  private val dateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC()
+
   val ImportTradeMovementType: String = "IM4567"
   val DeclarationType: String = "declaration type"
   val PartyType: String = "TB"
@@ -236,7 +238,88 @@ object StatusTestXMLData {
     </n1:responseDetail>
   </n1:queryDeclarationInformationResponse>
 
-  def generateDeclarationStatusResponse(acceptanceOrCreationDate: DateTime = DateTime.now(DateTimeZone.UTC),
+  def generateDeclarationStatusResponse(acceptanceOrCreationDate: DateTime = DateTime.now(DateTimeZone.UTC), partyType: String = PartyType): NodeSeq =
+    <n1:queryDeclarationstatusResponse
+      xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+      xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+      xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
+      <n1:responseCommon>
+        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
+      </n1:responseCommon>
+      <n1:responseDetail>
+        <n1:retrieveDeclarationStatusResponse>
+          <n1:retrieveDeclarationStatusDetailsList>
+            {generateDeclarationStatusDetailElement(acceptanceOrCreationDate)}
+            {generateDeclarationStatusDetailElement(acceptanceOrCreationDate)}
+          </n1:retrieveDeclarationStatusDetailsList>
+        </n1:retrieveDeclarationStatusResponse>
+      </n1:responseDetail>
+    </n1:queryDeclarationstatusResponse>
+
+  def generateDeclarationStatusDetailElement(
+      acceptanceOrCreationDate: DateTime,
+      partyType: String = PartyType): NodeSeq =
+            <n1:retrieveDeclarationStatusDetails>
+              <n1:Declaration>
+                <n1:AcceptanceDateTime>
+                  <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</n1:DateTimeString>
+                </n1:AcceptanceDateTime>
+                <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
+                <n1:VersionID>1</n1:VersionID>
+                <n1:ReceivedDateTime>
+                  <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</n1:DateTimeString>
+                </n1:ReceivedDateTime>
+                <n1:GoodsReleasedDateTime>
+                  <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</n1:DateTimeString>
+                </n1:GoodsReleasedDateTime>
+                <n1:ROE>6</n1:ROE>
+                <n1:ICS>15</n1:ICS>
+                <n1:IRC>000</n1:IRC>
+              </n1:Declaration>
+              <od:Declaration>
+                <od:FunctionCode>9</od:FunctionCode>
+                <od:TypeCode>IMZ</od:TypeCode>
+                <od:GoodsItemQuantity unitCode="NPR">100</od:GoodsItemQuantity>
+                <od:TotalPackageQuantity>10</od:TotalPackageQuantity>
+                <od:Submitter>
+                  <od:ID>GB123456789012000</od:ID>
+                </od:Submitter>
+                <od:GoodsShipment>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVB</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVC</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVD</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVE</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:UCR>
+                    <od:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</od:TraderAssignedReferenceID>
+                  </od:UCR>
+                </od:GoodsShipment>
+              </od:Declaration>
+            </n1:retrieveDeclarationStatusDetails>
+
+  /*def generateDeclarationStatusResponse(acceptanceOrCreationDate: DateTime = DateTime.now(DateTimeZone.UTC),
                                         populateAcceptanceDate: Boolean = true,
                                         tradeMovementType: String = ImportTradeMovementType,
                                         declarationType: String = DeclarationType,
@@ -814,7 +897,7 @@ object StatusTestXMLData {
           </xsd_1:declaration>
         </n1:declarationManagementInformationResponse>
       </n1:responseDetail>
-    </n1:queryDeclarationInformationResponse>
+    </n1:queryDeclarationInformationResponse>*/
 
   def statusResponseDeclarationNoCommunicationAddress: Elem =    <xsd_1:declaration>
     <n3:acceptanceDate>{DateTime.now(DateTimeZone.UTC).minusMonths(2).toString}</n3:acceptanceDate>
