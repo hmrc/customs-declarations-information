@@ -16,17 +16,26 @@
 
 package unit.services
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
+
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Configuration
+import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
 import uk.gov.hmrc.play.test.UnitSpec
-import util.StatusTestXMLData.{defaultDateTime, generateDeclarationStatusResponse}
+import util.StatusTestXMLData.{defaultDateTime, generateDeclarationStatusResponse, generateExportDeclarationStatusResponse, generateImportDeclarationStatusResponse}
+import util.XmlValidationService
 
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, Node, NodeSeq}
 
 class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSugar {
+
+  implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
@@ -45,6 +54,10 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
   }
 
   "Status Response Filter Service" should {
+
+    "ensure response passes schema validation" in new SetUp {
+      validateAgainstSchema(statusResponseWithAllValues.head)
+    }
 
     "ensure ReceivedDateTime is present" in new SetUp {
       val node = commonPath(statusResponseWithAllValues) \ "ReceivedDateTime" \ "DateTimeString"
@@ -101,6 +114,8 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
       val numberOfDecStatuses = 5
       val multuStatusResponsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(numberOfDecStatuses, acceptanceOrCreationDate = defaultDateTime))
 
+      validateAgainstSchema(multuStatusResponsesWithAllValues.head)
+
       val node = multuStatusResponsesWithAllValues \\ "DeclarationStatusDetails"
 
       node.size shouldBe numberOfDecStatuses
@@ -133,11 +148,37 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
     "ensure transformer can handle missing VersionID element" in new SetUp {
       testForMissingElement("VersionID")
     }
+
+    "ensure transformer can handle a full populated wco export schema" in new SetUp {
+      val transformed: NodeSeq = service.transform(generateExportDeclarationStatusResponse())
+
+      val pp = new scala.xml.PrettyPrinter(1024, 4)
+//      println(pp.format(transformed.head))
+
+      Files.write(Paths.get("gen_out.xml"), pp.format(transformed.head).getBytes(StandardCharsets.UTF_8))
+
+//      validateAgainstSchema(transformed.head)
+    }
+  }
+
+  private def validateAgainstSchema(xml: NodeSeq): Assertion = {
+    val mockConfiguration = mock[Configuration]
+    val propertyName: String = "xsd.locations.statusqueryresponse"
+    val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd")
+
+    when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
+    when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
+
+    val xmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
+
+    await(xmlValidationService.validate(xml)) should be(())
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: StatusResponseFilterService): Assertion = {
-    val missingSource = createElementFilter(missingElementName, "n1").transform( generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime) )
-    val statusResponseWithMissingValues: NodeSeq = service.transform(missingSource)
+    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform( generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime) )
+    val statusResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
+
+    validateAgainstSchema(statusResponseWithMissingValues.head)
 
     val node = commonPath(statusResponseWithMissingValues) \ missingElementName
 

@@ -24,19 +24,20 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 @Singleton
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
+  import StatusResponseFilterService.createPrefixTransformer
 
-  private def createNamespaceTransformer(targetPrefix: String): RuleTransformer = {
+  /*def createConditionalPrefixTransformer(targetPrefix: String, excludeElementsLabeled: String): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
-        case e: Elem => e.copy(prefix = targetPrefix)
+        case e: Elem if e.label != excludeElementsLabeled => e.copy(prefix = targetPrefix)
         case n => n
       }
     })
-  }
+  }*/
 
-  private val dirNamespaceReWriter = createNamespaceTransformer("p")
-  private val wcoResponseNamespaceReWriter = createNamespaceTransformer("p1")
-  private val wcoNamespaceReWriter = createNamespaceTransformer("p2")
+  private val dirPrefixReWriter = createPrefixTransformer("p")
+  private val wcoResponsePrefixReWriter = createPrefixTransformer("p1")
+  private val wcoPrefixReWriter = createPrefixTransformer("p2")
 
   def transform(xml: NodeSeq): NodeSeq = {
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
@@ -66,16 +67,27 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
     //TODO: everything is optional apart from ICS!!!!
     <p:DeclarationStatusDetails>
       <p:Declaration>
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "GoodsReleasedDateTime")}
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "ROE")}
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "ICS")}
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "IRC")}
-        {wcoResponseNamespaceReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString").map{ dts => <p:AcceptanceDateTime>{dts}</p:AcceptanceDateTime>}}
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "ID")}
-        {dirNamespaceReWriter.transform(mdgDeclaration \ "VersionID")}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "GoodsReleasedDateTime")}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "ROE")}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "ICS")}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "IRC")}
+        {wcoResponsePrefixReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString").map{ dts => <p:AcceptanceDateTime>{dts}</p:AcceptanceDateTime>}}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "ID")}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "VersionID")}
       </p:Declaration>
-      {wcoNamespaceReWriter.transform(wcoDeclaration)}
+      {wcoPrefixReWriter.transform(wcoDeclaration)}
     </p:DeclarationStatusDetails>
+  }
+}
+
+object StatusResponseFilterService {
+  def createPrefixTransformer(targetPrefix: String): RuleTransformer = {
+    new RuleTransformer( new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case e: Elem => e.copy(prefix = targetPrefix)
+        case n => n
+      }
+    })
   }
 }
