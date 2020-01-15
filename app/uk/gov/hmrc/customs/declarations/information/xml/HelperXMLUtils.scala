@@ -20,50 +20,6 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, NamespaceBinding, Node}
 
 object HelperXMLUtils {
-
-  /*
-  import scala.xml.{Elem, NamespaceBinding, Node, TopScope}
-  def changeNS(el: Elem,
-               oldURI: String, newURI: String,
-               oldPrefix: String, newPrefix: String): Elem = {
-    def replace(what: String, before: String, after: String): String =
-      if (what == before) after else what
-
-    def fixScope(ns: NamespaceBinding): NamespaceBinding =
-      if(ns == TopScope)
-        TopScope
-      else new NamespaceBinding(replace(ns.prefix, oldPrefix, newPrefix),
-        replace(ns.uri, oldURI, newURI),
-        fixScope(ns.parent))
-
-    def fixSeq(ns: Seq[Node]): Seq[Node] = for(node <- ns) yield node match {
-      case Elem(prefix, label, attribs, scope, children @ _*) =>
-        Elem(replace(prefix, oldPrefix, newPrefix),
-          label,
-          attribs,
-          fixScope(scope),
-          fixSeq(children) : _*)
-      case other => other
-    }
-
-    fixSeq(el.theSeq)(0).asInstanceOf[Elem]
-  }*/
-
-  /*node.head match {
-       case Elem(prefix, label, attribs, scope, children @ _*) =>
-         println(s"prefix: $prefix")
-         println(s"label: $label")
-         println(s"attribs: $attribs")
-         println(s"scope: $scope")
-         println(s"children#: ${children.size}")
-
-         println(s"scope: ${scope.prefix}")
-         println(s"scope: ${scope.uri}")
-
-         println(s"scope: ${scope.parent.parent.parent.parent.parent.prefix}")
-         println(s"scope: ${scope.parent.parent.parent.parent.parent.uri}")
-     }*/
-
   def createPrefixTransformer(targetPrefix: String): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
