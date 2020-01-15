@@ -16,186 +16,133 @@
 
 package unit.services
 
-import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
-import org.joda.time.{DateTime, DateTimeZone}
+import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
 import uk.gov.hmrc.play.test.UnitSpec
-import util.StatusTestXMLData.{DeclarationType, ImportTradeMovementType, generateDeclarationStatusResponse, generateValidStatusResponseWithMultiplePartiesOnly}
-import util.TestData.{date, dateString}
+import util.StatusTestXMLData.{defaultDateTime, generateDeclarationStatusResponse}
 
-import scala.xml.NodeSeq
+import scala.xml.transform.{RewriteRule, RuleTransformer}
+import scala.xml.{Elem, Node, NodeSeq}
 
 class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSugar {
 
-  private val acceptanceDateVal = DateTime.now(DateTimeZone.UTC)
-  private val dateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC()
+  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
+    new RuleTransformer( new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
+        case n => n
+      }
+    })
+  }
 
   trait SetUp {
-
     val mockInformationLogger: InformationLogger = mock[InformationLogger]
     val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
-
-    val service = new StatusResponseFilterService(mockInformationLogger, mockInformationConfigService)
-
-    val statusResponseWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = acceptanceDateVal))
+    implicit val service = new StatusResponseFilterService(mockInformationLogger, mockInformationConfigService)
+    val statusResponseWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime))
   }
 
   "Status Response Filter Service" should {
 
-    "outup xml" in new SetUp {
-      /*println(generateDeclarationStatusResponse())
-      println("============")*/
-//      println(statusResponseWithAllValues)
+    "ensure ReceivedDateTime is present" in new SetUp {
+      val node = commonPath(statusResponseWithAllValues) \ "ReceivedDateTime" \ "DateTimeString"
 
-      val pp = new scala.xml.PrettyPrinter(1024, 4)
-      println(pp.format(statusResponseWithAllValues.head))
-    }
-
-    //TODO: make date values different for each node
-    /*"ensure ReceivedDateTime is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "ReceivedDateTime" \\ "DateTimeString"
-
-      node.text shouldBe acceptanceDateVal.toString(dateTimeFormat)
-      node.head.attribute("formatCode").get.text shouldBe "string"
+      node.text shouldBe "20200615122900Z"
+      node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
     "ensure GoodsReleasedDateTime is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "GoodsReleasedDateTime" \\ "DateTimeString"
+      val node = commonPath(statusResponseWithAllValues) \ "GoodsReleasedDateTime" \ "DateTimeString"
 
-      node.text shouldBe "2001-12-17T09:30:47Z"
-      node.head.attribute("formatCode").get.text shouldBe "string"
+      node.text shouldBe "20200615123100Z"
+      node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
     "ensure ROE is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "ROE"
+      val node = commonPath(statusResponseWithAllValues) \ "ROE"
 
       node.text shouldBe "6"
     }
 
     "ensure ICS is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "ICS"
+      val node = commonPath(statusResponseWithAllValues) \ "ICS"
 
       node.text shouldBe "15"
     }
 
     "ensure IRC is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "IRC"
+      val node = commonPath(statusResponseWithAllValues) \ "IRC"
 
       node.text shouldBe "000"
     }
 
     "ensure AcceptanceDateTime is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "GoodsReleasedDateTime" \\ "DateTimeString"
+      val node = commonPath(statusResponseWithAllValues) \ "AcceptanceDateTime" \ "DateTimeString"
 
-      node.text shouldBe "2001-12-17T09:30:47Z"
-      node.head.attribute("formatCode").get.text shouldBe "string"
-    }
-
-    "ensure AcceptanceDateTime formatCode is correct" in new SetUp {
+      node.text shouldBe "20200615123000Z"
+      node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
     "ensure ID is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "ID"
+      val node = commonPath(statusResponseWithAllValues) \ "ID"
 
       node.text shouldBe "18GB9JLC3CU1LFGVR2"
     }
 
     "ensure VersionID is present" in new SetUp {
-      private val node = statusResponseWithAllValues \\ "VersionID"
+      val node = commonPath(statusResponseWithAllValues) \ "VersionID"
 
       node.text shouldBe "1"
-    }*/
-
-    "ensure transformer can handle different namespace prefix values" ignore new SetUp {
-
     }
 
-    "ensure transformer can handle multiple declaration status details" ignore new SetUp {
+    "ensure transformer can handle multiple DeclarationStatusDetails elements" in new SetUp {
+      val numberOfDecStatuses = 5
+      val multuStatusResponsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(numberOfDecStatuses, acceptanceOrCreationDate = defaultDateTime))
 
+      val node = multuStatusResponsesWithAllValues \\ "DeclarationStatusDetails"
+
+      node.size shouldBe numberOfDecStatuses
     }
 
-    //TODO: Remove old commented out code
-   /* "create the version number" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \\ "VersionID"
-
-      println(generateDeclarationStatusResponse())
-
-      node.text shouldBe "0"
+    "ensure transformer can handle missing ReceivedDateTime element" in new SetUp {
+      testForMissingElement("ReceivedDateTime")
     }
 
-    "create the mrn" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \ "Declaration" \ "ID"
-
-      node.text shouldBe "mrn"
+    "ensure transformer can handle missing GoodsReleasedDateTime element" in new SetUp {
+      testForMissingElement("GoodsReleasedDateTime")
     }
 
-    "create the creation date" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \\ "CreationDateTime" \\ "DateTimeString"
-
-      node.text shouldBe "2001-12-17T09:30:47Z"
-      node.head.attribute("formatCode").get.text shouldBe "string"
+    "ensure transformer can handle missing ROE element" in new SetUp {
+      testForMissingElement("ROE")
     }
 
-    "create the goods item count" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \\ "GoodsItemQuantity"
-
-      node.text shouldBe "2"
-      node.head.attribute("unitType").get.text shouldBe "101"
+    "ensure transformer can handle missing IRC element" in new SetUp {
+      testForMissingElement("IRC")
     }
 
-    "create the type code" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \\ "TypeCode"
-
-      node.text shouldBe ImportTradeMovementType + DeclarationType
+    "ensure transformer can handle missing AcceptanceDateTime element" in new SetUp {
+      testForMissingElement("AcceptanceDateTime")
     }
 
-    "create the TotalPackageQuantity" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \\ "TotalPackageQuantity"
-
-      node.text shouldBe "3"
+    "ensure transformer can handle missing ID element" in new SetUp {
+      testForMissingElement("ID")
     }
 
-    "create the acceptance date" in new SetUp {
-      private val response = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = date))
-      private val node = response \\ "AcceptanceDateTime" \\ "DateTimeString"
-      node.head.text shouldBe dateString
+    "ensure transformer can handle missing VersionID element" in new SetUp {
+      testForMissingElement("VersionID")
     }
-
-    "create the TB party identification number" in new SetUp {
-      private val response = createStatusResponseWithAllValues()
-      private val node = response \\ "Submitter" \ "ID"
-
-      node.head.text shouldBe "123456"
-    }
-
-    "create the party identification number when there is one with TB type and the rest are not" in new SetUp{
-      private val response = service.transform(generateValidStatusResponseWithMultiplePartiesOnly)
-      private val node = response \\ "Submitter" \ "ID"
-
-      node.head.text shouldBe "1"
-    }
-
-    "not create acceptance date when not provided" in new SetUp {
-      private val response = service.transform(generateValidStatusResponseWithMultiplePartiesOnly)
-      private val node = response \\ "AcceptanceDateTime" \\ "DateTimeString"
-
-      node shouldBe empty
-    }
-
-    "not create submitter id when not provided" in new SetUp {
-      private val response = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = acceptanceDateVal, partyType = "TT"))
-      private val node = response \\ "Submitter" \ "ID"
-
-      node shouldBe empty
-    }*/
-
   }
+
+  private def testForMissingElement(missingElementName: String)(implicit service: StatusResponseFilterService): Assertion = {
+    val missingSource = createElementFilter(missingElementName, "n1").transform( generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime) )
+    val statusResponseWithMissingValues: NodeSeq = service.transform(missingSource)
+
+    val node = commonPath(statusResponseWithMissingValues) \ missingElementName
+
+    node.size shouldBe 0
+  }
+
+  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationStatusDetails" \ "Declaration"
 }

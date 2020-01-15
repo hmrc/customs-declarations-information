@@ -29,7 +29,7 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
     new RuleTransformer( new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case e: Elem => e.copy(prefix = targetPrefix)
-        case `n` => n
+        case n => n
       }
     })
   }
@@ -63,7 +63,7 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   }
 
   private def transformDeclarationStatusDetail(mdgDeclaration: NodeSeq, wcoDeclaration: NodeSeq): NodeSeq = {
-
+    //TODO: everything is optional apart from ICS!!!!
     <p:DeclarationStatusDetails>
       <p:Declaration>
         {dirNamespaceReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
@@ -71,9 +71,7 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
         {dirNamespaceReWriter.transform(mdgDeclaration \ "ROE")}
         {dirNamespaceReWriter.transform(mdgDeclaration \ "ICS")}
         {dirNamespaceReWriter.transform(mdgDeclaration \ "IRC")}
-        <p:AcceptanceDateTime>
-          {wcoResponseNamespaceReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString")}
-        </p:AcceptanceDateTime>
+        {wcoResponseNamespaceReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString").map{ dts => <p:AcceptanceDateTime>{dts}</p:AcceptanceDateTime>}}
         {dirNamespaceReWriter.transform(mdgDeclaration \ "ID")}
         {dirNamespaceReWriter.transform(mdgDeclaration \ "VersionID")}
       </p:Declaration>
