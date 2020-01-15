@@ -20,11 +20,10 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
 import scala.xml._
-import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 @Singleton
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
-  import StatusResponseFilterService.createPrefixTransformer
+  import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils._
 
   /*def createConditionalPrefixTransformer(targetPrefix: String, excludeElementsLabeled: String): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
@@ -64,7 +63,6 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   }
 
   private def transformDeclarationStatusDetail(mdgDeclaration: NodeSeq, wcoDeclaration: NodeSeq): NodeSeq = {
-    //TODO: everything is optional apart from ICS!!!!
     <p:DeclarationStatusDetails>
       <p:Declaration>
         {dirPrefixReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
@@ -78,16 +76,5 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
       </p:Declaration>
       {wcoPrefixReWriter.transform(wcoDeclaration)}
     </p:DeclarationStatusDetails>
-  }
-}
-
-object StatusResponseFilterService {
-  def createPrefixTransformer(targetPrefix: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
-      override def transform(n: Node): Seq[Node] = n match {
-        case e: Elem => e.copy(prefix = targetPrefix)
-        case n => n
-      }
-    })
   }
 }

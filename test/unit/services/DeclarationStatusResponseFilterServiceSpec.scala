@@ -19,19 +19,20 @@ package unit.services
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
+import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils
 import uk.gov.hmrc.play.test.UnitSpec
-import util.StatusTestXMLData.{defaultDateTime, generateDeclarationStatusResponse, generateExportDeclarationStatusResponse, generateImportDeclarationStatusResponse}
+import util.StatusTestXMLData.{defaultDateTime, generateDeclarationStatusResponse, generateExportDeclarationStatusResponse}
 import util.XmlValidationService
 
+import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
-import scala.xml.{Elem, Node, NodeSeq}
 
 class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSugar {
 
@@ -56,6 +57,11 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
   "Status Response Filter Service" should {
 
     "ensure response passes schema validation" in new SetUp {
+      val node = generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime)
+
+      println(node.head)
+      HelperXMLUtils.extractNamespaceBindings(node.head.asInstanceOf[Elem]).foreach(ns => println(s"${ns.prefix}->${ns.uri}"))
+
       validateAgainstSchema(statusResponseWithAllValues.head)
     }
 

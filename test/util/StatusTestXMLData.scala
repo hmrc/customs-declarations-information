@@ -17,9 +17,9 @@
 package util
 
 
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder}
+import org.joda.time.format.DateTimeFormatterBuilder
 import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-import uk.gov.hmrc.customs.declarations.information.services.StatusResponseFilterService.createPrefixTransformer
+import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils.createPrefixTransformer
 
 import scala.xml.{Elem, NodeSeq, XML}
 
