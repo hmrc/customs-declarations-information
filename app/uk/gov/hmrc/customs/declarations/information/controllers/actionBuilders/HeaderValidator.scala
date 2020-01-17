@@ -35,7 +35,6 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
   private lazy val InvalidEoriHeaderRegex = "(^[\\s]*$|^.{18,}$)".r
 
   private val errorResponseBadgeIdentifierHeaderMissing = errorBadRequest(s"$XBadgeIdentifierHeaderName header is missing or invalid")
-  private val errorResponseEoriIdentifierHeaderMissingOrInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is missing or invalid")
   private val errorResponseEoriIdentifierHeaderInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is invalid")
 
   def validateHeaders[A](implicit conversationIdRequest: ConversationIdRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {

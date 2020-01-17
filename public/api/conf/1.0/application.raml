@@ -32,8 +32,8 @@ documentation:
           example: "19GBL4592NCOI21NR9"
       /status:
         get:
-          displayName: Get the status of a declaration
-          description: Get the status of a declaration with the given MRN. This endpoint is only available to CSP users.
+          displayName: Get the status of a declaration by MRN
+          description: Get the status of a declaration with the given MRN.
           headers:
             Accept:
               description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
@@ -41,10 +41,159 @@ documentation:
               required: true
               example: application/vnd.hmrc.1.0+xml
             X-Badge-Identifier:
-                description: Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
-                type: string
-                required: false
-                example: ABC123
+              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              type: string
+              required: false
+              example: ABC123
+            X-Submitter-Identifier:
+              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              type: string
+              required: false
+              example: GB123456789000
+          (annotations.scope): "write:customs-declarations-information"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
+          responses:
+            200:
+              body:
+                application/xml:
+                  description: Successful response payload
+                  type: !include schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd
+                  example: !include examples/DeclarationStatusResponseExample.xml
+            500:
+              body:
+                application/xml:
+                  description: Internal server error
+                  type: !include schemas/customs/error.xsd
+                  example: |
+                      <?xml version="1.0" encoding="UTF-8"?>
+                      <errorResponse>
+                          <code>INTERNAL_SERVER_ERROR</code>
+                          <message>Internal server error</message>
+                      </errorResponse>
+
+  /ducr:
+    /{ducr}:
+      uriParameters:
+        ducr:
+          description: Declaration Unique Consignment Reference
+          type: string
+          example: "19GBL4592NCOI21NR9"
+      /status:
+        get:
+          displayName: Get the status of a declaration by DUCR
+          description: Get the status of a declaration with the given DUCR.
+          headers:
+            Accept:
+              description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+              type: string
+              required: true
+              example: application/vnd.hmrc.1.0+xml
+            X-Badge-Identifier:
+              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              type: string
+              required: false
+              example: ABC123
+            X-Submitter-Identifier:
+              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              type: string
+              required: false
+              example: GB123456789000
+          (annotations.scope): "write:customs-declarations-information"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
+          responses:
+            200:
+              body:
+                application/xml:
+                  description: Successful response payload
+                  type: !include schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd
+                  example: !include examples/DeclarationStatusResponseExample.xml
+            500:
+              body:
+                application/xml:
+                  description: Internal server error
+                  type: !include schemas/customs/error.xsd
+                  example: |
+                      <?xml version="1.0" encoding="UTF-8"?>
+                      <errorResponse>
+                          <code>INTERNAL_SERVER_ERROR</code>
+                          <message>Internal server error</message>
+                      </errorResponse>
+
+  /ucr:
+    /{ucr}:
+      uriParameters:
+        ucr:
+          description: Unique Consignment Reference
+          type: string
+          example: "19GBL4592NCOI21NR9"
+      /status:
+        get:
+          displayName: Get the status of a declaration by UCR
+          description: Get the status of a declaration with the given UCR.
+          headers:
+            Accept:
+              description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+              type: string
+              required: true
+              example: application/vnd.hmrc.1.0+xml
+            X-Badge-Identifier:
+              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              type: string
+              required: false
+              example: ABC123
+            X-Submitter-Identifier:
+              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              type: string
+              required: false
+              example: GB123456789000
+          (annotations.scope): "write:customs-declarations-information"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
+          responses:
+            200:
+              body:
+                application/xml:
+                  description: Successful response payload
+                  type: !include schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd
+                  example: !include examples/DeclarationStatusResponseExample.xml
+            500:
+              body:
+                application/xml:
+                  description: Internal server error
+                  type: !include schemas/customs/error.xsd
+                  example: |
+                      <?xml version="1.0" encoding="UTF-8"?>
+                      <errorResponse>
+                          <code>INTERNAL_SERVER_ERROR</code>
+                          <message>Internal server error</message>
+                      </errorResponse>
+
+  /inventory-refence:
+    /{inventoryReference}:
+      uriParameters:
+        inventoryReference:
+          description: Inventory Reference
+          type: string
+          example: "19GBL4592NCOI21NR9"
+      /status:
+        get:
+          displayName: Get the status of a declaration by Inventory Reference
+          description: Get the status of a declaration with the given Inventory Reference.
+          headers:
+            Accept:
+              description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+              type: string
+              required: true
+              example: application/vnd.hmrc.1.0+xml
+            X-Badge-Identifier:
+              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              type: string
+              required: false
+              example: ABC123
+            X-Submitter-Identifier:
+              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              type: string
+              required: false
+              example: GB123456789000
           (annotations.scope): "write:customs-declarations-information"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
           responses:

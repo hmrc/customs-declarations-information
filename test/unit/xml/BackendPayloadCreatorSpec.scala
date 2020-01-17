@@ -20,14 +20,14 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContentAsEmpty
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.xml.MdgPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.play.test.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
 
 import scala.xml.NodeSeq
 
-class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
+class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
   private val year = 2017
   private val monthOfYear = 6
@@ -37,14 +37,17 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   private val secondOfMinute = 0
   private val millisOfSecond = 0
   private val dateTime = new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond, DateTimeZone.UTC)
-  private val payloadCreator = new MdgPayloadCreator()
+  private val payloadCreator = new BackendPayloadCreator()
 
-  "MdgPayloadCreator" should {
+  "BackendPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
-    def createPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, apiSubscriptionFieldsResponse)
+    def createMrnPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, apiSubscriptionFieldsResponse)
+    def createDucrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ducr, apiSubscriptionFieldsResponse)
+    def createUcrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ucr, apiSubscriptionFieldsResponse)
+    def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, inventoryReference, apiSubscriptionFieldsResponse)
 
     "set the clientID" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
       val rd = result \\ "clientID"
 
@@ -52,7 +55,7 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     }
 
     "set the conversationID" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
       val rd = result \\ "conversationID"
 
@@ -60,7 +63,7 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     }
 
     "set the correlationID" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
       val rd = result \\ "correlationID"
 
@@ -68,7 +71,7 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     }
 
     "set the badgeIdentifier" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
       val rd = result \\ "badgeIdentifier"
 
@@ -76,7 +79,7 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     }
 
     "set the dateTimeStamp" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
       val rd = result \\ "dateTimeStamp"
 
@@ -84,19 +87,43 @@ class MdgPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     }
 
     "set the timeStamp" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
-      val rd = result \\ "timeStamp"
+      val rd = result \\ "dateTimeStamp"
 
       rd.head.text shouldBe "2017-06-08T13:55:00.000Z"
     }
 
     "set the mrn" in {
-      val result = createPayload()
+      val result = createMrnPayload()
 
-      val rd = result \\ "reference"
+      val rd = result \\ "MRN"
 
       rd.head.text shouldBe "theMrn"
+    }
+
+    "set the ducr" in {
+      val result = createDucrPayload()
+
+      val rd = result \\ "DUCR"
+
+      rd.head.text shouldBe "theDucr"
+    }
+
+    "set the ucr" in {
+      val result = createUcrPayload()
+
+      val rd = result \\ "UCR"
+
+      rd.head.text shouldBe "theUcr"
+    }
+
+    "set the inventoryReference" in {
+      val result = createInventoryReferencePayload()
+
+      val rd = result \\ "InventoryReference"
+
+      rd.head.text shouldBe "theInventoryReference"
     }
     
   }

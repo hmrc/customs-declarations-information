@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.circuitbreaker.UnhealthyServiceException
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp, VersionOne}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
@@ -69,16 +69,25 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
     GuiceApplicationBuilder(overrides = Seq(TestModule.asGuiceableModule)).configure(Map(
       "microservice.services.declaration-status.host" -> Host,
       "microservice.services.declaration-status.port" -> Port,
-      "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext,
+      "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext,
       "microservice.services.declaration-status.bearer-token" -> AuthToken
     )).build()
 
   "DeclarationStatusConnector" should {
 
-    "make a correct request" in {
+    "make a correct request for a CSP" in {
       startMdgStatusService()
       await(sendValidXml())
-      verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedDeclarationStatusPayload.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+      verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+    }
+
+    "make a correct request for a non-CSP" in {
+      implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
+        ApiSubscriptionFieldsTestData.clientId, NonCsp(declarantEori), mock[Request[AnyContent]])
+
+      startMdgStatusService()
+      await(sendValidXml())
+      verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
     "circuit breaker trips after specified number of failures" in {
@@ -103,7 +112,7 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
         resetMockServer()
         startMdgStatusService(ACCEPTED)
         await(sendValidXml())
-        verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedDeclarationStatusPayload.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+        verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
       }
     }
 

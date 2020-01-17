@@ -17,21 +17,19 @@
 package util.externalservices
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.test.Helpers._
+import util.StatusTestXMLData.validBackendStatusResponse
 import util._
 
 import scala.xml.NodeSeq
 
 trait MdgStatusDeclarationService extends WireMockRunner {
-  private val url = urlMatching(CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext)
+  private val url = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext)
 
   val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
 
-  def startMdgStatusService(status: Int = OK, body: NodeSeq = StatusTestXMLData.generateDeclarationStatusResponse(acceptanceOrCreationDate = acceptanceDateVal)): Unit = startService(status, url, body)
-
-  private def startService (status: Int, url: UrlPattern, body: NodeSeq) = {
+  def startMdgStatusService(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
     stubFor(post(url).
       willReturn(
         aResponse()

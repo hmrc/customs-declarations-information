@@ -19,12 +19,11 @@ package uk.gov.hmrc.customs.declarations.information.services
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Result
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorGenericBadRequest
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, Csp, Mrn}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +33,6 @@ import scala.xml.{Elem, PrettyPrinter, TopScope, XML}
 
 @Singleton
 class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResponseFilterService,
-                                         statusResponseValidationService: StatusResponseValidationService,
                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                          override val logger: InformationLogger,
                                          connector: DeclarationStatusConnector,
@@ -42,30 +40,17 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
                                          uniqueIdsService: UniqueIdsService)
                                         (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
 
-  def send[A](mrn: Mrn)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
+  def send[A](searchType: SearchType)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
 
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
-        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, mrn)
+        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
             val xmlResponseBody = XML.loadString(response.body)
-            val badgeId = asr.authorisedAs match {
-              case Csp(_, badgeIdentifier) => badgeIdentifier.get
-              //TODO temporary addition to minimise changes in this ticket. Removed in next ticket.
-              case _ => BadgeIdentifier("BADGEID123")
-            }
-            statusResponseValidationService.validate(xmlResponseBody, badgeId) match {
-              case Right(_) => Right(filterResponse(response, xmlResponseBody))
-              case Left(errorResponse) =>
-                logError(errorResponse)
-                Left(errorResponse.XmlResult.withConversationId)
-              case _ =>
-                logError(ErrorGenericBadRequest)
-                Left(ErrorGenericBadRequest.XmlResult.withConversationId)
-            }
+            Right(filterResponse(response, xmlResponseBody))
           }).recover{
           case e: RuntimeException if e.getCause.isInstanceOf[NotFoundException] =>
             logger.error(s"declaration status call failed with 404: ${e.getMessage}", e)
