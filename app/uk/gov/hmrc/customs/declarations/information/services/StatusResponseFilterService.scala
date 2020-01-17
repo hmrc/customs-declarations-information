@@ -25,15 +25,6 @@ import scala.xml._
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
   import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils._
 
-  /*def createConditionalPrefixTransformer(targetPrefix: String, excludeElementsLabeled: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
-      override def transform(n: Node): Seq[Node] = n match {
-        case e: Elem if e.label != excludeElementsLabeled => e.copy(prefix = targetPrefix)
-        case n => n
-      }
-    })
-  }*/
-
   private val dirPrefixReWriter = createPrefixTransformer("p")
   private val wcoResponsePrefixReWriter = createPrefixTransformer("p1")
   private val wcoPrefixReWriter = createPrefixTransformer("p2")
@@ -45,9 +36,8 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
       xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
       xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
       xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
-      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd ">
+      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
 
       {decStatusDetails.map{ node =>
         val declarations = node \ "Declaration"

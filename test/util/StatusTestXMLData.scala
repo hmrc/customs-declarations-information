@@ -46,18 +46,6 @@ object StatusTestXMLData {
 
   private val wcoPrefixReWriter = createPrefixTransformer("od")
 
-  /*val ImportTradeMovementType: String = "IM4567"
-  val DeclarationType: String = "declaration type"
-  val PartyType: String = "TB"
-  val ExportTradeMovementType: String = "EX4567"
-  val COTradeMovementType: String = "CO4567"
-
-  val ValidImportProcedureCategory: String = "40IUUI"
-  val ValidExportProcedureCategory: String = "10JHGJHGJH"
-  val InValidProcedureCategory: String = "99FGDGFDGF"
-
-  val validCommunicationAddress: String = "hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123"*/
-
   val ValidDeclarationStatusQueryResponseXML: Elem = {
     <p:DeclarationStatusResponse
     xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31"
@@ -427,52 +415,6 @@ object StatusTestXMLData {
     </od:Declaration>
   }
 
-  /*TODO: Remove these if confirmed they are not used anywhere else
-  def statusResponseDeclarationNoCommunicationAddress: Elem =    <xsd_1:declaration>
-    <n3:acceptanceDate>{DateTime.now(DateTimeZone.UTC).minusMonths(2).toString}</n3:acceptanceDate>
-    <n3:tradeMovementType>{ImportTradeMovementType}</n3:tradeMovementType>
-    <n3:procedureCategory>{ValidImportProcedureCategory}</n3:procedureCategory>
-  </xsd_1:declaration>
-
-  def statusResponseDeclarationInvalidAcceptanceDateOld: Elem =    <xsd_1:declaration>
-    <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-    <n3:acceptanceDate>2002-05-30T09:29:47Z</n3:acceptanceDate>
-    <n3:tradeMovementType>{ImportTradeMovementType}</n3:tradeMovementType>
-    <n3:procedureCategory>{ValidImportProcedureCategory}</n3:procedureCategory>
-  </xsd_1:declaration>
-
-  def statusResponseDeclarationInvalidCreationDate: Elem =    <xsd_1:declaration>
-    <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-    <tns_3:creationDate formatCode="string">2002-05-30T09:29:47Z</tns_3:creationDate>
-    <n3:tradeMovementType>{ImportTradeMovementType}</n3:tradeMovementType>
-    <n3:procedureCategory>{ValidImportProcedureCategory}</n3:procedureCategory>
-  </xsd_1:declaration>
-
-  def statusResponseDeclarationNoProcedureCategory: Elem =    <xsd_1:declaration>
-    <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-    <n3:tradeMovementType>{COTradeMovementType}</n3:tradeMovementType>
-    <n3:acceptanceDate>{DateTime.now(DateTimeZone.UTC).minusDays(61).toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))}</n3:acceptanceDate>
-  </xsd_1:declaration>
-
-  def statusResponseDeclarationNoTradeMovementType: Elem =    <xsd_1:declaration>
-    <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-    <n3:acceptanceDate>{DateTime.now(DateTimeZone.UTC).minusDays(61).toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))}</n3:acceptanceDate>
-    <n3:procedureCategory>{ValidImportProcedureCategory}</n3:procedureCategory>
-  </xsd_1:declaration>
-
-  def statusResponseDeclarationNoAcceptanceDate: Elem =    <xsd_1:declaration>
-    <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-    <n3:tradeMovementType>{ImportTradeMovementType}</n3:tradeMovementType>
-    <n3:procedureCategory>{ValidImportProcedureCategory}</n3:procedureCategory>
-  </xsd_1:declaration>
-
-  def statusResponseDeclarationInvalidAcceptanceDateWithMillis: Elem =    <xsd_1:declaration>
-    <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-    <n3:acceptanceDate>2019-04-10T00:00:00.000Z</n3:acceptanceDate>
-    <n3:tradeMovementType>{ImportTradeMovementType}</n3:tradeMovementType>
-    <n3:procedureCategory>{ValidImportProcedureCategory}</n3:procedureCategory>
-  </xsd_1:declaration>*/
-
   def invalidStatusResponse(declarationNode: NodeSeq): NodeSeq = <n1:queryDeclarationInformationResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/" xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/" xmlns:n2="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" xmlns:n3="http://cmm.core.ecf/BaseTypes/cmmDeclarationTypes/trade/2017/02/22/" xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationInformation/v1 queryDeclarationInformationResponse.xsd">
     <n1:responseCommon>
       <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
@@ -499,20 +441,4 @@ object StatusTestXMLData {
       </n1:declarationManagementInformationResponse>
     </n1:responseDetail>
   </n1:queryDeclarationInformationResponse>
-
-  def generateImportDeclarationStatusResponse(): NodeSeq =
-    generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
-
-  def generateExportDeclarationStatusResponse(): NodeSeq =
-    generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
-
-  private def generateDeclarationStatusResponseFromFile(sampleDeclarationFileName: String): NodeSeq = {
-    val xml = XML.loadFile(s"test/resources/sample_xml/$sampleDeclarationFileName")
-
-    val node = (xml \"Declaration")
-
-    val prefixedWCOContent = wcoPrefixReWriter.transform(node.head)
-    val content = generateDeclarationStatusDetailsElement(defaultDateTime, prefixedWCOContent.head.asInstanceOf[Elem])
-    generateRootElements(content)
-  }
 }
