@@ -171,5 +171,5 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
     node.size shouldBe 0
   }
 
-  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationStatusDetails" \ "Declaration"
+  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationStatusDetails" \ "DeclarationMetaData"
 }
