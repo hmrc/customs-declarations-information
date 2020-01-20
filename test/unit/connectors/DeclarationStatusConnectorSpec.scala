@@ -45,12 +45,12 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock[ServiceConfigProvider]
   private val mockInformationConfigService = mock[InformationConfigService]
-  private val mockMdgPayloadCreator = mock[BackendPayloadCreator]
+  private val mockBackendPayloadCreator = mock[BackendPayloadCreator]
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
 
-  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockMdgPayloadCreator, mockServiceConfigProvider, mockInformationConfigService)
+  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService)
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
@@ -63,7 +63,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockMdgPayloadCreator.create(correlationId, date, mrn, apiSubscriptionFieldsResponse)(asr)).thenReturn(expectedStatusPayloadRequest)
+    when(mockBackendPayloadCreator.create(correlationId, date, mrn, apiSubscriptionFieldsResponse)(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
   "DeclarationStatusConnector" can {

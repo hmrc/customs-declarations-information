@@ -87,7 +87,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, apiSubscriptionFieldsResponse, searchType)(TestAuthorisedRequest)
     }
 
-    "return 404 error response when MDG call fails with 404" in new SetUp() {
+    "return 404 error response when backend call fails with 404" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
@@ -98,7 +98,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       result shouldBe Left(ErrorResponse.ErrorNotFound.XmlResult.withConversationId)
     }
 
-    "return 500 error response when MDG call fails" in new SetUp() {
+    "return 500 error response when backend call fails" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],

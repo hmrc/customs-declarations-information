@@ -24,12 +24,12 @@ import util._
 
 import scala.xml.NodeSeq
 
-trait MdgStatusDeclarationService extends WireMockRunner {
+trait BackendStatusDeclarationService extends WireMockRunner {
   private val url = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext)
 
   val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
 
-  def startMdgStatusService(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
+  def startBackendStatusService(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
     stubFor(post(url).
       willReturn(
         aResponse()
@@ -37,9 +37,9 @@ trait MdgStatusDeclarationService extends WireMockRunner {
           .withBody(body.toString())))
   }
 
-  def verifyMdgStatusDecServiceWasCalledWith(requestBody: String,
-                                          expectedAuthToken: String = ExternalServicesConfig.AuthToken,
-                                          maybeUnexpectedAuthToken: Option[String] = None) {
+  def verifyBackendStatusDecServiceWasCalledWith(requestBody: String,
+                                                 expectedAuthToken: String = ExternalServicesConfig.AuthToken,
+                                                 maybeUnexpectedAuthToken: Option[String] = None) {
     verify(1, postRequestedFor(url)
       .withHeader(CONTENT_TYPE, equalTo(XML + "; charset=utf-8"))
       .withHeader(ACCEPT, equalTo(XML))

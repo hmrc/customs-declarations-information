@@ -39,7 +39,7 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
                                  val cc: ControllerComponents,
                                  val logger: InformationLogger)
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
-  
+
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
       val searchType = Mrn(mrn)
       implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
@@ -80,7 +80,7 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
       }
     }
   }
-  
+
   private val actionPipeline: ActionBuilder[AuthorisedRequest, AnyContent] =
     Action andThen
       conversationIdAction andThen

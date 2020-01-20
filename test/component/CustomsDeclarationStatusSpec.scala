@@ -28,7 +28,7 @@ import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.ValidHeaders
 import util.TestData.nonCspBearerToken
 import util.XmlOps.stringToXml
-import util.externalservices.{ApiSubscriptionFieldsService, AuthService, MdgStatusDeclarationService}
+import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
 import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTestXMLData, TestData}
 
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with ExpectedTestResponses
   with Matchers
   with OptionValues
-  with MdgStatusDeclarationService
+  with BackendStatusDeclarationService
   with ApiSubscriptionFieldsService
   with AuthService {
 
@@ -146,7 +146,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   feature("Declaration Information API authorises status requests from CSPs with v1.0 accept header") {
     scenario("An authorised CSP successfully requests a status") {
       Given("A CSP wants the status of a declaration")
-      startMdgStatusService()
+      startBackendStatusService()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -172,7 +172,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
     scenario("An authorised non-CSP successfully requests a status") {
       Given("A non-CSP wants the status of a declaration")
-      startMdgStatusService()
+      startBackendStatusService()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the non-CSP is authorised with its privileged application")
