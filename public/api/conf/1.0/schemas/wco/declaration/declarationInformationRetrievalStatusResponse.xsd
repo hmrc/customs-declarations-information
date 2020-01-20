@@ -22,7 +22,7 @@
       	<xs:element name="DeclarationStatusDetails" minOccurs="1" maxOccurs="unbounded">
 		    <xs:complexType>
 		      <xs:sequence>	
-		      <xs:element name="DeclarationMetaData">
+		      <xs:element name="DeclarationMetadata">
 		          <xs:complexType>
 	                <xs:sequence>
 					  <xs:element name="ReceivedDateTime" minOccurs="0">
