@@ -34,7 +34,8 @@ class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with Befo
 
   protected val propertyName: String = "xsd.locations.statusqueryresponse"
 
-  protected val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd")
+  protected val xsdLocations: Seq[String] = Seq(
+    "/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
   
   def xmlValidationService: XmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
