@@ -59,7 +59,7 @@ object StatusTestXMLData {
     xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd ">
 
       <p:DeclarationStatusDetails>
-        <p:DeclarationMetaData>
+        <p:DeclarationMetadata>
           <p:ReceivedDateTime>
             <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
           </p:ReceivedDateTime>
@@ -74,7 +74,7 @@ object StatusTestXMLData {
           </p:AcceptanceDateTime>
           <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
           <p:VersionID>1</p:VersionID>
-        </p:DeclarationMetaData>
+        </p:DeclarationMetadata>
         <p2:Declaration>
           <p2:FunctionCode>9</p2:FunctionCode>
           <p2:TypeCode>IMZ</p2:TypeCode>
