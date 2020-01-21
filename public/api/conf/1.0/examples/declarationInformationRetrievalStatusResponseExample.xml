@@ -2,11 +2,12 @@
 <p:DeclarationStatusResponse
 	xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
 	xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+	xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
 
 	<p:DeclarationStatusDetails>
-		<p:DeclarationMetadata>
+		<p:Declaration>
 			<p:AcceptanceDateTime>
 				<p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
 			</p:AcceptanceDateTime>
@@ -21,49 +22,49 @@
 			<p:ICS>15</p:ICS>
 			<p:IRC>000</p:IRC>
 			<p:ID>18GB9JLC3CU1LFGVR2</p:ID>
-		</p:DeclarationMetadata>
-		<p:Declaration>
-			<p:FunctionCode>9</p:FunctionCode>
-			<p:TypeCode>IMZ</p:TypeCode>
-			<p:GoodsItemQuantity unitCode="NPR">100</p:GoodsItemQuantity>
-			<p:TotalPackageQuantity>10</p:TotalPackageQuantity>
-			<p:Submitter>
-				<p:ID>GB123456789012000</p:ID>
-			</p:Submitter>
-			<p:GoodsShipment>
-				<p:PreviousDocument>
-					<p:ID>18GBAKZ81EQJ2FGVR</p:ID>
-					<p:TypeCode>DCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>18GBAKZ81EQJ2FGVA</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>18GBAKZ81EQJ2FGVB</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>18GBAKZ81EQJ2FGVC</p:ID>
-					<p:TypeCode>DCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>18GBAKZ81EQJ2FGVD</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>18GBAKZ81EQJ2FGVE</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:UCR>
-					<p:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p:TraderAssignedReferenceID>
-				</p:UCR>
-			</p:GoodsShipment>
 		</p:Declaration>
+		<p2:Declaration>
+			<p2:FunctionCode>9</p2:FunctionCode>
+			<p2:TypeCode>IMZ</p2:TypeCode>
+			<p2:GoodsItemQuantity unitCode="NPR">100</p2:GoodsItemQuantity>
+			<p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
+			<p2:Submitter>
+				<p2:ID>GB123456789012000</p2:ID>
+			</p2:Submitter>
+			<p2:GoodsShipment>
+				<p2:PreviousDocument>
+					<p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
+					<p2:TypeCode>DCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>18GBAKZ81EQJ2FGVB</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>18GBAKZ81EQJ2FGVC</p2:ID>
+					<p2:TypeCode>DCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>18GBAKZ81EQJ2FGVD</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>18GBAKZ81EQJ2FGVE</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:UCR>
+					<p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
+				</p2:UCR>
+			</p2:GoodsShipment>
+		</p2:Declaration>
 	</p:DeclarationStatusDetails>
 
 	<p:DeclarationStatusDetails>
-		<p:DeclarationMetadata>
+		<p:Declaration>
 			<p:AcceptanceDateTime>
 				<p1:DateTimeString formatCode="102">20190703110757Z</p1:DateTimeString>
 			</p:AcceptanceDateTime>
@@ -78,44 +79,44 @@
 			<p:ICS>15</p:ICS>
 			<p:IRC>000</p:IRC>
 			<p:ID>19GB9JLC3CU1LFGVR2</p:ID>
-		</p:DeclarationMetadata>
-		<p:Declaration>
-			<p:FunctionCode>9</p:FunctionCode>
-			<p:TypeCode>IMZ</p:TypeCode>
-			<p:GoodsItemQuantity unitCode="NPR">100</p:GoodsItemQuantity>
-			<p:TotalPackageQuantity>10</p:TotalPackageQuantity>
-			<p:Submitter>
-				<p:ID>GB123456789012000</p:ID>
-			</p:Submitter>
-			<p:GoodsShipment>
-				<p:PreviousDocument>
-					<p:ID>19GBAKZ81EQJ2FGVR</p:ID>
-					<p:TypeCode>DCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>19GBAKZ81EQJ2FGVA</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>19GBAKZ81EQJ2FGVB</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>19GBAKZ81EQJ2FGVC</p:ID>
-					<p:TypeCode>DCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>19GBAKZ81EQJ2FGVD</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:PreviousDocument>
-					<p:ID>19GBAKZ81EQJ2FGVE</p:ID>
-					<p:TypeCode>MCR</p:TypeCode>
-				</p:PreviousDocument>
-				<p:UCR>
-					<p:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p:TraderAssignedReferenceID>
-				</p:UCR>
-			</p:GoodsShipment>
 		</p:Declaration>
+		<p2:Declaration>
+			<p2:FunctionCode>9</p2:FunctionCode>
+			<p2:TypeCode>IMZ</p2:TypeCode>
+			<p2:GoodsItemQuantity unitCode="NPR">100</p2:GoodsItemQuantity>
+			<p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
+			<p2:Submitter>
+				<p2:ID>GB123456789012000</p2:ID>
+			</p2:Submitter>
+			<p2:GoodsShipment>
+				<p2:PreviousDocument>
+					<p2:ID>19GBAKZ81EQJ2FGVR</p2:ID>
+					<p2:TypeCode>DCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>19GBAKZ81EQJ2FGVA</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>19GBAKZ81EQJ2FGVB</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>19GBAKZ81EQJ2FGVC</p2:ID>
+					<p2:TypeCode>DCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>19GBAKZ81EQJ2FGVD</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:PreviousDocument>
+					<p2:ID>19GBAKZ81EQJ2FGVE</p2:ID>
+					<p2:TypeCode>MCR</p2:TypeCode>
+				</p2:PreviousDocument>
+				<p2:UCR>
+					<p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
+				</p2:UCR>
+			</p2:GoodsShipment>
+		</p2:Declaration>
 	</p:DeclarationStatusDetails>
 </p:DeclarationStatusResponse>
