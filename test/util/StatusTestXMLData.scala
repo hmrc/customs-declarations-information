@@ -56,10 +56,10 @@ object StatusTestXMLData {
     xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
     xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd ">
+    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
 
       <p:DeclarationStatusDetails>
-        <p:DeclarationMetadata>
+        <p:Declaration>
           <p:ReceivedDateTime>
             <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
           </p:ReceivedDateTime>
@@ -74,7 +74,7 @@ object StatusTestXMLData {
           </p:AcceptanceDateTime>
           <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
           <p:VersionID>1</p:VersionID>
-        </p:DeclarationMetadata>
+        </p:Declaration>
         <p2:Declaration>
           <p2:FunctionCode>9</p2:FunctionCode>
           <p2:TypeCode>IMZ</p2:TypeCode>

@@ -150,7 +150,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
   private def validateAgainstSchema(xml: NodeSeq): Assertion = {
     val mockConfiguration = mock[Configuration]
     val propertyName: String = "xsd.locations.statusqueryresponse"
-    val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/declarationInformationRetrievalStatusResponse.xsd")
+    val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
 
     when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
     when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
@@ -171,5 +171,5 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
     node.size shouldBe 0
   }
 
-  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationStatusDetails" \ "DeclarationMetadata"
+  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationStatusDetails" \ "Declaration"
 }

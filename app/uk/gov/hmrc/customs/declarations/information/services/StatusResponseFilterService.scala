@@ -51,16 +51,16 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
 
   private def transformDeclarationStatusDetail(mdgDeclaration: NodeSeq, wcoDeclaration: NodeSeq): NodeSeq = {
     <p:DeclarationStatusDetails>
-      <p:DeclarationMetadata>
+      <p:Declaration>
+        {wcoResponsePrefixReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString").map{ dts => <p:AcceptanceDateTime>{dts}</p:AcceptanceDateTime>}}
+        {dirPrefixReWriter.transform(mdgDeclaration \ "VersionID")}
         {dirPrefixReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
         {dirPrefixReWriter.transform(mdgDeclaration \ "GoodsReleasedDateTime")}
         {dirPrefixReWriter.transform(mdgDeclaration \ "ROE")}
         {dirPrefixReWriter.transform(mdgDeclaration \ "ICS")}
         {dirPrefixReWriter.transform(mdgDeclaration \ "IRC")}
-        {wcoResponsePrefixReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString").map{ dts => <p:AcceptanceDateTime>{dts}</p:AcceptanceDateTime>}}
         {dirPrefixReWriter.transform(mdgDeclaration \ "ID")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "VersionID")}
-      </p:DeclarationMetadata>
+      </p:Declaration>
       {wcoPrefixReWriter.transform(wcoDeclaration)}
     </p:DeclarationStatusDetails>
   }
