@@ -43,7 +43,7 @@ import scala.concurrent.Future
 class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
   private val dateTime = new DateTime()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
-  private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestAuthorisedRequest
+  private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
   protected lazy val mockStatusResponseFilterService: StatusResponseFilterService = mock[StatusResponseFilterService]
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
@@ -59,7 +59,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
     when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
-      any[ApiVersion], any[ApiSubscriptionFieldsResponse],
+      any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(mockHttpResponse))
     when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
@@ -70,7 +70,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
     protected lazy val service: DeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockApiSubscriptionFieldsConnector,
       mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService)
 
-    protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
+    protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
       await(service.send(searchType) (vpr, hc))
     }
   }
@@ -81,17 +81,24 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
 
   "Business Service" should {
 
-    "send xml to connector" in new SetUp() {
+    "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, apiSubscriptionFieldsResponse, searchType)(TestAuthorisedRequest)
+      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), searchType)(TestCspAuthorisedRequest)
+    }
+
+    "send xml to connector as non-CSP" in new SetUp() {
+      implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toNonCspAuthorisedRequest(declarantEori)
+      val result: Either[Result, HttpResponse] = send(nonCspRequest)
+      result.right.get.body shouldBe "<xml>transformed</xml>"
+      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, None, searchType)(nonCspRequest)
     }
 
     "return 404 error response when backend call fails with 404" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
-        any[ApiSubscriptionFieldsResponse],
+        any[Option[ApiSubscriptionFieldsResponse]],
         meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new RuntimeException(new NotFoundException("nothing here"))))
       val result: Either[Result, HttpResponse] = send()
 
@@ -102,7 +109,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
-        any[ApiSubscriptionFieldsResponse],
+        any[Option[ApiSubscriptionFieldsResponse]],
         meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
       val result: Either[Result, HttpResponse] = send()
 

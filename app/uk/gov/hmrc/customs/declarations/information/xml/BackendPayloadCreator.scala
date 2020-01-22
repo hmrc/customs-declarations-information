@@ -31,7 +31,7 @@ class BackendPayloadCreator() {
   def create[A](correlationId: CorrelationId,
                 date: DateTime,
                 searchType: SearchType,
-                apiSubscriptionFieldsResponse: ApiSubscriptionFieldsResponse)
+                maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                (implicit asr: AuthorisedRequest[A]): NodeSeq = {
 
     val searchElement = <n1:labelToRename>{searchType.toString}</n1:labelToRename>.copy(label = searchType.label)
@@ -42,7 +42,7 @@ class BackendPayloadCreator() {
     xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusRequest.xsd">
       <n1:requestCommon>
         {Seq[NodeSeq](
-        <n1:clientID>{apiSubscriptionFieldsResponse.fieldsId.toString}</n1:clientID>, Text(newLineAndIndentation),
+        <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>, Text(newLineAndIndentation),
         <n1:conversationID>{asr.conversationId.toString}</n1:conversationID>, Text(newLineAndIndentation),
         <n1:correlationID>{correlationId.toString}</n1:correlationID>)}
         {val as = asr.authorisedAs
@@ -54,7 +54,7 @@ class BackendPayloadCreator() {
             val badgeIdentifierElement: NodeSeq = {badgeId.fold(NodeSeq.Empty)(badge => <v1:badgeIdentifier>{badge.toString}</v1:badgeIdentifier>)}
             Seq[NodeSeq](badgeIdentifierElement, Text(newLineAndIndentation),
               <n1:dateTimeStamp>{date.toString}</n1:dateTimeStamp>, Text(newLineAndIndentation),
-              <v1:authenticatedPartyID>{apiSubscriptionFieldsResponse.fields.authenticatedEori.get}</v1:authenticatedPartyID>, Text(newLineAndIndentation),
+              <v1:authenticatedPartyID>{maybeApiSubscriptionFieldsResponse.get.fields.authenticatedEori.get}</v1:authenticatedPartyID>, Text(newLineAndIndentation),
               <v1:originatingPartyID>{Csp.originatingPartyId(as.asInstanceOf[Csp])}</v1:originatingPartyID>)
         }
         }

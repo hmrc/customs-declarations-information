@@ -41,17 +41,17 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
   "BackendPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
-    def createMrnPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, apiSubscriptionFieldsResponse)
-    def createDucrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ducr, apiSubscriptionFieldsResponse)
-    def createUcrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ucr, apiSubscriptionFieldsResponse)
-    def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, inventoryReference, apiSubscriptionFieldsResponse)
+    def createMrnPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))
+    def createDucrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ducr, Some(apiSubscriptionFieldsResponse))
+    def createUcrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ucr, Some(apiSubscriptionFieldsResponse))
+    def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
 
     "set the clientID" in {
       val result = createMrnPayload()
 
       val rd = result \\ "clientID"
 
-      rd.head.text shouldBe "327d9145-4965-4d28-a2c5-39dedee50334"
+      rd.head.text shouldBe "99999999-9999-9999-9999-999999999999"
     }
 
     "set the conversationID" in {

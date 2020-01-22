@@ -139,6 +139,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   }
 
   private def sendValidXml() = {
-    connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn)
+    connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)
   }
 }

@@ -173,7 +173,6 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     scenario("An authorised non-CSP successfully requests a status") {
       Given("A non-CSP wants the status of a declaration")
       startBackendStatusService()
-      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the non-CSP is authorised with its privileged application")
       authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
