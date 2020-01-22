@@ -4,7 +4,6 @@
 	xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
 	xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
     xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-    xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
 
@@ -40,22 +39,6 @@
 				</p2:PreviousDocument>
 				<p2:PreviousDocument>
 					<p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
-					<p2:TypeCode>MCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>18GBAKZ81EQJ2FGVB</p2:ID>
-					<p2:TypeCode>MCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>18GBAKZ81EQJ2FGVC</p2:ID>
-					<p2:TypeCode>DCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>18GBAKZ81EQJ2FGVD</p2:ID>
-					<p2:TypeCode>MCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>18GBAKZ81EQJ2FGVE</p2:ID>
 					<p2:TypeCode>MCR</p2:TypeCode>
 				</p2:PreviousDocument>
 				<p2:UCR>
@@ -97,22 +80,6 @@
 				</p2:PreviousDocument>
 				<p2:PreviousDocument>
 					<p2:ID>19GBAKZ81EQJ2FGVA</p2:ID>
-					<p2:TypeCode>MCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>19GBAKZ81EQJ2FGVB</p2:ID>
-					<p2:TypeCode>MCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>19GBAKZ81EQJ2FGVC</p2:ID>
-					<p2:TypeCode>DCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>19GBAKZ81EQJ2FGVD</p2:ID>
-					<p2:TypeCode>MCR</p2:TypeCode>
-				</p2:PreviousDocument>
-				<p2:PreviousDocument>
-					<p2:ID>19GBAKZ81EQJ2FGVE</p2:ID>
 					<p2:TypeCode>MCR</p2:TypeCode>
 				</p2:PreviousDocument>
 				<p2:UCR>
