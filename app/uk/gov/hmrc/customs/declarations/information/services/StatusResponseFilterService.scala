@@ -30,7 +30,8 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
     ("http://gov.uk/customs/declarationInformationRetrieval/status/v2" -> "p"),
     ("urn:wco:datamodel:WCO:Response_DS:DMS:2" -> "p1"),
     ("urn:wco:datamodel:WCO:DEC-DMS:2" -> "p2"),
-    ("urn:wco:datamodel:WCO:Declaration_DS:DMS:2" -> "p3")
+    ("urn:wco:datamodel:WCO:Declaration_DS:DMS:2" -> "p3"),
+    ("urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" -> "p4")
   )
 
   def transform(xml: NodeSeq): NodeSeq = {
@@ -44,6 +45,8 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
       xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
       xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
       xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+      xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
 

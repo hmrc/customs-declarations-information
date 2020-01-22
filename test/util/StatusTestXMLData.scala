@@ -44,15 +44,13 @@ object StatusTestXMLData {
 
   val ValidDeclarationStatusQueryResponseXML: Elem = {
     <p:DeclarationStatusResponse
-    xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31"
-    xmlns:clm63055="urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B"
-    xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
-    xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-    xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
-    xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-    xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
+      xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+      xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+      xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+      xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
 
       <p:DeclarationStatusDetails>
         <p:Declaration>
@@ -88,22 +86,6 @@ object StatusTestXMLData {
               <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
               <p2:TypeCode>MCR</p2:TypeCode>
             </p2:PreviousDocument>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVB</p2:ID>
-              <p2:TypeCode>MCR</p2:TypeCode>
-            </p2:PreviousDocument>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVC</p2:ID>
-              <p2:TypeCode>DCR</p2:TypeCode>
-            </p2:PreviousDocument>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVD</p2:ID>
-              <p2:TypeCode>MCR</p2:TypeCode>
-            </p2:PreviousDocument>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVE</p2:ID>
-              <p2:TypeCode>MCR</p2:TypeCode>
-            </p2:PreviousDocument>
             <p2:UCR>
               <p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
             </p2:UCR>
@@ -113,7 +95,6 @@ object StatusTestXMLData {
     </p:DeclarationStatusResponse>
   }
 
-  //TODO: replace with methods below
   val expectedDeclarationStatusPayload: Elem =
     <n1:queryDeclarationInformationRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/"
@@ -135,7 +116,6 @@ object StatusTestXMLData {
       </n1:requestDetail>
     </n1:queryDeclarationInformationRequest>
 
-  //TODO: replace with methods below
   val generateValidStatusResponseWithMultiplePartiesOnly: NodeSeq = <n1:queryDeclarationInformationResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/" xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/" xmlns:n2="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" xmlns:n3="http://cmm.core.ecf/BaseTypes/cmmDeclarationTypes/trade/2017/02/22/" xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationInformation/v1 queryDeclarationInformationResponse.xsd">
     <n1:responseCommon>
       <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
@@ -325,12 +305,12 @@ object StatusTestXMLData {
 
   def generateRootElements(content: Seq[NodeSeq]): Elem = {
     <n1:queryDeclarationstatusResponse
-    xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
-    xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-    xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
-    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
+      xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+      xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+      xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
       <n1:responseCommon>
         <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
       </n1:responseCommon>
@@ -388,22 +368,6 @@ object StatusTestXMLData {
           <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
           <od:TypeCode>MCR</od:TypeCode>
         </od:PreviousDocument>
-        <od:PreviousDocument>
-          <od:ID>18GBAKZ81EQJ2FGVB</od:ID>
-          <od:TypeCode>MCR</od:TypeCode>
-        </od:PreviousDocument>
-        <od:PreviousDocument>
-          <od:ID>18GBAKZ81EQJ2FGVC</od:ID>
-          <od:TypeCode>DCR</od:TypeCode>
-        </od:PreviousDocument>
-        <od:PreviousDocument>
-          <od:ID>18GBAKZ81EQJ2FGVD</od:ID>
-          <od:TypeCode>MCR</od:TypeCode>
-        </od:PreviousDocument>
-        <od:PreviousDocument>
-          <od:ID>18GBAKZ81EQJ2FGVE</od:ID>
-          <od:TypeCode>MCR</od:TypeCode>
-        </od:PreviousDocument>
         <od:UCR>
           <od:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</od:TraderAssignedReferenceID>
         </od:UCR>
@@ -411,34 +375,43 @@ object StatusTestXMLData {
     </od:Declaration>
   }
 
-  def invalidStatusResponse(declarationNode: NodeSeq): NodeSeq = <n1:queryDeclarationInformationResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/" xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/" xmlns:n2="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" xmlns:n3="http://cmm.core.ecf/BaseTypes/cmmDeclarationTypes/trade/2017/02/22/" xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationInformation/v1 queryDeclarationInformationResponse.xsd">
-    <n1:responseCommon>
-      <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
-    </n1:responseCommon>
-    <n1:responseDetail>
-      <n1:declarationManagementInformationResponse>
-        <n2:extensions>
-          <tns_3:value>String</tns_3:value>
-          <tns_3:type>token</tns_3:type>
-        </n2:extensions>
-        <n2:sequenceNumber>0</n2:sequenceNumber>
-        <n2:request>
-          <n2:status>token</n2:status>
-          <n2:id>String</n2:id>
+  def invalidStatusResponse(declarationNode: NodeSeq): NodeSeq =
+    <n1:queryDeclarationInformationResponse
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/"
+      xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1"
+      xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/"
+      xmlns:n2="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/"
+      xmlns:n3="http://cmm.core.ecf/BaseTypes/cmmDeclarationTypes/trade/2017/02/22/"
+      xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/"
+      xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationInformation/v1 queryDeclarationInformationResponse.xsd">
+      <n1:responseCommon>
+        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
+      </n1:responseCommon>
+      <n1:responseDetail>
+        <n1:declarationManagementInformationResponse>
+          <n2:extensions>
+            <tns_3:value>String</tns_3:value>
+            <tns_3:type>token</tns_3:type>
+          </n2:extensions>
           <n2:sequenceNumber>0</n2:sequenceNumber>
+          <n2:request>
+            <n2:status>token</n2:status>
+            <n2:id>String</n2:id>
+            <n2:sequenceNumber>0</n2:sequenceNumber>
+            <n2:timeStamp>2001-12-17T09:30:47Z</n2:timeStamp>
+            <n2:externalId>String</n2:externalId>
+          </n2:request>
+          <n2:id>String</n2:id>
           <n2:timeStamp>2001-12-17T09:30:47Z</n2:timeStamp>
+          <n2:isFinal>true</n2:isFinal>
           <n2:externalId>String</n2:externalId>
-        </n2:request>
-        <n2:id>String</n2:id>
-        <n2:timeStamp>2001-12-17T09:30:47Z</n2:timeStamp>
-        <n2:isFinal>true</n2:isFinal>
-        <n2:externalId>String</n2:externalId>
-          {declarationNode}
-      </n1:declarationManagementInformationResponse>
-    </n1:responseDetail>
-  </n1:queryDeclarationInformationResponse>
+            {declarationNode}
+        </n1:declarationManagementInformationResponse>
+      </n1:responseDetail>
+    </n1:queryDeclarationInformationResponse>
 
-  def generateImportDeclarationStatusResponse(): NodeSeq =
+  /*def generateImportDeclarationStatusResponse(): NodeSeq =
     generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
 
   def generateExportDeclarationStatusResponse(): NodeSeq =
@@ -452,5 +425,5 @@ object StatusTestXMLData {
     val prefixedWCOContent = wcoPrefixReWriter.transform(node.head)
     val content = generateDeclarationStatusDetailsElement(defaultDateTime, prefixedWCOContent.head.asInstanceOf[Elem])
     generateRootElements(content)
-  }
+  }*/
 }
