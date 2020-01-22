@@ -25,11 +25,19 @@ import scala.xml._
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
   import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils._
 
-  private val dirPrefixReWriter = createPrefixTransformer("p")
-  private val wcoResponsePrefixReWriter = createPrefixTransformer("p1")
-  private val wcoPrefixReWriter = createPrefixTransformer("p2")
+  private val outputXmlNamespaceBindings = Map(
+    ("http://www.w3.org/2001/XMLSchema-instance" -> "xsi"),
+    ("http://gov.uk/customs/declarationInformationRetrieval/status/v2" -> "p"),
+    ("urn:wco:datamodel:WCO:Response_DS:DMS:2" -> "p1"),
+    ("urn:wco:datamodel:WCO:DEC-DMS:2" -> "p2"),
+    ("urn:wco:datamodel:WCO:Declaration_DS:DMS:2" -> "p3")
+  )
 
   def transform(xml: NodeSeq): NodeSeq = {
+    val inputPrefixToUriMap = extractNamespaceBindings(xml.head.asInstanceOf[Elem]).map( nsb => (nsb.prefix -> nsb.uri)).toMap
+    val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputXmlNamespaceBindings)
+    val prefixReWriter = createDiscerningPrefixTransformer(inputPrefixToOutputPrefixMap)
+
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
 
     <p:DeclarationStatusResponse
@@ -44,24 +52,21 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
         val mdgDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
         val wcoDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
 
-        transformDeclarationStatusDetail(mdgDeclaration, wcoDeclaration)
+        <p:DeclarationStatusDetails>
+          {prefixReWriter.transform(mdgDeclaration)}
+          {prefixReWriter.transform(wcoDeclaration)}
+        </p:DeclarationStatusDetails>
       }}
     </p:DeclarationStatusResponse>
   }
 
-  private def transformDeclarationStatusDetail(mdgDeclaration: NodeSeq, wcoDeclaration: NodeSeq): NodeSeq = {
-    <p:DeclarationStatusDetails>
-      <p:Declaration>
-        {wcoResponsePrefixReWriter.transform(mdgDeclaration \ "AcceptanceDateTime" \ "DateTimeString").map{ dts => <p:AcceptanceDateTime>{dts}</p:AcceptanceDateTime>}}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "VersionID")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "ReceivedDateTime")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "GoodsReleasedDateTime")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "ROE")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "ICS")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "IRC")}
-        {dirPrefixReWriter.transform(mdgDeclaration \ "ID")}
-      </p:Declaration>
-      {wcoPrefixReWriter.transform(wcoDeclaration)}
-    </p:DeclarationStatusDetails>
+  private def constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap: Map[String, String], outputUriToPrefixMap: Map[String, String]): Map[String, String] = {
+    inputPrefixToUriMap.keySet.foldLeft(Seq.empty[(String, String)]){ (inputPrefixToOutputPrefix, inputPrefix) =>
+      val inputUri = inputPrefixToUriMap(inputPrefix)
+      val outputPrefix = outputUriToPrefixMap.getOrElse(inputUri, inputPrefix)
+      val inputToOutputPrefix: (String, String) = (inputPrefix, outputPrefix)
+
+      inputPrefixToOutputPrefix :+ inputToOutputPrefix
+    }.toMap
   }
 }

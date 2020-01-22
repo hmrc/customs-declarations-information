@@ -16,10 +16,8 @@
 
 package util
 
-
 import org.joda.time.format.DateTimeFormatterBuilder
 import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils.createPrefixTransformer
 
 import scala.xml.{Elem, NodeSeq, XML}
 
@@ -43,8 +41,6 @@ object StatusTestXMLData {
     .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
     .appendTimeZoneOffset("Z", false, 2, 2)
     .toFormatter
-
-  private val wcoPrefixReWriter = createPrefixTransformer("od")
 
   val ValidDeclarationStatusQueryResponseXML: Elem = {
     <p:DeclarationStatusResponse
@@ -358,7 +354,7 @@ object StatusTestXMLData {
   def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime): Elem = {
     <n1:Declaration>
       <n1:AcceptanceDateTime>
-        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</n1:DateTimeString>
+        <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
       </n1:AcceptanceDateTime>
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
       <n1:VersionID>1</n1:VersionID>
@@ -441,4 +437,20 @@ object StatusTestXMLData {
       </n1:declarationManagementInformationResponse>
     </n1:responseDetail>
   </n1:queryDeclarationInformationResponse>
+
+  def generateImportDeclarationStatusResponse(): NodeSeq =
+    generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
+
+  def generateExportDeclarationStatusResponse(): NodeSeq =
+    generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
+
+  private def generateDeclarationStatusResponseFromFile(sampleDeclarationFileName: String): NodeSeq = {
+    val xml = XML.loadFile(s"test/resources/sample_xml/$sampleDeclarationFileName")
+
+    val node = (xml \"Declaration")
+
+    val prefixedWCOContent = wcoPrefixReWriter.transform(node.head)
+    val content = generateDeclarationStatusDetailsElement(defaultDateTime, prefixedWCOContent.head.asInstanceOf[Elem])
+    generateRootElements(content)
+  }
 }

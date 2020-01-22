@@ -20,10 +20,13 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, NamespaceBinding, Node}
 
 object HelperXMLUtils {
-  def createPrefixTransformer(targetPrefix: String): RuleTransformer = {
+  def createDiscerningPrefixTransformer(inputPrefixToOutputPrefixMap: Map[String, String]): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
-        case e: Elem => e.copy(prefix = targetPrefix)
+        case e: Elem => {
+          val targetPrefix = inputPrefixToOutputPrefixMap.getOrElse(e.prefix,e.prefix)
+          e.copy(prefix = targetPrefix)
+        }
         case n => n
       }
     })
