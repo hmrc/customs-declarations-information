@@ -3,6 +3,8 @@
 	xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
 	xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
 	xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+    xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+    xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
 
@@ -11,17 +13,17 @@
 			<p:AcceptanceDateTime>
 				<p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
 			</p:AcceptanceDateTime>
+			<p:ID>18GB9JLC3CU1LFGVR2</p:ID>
 			<p:VersionID>1</p:VersionID>
 			<p:ReceivedDateTime>
 				<p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
 			</p:ReceivedDateTime>
-			<p:GoodsReleasedDateTime>
-				<p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
-			</p:GoodsReleasedDateTime>
+            <p:GoodsReleasedDateTime>
+                <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
+            </p:GoodsReleasedDateTime>
 			<p:ROE>6</p:ROE>
 			<p:ICS>15</p:ICS>
 			<p:IRC>000</p:IRC>
-			<p:ID>18GB9JLC3CU1LFGVR2</p:ID>
 		</p:Declaration>
 		<p2:Declaration>
 			<p2:FunctionCode>9</p2:FunctionCode>
@@ -68,17 +70,17 @@
 			<p:AcceptanceDateTime>
 				<p1:DateTimeString formatCode="102">20190703110757Z</p1:DateTimeString>
 			</p:AcceptanceDateTime>
+			<p:ID>19GB9JLC3CU1LFGVR2</p:ID>
 			<p:VersionID>1</p:VersionID>
 			<p:ReceivedDateTime>
 				<p:DateTimeString formatCode="102">20190703110757Z</p:DateTimeString>
 			</p:ReceivedDateTime>
-			<p:GoodsReleasedDateTime>
-				<p:DateTimeString formatCode="102">20190703110757Z</p:DateTimeString>
-			</p:GoodsReleasedDateTime>
+            <p:GoodsReleasedDateTime>
+                <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
+            </p:GoodsReleasedDateTime>
 			<p:ROE>6</p:ROE>
 			<p:ICS>15</p:ICS>
 			<p:IRC>000</p:IRC>
-			<p:ID>19GB9JLC3CU1LFGVR2</p:ID>
 		</p:Declaration>
 		<p2:Declaration>
 			<p2:FunctionCode>9</p2:FunctionCode>
