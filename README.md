@@ -7,10 +7,10 @@ The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in 
 
 
 ## GET Status Request 
- ### `GET /mrn/{valid mrn}/status`
- ### `GET /ducr/{valid ducr}/status`
- ### `GET /ucr/{valid ucr}/status`
- ### `GET /inventory-reference/{valid inventoryReference}/status`
+ ### `GET /mrn/{mrn}/status`
+ ### `GET /ducr/{ducr}/status`
+ ### `GET /ucr/{ucr}/status`
+ ### `GET /inventory-reference/{inventoryReference}/status`
 
  ### curl command (using mrn as an example)
  ```
