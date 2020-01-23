@@ -48,12 +48,16 @@ object StatusTestXMLData {
       xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
       xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
       xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-      xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
 
       <p:DeclarationStatusDetails>
         <p:Declaration>
+          <p:AcceptanceDateTime>
+            <p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
+          </p:AcceptanceDateTime>
+          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
+          <p:VersionID>1</p:VersionID>
           <p:ReceivedDateTime>
             <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
           </p:ReceivedDateTime>
@@ -63,11 +67,6 @@ object StatusTestXMLData {
           <p:ROE>6</p:ROE>
           <p:ICS>15</p:ICS>
           <p:IRC>000</p:IRC>
-          <p:AcceptanceDateTime>
-            <p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
-          </p:AcceptanceDateTime>
-          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
-          <p:VersionID>1</p:VersionID>
         </p:Declaration>
         <p2:Declaration>
           <p2:FunctionCode>9</p2:FunctionCode>
@@ -115,187 +114,6 @@ object StatusTestXMLData {
         </n1:declarationManagementInformationRequest>
       </n1:requestDetail>
     </n1:queryDeclarationInformationRequest>
-
-  //TODO: not used
-  val generateValidStatusResponseWithMultiplePartiesOnly: NodeSeq = <n1:queryDeclarationInformationResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/" xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/" xmlns:n2="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" xmlns:n3="http://cmm.core.ecf/BaseTypes/cmmDeclarationTypes/trade/2017/02/22/" xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationInformation/v1 queryDeclarationInformationResponse.xsd">
-    <n1:responseCommon>
-      <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
-    </n1:responseCommon>
-    <n1:responseDetail>
-      <n1:declarationManagementInformationResponse>
-        <n2:extensions>
-          <tns_3:value>String</tns_3:value>
-          <tns_3:type>token</tns_3:type>
-        </n2:extensions>
-        <n2:sequenceNumber>0</n2:sequenceNumber>
-        <n2:request>
-          <n2:status>token</n2:status>
-          <n2:id>String</n2:id>
-          <n2:sequenceNumber>0</n2:sequenceNumber>
-          <n2:timeStamp>2001-12-17T09:30:47Z</n2:timeStamp>
-          <n2:externalId>String</n2:externalId>
-        </n2:request>
-        <n2:id>String</n2:id>
-        <n2:timeStamp>2001-12-17T09:30:47Z</n2:timeStamp>
-        <n2:isFinal>true</n2:isFinal>
-        <n2:externalId>String</n2:externalId>
-        <xsd_1:declaration>
-          <tns_3:isCurrent>true</tns_3:isCurrent>
-          <tns_3:isDisplayable>true</tns_3:isDisplayable>
-          <n3:extensions>
-            <tns_3:value>String</tns_3:value>
-            <tns_3:type>token</tns_3:type>
-          </n3:extensions>
-          <n3:totalGrossMass>0</n3:totalGrossMass>
-          <n3:modeOfEntry>token</n3:modeOfEntry>
-          <n3:communicationAddress>hmrcgwid:144b80b0-b46e-4c56-be1a-83b36649ac46:ad3a8c50-fc1c-4b81-a56cbb153aced791:BADGEID123</n3:communicationAddress>
-          <n3:receiveDate>2001-12-17T09:30:47Z</n3:receiveDate>
-          <n3:reference>String</n3:reference>
-          <n3:submitterReference>String</n3:submitterReference>
-          <n3:goodsCommunityStatus>token</n3:goodsCommunityStatus>
-          <n3:loadingListCount>0</n3:loadingListCount>
-          <n3:invoiceAmount>0</n3:invoiceAmount>
-          <n3:procedureCategory>token</n3:procedureCategory>
-          <n3:batchId>String</n3:batchId>
-          <n3:specificCircumstance>token</n3:specificCircumstance>
-          <xsd_1:additionalDocuments>
-            <n3:amount>0</n3:amount>
-            <n3:sequenceNumber>0</n3:sequenceNumber>
-            <n3:quantity>0</n3:quantity>
-            <n3:identifier>String</n3:identifier>
-            <n3:type>token</n3:type>
-            <n3:effectiveDate>2001-12-17T09:30:47Z</n3:effectiveDate>
-            <n3:issuerName>String</n3:issuerName>
-            <n3:exemption>token</n3:exemption>
-            <n3:name>String</n3:name>
-          </xsd_1:additionalDocuments>
-          <xsd_1:additionalInformation>
-            <n3:limitDate>2001-12-17T09:30:47Z</n3:limitDate>
-            <n3:sequenceNumber>0</n3:sequenceNumber>
-            <n3:text>String</n3:text>
-            <n3:type>token</n3:type>
-            <n3:code>String</n3:code>
-            <n3:pointer>String</n3:pointer>
-          </xsd_1:additionalInformation>
-          <xsd_1:amendments>
-            <n3:declarationVersion>0</n3:declarationVersion>
-            <n3:effectiveDate>2001-12-17T09:30:47Z</n3:effectiveDate>
-            <n3:sequenceNumber>0</n3:sequenceNumber>
-            <n3:reasonText>String</n3:reasonText>
-            <n3:reason>token</n3:reason>
-            <n3:pointer>String</n3:pointer>
-          </xsd_1:amendments>
-          <xsd_1:countryRegions>
-            <n3:type>token</n3:type>
-            <n3:sequenceNumber>0</n3:sequenceNumber>
-            <n3:countrySubDivisionId>token</n3:countrySubDivisionId>
-            <n3:country>token</n3:country>
-            <n3:countryGroup>token</n3:countryGroup>
-            <n3:subRole>token</n3:subRole>
-          </xsd_1:countryRegions>
-          <xsd_1:currencies>
-            <tns:exchangeRate>0</tns:exchangeRate>
-            <tns:sequenceNumber>0</tns:sequenceNumber>
-            <tns:code>token</tns:code>
-          </xsd_1:currencies>
-          <xsd_1:customsOffices>
-            <n3:customsOfficeName>String</n3:customsOfficeName>
-            <n3:type>token</n3:type>
-            <xsd_1:customsOfficeID>
-              <tns:type>token</tns:type>
-              <tns:number>String</tns:number>
-            </xsd_1:customsOfficeID>
-          </xsd_1:customsOffices>
-          <xsd_1:guarantees>
-            <n3:partyID>String</n3:partyID>
-            <n3:sequenceNumber>0</n3:sequenceNumber>
-            <n3:grn>String</n3:grn>
-            <n3:otherReference>String</n3:otherReference>
-            <n3:type>token</n3:type>
-            <n3:dutyAmount>0</n3:dutyAmount>
-            <n3:accessCode>String</n3:accessCode>
-            <xsd_1:customsOfficeID>
-              <tns:type>token</tns:type>
-              <tns:number>String</tns:number>
-            </xsd_1:customsOfficeID>
-          </xsd_1:guarantees>
-          <xsd_1:incidents>
-            <n3:text>String</n3:text>
-            <n3:sequenceNumber>0</n3:sequenceNumber>
-          </xsd_1:incidents>
-          <xsd_1:parties>
-            <n3:status>token</n3:status>
-            <n3:type>TB</n3:type>
-            <n3:partyName>String</n3:partyName>
-            <n3:subRole>token</n3:subRole>
-            <n3:authorizationType>token</n3:authorizationType>
-            <xsd_1:partyIdentification>
-              <tns:type>token</tns:type>
-              <tns:number>1</tns:number>
-            </xsd_1:partyIdentification>
-            <xsd_1:contactPerson>
-              <n3:name>String</n3:name>
-              <xsd_1:contactMechanisms>
-                <tns_3:invalidDate>2001-12-17T09:30:47Z</tns_3:invalidDate>
-                <tns_3:effectiveDate>2001-12-17T09:30:47Z</tns_3:effectiveDate>
-                <tns:identification>String</tns:identification>
-                <tns:purpose>token</tns:purpose>
-                <tns:type>token</tns:type>
-              </xsd_1:contactMechanisms>
-              <xsd_1:physicalAddress>
-                <tns:countrySubDivisionId>String</tns:countrySubDivisionId>
-                <tns:type>token</tns:type>
-                <tns:streetAndNumber>String</tns:streetAndNumber>
-                <tns:countrySubDivisionName>String</tns:countrySubDivisionName>
-                <tns:cityName>String</tns:cityName>
-                <tns:zipCode>String</tns:zipCode>
-                <tns:houseNumberExtension>String</tns:houseNumberExtension>
-                <tns:houseNumber>0</tns:houseNumber>
-                <tns:streetName>String</tns:streetName>
-                <tns:country>
-                  <tns:code>token</tns:code>
-                </tns:country>
-              </xsd_1:physicalAddress>
-            </xsd_1:contactPerson>
-            <xsd_1:contactMechanisms>
-              <tns_3:invalidDate>2001-12-17T09:30:47Z</tns_3:invalidDate>
-              <tns_3:effectiveDate>2001-12-17T09:30:47Z</tns_3:effectiveDate>
-              <tns:identification>String</tns:identification>
-              <tns:purpose>token</tns:purpose>
-              <tns:type>token</tns:type>
-            </xsd_1:contactMechanisms>
-            <xsd_1:physicalAddress>
-              <tns:countrySubDivisionId>String</tns:countrySubDivisionId>
-              <tns:type>token</tns:type>
-              <tns:streetAndNumber>String</tns:streetAndNumber>
-              <tns:countrySubDivisionName>String</tns:countrySubDivisionName>
-              <tns:cityName>String</tns:cityName>
-              <tns:zipCode>String</tns:zipCode>
-              <tns:houseNumberExtension>String</tns:houseNumberExtension>
-              <tns:houseNumber>0</tns:houseNumber>
-              <tns:streetName>String</tns:streetName>
-              <tns:country>
-                <tns:code>token</tns:code>
-              </tns:country>
-            </xsd_1:physicalAddress>
-          </xsd_1:parties>
-          <xsd_1:parties>
-            <xsd_1:partyIdentification>
-              <tns:number>2</tns:number>
-            </xsd_1:partyIdentification>
-          </xsd_1:parties>
-          <xsd_1:parties></xsd_1:parties>
-          <xsd_1:signature>
-            <n3:sign>UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</n3:sign>
-            <n3:name>String</n3:name>
-            <n3:place>String</n3:place>
-            <n3:timeStamp>2001-12-17T09:30:47Z</n3:timeStamp>
-            <n3:authentication>String</n3:authentication>
-          </xsd_1:signature>
-        </xsd_1:declaration>
-      </n1:declarationManagementInformationResponse>
-    </n1:responseDetail>
-  </n1:queryDeclarationInformationResponse>
 
   def generateDeclarationStatusResponse(noOfDeclarationStatusResponses: Int = 1, acceptanceOrCreationDate: DateTime): NodeSeq = {
     val items = 0 until noOfDeclarationStatusResponses
@@ -453,8 +271,6 @@ object StatusTestXMLData {
   }
 
   private def getWcoDeclarationWithAllElementsPopulated(): Node = {
-    val xml = XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml")
-
-    xml.head
+    XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml").head
   }
 }

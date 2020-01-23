@@ -52,7 +52,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
 
   "Status Response Filter Service" should {
 
-    /*"ensure output passes schema validation" in new SetUp {
+    "ensure output passes schema validation" in new SetUp {
       validateAgainstSchema(statusResponseWithAllValues.head)
     }
 
@@ -145,10 +145,9 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
     "handle missing VersionID element in MDG response" in new SetUp {
       testForMissingElement("VersionID")
     }
-*/
-    "handle future extension of optional fields being returned" in new SetUp {
-      val responsesWithAllValues: NodeSeq = service.transform(
-        generateDeclarationStatusResponseContainingAllOptionalElements(defaultDateTime))
+
+    "handle future extension where all optional fields are returned" in new SetUp {
+      val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponseContainingAllOptionalElements(defaultDateTime))
 
       validateAgainstSchema(responsesWithAllValues.head)
     }
