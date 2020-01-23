@@ -20,7 +20,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, NamespaceBinding, Node}
 
 object HelperXMLUtils {
-  def createDiscerningPrefixTransformer(inputPrefixToOutputPrefixMap: Map[String, String]): RuleTransformer = {
+  def createPrefixTransformer(inputPrefixToOutputPrefixMap: Map[String, String]): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case e: Elem => {
@@ -32,12 +32,15 @@ object HelperXMLUtils {
     })
   }
 
-  def extractNamespaceBindings(element: Elem): Seq[NamespaceBinding] = {
-    walkNamespaceBindingHierarchy(element.scope)
+  def extractNamespaceBindings(node: Node): Seq[NamespaceBinding] = {
+    node match {
+      case element: Elem => walkNamespaceBindingHierarchy(element.scope)
+      case _ => Seq()
+    }
   }
 
   @tailrec
-  private def walkNamespaceBindingHierarchy(ns: NamespaceBinding, childBindings: Seq[NamespaceBinding] = Seq.empty): Seq[NamespaceBinding] = {
+  def walkNamespaceBindingHierarchy(ns: NamespaceBinding, childBindings: Seq[NamespaceBinding] = Seq.empty): Seq[NamespaceBinding] = {
     if (ns.uri == null){
       childBindings
     }

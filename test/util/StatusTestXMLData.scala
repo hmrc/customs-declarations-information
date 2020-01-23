@@ -19,7 +19,7 @@ package util
 import org.joda.time.format.DateTimeFormatterBuilder
 import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
 
-import scala.xml.{Elem, NodeSeq, XML}
+import scala.xml.{Elem, Node, NodeSeq, XML}
 
 object StatusTestXMLData {
 
@@ -116,6 +116,7 @@ object StatusTestXMLData {
       </n1:requestDetail>
     </n1:queryDeclarationInformationRequest>
 
+  //TODO: not used
   val generateValidStatusResponseWithMultiplePartiesOnly: NodeSeq = <n1:queryDeclarationInformationResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd_1="http://trade.core.ecf/messages/2017/03/31/" xmlns:n1="http://gov.uk/customs/retrieveDeclarationInformation/v1" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/" xmlns:n2="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" xmlns:n3="http://cmm.core.ecf/BaseTypes/cmmDeclarationTypes/trade/2017/02/22/" xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationInformation/v1 queryDeclarationInformationResponse.xsd">
     <n1:responseCommon>
       <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
@@ -298,12 +299,12 @@ object StatusTestXMLData {
 
   def generateDeclarationStatusResponse(noOfDeclarationStatusResponses: Int = 1, acceptanceOrCreationDate: DateTime): NodeSeq = {
     val items = 0 until noOfDeclarationStatusResponses
-    val content = items.map(index => generateDeclarationStatusDetailsElement(acceptanceOrCreationDate.plusMonths(index), generateWCODeclaration()))
+    val content = items.map(index => generateDeclarationStatusDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate.plusMonths(index)), generateStandardResponseWCODeclaration()))
 
     generateRootElements(content)
   }
 
-  def generateRootElements(content: Seq[NodeSeq]): Elem = {
+  private def generateRootElements(content: Seq[NodeSeq]): Elem = {
     <n1:queryDeclarationstatusResponse
       xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
       xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
@@ -324,20 +325,54 @@ object StatusTestXMLData {
     </n1:queryDeclarationstatusResponse>
   }
 
-  def generateDeclarationStatusDetailsElement(acceptanceOrCreationDate: DateTime, wcoDeclaration: Elem): NodeSeq = {
+  private def generateDeclarationStatusDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq = {
     <n1:retrieveDeclarationStatusDetails>
-      {generateHMRCDeclaration(acceptanceOrCreationDate)}
+      {hmrcDeclaration}
       {wcoDeclaration}
     </n1:retrieveDeclarationStatusDetails>
   }
 
-  def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime): Elem = {
+  private def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime, withOptionalElements: Boolean = false): Elem = {
     <n1:Declaration>
       <n1:AcceptanceDateTime>
         <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
       </n1:AcceptanceDateTime>
+      {if (withOptionalElements){
+        <n1:CancellationDateTime>
+          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+        </n1:CancellationDateTime>
+        <n1:FunctionalReferenceID>token</n1:FunctionalReferenceID>
+      }}
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
+      {if (withOptionalElements){
+        <n1:RejectionDateTime>
+          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+        </n1:RejectionDateTime>
+      }}
       <n1:VersionID>1</n1:VersionID>
+      {if (withOptionalElements){
+        <n1:DutyTaxFee>
+          <n1:Payment>
+            <n1:ReferenceID >token</n1:ReferenceID>
+            <n1:TaxAssessedAmount currencyID="GBP">0.0</n1:TaxAssessedAmount>
+            <n1:DueDateTime>
+              <otnds:DateTimeString formatCode="102">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+            </n1:DueDateTime>
+            <n1:PaymentAmount currencyID="GBP">0.0</n1:PaymentAmount>
+            <n1:ObligationGuarantee>
+              <n1:ReferenceID>token</n1:ReferenceID>
+            </n1:ObligationGuarantee>
+          </n1:Payment>
+        </n1:DutyTaxFee>
+        <n1:GoodsShipment>
+          <n1:GovernmentAgencyGoodsItem>
+            <n1:SequenceNumeric>0.0</n1:SequenceNumeric>
+            <n1:Commodity>
+              <n1:DutyTaxFee/>
+            </n1:Commodity>
+          </n1:GovernmentAgencyGoodsItem>
+        </n1:GoodsShipment>
+      }}
       <n1:ReceivedDateTime>
         <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(-1).toString(dateTimeFormat)}</n1:DateTimeString>
       </n1:ReceivedDateTime>
@@ -350,7 +385,7 @@ object StatusTestXMLData {
     </n1:Declaration>
   }
 
-  def generateWCODeclaration(): Elem = {
+  private def generateStandardResponseWCODeclaration(): Elem = {
     <od:Declaration>
       <od:FunctionCode>9</od:FunctionCode>
       <od:TypeCode>IMZ</od:TypeCode>
@@ -411,19 +446,15 @@ object StatusTestXMLData {
       </n1:responseDetail>
     </n1:queryDeclarationInformationResponse>
 
-  /*def generateImportDeclarationStatusResponse(): NodeSeq =
-    generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
+  def generateDeclarationStatusResponseContainingAllOptionalElements(acceptanceOrCreationDate: DateTime): NodeSeq = {
+    val content = generateDeclarationStatusDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate, withOptionalElements = true), getWcoDeclarationWithAllElementsPopulated())
 
-  def generateExportDeclarationStatusResponse(): NodeSeq =
-    generateDeclarationStatusResponseFromFile("example_submission_declaration_imports.xml")
-
-  private def generateDeclarationStatusResponseFromFile(sampleDeclarationFileName: String): NodeSeq = {
-    val xml = XML.loadFile(s"test/resources/sample_xml/$sampleDeclarationFileName")
-
-    val node = (xml \"Declaration")
-
-    val prefixedWCOContent = wcoPrefixReWriter.transform(node.head)
-    val content = generateDeclarationStatusDetailsElement(defaultDateTime, prefixedWCOContent.head.asInstanceOf[Elem])
     generateRootElements(content)
-  }*/
+  }
+
+  private def getWcoDeclarationWithAllElementsPopulated(): Node = {
+    val xml = XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml")
+
+    xml.head
+  }
 }

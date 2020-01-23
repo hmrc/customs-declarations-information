@@ -19,25 +19,29 @@ package uk.gov.hmrc.customs.declarations.information.services
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
-import scala.xml._
+import scala.xml.NodeSeq
+
 
 @Singleton
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
   import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils._
 
-  private val outputXmlNamespaceBindings = Map(
+  private val outputUriToPrefixMap = Map(
     ("http://www.w3.org/2001/XMLSchema-instance" -> "xsi"),
     ("http://gov.uk/customs/declarationInformationRetrieval/status/v2" -> "p"),
-    ("urn:wco:datamodel:WCO:Response_DS:DMS:2" -> "p1"),
-    ("urn:wco:datamodel:WCO:DEC-DMS:2" -> "p2"),
-    ("urn:wco:datamodel:WCO:Declaration_DS:DMS:2" -> "p3"),
+    ("urn:wco:datamodel:WCO:Response_DS:DMS:2" -> "p1"),    //wco response elements definition name space
+    ("urn:wco:datamodel:WCO:DEC-DMS:2" -> "p2"),            //wco Declaration elements definition name space
+    ("urn:wco:datamodel:WCO:Declaration_DS:DMS:2" -> "p3"), //wco Declaration complex type definition
     ("urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" -> "p4")
   )
 
   def transform(xml: NodeSeq): NodeSeq = {
-    val inputPrefixToUriMap = extractNamespaceBindings(xml.head.asInstanceOf[Elem]).map( nsb => (nsb.prefix -> nsb.uri)).toMap
-    val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputXmlNamespaceBindings)
-    val prefixReWriter = createDiscerningPrefixTransformer(inputPrefixToOutputPrefixMap)
+    val inputPrefixToUriMap = extractNamespaceBindings(xml.head)
+      .map( nsb => (nsb.prefix -> nsb.uri))
+      .toMap
+
+    val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
+    val prefixReWriter = createPrefixTransformer(inputPrefixToOutputPrefixMap)
 
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
 
