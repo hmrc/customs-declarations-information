@@ -45,7 +45,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestAuthorisedRequest
+  private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestCspAuthorisedRequest
   private implicit val mockInformationLogger: InformationLogger = mock[InformationLogger]
 
   override protected def beforeAll() {

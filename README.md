@@ -3,13 +3,16 @@
 
 This API permits requesting the status of a declaration.
 
-The user must supply a movement reference number (MRN) as a parameter in the request URL. The endpoint returns a set of latest status details for the MRN.
+The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in the request URL. The endpoint returns a set of latest status details.
 
 
 ## GET Status Request 
- ### `GET /mrn/{valid mrn}/status`
+ ### `GET /mrn/{mrn}/status`
+ ### `GET /ducr/{ducr}/status`
+ ### `GET /ucr/{ucr}/status`
+ ### `GET /inventory-reference/{inventoryReference}/status`
 
- ### curl command
+ ### curl command (using mrn as an example)
  ```
   curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/status" \
    -H 'Accept: application/vnd.hmrc.1.0+xml' \
@@ -75,13 +78,13 @@ that `default` configuration is declared directly inside the `customs-declaratio
             host = some.host
             port = 80
             bearer-token = "some_token"
-            context = /declarations/retrieveinformation/v1
+            context = /declarations/querystatusinformation/v1
 
             stub {
               host = localhost
               port = 9479
               bearer-token = "some_stub_token"
-              context = /declarations/retrieveinformation/v1
+              context = /declarations/querystatusinformation/v1
             }
           }
         }

@@ -26,19 +26,19 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.circuitbreaker.UnhealthyServiceException
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp, VersionOne}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
 import util.TestData._
 import util._
-import util.externalservices.MdgStatusDeclarationService
+import util.externalservices.BackendStatusDeclarationService
 
 class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
   with MockitoSugar
-  with MdgStatusDeclarationService {
+  with BackendStatusDeclarationService {
 
   private lazy val connector = app.injector.instanceOf[DeclarationStatusConnector]
 
@@ -69,20 +69,29 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
     GuiceApplicationBuilder(overrides = Seq(TestModule.asGuiceableModule)).configure(Map(
       "microservice.services.declaration-status.host" -> Host,
       "microservice.services.declaration-status.port" -> Port,
-      "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext,
+      "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext,
       "microservice.services.declaration-status.bearer-token" -> AuthToken
     )).build()
 
   "DeclarationStatusConnector" should {
 
-    "make a correct request" in {
-      startMdgStatusService()
+    "make a correct request for a CSP" in {
+      startBackendStatusService()
       await(sendValidXml())
-      verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedDeclarationStatusPayload.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+      verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+    }
+
+    "make a correct request for a non-CSP" in {
+      implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
+        ApiSubscriptionFieldsTestData.clientId, NonCsp(declarantEori), mock[Request[AnyContent]])
+
+      startBackendStatusService()
+      await(sendValidXml())
+      verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
     "circuit breaker trips after specified number of failures" in {
-      startMdgStatusService(INTERNAL_SERVER_ERROR)
+      startBackendStatusService(INTERNAL_SERVER_ERROR)
 
       1 to numberOfCallsToTriggerStateChange foreach { _ =>
         val k = intercept[Upstream5xxResponse](await(sendValidXml()))
@@ -95,30 +104,30 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       }
 
       resetMockServer()
-      startMdgStatusService(ACCEPTED)
+      startBackendStatusService(ACCEPTED)
 
       Thread.sleep(unavailablePeriodDurationInMillis)
 
       1 to 5 foreach { _ =>
         resetMockServer()
-        startMdgStatusService(ACCEPTED)
+        startBackendStatusService(ACCEPTED)
         await(sendValidXml())
-        verifyMdgStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedDeclarationStatusPayload.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+        verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
       }
     }
 
     "return a failed future when external service returns 404" in {
-      startMdgStatusService(NOT_FOUND)
+      startBackendStatusService(NOT_FOUND)
       intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[NotFoundException]
     }
 
     "return a failed future when external service returns 400" in {
-      startMdgStatusService(BAD_REQUEST)
+      startBackendStatusService(BAD_REQUEST)
       intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[BadRequestException]
     }
 
     "return a failed future when external service returns 500" in {
-      startMdgStatusService(INTERNAL_SERVER_ERROR)
+      startBackendStatusService(INTERNAL_SERVER_ERROR)
       intercept[Upstream5xxResponse](await(sendValidXml()))
     }
 
@@ -130,6 +139,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   }
 
   private def sendValidXml() = {
-    connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn)
+    connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)
   }
 }

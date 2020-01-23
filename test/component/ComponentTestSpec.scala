@@ -55,7 +55,7 @@ trait ComponentTestSpec extends FeatureSpec
     "microservice.services.auth.port" -> ExternalServicesConfig.Port,
     "microservice.services.declaration-status.host" -> ExternalServicesConfig.Host,
     "microservice.services.declaration-status.port" -> ExternalServicesConfig.Port,
-    "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext,
+    "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext,
     "microservice.services.declaration-status.bearer-token" -> ExternalServicesConfig.AuthToken,
     "microservice.services.api-subscription-fields.host" -> ExternalServicesConfig.Host,
     "microservice.services.api-subscription-fields.port" -> ExternalServicesConfig.Port,

@@ -17,21 +17,19 @@
 package util.externalservices
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.test.Helpers._
+import util.StatusTestXMLData.validBackendStatusResponse
 import util._
 
 import scala.xml.NodeSeq
 
-trait MdgStatusDeclarationService extends WireMockRunner {
-  private val url = urlMatching(CustomsDeclarationsExternalServicesConfig.MdgStatusDeclarationServiceContext)
+trait BackendStatusDeclarationService extends WireMockRunner {
+  private val url = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext)
 
   val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
 
-  def startMdgStatusService(status: Int = OK, body: NodeSeq = StatusTestXMLData.generateDeclarationStatusResponse(acceptanceOrCreationDate = acceptanceDateVal)): Unit = startService(status, url, body)
-
-  private def startService (status: Int, url: UrlPattern, body: NodeSeq) = {
+  def startBackendStatusService(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
     stubFor(post(url).
       willReturn(
         aResponse()
@@ -39,9 +37,9 @@ trait MdgStatusDeclarationService extends WireMockRunner {
           .withBody(body.toString())))
   }
 
-  def verifyMdgStatusDecServiceWasCalledWith(requestBody: String,
-                                          expectedAuthToken: String = ExternalServicesConfig.AuthToken,
-                                          maybeUnexpectedAuthToken: Option[String] = None) {
+  def verifyBackendStatusDecServiceWasCalledWith(requestBody: String,
+                                                 expectedAuthToken: String = ExternalServicesConfig.AuthToken,
+                                                 maybeUnexpectedAuthToken: Option[String] = None) {
     verify(1, postRequestedFor(url)
       .withHeader(CONTENT_TYPE, equalTo(XML + "; charset=utf-8"))
       .withHeader(ACCEPT, equalTo(XML))

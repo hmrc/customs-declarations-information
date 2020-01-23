@@ -28,13 +28,14 @@ import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatus
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.MdgPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
+import util.StatusTestXMLData.expectedStatusPayloadRequest
 import util.TestData._
-import util.{ApiSubscriptionFieldsTestData, StatusTestXMLData, TestData}
+import util.{ApiSubscriptionFieldsTestData, TestData}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,12 +45,12 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock[ServiceConfigProvider]
   private val mockInformationConfigService = mock[InformationConfigService]
-  private val mockMdgPayloadCreator = mock[MdgPayloadCreator]
+  private val mockBackendPayloadCreator = mock[BackendPayloadCreator]
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
 
-  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockMdgPayloadCreator, mockServiceConfigProvider, mockInformationConfigService)
+  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService)
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
@@ -62,7 +63,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockMdgPayloadCreator.create(correlationId, date, mrn, apiSubscriptionFieldsResponse)(asr)).thenReturn(util.StatusTestXMLData.expectedDeclarationStatusPayload)
+    when(mockBackendPayloadCreator.create(correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
   "DeclarationStatusConnector" can {
@@ -83,7 +84,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(anyString, ameq(StatusTestXMLData.expectedDeclarationStatusPayload.toString()), any[SeqOfHeader])(
+        verify(mockWsPost).POSTString(anyString, ameq(expectedStatusPayloadRequest.toString()), any[SeqOfHeader])(
           any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
@@ -121,7 +122,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
         when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(null)
 
         val caught = intercept[IllegalArgumentException] {
-          await(connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn))
+          await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
         }
         caught.getMessage shouldBe "config not found"
       }
@@ -129,7 +130,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   }
 
   private def awaitRequest = {
-    await(connector.send(date, correlationId, VersionOne, apiSubscriptionFieldsResponse, mrn))
+    await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {

@@ -46,6 +46,19 @@ object TestData {
 
   val mrnValue = "theMrn"
   val mrn = Mrn(mrnValue)
+  val invalidMrnTooLong = "theMrnThatIsTooLongToBeAcceptableToThisService"
+
+  val ducrValue = "theDucr"
+  val ducr = Ducr(ducrValue)
+  val invalidDucrTooLong = "theDucrThatIsTooLongToBeAcceptableToThisServiceFarFarTooLongInFactToBeOfUse"
+
+  val ucrValue = "theUcr"
+  val ucr = Ucr(ucrValue)
+  val invalidUcrTooLong = "theUcrThatIsTooLongToBeAcceptableToThisService"
+
+  val inventoryReferenceValue = "theInventoryReference"
+  val inventoryReference = InventoryReference(inventoryReferenceValue)
+  val invalidInventoryReferenceTooLong = "theInventoryReferenceThatIsTooLongToBeAcceptableToThisServiceFarFarTooLongInFactToBeOfUse"
 
   val dateString = "2018-09-11T10:28:54.128Z"
   val date: DateTime = DateTime.parse("2018-09-11T10:28:54.128Z")
@@ -102,8 +115,6 @@ object TestData {
   val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequest)
   val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
-  val TestAuthorisedRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier)))
-
   val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
   val TestValidatedHeadersRequestNoBadgeIdNoEori = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
 

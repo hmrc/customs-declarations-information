@@ -24,7 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFi
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,14 +42,18 @@ trait ApiSubscriptionFieldsService {
   private val apiContextEncoded = URLEncoder.encode("customs/declarations-information", "UTF-8")
 
   def futureApiSubFieldsId[A](c: ClientId)
-                             (implicit vpr: HasConversationId with ExtractedHeaders, hc: HeaderCarrier): Future[Either[Result, ApiSubscriptionFieldsResponse]] = {
-    (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, vpr.requestedApiVersion)) map { response =>
-      Right(response)
-    }).recover {
-      case NonFatal(e) =>
-        logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)
-        Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+                             (implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, Option[ApiSubscriptionFieldsResponse]]] = {
+    asr.authorisedAs match {
+      case Csp(_, _) =>
+        (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion)) map { response =>
+        Right(Some(response))
+      }).recover {
+        case NonFatal(e) =>
+          logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)
+          Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+      }
+      case NonCsp(_) => Future.successful(Right(None))
     }
-  }
 
+  }
 }

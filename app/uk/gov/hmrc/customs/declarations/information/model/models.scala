@@ -38,10 +38,6 @@ object Eori {
   implicit val reader: Reads[Eori] = Reads.of[String].map(new Eori(_))
 }
 
-case class Mrn(value: String) extends AnyVal {
-  override def toString: String = value.toString
-}
-
 case class CorrelationId(uuid: UUID) extends AnyVal {
   override def toString: String = uuid.toString
 }
@@ -71,3 +67,36 @@ object Csp {
   def originatingPartyId(csp: Csp): String = csp.eori.fold(csp.badgeIdentifier.get.toString)(e => e.toString)
 }
 case class NonCsp(eori: Eori) extends AuthorisedAs
+
+sealed trait SearchType {
+  protected val mrnAndUcrMaxLength = 35
+  protected val ducrAndInventoryReferenceMaxLength = 70
+  val value: String
+  val label: String
+  val maxLength: Int
+  lazy val validValue: Boolean = if (value.length > 0 && value.length <= maxLength) true else false
+}
+
+case class Mrn(value: String) extends SearchType {
+  override def toString: String = value.toString
+  val label = "MRN"
+  val maxLength: Int = mrnAndUcrMaxLength
+}
+
+case class Ducr(value: String) extends SearchType {
+  override def toString: String = value.toString
+  val label = "DUCR"
+  val maxLength: Int = ducrAndInventoryReferenceMaxLength
+}
+
+case class Ucr(value: String) extends SearchType {
+  override def toString: String = value.toString
+  val label = "UCR"
+  val maxLength: Int = mrnAndUcrMaxLength
+}
+
+case class InventoryReference(value: String) extends SearchType {
+  override def toString: String = value.toString
+  val label = "InventoryReference"
+  val maxLength: Int = ducrAndInventoryReferenceMaxLength
+}

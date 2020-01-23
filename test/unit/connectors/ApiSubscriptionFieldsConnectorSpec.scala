@@ -49,7 +49,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val mockInformationConfig = mock[InformationConfig]
   private val mockUuidService = mock[UuidService]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private implicit val vpr = TestData.TestAuthorisedRequest
+  private implicit val vpr = TestData.TestCspAuthorisedRequest
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockUuidService, mockLogger, mockInformationConfigService)

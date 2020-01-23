@@ -25,7 +25,8 @@ import util.TestData.{cspBearerToken, nonCspBearerToken}
 
 object FakeRequests {
 
-  lazy val ValidDeclarationStatusRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*)
+  lazy val ValidCspDeclarationStatusRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromCsp
+  lazy val ValidNonCspDeclarationStatusRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
 
   implicit class FakeRequestOps[R](val fakeRequest: FakeRequest[R]) extends AnyVal {
     def fromCsp: FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $cspBearerToken")
