@@ -19,15 +19,61 @@ package uk.gov.hmrc.customs.declarations.information.services
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
-import scala.xml._
+import scala.xml.NodeSeq
+
 
 @Singleton
-class StatusResponseFilterService @Inject() (informationLogger: InformationLogger,
-                                             informationConfigService: InformationConfigService) {
+class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
+  import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils._
 
-  //TODO leaving transform hooks in place for future ticket
+  private val outputUriToPrefixMap = Map(
+    ("http://www.w3.org/2001/XMLSchema-instance" -> "xsi"),
+    ("http://gov.uk/customs/declarationInformationRetrieval/status/v2" -> "p"),
+    ("urn:wco:datamodel:WCO:Response_DS:DMS:2" -> "p1"),    //wco response elements definition name space
+    ("urn:wco:datamodel:WCO:DEC-DMS:2" -> "p2"),            //wco Declaration elements definition name space
+    ("urn:wco:datamodel:WCO:Declaration_DS:DMS:2" -> "p3"), //wco Declaration complex type definition
+    ("urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" -> "p4")
+  )
+
   def transform(xml: NodeSeq): NodeSeq = {
-    xml
+    val inputPrefixToUriMap = extractNamespaceBindings(xml.head)
+      .map( nsb => (nsb.prefix -> nsb.uri))
+      .toMap
+
+    val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
+    val prefixReWriter = createPrefixTransformer(inputPrefixToOutputPrefixMap)
+
+    val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
+
+    <p:DeclarationStatusResponse
+      xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+      xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+      xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+      xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+
+      {decStatusDetails.map{ node =>
+        val declarations = node \ "Declaration"
+        val mdgDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
+        val wcoDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
+
+        <p:DeclarationStatusDetails>
+          {prefixReWriter.transform(mdgDeclaration)}
+          {prefixReWriter.transform(wcoDeclaration)}
+        </p:DeclarationStatusDetails>
+      }}
+    </p:DeclarationStatusResponse>
   }
 
+  private def constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap: Map[String, String], outputUriToPrefixMap: Map[String, String]): Map[String, String] = {
+    inputPrefixToUriMap.keySet.foldLeft(Seq.empty[(String, String)]){ (inputPrefixToOutputPrefix, inputPrefix) =>
+      val inputUri = inputPrefixToUriMap(inputPrefix)
+      val outputPrefix = outputUriToPrefixMap.getOrElse(inputUri, inputPrefix)
+      val inputToOutputPrefix: (String, String) = (inputPrefix, outputPrefix)
+
+      inputPrefixToOutputPrefix :+ inputToOutputPrefix
+    }.toMap
+  }
 }

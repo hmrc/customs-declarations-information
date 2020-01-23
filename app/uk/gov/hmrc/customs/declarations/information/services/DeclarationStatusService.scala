@@ -24,6 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, Csp, Mrn}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,6 +47,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
     val correlationId = uniqueIdsService.correlation
 
     futureApiSubFieldsId(asr.clientId) flatMap {
+
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
@@ -59,6 +61,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
             logger.error(s"declaration status call failed: ${e.getMessage}", e)
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
         }
+
       case Left(result) =>
         Future.successful(Left(result))
     }
