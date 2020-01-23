@@ -41,12 +41,12 @@ documentation:
               required: true
               example: application/vnd.hmrc.1.0+xml
             X-Badge-Identifier:
-              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              description: Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: ABC123
             X-Submitter-Identifier:
-              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              description: The EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: GB123456789000
@@ -89,12 +89,12 @@ documentation:
               required: true
               example: application/vnd.hmrc.1.0+xml
             X-Badge-Identifier:
-              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              description: Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: ABC123
             X-Submitter-Identifier:
-              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              description: The EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: GB123456789000
@@ -136,12 +136,12 @@ documentation:
               required: true
               example: application/vnd.hmrc.1.0+xml
             X-Badge-Identifier:
-              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              description: Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: ABC123
             X-Submitter-Identifier:
-              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              description: The EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: GB123456789000
@@ -183,12 +183,12 @@ documentation:
               required: true
               example: application/vnd.hmrc.1.0+xml
             X-Badge-Identifier:
-              description: Either this or X-Submitter-Identifier (or both) required for CSPs. Optional for non-CSPs. Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12.
+              description: Represents the end-user who is interacting with the subscribed application. Must be numeric or upper case letters with a minimum length of 6 and a maximum length of 12. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: ABC123
             X-Submitter-Identifier:
-              description: Either this or X-Badge-Identifier (or both) required for CSPs. Optional for non-CSPs. This is the EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters.
+              description: The EORI associated with the originating owner of the declaration. Must be numeric and upper case characters with a maximum length of 17 characters. CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
               type: string
               required: false
               example: GB123456789000
