@@ -1,5 +1,7 @@
 import AppDependencies._
 import com.typesafe.sbt.packager.MappingsHelper._
+import com.typesafe.sbt.web.PathMapping
+import com.typesafe.sbt.web.pipeline.Pipeline
 import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import sbt._
@@ -12,11 +14,6 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 import scala.language.postfixOps
-
-mappings in Universal ++= directory(baseDirectory.value / "public")
-// my understanding is publishing processed changed when we moved to the open and
-// now it is done in production mode (was in dev previously). hence, we encounter the problem accessing "public" folder
-// see https://stackoverflow.com/questions/36906106/reading-files-from-public-folder-in-play-framework-in-production
 
 name := "customs-declarations-information"
 
@@ -122,7 +119,31 @@ val compileDependencies = Seq(customsApiCommon, circuitBreaker)
 val testDependencies = Seq(hmrcTest, scalaTest, scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
+(managedClasspath in Runtime) += (packageBin in Assets).value
 
 libraryDependencies ++= compileDependencies ++ testDependencies
+
+// Task to create a ZIP file containing all WCO XSDs for each version, under the version directory
+val zipWcoXsds = taskKey[Pipeline.Stage]("Zips up all WCO status XSDs and example messages")
+
+zipWcoXsds := { mappings: Seq[PathMapping] =>
+  val targetDir = WebKeys.webTarget.value / "zip"
+  val zipFiles: Iterable[java.io.File] =
+    ((resourceDirectory in Assets).value / "api" / "conf")
+      .listFiles
+      .filter(_.isDirectory)
+      .map { dir =>
+        val wcoXsdPaths = Path.allSubpaths(dir / "schemas")
+        val exampleMessagesFilter = new SimpleFileFilter(_.getPath.contains("/example_messages/"))
+        val exampleMessagesPaths = Path.selectSubpaths(dir / "examples", exampleMessagesFilter)
+        val zipFile = targetDir / "api" / "conf" / dir.getName / "wco-status-schemas.zip"
+        IO.zip(wcoXsdPaths ++ exampleMessagesPaths, zipFile)
+        println(s"Created zip $zipFile")
+        zipFile
+      }
+  zipFiles.pair(relativeTo(targetDir)) ++ mappings
+}
+
+pipelineStages := Seq(zipWcoXsds)
 
 evictionWarningOptions in update := EvictionWarningOptions.default.withWarnTransitiveEvictions(false)
