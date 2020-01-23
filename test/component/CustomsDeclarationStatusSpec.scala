@@ -54,12 +54,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
   //TODO should be the transformed response
   private def validResponse() =
-    raw"""<n1:queryDeclarationStatusResponse 
-         |        xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2" 
-         |        xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2" 
-         |        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         |        xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" 
-         |        xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2" 
+    raw"""<n1:queryDeclarationStatusResponse
+         |        xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+         |        xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+         |        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         |        xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+         |        xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
          |        xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
          |    <n1:responseCommon>
          |        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
