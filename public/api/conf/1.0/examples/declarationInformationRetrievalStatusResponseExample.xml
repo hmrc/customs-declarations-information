@@ -10,15 +10,15 @@
   <p:DeclarationStatusDetails>
     <p:Declaration>
       <p:AcceptanceDateTime>
-        <p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
+        <p1:DateTimeString formatCode="304">20190702110757Z</p1:DateTimeString>
       </p:AcceptanceDateTime>
       <p:ID>19GBL4592NCOI21NR9</p:ID>
       <p:VersionID>1</p:VersionID>
       <p:ReceivedDateTime>
-        <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
+        <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
       </p:ReceivedDateTime>
       <p:GoodsReleasedDateTime>
-        <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
+        <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
       </p:GoodsReleasedDateTime>
       <p:ROE>6</p:ROE>
       <p:ICS>15</p:ICS>
@@ -27,7 +27,7 @@
     <p2:Declaration>
       <p2:FunctionCode>9</p2:FunctionCode>
       <p2:TypeCode>IMZ</p2:TypeCode>
-      <p2:GoodsItemQuantity unitCode="NPR">100</p2:GoodsItemQuantity>
+      <p2:GoodsItemQuantity>100</p2:GoodsItemQuantity>
       <p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
       <p2:Submitter>
         <p2:ID>GB123456789012000</p2:ID>
