@@ -42,57 +42,101 @@ object StatusTestXMLData {
     .appendTimeZoneOffset("Z", false, 2, 2)
     .toFormatter
 
-  val ValidDeclarationStatusQueryResponseXML: Elem = {
-    <p:DeclarationStatusResponse
-      xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
-      xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-      xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
-      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 ../schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd ">
+  val expectedStatusPayloadRequest: Elem =
+    <n1:queryDeclarationStatusRequest
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusRequest.xsd">
+      <n1:requestCommon>
+        <n1:clientID>327d9145-4965-4d28-a2c5-39dedee50334</n1:clientID>
+        <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+        <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+        <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>
+        <n1:dateTimeStamp>2018-09-11T10:28:54.128Z</n1:dateTimeStamp>
+        <v1:authenticatedPartyID>ZZ123456789000</v1:authenticatedPartyID>
+        <v1:originatingPartyID>BADGEID123</v1:originatingPartyID>
+      </n1:requestCommon>
+      <n1:requestDetail>
+        <n1:retrieveDeclarationStatusRequest>
+          <n1:MRN>theMRN</n1:MRN>
+        </n1:retrieveDeclarationStatusRequest>
+      </n1:requestDetail>
+    </n1:queryDeclarationStatusRequest>
 
-      <p:DeclarationStatusDetails>
-        <p:Declaration>
-          <p:AcceptanceDateTime>
-            <p1:DateTimeString formatCode="102">20190702110757Z</p1:DateTimeString>
-          </p:AcceptanceDateTime>
-          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
-          <p:VersionID>1</p:VersionID>
-          <p:ReceivedDateTime>
-            <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
-          </p:ReceivedDateTime>
-          <p:GoodsReleasedDateTime>
-            <p:DateTimeString formatCode="102">20190702110757Z</p:DateTimeString>
-          </p:GoodsReleasedDateTime>
-          <p:ROE>6</p:ROE>
-          <p:ICS>15</p:ICS>
-          <p:IRC>000</p:IRC>
-        </p:Declaration>
-        <p2:Declaration>
-          <p2:FunctionCode>9</p2:FunctionCode>
-          <p2:TypeCode>IMZ</p2:TypeCode>
-          <p2:GoodsItemQuantity unitCode="NPR">100</p2:GoodsItemQuantity>
-          <p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
-          <p2:Submitter>
-            <p2:ID>GB123456789012000</p2:ID>
-          </p2:Submitter>
-          <p2:GoodsShipment>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
-              <p2:TypeCode>DCR</p2:TypeCode>
-            </p2:PreviousDocument>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
-              <p2:TypeCode>MCR</p2:TypeCode>
-            </p2:PreviousDocument>
-            <p2:UCR>
-              <p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
-            </p2:UCR>
-          </p2:GoodsShipment>
-        </p2:Declaration>
-      </p:DeclarationStatusDetails>
-    </p:DeclarationStatusResponse>
-  }
+  val validBackendStatusResponse =
+    <n1:queryDeclarationStatusResponse
+    xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+    xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+    xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
+      <n1:responseCommon>
+        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
+      </n1:responseCommon>
+      <n1:responseDetail>
+        <n1:retrieveDeclarationStatusResponse>
+          <n1:retrieveDeclarationStatusDetailsList>
+            <n1:retrieveDeclarationStatusDetails>
+              <n1:Declaration>
+                <n1:AcceptanceDateTime>
+                  <otnds:DateTimeString formatCode="304">20190702110757Z</otnds:DateTimeString>
+                </n1:AcceptanceDateTime>
+                <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
+                <n1:VersionID>1</n1:VersionID>
+                <n1:ReceivedDateTime>
+                  <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
+                </n1:ReceivedDateTime>
+                <n1:GoodsReleasedDateTime>
+                  <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
+                </n1:GoodsReleasedDateTime>
+                <n1:ROE>6</n1:ROE>
+                <n1:ICS>15</n1:ICS>
+                <n1:IRC>000</n1:IRC>
+              </n1:Declaration>
+              <od:Declaration>
+                <od:FunctionCode>9</od:FunctionCode>
+                <od:TypeCode>IMZ</od:TypeCode>
+                <od:GoodsItemQuantity unitCode="NPR">100</od:GoodsItemQuantity>
+                <od:TotalPackageQuantity>10</od:TotalPackageQuantity>
+                <od:Submitter>
+                  <od:ID>GB123456789012000</od:ID>
+                </od:Submitter>
+                <od:GoodsShipment>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVB</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVC</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVD</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVE</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:UCR>
+                    <od:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</od:TraderAssignedReferenceID>
+                  </od:UCR>
+                </od:GoodsShipment>
+              </od:Declaration>
+            </n1:retrieveDeclarationStatusDetails>
+          </n1:retrieveDeclarationStatusDetailsList>
+        </n1:retrieveDeclarationStatusResponse>
+      </n1:responseDetail>
+    </n1:queryDeclarationStatusResponse>
 
   val expectedDeclarationStatusPayload: Elem =
     <n1:queryDeclarationInformationRequest
@@ -124,7 +168,7 @@ object StatusTestXMLData {
     generateRootElements(content)
   }
 
-  private def generateRootElements(content: Seq[NodeSeq]): Elem = {
+  private def generateRootElements(content: Seq[NodeSeq]): Elem =
     <n1:queryDeclarationstatusResponse
       xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
       xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
@@ -143,16 +187,15 @@ object StatusTestXMLData {
         </n1:retrieveDeclarationStatusResponse>
       </n1:responseDetail>
     </n1:queryDeclarationstatusResponse>
-  }
 
-  private def generateDeclarationStatusDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq = {
+  private def generateDeclarationStatusDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq =
     <n1:retrieveDeclarationStatusDetails>
       {hmrcDeclaration}
       {wcoDeclaration}
     </n1:retrieveDeclarationStatusDetails>
-  }
 
-  private def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime, withOptionalElements: Boolean = false): Elem = {
+
+  private def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime, withOptionalElements: Boolean = false): Elem =
     <n1:Declaration>
       <n1:AcceptanceDateTime>
         <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
@@ -203,9 +246,8 @@ object StatusTestXMLData {
       <n1:ICS>15</n1:ICS>
       <n1:IRC>000</n1:IRC>
     </n1:Declaration>
-  }
 
-  private def generateStandardResponseWCODeclaration(): Elem = {
+  private def generateStandardResponseWCODeclaration(): Elem =
     <od:Declaration>
       <od:FunctionCode>9</od:FunctionCode>
       <od:TypeCode>IMZ</od:TypeCode>
@@ -228,7 +270,6 @@ object StatusTestXMLData {
         </od:UCR>
       </od:GoodsShipment>
     </od:Declaration>
-  }
 
   def invalidStatusResponse(declarationNode: NodeSeq): NodeSeq =
     <n1:queryDeclarationInformationResponse
