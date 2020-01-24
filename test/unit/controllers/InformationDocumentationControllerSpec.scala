@@ -77,7 +77,7 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
          |      }
          |   ],
          |   "api":{
-         |      "name":"Declaration Information",
+         |      "name":"Customs Declarations Information",
          |      "description":"Allows CSPs to retrieve declaration status information",
          |      "context":"customs/declarations-information",
          |      "versions":[
