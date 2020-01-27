@@ -46,7 +46,6 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
     val correlationId = uniqueIdsService.correlation
 
     futureApiSubFieldsId(asr.clientId) flatMap {
-
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
@@ -60,7 +59,6 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
             logger.error(s"declaration status call failed: ${e.getMessage}", e)
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
         }
-
       case Left(result) =>
         Future.successful(Left(result))
     }
