@@ -42,8 +42,8 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
-      val searchType = Mrn(mrn)
-      implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    val searchType = Mrn(mrn)
+    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
   def getByDucr(ducr: String): Action[AnyContent] = actionPipeline.async {
