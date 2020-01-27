@@ -101,6 +101,14 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       |</p:DeclarationStatusResponse>
       |""".stripMargin
 
+  val notImplementedResponse =
+    raw"""<?xml version='1.0' encoding='UTF-8'?>
+         |<errorResponse>
+         |      <code>NOT_IMPLEMENTED</code>
+         |      <message>Not yet available</message>
+         |      
+         |    </errorResponse>""".stripMargin
+
   private def createFakeRequest(endpoint: String): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*)
 
@@ -191,7 +199,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCsp())
@@ -211,19 +219,47 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       When("a MRN request with data is sent to the API")
       val result: Future[Result] = route(app = app, validDucrRequest).value
 
-      println(contentAsString(result))
+      Then("a response with a 501 (NOT_IMPLEMENTED) status is received")
+      status(result) shouldBe NOT_IMPLEMENTED
 
-      Then("a response with a 400 (BAD_REQUEST) status is received")
-      status(result) shouldBe BAD_REQUEST
+      And("the response body is a error status xml")
+      contentAsString(result) shouldBe notImplementedResponse
+    }
 
-      And("the response body is a valid status xml")
-      contentAsString(result) shouldBe validResponse
+    scenario("An authorised CSP unsuccessfully queries declaration status by an UCR value") {
+      Given("A CSP wants the status of a declaration associated with a given UCR")
+      startBackendStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
-      And("the request was authorised with AuthService")
-      eventually(verifyAuthServiceCalledForCsp())
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
 
-      And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      When("a MRN request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validUcrRequest).value
+
+      Then("a response with a 501 (NOT_IMPLEMENTED) status is received")
+      status(result) shouldBe NOT_IMPLEMENTED
+
+      And("the response body is a error status xml")
+      contentAsString(result) shouldBe notImplementedResponse
+    }
+
+    scenario("An authorised CSP unsuccessfully queries declaration status by an Inventory Reference value") {
+      Given("A CSP wants the status of a declaration associated with a given Inventory Reference")
+      startBackendStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
+
+      When("a MRN request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validIrRequest).value
+
+      Then("a response with a 501 (NOT_IMPLEMENTED) status is received")
+      status(result) shouldBe NOT_IMPLEMENTED
+
+      And("the response body is a error status xml")
+      contentAsString(result) shouldBe notImplementedResponse
     }
   }
 }
