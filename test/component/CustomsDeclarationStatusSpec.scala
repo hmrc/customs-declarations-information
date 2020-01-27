@@ -33,8 +33,6 @@ import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTest
 
 import scala.concurrent.Future
 
-//TODO requires correct xml transform implementation
-@Ignore
 class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with AuditService
   with ExpectedTestResponses
@@ -45,91 +43,73 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with AuthService {
 
   private val mrn = "some-mrn"
-  private val endpoint = s"/mrn/$mrn/status"
+  private val ducr = "some-ducr"
+  private val ucr = "some-ucr"
+  private val inventoryReference = "some-ir"
 
-  private val ISO_UTC_DateTimeFormat: DateTimeFormatter = ISODateTimeFormat.dateTime.withZoneUTC()
+  private val endpointMRN = s"/mrn/$mrn/status"
+  private val endpointDUCR = s"/ducr/$ducr/status"
+  private val endpointUCR = s"/ucr/$ucr/status"
+  private val endpointIR = s"/inventory-reference/$inventoryReference/status"
 
   private val apiSubscriptionKeyForXClientId =
     ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information", version = VersionOne)
 
-  //TODO should be the transformed response
   private def validResponse() =
-    raw"""<n1:queryDeclarationStatusResponse
-         |        xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
-         |        xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-         |        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         |        xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-         |        xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
-         |        xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
-         |    <n1:responseCommon>
-         |        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
-         |    </n1:responseCommon>
-         |    <n1:responseDetail>
-         |        <n1:retrieveDeclarationStatusResponse>
-         |            <n1:retrieveDeclarationStatusDetailsList>
-         |                <n1:retrieveDeclarationStatusDetails>
-         |                    <n1:Declaration>
-         |                        <n1:AcceptanceDateTime>
-         |                            <otnds:DateTimeString formatCode="304">20190702110757Z</otnds:DateTimeString>
-         |                        </n1:AcceptanceDateTime>
-         |                        <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
-         |                        <n1:VersionID>1</n1:VersionID>
-         |                        <n1:ReceivedDateTime>
-         |                            <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
-         |                        </n1:ReceivedDateTime>
-         |                        <n1:GoodsReleasedDateTime>
-         |                            <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
-         |                        </n1:GoodsReleasedDateTime>
-         |                        <n1:ROE>6</n1:ROE>
-         |                        <n1:ICS>15</n1:ICS>
-         |                        <n1:IRC>000</n1:IRC>
-         |                    </n1:Declaration>
-         |                    <od:Declaration>
-         |                        <od:FunctionCode>9</od:FunctionCode>
-         |                        <od:TypeCode>IMZ</od:TypeCode>
-         |                        <od:GoodsItemQuantity unitCode="NPR">100</od:GoodsItemQuantity>
-         |                        <od:TotalPackageQuantity>10</od:TotalPackageQuantity>
-         |                        <od:Submitter>
-         |                            <od:ID>GB123456789012000</od:ID>
-         |                        </od:Submitter>
-         |                        <od:GoodsShipment>
-         |                            <od:PreviousDocument>
-         |                                <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
-         |                                <od:TypeCode>DCR</od:TypeCode>
-         |                            </od:PreviousDocument>
-         |                            <od:PreviousDocument>
-         |                                <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
-         |                                <od:TypeCode>MCR</od:TypeCode>
-         |                            </od:PreviousDocument>
-         |                            <od:PreviousDocument>
-         |                                <od:ID>18GBAKZ81EQJ2FGVB</od:ID>
-         |                                <od:TypeCode>MCR</od:TypeCode>
-         |                            </od:PreviousDocument>
-         |                            <od:PreviousDocument>
-         |                                <od:ID>18GBAKZ81EQJ2FGVC</od:ID>
-         |                                <od:TypeCode>DCR</od:TypeCode>
-         |                            </od:PreviousDocument>
-         |                            <od:PreviousDocument>
-         |                                <od:ID>18GBAKZ81EQJ2FGVD</od:ID>
-         |                                <od:TypeCode>MCR</od:TypeCode>
-         |                            </od:PreviousDocument>
-         |                            <od:PreviousDocument>
-         |                                <od:ID>18GBAKZ81EQJ2FGVE</od:ID>
-         |                                <od:TypeCode>MCR</od:TypeCode>
-         |                            </od:PreviousDocument>
-         |                            <od:UCR>
-         |                                <od:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</od:TraderAssignedReferenceID>
-         |                            </od:UCR>
-         |                        </od:GoodsShipment>
-         |                    </od:Declaration>
-         |                </n1:retrieveDeclarationStatusDetails>
-         |            </n1:retrieveDeclarationStatusDetailsList>
-         |        </n1:retrieveDeclarationStatusResponse>
-         |    </n1:responseDetail>
-         |</n1:queryDeclarationStatusResponse>""".stripMargin
+    raw"""<p:DeclarationStatusResponse 
+      |xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+      |  <p:DeclarationStatusDetails>
+      |    <p:Declaration>
+      |      <p:AcceptanceDateTime>
+      |        <p1:DateTimeString formatCode="304">20190702110757Z</p1:DateTimeString>
+      |      </p:AcceptanceDateTime>
+      |      <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
+      |      <p:VersionID>1</p:VersionID>
+      |      <p:ReceivedDateTime>
+      |        <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+      |      </p:ReceivedDateTime>
+      |      <p:GoodsReleasedDateTime>
+      |        <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+      |      </p:GoodsReleasedDateTime>
+      |      <p:ROE>6</p:ROE>
+      |      <p:ICS>15</p:ICS>
+      |      <p:IRC>000</p:IRC>
+      |    </p:Declaration>
+      |    <p2:Declaration>
+      |      <p2:FunctionCode>9</p2:FunctionCode>
+      |      <p2:TypeCode>IMZ</p2:TypeCode>
+      |      <p2:GoodsItemQuantity>100</p2:GoodsItemQuantity>
+      |      <p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
+      |      <p2:Submitter>
+      |        <p2:ID>GB123456789012000</p2:ID>
+      |      </p2:Submitter>
+      |      <p2:GoodsShipment>
+      |        <p2:PreviousDocument>
+      |          <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
+      |          <p2:TypeCode>DCR</p2:TypeCode>
+      |        </p2:PreviousDocument>
+      |        <p2:PreviousDocument>
+      |          <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
+      |          <p2:TypeCode>MCR</p2:TypeCode>
+      |        </p2:PreviousDocument>
+      |        <p2:UCR>
+      |          <p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
+      |        </p2:UCR>
+      |      </p2:GoodsShipment>
+      |    </p2:Declaration>
+      |  </p:DeclarationStatusDetails>
+      |</p:DeclarationStatusResponse>
+      |""".stripMargin
 
-  val validCspRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromCsp
-  val validNonCspRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*).fromNonCsp
+  private def createFakeRequest(endpoint: String): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*)
+
+  val validCspRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
+  val validNonCspRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromNonCsp
+  val validMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
+  val validDucrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointDUCR).fromCsp
+  val validUcrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointUCR).fromCsp
+  val validIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointIR).fromCsp
 
   override protected def beforeAll() {
     startMockServer()
@@ -195,4 +175,55 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
+  feature("Declaration Information API query declaration statuses") {
+    scenario("An authorised CSP successfully queries declaration status by an MRN value") {
+      Given("A CSP wants the status of a declaration with a given MRN")
+      startBackendStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
+
+      When("a MRN request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validMrnRequest).value
+
+      Then("a response with a 200 (OK) status is received")
+      status(result) shouldBe OK
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe validResponse
+
+      And("the request was authorised with AuthService")
+      eventually(verifyAuthServiceCalledForCsp())
+
+      And("v1 config was used")
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+    }
+
+    scenario("An authorised CSP unsuccessfully queries declaration status by an DUCR value") {
+      Given("A CSP wants the status of a declaration associated with a given DUCR")
+      startBackendStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
+
+      When("a MRN request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validDucrRequest).value
+
+      println(contentAsString(result))
+
+      Then("a response with a 400 (BAD_REQUEST) status is received")
+      status(result) shouldBe BAD_REQUEST
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe validResponse
+
+      And("the request was authorised with AuthService")
+      eventually(verifyAuthServiceCalledForCsp())
+
+      And("v1 config was used")
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+    }
+  }
 }
