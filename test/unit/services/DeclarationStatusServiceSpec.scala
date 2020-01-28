@@ -55,7 +55,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
   protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
   protected val searchType = Mrn("theMrn")
-  protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId
+  protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
