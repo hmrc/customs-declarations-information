@@ -26,37 +26,26 @@ The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in 
 ---
 
 
-### Lookup of `fieldsId` UUID from `api-subscription-fields` service
+### Lookup of `authenticatedEori` from `api-subscription-fields` service for CSPs only
 
 The `X-Client-ID` header, together with the application context and version are used
- to call the `api-subscription-fields` service to get the unique `fieldsId` UUID to pass on to the backend request (where it is known as `clientID`).
+ to call the `api-subscription-fields` service to get the `authenticatedEori` to pass on to the backend request (where it is known as `authenticatedPartyID`).
 
-So there is a direct dependency on the `api-subscription-fields` service. Note the service to get the `fieldsId` is not currently stubbed. 
+So there is a direct dependency on the `api-subscription-fields` service. Note the service to get the `authenticatedEori` is not currently stubbed. 
 
 ### Seeding Data in `api-subscription-fields` for local end to end testing
 
 Make sure the [`api-subscription-fields`](https://github.com/hmrc/api-subscription-fields) service is running on port `9650`. Then run the below curl command.
 
-Please note that version `1.0` is used as an example in the commands given and you should insert the customs declarations api version number which you will call subsequently.
+Please note that version `1.0` is used as an example in the commands given and you should insert the customs declarations information api version number which you will call subsequently.
 
 Please note that value `d65f2252-9fcf-4f04-9445-5971021226bb` is used as an example in the commands given and you should insert the UUID value which suits your needs.
 
-    curl -v -X PUT "http://localhost:9650/field/application/d65f2252-9fcf-4f04-9445-5971021226bb/context/customs%2Fdeclarations-information/version/1.0" -H "Cache-Control: no-cache" -H "Content-Type: application/json" -d '{ "fields" : { "" : "" } }'
+    curl -v -X PUT "http://localhost:9650/field/application/d65f2252-9fcf-4f04-9445-5971021226bb/context/customs%2Fdeclarations-information/version/1.0" -H "Cache-Control: no-cache" -H "Content-Type: application/json" -d '{ "fields" : { "authenticatedEori" : "GB123456789000" } }'
 
-We then have to manually reset the `fieldId` field to match the id expected by the downstream services. In a MongoDB command
-window paste the following, one after the other.
-
-    use api-subscription-fields
-
-    db.subscriptionFields.update(
-        { "clientId" : "d65f2252-9fcf-4f04-9445-5971021226bb", "apiContext" : "customs/declarations-information", "apiVersion" : "1.0" },
-        { $set:
-            {"fieldsId" : "d65f2252-9fcf-4f04-9445-5971021226bb"}
-        }
-    )
-    
 When you then send a request to `customs-declarations-information` make sure you have the HTTP header `X-Client-ID` with the value `d65f2252-9fcf-4f04-9445-5971021226bb`
 
+There is no lookup of `api-subscription-fields` for non-CSP requests.
 
 ## Switching service endpoints
 

@@ -26,6 +26,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorNotFound, errorInternalServerError}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -35,7 +36,7 @@ import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
 import uk.gov.hmrc.play.test.UnitSpec
-import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
+import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithNoEori, apiSubscriptionFieldsResponseWithEmptyEori}
 import util.TestData.{correlationId, _}
 
 import scala.concurrent.Future
@@ -54,6 +55,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
   protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
   protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
   protected val searchType = Mrn("theMrn")
+  protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
@@ -94,6 +96,18 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, None, searchType)(nonCspRequest)
     }
 
+    "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
+      when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponseWithNoEori))
+      val result: Either[Result, HttpResponse] = send()
+      result shouldBe Left(missingEoriResult)
+    }
+
+    "return 500 with detailed message when call to api-subscription field returns empty eori" in new SetUp() {
+      when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponseWithEmptyEori))
+      val result: Either[Result, HttpResponse] = send()
+      result shouldBe Left(missingEoriResult)
+    }
+    
     "return 404 error response when backend call fails with 404" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -102,7 +116,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new RuntimeException(new NotFoundException("nothing here"))))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse.ErrorNotFound.XmlResult.withConversationId)
+      result shouldBe Left(ErrorNotFound.XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
