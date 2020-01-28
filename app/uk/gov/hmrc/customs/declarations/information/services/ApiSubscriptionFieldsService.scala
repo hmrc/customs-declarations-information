@@ -47,10 +47,10 @@ trait ApiSubscriptionFieldsService {
     asr.authorisedAs match {
       case Csp(_, _) =>
         (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion)) map { response =>
-          if (invalidAuthenticatedEori(response.fields.authenticatedEori)) {
-            Left(errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId)
-          } else {
+          if (validateAuthenticatedEori(response.fields.authenticatedEori)) {
             Right(Some(response))
+          } else {
+            Left(errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId)
           }
       }).recover {
         case NonFatal(e) =>
@@ -62,8 +62,8 @@ trait ApiSubscriptionFieldsService {
 
   }
   
-  private def invalidAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
-    if (authenticatedEori.isEmpty || (authenticatedEori.isDefined && authenticatedEori.get.trim.isEmpty)) {
+  private def validateAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
+    if (authenticatedEori.isDefined && !authenticatedEori.get.trim.isEmpty) {
       true
     } else {
       false
