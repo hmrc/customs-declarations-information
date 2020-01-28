@@ -47,7 +47,7 @@ trait ApiSubscriptionFieldsService {
     asr.authorisedAs match {
       case Csp(_, _) =>
         (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion)) map { response =>
-          if (validateAuthenticatedEori(response.fields.authenticatedEori)) {
+          if (validAuthenticatedEori(response.fields.authenticatedEori)) {
             Right(Some(response))
           } else {
             Left(errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId)
@@ -62,7 +62,7 @@ trait ApiSubscriptionFieldsService {
 
   }
   
-  private def validateAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
+  private def validAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
     if (authenticatedEori.isDefined && !authenticatedEori.get.trim.isEmpty) {
       true
     } else {
