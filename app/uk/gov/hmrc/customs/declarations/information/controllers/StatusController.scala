@@ -84,7 +84,7 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
 
       case _ =>
         logger.error(s"Not yet available ${searchType.label}: ${searchType.value}")
-        Future.successful(ErrorResponse(NOT_IMPLEMENTED, ErrorResponse.NotImplemented, "Not yet available").XmlResult)
+        Future.successful(ErrorResponse(NOT_IMPLEMENTED, ErrorResponse.NotImplemented, "Not yet available").XmlResult.withConversationId)
     }
   }
 
