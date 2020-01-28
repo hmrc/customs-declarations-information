@@ -19,6 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
 import play.api.mvc._
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -41,43 +42,49 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
-      val searchType = Mrn(mrn)
-      implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    val searchType = Mrn(mrn)
+    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
   def getByDucr(ducr: String): Action[AnyContent] = actionPipeline.async {
-      val searchType = Ducr(ducr)
-      implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    val searchType = Ducr(ducr)
+    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
   def getByUcr(ucr: String): Action[AnyContent] = actionPipeline.async {
-      val searchType = Ucr(ucr)
-      implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    val searchType = Ucr(ucr)
+    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
   def getByInventoryReference(inventoryReference: String): Action[AnyContent] = actionPipeline.async {
-      val searchType = InventoryReference(inventoryReference)
-      implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    val searchType = InventoryReference(inventoryReference)
+    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
   private def search(searchType: SearchType)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-    if (!searchType.validValue) {
-      logger.error(s"Invalid ${searchType.label}: ${searchType.value}")
-      Future.successful(errorBadRequest(errorMessage = s"Invalid ${searchType.label}").XmlResult.withConversationId)
-    } else {
-      declarationStatusService.send(searchType) map {
-        case Right(res: HttpResponse) =>
-          val id = new HasConversationId {
-            override val conversationId = asr.conversationId
-          }
-          logger.info(s"Declaration information request by ${searchType.getClass.getSimpleName} processed successfully.")(id)
-          logger.debug(s"Returning filtered declaration status request with status code 200 and body\n ${res.body}")(id)
-          Ok(res.body).withConversationId.as(ContentTypes.XML)
-        case Left(errorResult) =>
-          errorResult
-      }
+    searchType match {
+      case s: SearchType if !s.validValue =>
+        logger.error(s"Invalid ${searchType.label}: ${searchType.value}")
+        Future.successful(errorBadRequest(errorMessage = s"Invalid ${searchType.label}").XmlResult.withConversationId)
+
+      case s: Mrn =>
+        declarationStatusService.send(searchType) map {
+          case Right(res: HttpResponse) =>
+            val id = new HasConversationId {
+              override val conversationId = asr.conversationId
+            }
+            logger.info(s"Declaration information request by ${searchType.getClass.getSimpleName} processed successfully.")(id)
+            logger.debug(s"Returning filtered declaration status request with status code 200 and body\n ${res.body}")(id)
+            Ok(res.body).withConversationId.as(ContentTypes.XML)
+          case Left(errorResult) =>
+            errorResult
+        }
+
+      case _ =>
+        logger.error(s"Not yet available ${searchType.label}: ${searchType.value}")
+        Future.successful(ErrorResponse(NOT_IMPLEMENTED, ErrorResponse.NotImplemented, "Not yet available").XmlResult.withConversationId)
     }
   }
 
@@ -86,5 +93,4 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
       conversationIdAction andThen
       validateAndExtractHeadersAction andThen
       authAction
-
 }
