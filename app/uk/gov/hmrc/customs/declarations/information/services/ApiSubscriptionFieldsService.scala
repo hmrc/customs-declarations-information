@@ -20,6 +20,7 @@ import java.net.URLEncoder
 
 import play.api.mvc.Result
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -46,7 +47,11 @@ trait ApiSubscriptionFieldsService {
     asr.authorisedAs match {
       case Csp(_, _) =>
         (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion)) map { response =>
-        Right(Some(response))
+          if (invalidAuthenticatedEori(response.fields.authenticatedEori)) {
+            Left(errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId)
+          } else {
+            Right(Some(response))
+          }
       }).recover {
         case NonFatal(e) =>
           logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)
@@ -55,5 +60,13 @@ trait ApiSubscriptionFieldsService {
       case NonCsp(_) => Future.successful(Right(None))
     }
 
+  }
+  
+  private def invalidAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
+    if (authenticatedEori.isEmpty || (authenticatedEori.isDefined && authenticatedEori.get.trim.isEmpty)) {
+      true
+    } else {
+      false
+    }
   }
 }

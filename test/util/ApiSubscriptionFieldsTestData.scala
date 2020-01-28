@@ -34,6 +34,8 @@ trait ApiSubscriptionFieldsTestData {
   val apiSubscriptionKey = ApiSubscriptionKey(clientId, apiContext, VersionOne)
   val apiSubscriptionKeyWithEncodedContext: ApiSubscriptionKey = apiSubscriptionKey.copy(context = apiContextEncoded)
   val apiSubscriptionFieldsResponse = ApiSubscriptionFieldsResponse(UUID.fromString(subscriptionFieldsIdString), ApiSubscriptionFieldsResponseFields(Some(declarantEoriValue)))
+  val apiSubscriptionFieldsResponseWithNoEori = apiSubscriptionFieldsResponse.copy(fields = ApiSubscriptionFieldsResponseFields(None))
+  val apiSubscriptionFieldsResponseWithEmptyEori = apiSubscriptionFieldsResponse.copy(fields = ApiSubscriptionFieldsResponseFields(Some("  ")))
   val responseJsonString: String =
     s"""{
        |  "clientId": "afsdknbw34ty4hebdv",
