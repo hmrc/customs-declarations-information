@@ -50,7 +50,7 @@ trait ApiSubscriptionFieldsService {
           if (validAuthenticatedEori(response.fields.authenticatedEori)) {
             Right(Some(response))
           } else {
-            Left(errorInternalServerError("Missing authenticated eori in api-subscription-fields").XmlResult.withConversationId)
+            Left(errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId)
           }
       }).recover {
         case NonFatal(e) =>
