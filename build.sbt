@@ -16,7 +16,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-
+scalaVersion := "2.12.10"
 targetJvm := "jvm-1.8"
 
 lazy val allResolvers = resolvers ++= Seq(
@@ -94,8 +94,7 @@ lazy val componentTestSettings =
 
 lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
 
-lazy val playPublishingSettings: Seq[sbt.Setting[_]] = sbtrelease.ReleasePlugin.releaseSettings ++
-  Seq(credentials += SbtCredentials) ++
+lazy val playPublishingSettings: Seq[sbt.Setting[_]] = Seq(credentials += SbtCredentials) ++
   publishAllArtefacts
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
@@ -116,7 +115,7 @@ scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 val compileDependencies = Seq(customsApiCommon, circuitBreaker)
 
-val testDependencies = Seq(hmrcTest, scalaTest, scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
+val testDependencies = Seq(hmrcTest, scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
 (managedClasspath in Runtime) += (packageBin in Assets).value
