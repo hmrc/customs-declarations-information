@@ -49,13 +49,13 @@ class BackendPayloadCreator() {
         as match {
           case NonCsp(eori) => Seq[NodeSeq](
             <n1:dateTimeStamp>{date.toString}</n1:dateTimeStamp>, Text(newLineAndIndentation),
-            <v1:authenticatedPartyID>{eori.value}</v1:authenticatedPartyID>) // originatingPartyID is only required for CSPs
+            <n1:authenticatedPartyID>{eori.value}</n1:authenticatedPartyID>) // originatingPartyID is only required for CSPs
           case Csp(_, badgeId) =>
-            val badgeIdentifierElement: NodeSeq = {badgeId.fold(NodeSeq.Empty)(badge => <v1:badgeIdentifier>{badge.toString}</v1:badgeIdentifier>)}
+            val badgeIdentifierElement: NodeSeq = {badgeId.fold(NodeSeq.Empty)(badge => <n1:badgeIdentifier>{badge.toString}</n1:badgeIdentifier>)}
             Seq[NodeSeq](badgeIdentifierElement, Text(newLineAndIndentation),
               <n1:dateTimeStamp>{date.toString}</n1:dateTimeStamp>, Text(newLineAndIndentation),
-              <v1:authenticatedPartyID>{maybeApiSubscriptionFieldsResponse.get.fields.authenticatedEori.get}</v1:authenticatedPartyID>, Text(newLineAndIndentation),
-              <v1:originatingPartyID>{Csp.originatingPartyId(as.asInstanceOf[Csp])}</v1:originatingPartyID>)
+              <n1:authenticatedPartyID>{maybeApiSubscriptionFieldsResponse.get.fields.authenticatedEori.get}</n1:authenticatedPartyID>, Text(newLineAndIndentation),
+              <n1:originatingPartyID>{Csp.originatingPartyId(as.asInstanceOf[Csp])}</n1:originatingPartyID>)
         }
         }
       </n1:requestCommon>

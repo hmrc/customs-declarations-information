@@ -1,0 +1,1218 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/" version="2.8" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/" xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xmlns:tns_2="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/">
+  <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" schemaLocation="cmmValueTypes.xsd"/>
+  <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" schemaLocation="cmmEnhancementTypes.xsd"/>
+  <xsd:complexType name="CodeListElementField">
+    <xsd:annotation>
+      <xsd:documentation>Element of a code list. Abstract object describing the common features of reference data elements.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:token">
+        <xsd:attribute name="type" type="xsd:token">
+          <xsd:annotation>
+            <xsd:documentation>The identification of a list of codes.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="responsibleAgent" type="xsd:token">
+          <xsd:annotation>
+            <xsd:documentation>An agency that maintains one or more code lists.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="MeasureUnitQualifier">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the qualifier of a measurement unit Note: defined TARIC and maintained by Arctic/Tariff A		Total alcohol B		Per Flask C		1 000 D		Per 1% by weight of sucrose or extractable sugar E		Net drained weight F		Common wheat G 		Gross I 		Biodiesel content J		Fuel content (usually in form of tallow, stearin, paraffin wax or other waxes, including the wick) L		Live weight M		Net dry matter P		Lactic matter R		raw sugar with a yield of 92|% S 		White sugar T		Dry lactic matter X 		Hectolitre Z		Per 1|% by weight of sucrose </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TaskActionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of action taken in a task NOTE:	possible values defined and maintained by eCF: 1:	Extend deadline	 2:	Unable to provide coverage </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlResultAssessmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of control result assessment NOTE: 	possible values defined/maintained by eCF 1: No discrepancy 2: Minor discrepancy 4: Major discrepancy 5: Unable to determine NOTE: code '3' possible discrepancies (in case of laboratory test driving the manual determination of additional security) was removed (taking additional security is now initiated in case of a provisonal control result)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ServiceRequestStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of status of a service request: NOTE: possible values defined by eCF: 22: Cancelled 23: Suspended 24: Pending 25: Responded</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CountryRegionRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the role a country plays in a particular context NOTE: Possible values defined/maintained by eCF 1: Country/Region of dispatch 2: Country/Region of export 3: Country/Region of origin 4: Country/Region of first destination 5: Country/Region of final destination 6: Intermediate Country/Region of routing</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TransportMeansType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a means of transport. Note 1: 	A means of transport type is a refinement of a mode of tranport Note 2: 	Possible values as captured in the UN/Edifact  8179 Transport means code list. 1     Barge chemical tanker A barge equipped to transport liquid chemicals. 2     Coaster chemical tanker A coaster vessel equipped to transport liquid chemicals. 3     Dry bulk carrier Vessel designed to carry dry bulk (expellers). 4     Deep sea chemical tanker An ocean-going vessel equipped to transport liquid chemicals. 5     Gas tanker A vessel equipped to transport gas. 6     Aircraft A machine capable of flight. 7     Car with caravan A caravan towed by a car. 8     Container ship Vessel capable of carrying containers and other cargo. 9     Exceptional transport Transport for which common characteristics are not applicable (e.g. big transformers requiring special wagons, special tackles, special routing etc.). 10    Bus To specify that the means of transportation is a bus. 11    Ship A large vessel navigating deep water. 12    Ship tanker A large vessel equipped to transport liquids. 13    Ocean vessel An ocean-going vessel that is not a ship. 15    Taxi A means of transport identification code indicating a taxi. 16    Barge A category of boat used to transport material over water. 17    Customer determined means of transport The type of means of transport is to be determined by the customer. 18    Seller determined means of transport The type of means of transport is to be determined by the seller. 19    Tip-up truck A truck capable of tipping up in order to deliver its load. 20    Furniture truck A truck used explicitly for the conveyance of furniture. 21    Rail tanker A rail wagon equipped to transport liquids. X    22    Rail silo tanker Self explanatory. Note: 1. This code value will be removed effective with directory D.04B. 23    Rail bulk car A rail wagon equipped to transport bulk cargo. 24    Customer rail tanker A customer-owned rail wagon equipped to transport liquids. X    25    Rail express Description to be provided. Note: 1. This code value will be removed effective with directory D.04B. 26    Tip-up articulated truck An articulated truck capable of tipping up in order to deliver its load. 27    Rigid truck with tank A rigid truck fitted with a tank capable of carrying liquids or bulk goods. 28    Refrigerated truck and trailer A combined truck and trailer equipped to maintain refrigerated temperatures. 29    Freezer truck and trailer A combined truck and trailer equipped to maintain freezing temperatures. 30    Tautliner 25 tonne, combined with 90 cubic meter trailer with removable roof A truck with non-ridged sides, 25 tonne capacity combined with a 90 cubic meter trailer with removable roof. 31    Truck An automotive vehicle for hauling goods. 32    Road tanker An over-the-road tank trucker or trailer. X    33    Road silo tanker Description to be provided. Note: 1. This code value will be removed effective with directory D.04B. 34    Tautliner truck A truck with non-ridged sides. 35    Truck/trailer with tilt A truck and trailer combination with a tilting capability. 36    Pipeline A line of pipes for conveying water, gas, oil, etc. 37    Hydrant cart Vehicle used at large airports with installed distribution systems to make into-plane deliveries of fuel; distinguished from other types of fuelling vehicles. 38    Car Car. 39    Tautliner truck with removable roof A truck with non-ridged sides and removable roof. 40    Truck with opening floor A truck with an opening floor mechanism which is used to discharge the cargo. 41    Freezer truck A truck equipped to maintain freezing temperatures. 42    Isothermic truck A truck equipped to maintain controlled temperatures. 43    Refrigerated truck A truck equipped to maintain refrigerated temperatures. 44    Freezer van A small rigid covered vehicle for conveying frozen goods. 45    Isothermic van A small rigid covered vehicle for conveying temperature controlled goods. 46    Refrigerated van A small rigid covered vehicle for conveying refrigerated goods. 47    Bulk truck A truck suitable for transporting bulk goods. 48    Van A small vehicle suitable for carrying small volume loads. 49    Roadrailer Used for shipments that travel by multimodal rail or highway trailer (roadrailer). 50    Passenger vessel Vessel for carrying passengers. 51    Cargo and passenger vessel Vessel for carrying cargo and passengers. 52    General cargo vessel Vessel for carrying general cargo. 53    Crude oil tanker Vessel for carrying crude oil. 54    Liquefied Petroleum Gas (LPG) carrier Vessel for carrying Liquefied Petroleum Gas (LPG). 55    Liquefied Natural Gas (LNG) carrier Vessel for carrying Liquefied Natural Gas (LNG). 56    Grain carrier Vessel for carrying grain. 57    Timber or log carrier Vessel for carrying timber or logs. 58    Wood chip carrier Vessel for carrying wood chips. 59    Steel products vessel Vessel for carrying steel products. 60    Gravel vessel Vessel for carrying gravel. 61    Cement vessel Vessel for carrying cement in bulk. 62    Coal vessel Vessel for carrying coal. 63    Ore carrier Vessel for carrying ore in bulk. 64    Car carrier Vessel for carrying complete cars and/or their knock- down parts. 65    Container only vessel Vessel for carrying containers only. 66    Roll on - roll off vessel A vessel capable of carrying roll on - roll off cargo. 67    Ferry A means of transport for carrying passengers and/or vehicles on a regular basis. 68    Fishing vessel Vessel used in the catching of fish. 69    Work vessel A vessel engaged in "port and harbour work", which means construction, improvement, maintenance or rehabilitation of port and harbour facilities. Dredger, floating crane, sand carrier with grab bucket are included in this type of the means of transport. 70    Patrol vessel A vessel to patrol port or coastal area. 71    Tug and/or push boat A vessel to push and/or pull other vessels. 72    Train with one wagon A train with a single wagon used to carry goods. 73    Train with more than one and less than 20 wagons A train with more than one and less than 20 wagons used to carry goods. 74    Train with 20 or more wagons A train with 20 or more wagons used to carry goods. 75    Oil products tanker A vessel for carrying products derived from crude oil. 76    Training vessel A vessel for learning maritime skills. 77    Freezer truck and isothermic trailer A combined freezer truck and isothermic trailer. 78    Isothermic truck and isothermic trailer A truck and a trailer equipped to maintain controlled temperatures. 79    Refrigerated truck and isothermic trailer A combined refrigerated truck and isothermic trailer. 80    Freezer truck and refrigerated trailer A combined freezer truck and refrigerated trailer. 81    Isothermic truck and refrigerated trailer A combined isothermic truck and refrigerated trailer. 82    Rigid truck with tank and tank trailer A combined rigid truck with tank and tank trailer. 83    Bulk truck and tank trailer A combined truck capable of carrying liquids or bulk goods and a tank trailer. 84    Rigid truck with tank and bulk trailer A combined rigid truck with tank and a trailer capable of carrying liquids or bulk goods. 85    Bulk truck and bulk trailer A combined truck and a trailer both capable of carrying liquids or bulk goods. 86    Tautliner truck and extendable trailer A combined tautliner truck and extendable trailer. 87    Tautliner truck with removable roof and extendable trailer A combined tautliner truck with removable roof and extendable trailer. 88    Truck with opening floor and extendable trailer A combined truck with opening floor and extendable trailer. 89    Bulk truck and extendable trailer A combined truck capable of carrying liquids or bulk goods and an extendable trailer. 90    Isothermic truck and freezer trailer A combined isothermic truck and freezer trailer. 91    Refrigerated truck and freezer trailer A combined refrigerated truck and freezer trailer. 92    Tip-up truck and gondola trailer A combined tip-up truck and gondola trailer. A gondola trailer is a split level trailer suitable for the transport of heavy machinery. 93    Tautliner truck and gondola trailer A combined tautliner truck and gondola trailer. A gondola trailer is a split level trailer suitable for the transport of heavy machinery. 94    Tautliner truck with removable roof and gondola trailer A combined tautliner truck with removable roof and gondola trailer. A gondola trailer is a split level trailer suitable for the transport of heavy machinery. 95    Truck with opening floor and gondola trailer A combined truck with opening floor and gondola trailer. A gondola trailer is a split level trailer suitable for the transport of heavy machinery. 96    Bulk truck and gondola trailer A combined truck capable of carrying liquids or bulk goods and a gondola trailer. A gondola trailer is a split level trailer suitable for the transport of heavy machinery. 97    Tip-up truck and extendable gondola trailer A combined tip-up truck with extendable gondola trailer. An extendable gondola trailer is a trailer fitted with a rear axle which can be extended to cater for variable length and is suitable for the transport of heavy machinery. 98    Tautliner truck and extendable gondola trailer A combined tautliner truck and extendable gondola trailer. An extendable gondola trailer is a trailer fitted with a rear axle which can be extended to cater for variable length and is suitable for the transport of heavy machinery. 99    Tautliner truck with removable roof and extendable gondola trailer A combined tautliner truck with removable roof and extendable gondola trailer. An extendable gondola trailer is a trailer fitted with a rear axle which can be extended to cater for variable length and is suitable for the transport of heavy machinery. 100   Truck with opening floor and extendable gondola trailer A combined truck with opening floor and extendable gondola trailer. An extendable gondola trailer is a trailer fitted with a rear axle which can be extended to cater for variable length and is suitable for the transport of heavy machinery. 101   Bulk truck and extendable gondola trailer A combined truck capable of carrying liquids or bulk goods and a extendable gondola trailer. An extendable gondola trailer is a trailer fitted with a rear axle which can be extended to cater for variable length and is suitable for the transport of heavy machinery. 102   Tip-up truck and trailer with opening floor A combined tip-up truck and trailer with opening floor. 103   Tautliner truck and trailer with opening floor A combined tautliner truck and trailer with opening floor. 104   Tautliner truck with removable roof and trailer with opening floor A combined tautliner truck with removable roof and trailer with opening floor. 105   Truck and trailer with opening floor A combined truck and a trailer with an opening floor. 106   Bulk truck and trailer with opening floor A combined truck capable of carrying liquids or bulk goods and a trailer with opening floor. 107   Removal truck and trailer A combined truck and trailer capable of carrying household effects. 108   Tautliner truck and removal trailer A combined tautliner truck and trailer capable of carrying household effects. 109   Tautliner truck with removable roof and removal trailer A combined tautliner truck with a removable roof and a trailer capable of carrying household effects. 110   Vessel, temperature controlled cargo A vessel to carry temperature controlled cargo. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ModeOfEntryType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a type of a mode of data entry NOTE: 	possible values maintained by eCF 1:	Manually entered 2:	Electronically received</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DocumentExemptionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a type of document exemption</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlResultIndicatorType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of indicator of a control result NOTE: 	possible values defined and maintained by the EU: DI:		Differences (Attribute incorrect) NE:		New entry</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="RiskAssessmentResultType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing information about the risk rate NOTE: 		possible values, defined and maintained by eCF 1:	no risk 2:	low risk 3:	medium risk 4:	high risk</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitMessageType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of an exit message NOTE: 	possible values as defined and maintained by eCF: 1:	Anticipated Exit Data Request (IE502) 2:	Exit Result Message (IE518) 3: 	Export Declaration Data Request (IE527) 4:	Export Cancellation Acknowledgment (IE901) 5: 	Functional Error Response (IE906) 6: 	Anticipated Exit Message (IE501) 7: 	Export Cancellation Message (IE510) 8: 	Exit Status Request (IE904) 9:	Exit Status Response (IE905) 10:	Anticipated Exit Data Response (IE503) 11:	Export Declaration Data Response (IE538) 12:	Exit Diversion Message (IE524) 13:	Exit Follow-up Request (IE584) 14:	Exit Follow-up Negative Response (IE586)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProcedureCategory">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a category of government procedure types. NOTE:	possible value defined and maintained by eCF: A: 	Export/Dispatch 10, 11, 23 B: 	Customs warehousing of prefinanced goods for export 76, 77 C: 	Re-export after a customs procedure with economic impact other than the customs warehousing procedure (inward processing, temporary importation, processing under customs control) 31 D: 	Re-export after customs warehousing 31 E: 	Outward processing 21, 22 F: 	Transit G: 	Community status of goods H: 	Release for free circulation 01, 02, 07, 40 41, 42, 43, 45, 48, 49, 61, 63, 68 I: 	Placing under a customs procedure with economic impact other than the outward processing and customs warehousing procedures (inward processing (suspension system), temporary importation, processing under customs control) 51, 53, 54, 91, 92 J: 	Placing in type A, B, C, E and F customs warehouses 71, 78 K: 	Placing in a type D customs warehouse 71, 78 </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TaskType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of task carried out in the context of customs management NOTE: defined and maintained by eCF  1. Automated  Control Task         category: ControlTasks  2. External Control Task            category: ControlTasks 3. Manual Control Task              category: ControlTasks 4. Pay-up Deadline Monitoring Task</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CurrencyType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a type of currency NOTE: currencies a coded using the 3 digit ISO 4217 standard currency name code list</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="HumanTaskType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of human task carried out in the context of customs declaration management</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TransportModeType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a category of transport facilities used to transport people or cargo NOTE 1:    A mode of transport is a category of types of transport means that use the same transport medium such as roads, water, air  NOTE 2:    Possible values maneged by the 'Working Party on Facilitation of International Trade Procedures' (WPFITP) listed below: NOTE 3:   The CCIPcode list of transport modes is a sub set of the WPFITP list. The only exception is the descripton of code 9  which CCIPdescribes as 'own propulsion' and WPFITP as 'Mode Unknown'. To align both descriptions, we propose to rename the lable of code 9  to 'Mode Unknown/Own Propulsion' Code    Mode of Transport             Explanations 0       -                    In principle, this code should not be used since the digit '0' may be employed                               to indicate absence of entry, etc. If this is not the case, the code can be used when                               indication of a mode of transport would be irrelevant, e.g. statistical reporting                               should not take place (for samples, gifts, personal effect, etc.). 1       Maritime transport             Provision is made for separate reporting of inland water transport under code                               8, assuming that appropriate definitions and rules of application will be given,                               particularly when transport covers sea as well as inland waterways. 2       Rail transport                - 3       Road transport             - 4       Air transport                - 5       Mail               (Active mode of transport unknown) - This code is provided for practical                               reasons, despite the fact that mail is not a genuine mode of transport. In many                               countries, the value of merchandise exported and imported by mail is considerable,                               but the exporter or importer concerned would be unable to state by which                               mode postal items had passed the national border. 6       Multimodal transport          (Active mode of transport unknown) – This code is provided for practical                               reasons, despite the fact that multimodal transport is not a genuine mode of                               transport. It can be used when goods are carried by at least two different modes                               from a place at which the goods are taken in charge by a transport operator to                               a place designated for delivery, on the basis of one transport contract. (Operations                               of pick-up and delivery of goods carried out in the performance of a                               unimodal transport, as defined in such a contract, shall not be considered as                               multimodal transport.) 7       Fixed transport             This code applies to installations for continuous transport such as pipelines,                               installations ropeways and electric power lines. 8       Inland water transport          This code is used only in such cases where the application of waterborne                               transport is reported separately within the framework of a one-digit code. 9       Mode unknown/             This code can be used when the mode is not known or when information on it       Own Propulsion               is not available at the time of issuing the document concerned.           Examples of transport modes and the transport means falling in those categories # Aviation, Air     * Aircraft, Aeroplane     * Airship and Blimp     * Autogyro     * Balloon (aircraft)     * Hang glider     * Helicopter     * Jetpack     * Microlight     * Tiltrotor     * Jump Jet # Human-powered transport     * Bicycle, (Cycling)     * Pedestrian (walking)     * Rickshaw     * Skateboard     * Skate     * Sledge     * Wheelchair     * Ski # Ship transport     * Boat. Sailboat     * Ferry, Car ferry, Passenger Ferry     * Hydrofoil     * Ship     * Submarine     * Hovercraft # Rail transport, Railway (UK) Railroad (US)     * Cable car (railway)     * Funicular     * Rapid transit (metro, underground, subway, or elevated rail systems)     * Tram     * Train     * Monorail # Road transport     * Auto rickshaw (or Tuk-Tuk)     * Bus     * Coach     * Car (UK) Automobile (US)     * Motorcycle     * Truck (US), Lorry (UK), Heavy Goods Vehicle     * Trolley bus</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a coverage response NOTE 1: Possible values defined and maintained by eCF: 1: OK (coverage for the declaration exists and is sufficient) 2:  Not OK (declarant is unable to provide coverage for the declaration) </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TransactionConditionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a transaction condition NOTE 1:	Used to denote DV1 transaction conditions as captured in AdditionalInformation objects of type ABC (Conditions of sale or purchase) NOTE 2: 	Possible values defined and maintained by eCF: 1:	buyer/seller not affiliated as per article 143 ECC 2454/93 2: 	buyer/seller affiliation as per article 143 ECC 2454/93 not influencing price of goods 3: 	buyer/seller affiliation as per article 143 ECC 2454/93 influencing price of goods	 4: 	price influenced by buyer/seller affiliation as per article 143 ECC 2454/93 is close approximate value as per article 29 (2) (b) of Regulation (EEC) 2913/92 5: 	special restrictions as to the dispostion of the goods by the buyer	 6: 	valuation affecting price conditions or considerations 7: 	valuation affecting royalties or license fees 8: 	valuation affecting other revenue 9: 	specification of "other deductible charges" 10: customs decision concerning transaction conditions 11: contract information </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SecurityAmountType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a Security amount
+
+NOTE :      possible values defined and maintained by the client.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SpecialMentionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a possible value of the AdditionalInformation object of type 'CUS' NOTE: 	 The code list of special mention values consists of the following 5 digit EU codes: 90001 Date of entry into customs warehouse type D 90002 Request for deviation of customsvalue usual forms of handling 90003 Inspected in other member state (Phytosanitary directive) 90004 EU-approved. Licencenr. 90005 Emergency procedure (PD) 90006 Par. 24a Implementation legislation VAT 1968 95008 Conform annex I Regulation (EC) 2331/97 quality requirements 95009 No transhipment in EU Geen overlading binnen de EU article 9 commission regulation 800/1999 95011 Telephonic release of goods known to customs 95012 Intervention goods for storage in 3rd countries Interventiegoederen voor opslag in 3e landen article 2 commission regulation 3551/92 95013 Intervention products transportation Interventieproducten vervoer article 340 quarter(3)(b) commission regulation 2454/93 95014 Intervention meat Vlees uit interventievoorraden article 12,2 commission regulation 3002/92 95015 Intervention meat without restitutions Vlees uit interventievoorraden zonder restitutie article 12,2 commission regulation 3002/92 95016 Goods destined for the Royal Household 95017 Request for retrospective exportcertification without previous fixation of restitution amount 95018 Conform conditions of art. 45 Reg.1291/2000 95019 Declaration for re-exportation at other customs office after storage in customs warehouse 95020 Importation for free circulation in the country of destination 95021 Request for repayment of excise/taxes/VAT (national legislation) verbruiksbelastingen van alcoholvrije dranken en van enkele andere producten en art. 24 wet op de omzetbelasting. 95022 Request for repayment of duties (customs code) Verzoek terugbetaling rechten bij invoer (CDW) article 235 - 242 commission regulation 2454/1993 95023 Export restitution: 0 EUR Regulation EC Nr 1676/2004 Uitvoerrestitutie: 0 EUR/Verordening (EG) nr. 1676/2004 article 1 commission regulation 1712/2004 95024 net weight not incorporating the weight of the wax. NIET IN NETTO-GEWICHT BEGREPEN commission regulation EG 558/2005 footnote 7e 95025 net weight includes the weight of the film in plastic. INCLUSIEF PLASTIC COATING/FOLIE commission regulation EG 558/2005 footnote 7c 95026 net weight includes the weight of the ash or the paraffin INCLUSIEF PARAFFINE EN-OF AS commission regulation EG 558/2005 footnote 7d 95027 addition of herbs or spices. INCLUSIEF KRUIDEN OF SPECERIJEN commission regulation EG 558/2005 footnote 10b 95028 addition of such non-lactic ingredients. INCLUSIEF ANDERE MELKVR. INGREDIENTEN (HAM E.D.) commission regulation EG 558/2005 footnote 10a 97003 Light-heavy or unmixed gasoil Halfzware- of gasolie onvermengd. National: art 27 lid 1 wet op de accijns 97004 Light-heavy or gasoil supplied with means for identification Halfzware- of gasolie voorzien van herkenningsmiddelen National: art 27 lid 3 wet op de accijns 97005 Clause of protest Protestclausulevergunning HD bezwaar en beroep punt 2.2.2. 97006 duration of validity XXX weeks Geldigheidsduur XXX weken article 292,4(e) and article 499 (f) commission regulation 2454/1993 90009 Depositor is other person than warehousekeeper 90010 Transporter: Name, Postcode House number excise goods 90011 Excise warehouse licensee: 90012 approve conformity checking operationsperformed by this third country prior to import into the Community. Coded: 90013 request to charge the import duties on the whole consignment to the highest rate of import duty 90014 Decision LWT: identification number: Decision from the Customs National Value team on a customs value judg(e)ment 95001 Commercial policy Handelspolitiek article 549 lid 2 commission regulation 2454/1993 95002 No additived whey/etc than mentioned under footnote 95003 No other additives than mentioned in footnote HBIII (national legislation) under goodsdescription 95004 Exempted from exportcertificate 95005 Exempted from form L(F) 95006 Declared in datasystem as  'placed under' for CO/A regulation 7600 95007 Declared in datasystem as 'placed under' for EX/A regulation 1076</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContactMechanismType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of contact mechanism NOTE 1: UNTDID code list 3153 Communication medium type NOTE 2: the UNTDID code list 3153 does not contain a value indicating a physical contact address. For this we may need to define an eCF value e.g.: 'ZZ' NOTE 3:  UNTDID code list 3153 Values: AA    Circuit switching A process that, on demand, connects two or more data terminal equipments and permits the exclusive use of a data circuit between them until the connection is released (ISO). AB    SITA Communications number assigned by Societe Internationale de Telecommunications Aeronautiques (SITA). AC    ARINC Communications number assigned by Aeronautical Radio Inc. AD    Courier A communication channel identifying a courier. AE    Express post Express (e.g. overnight) postal service document delivery. CA    Cable address The cable is used as communication medium. EI    EDI transmission Number identifying the service and service user. EM    Electronic mail Exchange of mail by electronic means. EX    Extension Telephone extension. FT    File transfer access method According to ISO. FX    Telefax Device used for transmitting and reproducing fixed graphic material (as printing) by means of signals over telephone lines or other electronic transmission media. GM    GEIS (General Electric Information Service) mailbox GEIS mailbox system is used as communication medium. IE    IBM information exchange IBM IE is used as communication medium. IM    Internal mail Internal mail address/number. MA    Mail Postal service document delivery. PB    Postbox no. Postbox system is used as communication medium. PS    Packet switching The process of routing and transferring data by means of addressed packets so that a channel is occupied only during the transmission; upon completion of the transmission the channel is made available for the transfer of other packets (ISO). SW    S.W.I.F.T. Communications address assigned by Society for Worldwide Interbank Financial Telecommunications s.c. TE    Telephone Voice/data transmission by telephone. TG    Telegraph Text transmission via telegraph. TL    Telex Transmission of text/data via telex. TM    Telemail Transmission of text/data via telemail. TT    Teletext Transmission of text/data via teletext. TX    TWX Communication service involving Teletypewriter machines connected by wire or electronic transmission media. Teletypewriter machines are the devices used to send and receive signals and produce hardcopy from them. XF    X.400 CCITT Message handling system. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CustomsWarehouseType">
+    <xsd:annotation>
+      <xsd:documentation>Objects that represent a type of customs warehouse NOTE: the following customs warehouse type are distinguished: Type A: a public warehouse where anybody can store their goods and where the warehouse keeper is responsible for fulfilling the obligations arising from the placing of goods under the Customs Warehouse procedure. Type B: A public warehouse where anybody can store their goods and where the depositor is responsible for fulfilling the obligations arising from the placing of goods under the Customs Warehouse procedure. Type B warehouses are often used by stevedores, agents and transport companies in ports to store goods for a limited time until the means of transport has arrived to further distribute the goods to the place of destination. Type C: A private warehouse where only the warehouse keeper can store goods, where the warehouse keeper is the same person as the depositor but is not necessarily the owner of the goods. Type D: A private warehouse where only the warehouse keeper can store his goods, where the warehouse keeper is the same person as the depositor but is not necessarily the owner of the goods. In contrast with the other warehouse types the Import Duties are calculated based on the rules of assessment ascertained or accepted at the time when the goods are placed under the Customs Warehousing system. This type of warehouse is quite similar to a type C warehouse Type E: A private warehouse where only the warehouse keeper can store his goods, where the warehouse keeper is the same person as the depositor but is not necessarily the owner of the goods. For this type of warehouse it is permitted to place the goods under the Warehouse Procedure without them being physically stored in a Customs Warehouse. This type of warehousing requires a high level administrative organisation including inventory records, as the physical location of the goods is not the key factor, but the fact that the goods are entered in the warehouse records. Customs must be able to follow the goods through the records system. This type of warehouse is the most sophisticated type which gives maximum flexibility to the warehouse keeper, but also requires a high level records system. Type F: A public warehouse where anybody can store their goods, which is operated by the Customs authorities. This type of warehouse is very rare. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProcedureTreatmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a procedure treatment NOTE:   possible values defined and maintained by eCF: 1:  Relief treatment 2:  Suspension treatment 3:	Duty treatment</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValuationAdjustmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a customs valuation adjustment WCO ID:		371 (in class CustomsValuation) WCO NAME:	Charges type, coded WCO DESC:	Code identifying the type of charge. NOTE: 			possible values are taken from the UNTDED 5025 Monetary amount type code qualifier 4: 	Additional royalties related to the imported goods are payable either directly or indirectly by the buyer as condition to the sale, as specified in DV1 box 9 (a) 18:	Brokerage.  Fee charged by a broker for acting on behalf of a third party. 19:	Buying commission. Commission paid by the importer to his/her agent for the service of representing him/her in the purchase, being the part to be deducted from the amount specified in DV1 box 13 (a) 40:	Customs value. (5032) Value declared for Customs purposes on those goods in a consignment which are subject to the same Customs procedure, and have the same tariff/statistical heading, country information and duty regime, as specified in V1 box 24 (result of the contents of DV1 box 12 + 18 - 23 45:	deductible after importation charges (Customs). Charges (e.g. construction, assembly, erection, maintenance or technical assistance) after importation, which are included in the total invoice price, that may be deducted to arrive at a Customs value, as specified in DV1 box 20 49:	Development necessary for production of imported goods. (Customs). Value of engineering, development, artwork, design 	work and plans and sketches carried out elsewhere than in the Customs territory and necessary for the production of the imported goods, as specified in DV1 box 14 (c) 65: total indirect payments 66:	Goods item total. Net price x quantity for the line item, as specified in DV1 box 11 (a) 69:	Insurance and transport charges incurred outside Customs territory (5488)+(5292) Insurance and transport charges incurred outside a Customs territory (or a Customs union), as specified in DV1 box 17 (a + c) 80:	Licence fees related to the imported goods are payable either directly or indirectly by the buyer as condition to the sale, as 	specified in DV1 box 9 (a) 81:	Loading and handling cost. Cost incurred by loading and handling, as specified in DV1 box 17 (b) 84:	Material consumed in production of imported goods (Customs). Value of materials consumed in the production of the imported goods, as specified in DV1 box 14 (c) 103:	Other deductible charges. Other charges deducted from the total invoice value, as specified in DV1 box 21 107:	Packing cost (Customs) [5448] Costs incurred for all containers and coverings of whatever nature which are considered as being one for Customs purposes with the goods, and the cost of packing whether for labour or material, as specified in DV1 box 13 (c) 108:	Parts incorporated in imported goods (Customs). Materials, components, parts and similar items incorporated in the imported goods, as specified in DV1 box 14 (a) 127:	Tools used in production of imported goods (Customs). Tools, dies, moulds and similar items used in the production of the imported goods, as specified in DV1 box 14 (b) 144:   	Transport charges (Customs). (5292) Cost incurred by shipper in moving goods, by whatever means, from one place to 	another under the terms of the contract of carriage, see UN/ECE Recommendation No 23. Synonym: freight charges (Customs), as specified in DV1 box 17 (a) 145:	Transport charges incurred outside Customs territory. (5292) Transport charges incurred outside a Customs territory (or a Customs union), as specified in DV1 box 17 (a) 152:	Subsequent resale of imported goods (Customs). Value of any part of the proceeds of any subsequent resale, disposal or use of the imported goods that accrues, directly or indirectly, to the seller as specified in DV1 box 9 (b) 158:  	Insurance and transport charges incurred inside Customs territory (5488)+(5292). Charges to be paid for moving goods, by whatever means, from the point of entry into the Customs territory (within a Customs union: to the point of entry in the final destination country), as specified in DV1 box 19 162:   	Customs duty paid. Amount which can be deducted from the stated invoice price where that price includes the Customs 	duty amount, as specified in DV1 box 22 265:	Commission amount. Amount of any commission, being the basis (purchase commissions need to be deducted) for the amount, as specified in DV1 box 13 (a) 354:   	Add to make market value: Addition to the base value of an item for customs duty computation purposes, as specified in DV1 box 18 356:	Deduct to make market value. Deduction from the base value of an item for customs duty computation purposes as specified in DV1 box 23 165   	Adjustment amount. Amount being the balance of the amount to be adjusted and the adjusted amount. as specified in SAD box 45 </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AddressType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a physical address NOTE:	possible values defined and maintained by UNTDED 3131: 1 	Postal address - The address is representing a postal address. 2	Fiscal address - Identification of an address as required by fiscal administrations. 3 	Physical address - The address represents an actual physical location. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="GoodsCommunityStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of community status of the goods as codified by T codes NOTE: possible values defined in CCIP T1: Goods required to move under the external Community transit procedure T2: Goods required to move under the internal Community transit procedure in accordance with Article 163 or 165 of the Code, T2F: Goods required to move under the internal Community transit procedure, in accordance with Article 340c(1) T2SM: Goods placed under the internal Community transit procedure, in application of Article 2 of Decision 4/92 of the EEC San Marino Co-operation Committee of 22 December 1992. T: Mixed consignments covered by Article 351, in which case the space following the 'T' must be scored through T2L: Form establishing the Community status of goods T2LF: Form establishing the Community status of goods consigned to, or from, a part of the customs territory of the Community where the provisions of Directive 77/388/EEC do not apply T2LSM: Form establishing the status of goods destined for San Marino in application of Article 2 of Decision 4/92 of the EEC-San Marino Cooperation Committee of 22 December 1992.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="FootNoteType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a footnote belonging to de Duty/Tax/Fee measure NOTE:	code list elements are defined and maintained by the DCS/Tariff component: examples: CA Additional nomenclature - CADD CD Conditions CG Cultural goods DU Dual use goods EU End use footnote MG Military goods and technologies MH Meursing table MX Export refund measure NC Combined Nomenclature NM NC measure NX Export Refund Nomenclature OZ Ozone-depleting substances PB Publication PN See annex TM Taric Measure TN Taric Nomenclature TP Dynamic footnote TR Torture and repression WR Wine reference</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="QuotaStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the status of a quota level NOTE: possible values (managed by eCF) 1:   safe:             the quota level is sufficient; in case of a request the preferential tariff is assumed to apply 2:   critical:             the quota level is critical; it is uncertain whether preferential tariff will apply, in calculating the tax, the normal tariff is                   assumed 3:   exhausted:       quota is no longer available, the normal tariff will apply 4:   blocked:          the allocation is being postponed to the moment the quota is unblocked -&gt; after unblocking the allocation will take place                   in a first-in-first    out order until  5:   blocked and critical: same as blocked but the quota level is already critical 6:   suspended:       the preferential tariff is temporarily rendered inoperative -&gt; requests for declarations with an acceptance date between                   the suspension start and end date are not eligible for the preferential tariff</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TransportMeansRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the role a means of transport can play in a particular context Possible values defined and maintained by eCF: 1.   Departure Transport Means 2.   Border Crossing Transport Means 3   Customs area entry transport means 4.   Customs area exit transport means 5.   Arrival Transport Means 6.   Transit Transport Means 7.    Inland Transport Means</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocationRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of role a location plays in association with another object Possible values defined and maintained by UNTDID: 3227 Location function code qualifier 14:    Goods item storage location [3384] To identify the place where a goods item is located. 9: Place  of Loading [3334]   Seaport, airport, freight terminal, rail station or other place at which the goods (cargo) are loaded on to the means of transport being used for their carriage. 92:		Routing. Indication of a routing place 65: Final port or place of discharge</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AccountingEntryType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of an accounting entry NOTE:	possible value defined and maintained by eCF: 1: deposit (money paid up to the account) =&gt; crediting the account 2: reservation (money reserved from the account  =&gt; debiting the account  3: release (reserved money to be made available to the account again) =&gt; crediting the account 4: payment (money paid from the account =&gt; debiting the account 5: account receivable booking (=&gt; crediting the account) </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="OverallControlResultType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of an overall control result NOTE: 	possible values defined and maintained by the EU: A1: Satisfactory (A1 is also used for cases with minor discrepancies), A2: Considered Satisfactory (No control performed), A3: Simplified procedure (Trader premises, value is provided by trader at submission), A4: Minor Discrepancies, B1: Not Satisfactory NOTE: A1, A2, A3 and B1  may be used by the office of export. A1, A2, A4, and  B1 may be used by the office of exit </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DutyDecisionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a duty decision taken by the competent authorities: NOTE: Possible values defines and maintained by eCF 1: Provisional duty cancelled; not superseded by a final duty 2: Provisional duty made final without any change in the measure conditions 3: Provisial duty made final with rate adjustment; not change in measure conditions 4: Provisional duty made final with change in measure conditions 5: Provisional duty made final with unknown impact to the declaration</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocationIdentificationType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of identification for a location playing a role in a declaration Possible values defined and maintained by UCC Annex B 5/23</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TopicType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a topic of a notification/publication NOTE:	possible values defined by eCF: 1:	Declaration validation 2:	Declaration goods release 3:	Declaration clearance 4:	Declaration invalidation 5:	Declaration rejected 6:	Declaration handled externally</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="GoodsExportStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the export status of the goods, as determined by the office of export NOTE: 	possible values defined and maintained by eCF: * States from office of export 1:	Goods Released For Export 2:	Diversion Accepted 3:	Export Stopped, Discrepancy at Exit 4: 	Exported 5:	Cancelled </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SpecialProcedureType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the special procedure further detailing a government procedure NOTE:   values defined/maintained by country or customs union, here the EU: A01:	Goods entered for an IP procedure (suspension system) after prior export of compensating products obtained from milk and milk products A02:	Goods placed under an IP procedure (suspension system) and intended for military use abroad A03:	Goods placed under an IP procedure (suspension system) and intended for re-export to the continental shelf A04:	Goods placed under an IP procedure (suspension system) (VAT only) A05:	Goods placed under an IP procedure (suspension system) (VAT only) and intended for re-export to the continental shelf A06:	Goods placed under an IP procedure (drawback system) and intended for military use abroad A07:	Goods placed under an IP procedure (drawback system) and intended for re-export to the continental shelf A08:	Goods which are placed under an IP procedure (suspension system) without suspension of excise duties. A51:	Compensating products obtained from milk and milk products A52:	Compensating products placed under an IP procedure (suspension system) (VAT only) A53:	Compensating products placed under an IP procedure and intended for military use abroad B01:	Compensating products returning to the Member State in which duties were paid B02:	Compensating products returning after repair under guarantee B03:	Compensating products returning after replacement under guarantee B04:	Compensating products returning after outward processing and VAT suspension in case of end-use. B05:	Compensating products returning with partial relief of customs duties when the cost of the processing operation is used for calculation (article 591) B51:	Goods imported for IP exported for repair under OP B52:	Goods imported for IP exported for replacement under guarantee B53:	OP under agreements with third countries, possibly combined with VAT OP B54:	VAT OP only C01:	Personal property belonging to natural persons transferring their normal place of residence to the Community  C02: 	Goods imported on the occasion of a marriage (trousseaux and household effects) C03:	Goods imported on the occasion of a marriage (presents customarily given on the occasion of a marriage) C04:	Personal property acquired by inheritance  C05:	Household effects for furnishing a secondary residence  C06:	School outfits, scholastic materials and other scholastic household effects  C07:	Consignments of negligible value  C08:	Consignments sent from one private individual to another C09:	Capital goods and other equipment imported on the transfer of activities from a third country into the Community C10:	Capital goods and other equipment belonging to persons engaged in a liberal profession and to legal persons engaged in a non-profit making activity etc.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageMeansType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of coverage means (guarantee). NOTE:      Possible values maintained by eCF:          1:   Permanent authorization      Continuous         Non-transaction based;                2:   Credit account               Continuous         Transaction based;                   3:   Cash (deposit)               Incidental            Transaction based; NOTE:       possible values (provided by Tony Crewdson 04-08-09 10:21) Code 0: Guarantee waiver Code 1: Comprehensive guarantee Code 2: Individual guarantee (by Guarantor) Code 3: Cash deposit guarantee (by Principal) Code 4: Individual guarantee in the form of vouchers Code 5: For guarantee waiver where the secured amount does not exceed 500 EURO Code 6: Guarantee not required  Code 7: Guarantee not required for the journey between Office of Departure and Office of Transit (EFTA only) Code 8: Guarantee not required for certain public bodies (EC code only) Code 9: Individual guarantee with multiple use Code A: For guarantee waiver by agreement (EFTA code only) Code B: movements carried under the TIR Convention</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExtensionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a code, maintainable by the DMS client, which can be used to encode information in an extension object linked to an extendable object. NOTE: values are to be provided by clients of the eCF/DMS in their capacity of code list responsible agent NOTE 2: 	possible values for NL Customs: 1:	nl.riskassessment.InBehBij 2: 	nl.riskassessment.In_Beh_monent 3:	nl.riskassessment.VrijgPartij-SLO 4:	nl.riskassessment.Vrijg_moment 5: 	nl.riskassessment.Uitv_moment 6:	nl.riskassessment.Terugmeld_moment 7:	nl.riskassessment.GebrDrempWrde 8:	removed 9:	nl.riskassessment.GebrPlafWrde 10:	nl.riskassessment.VrijgPartij-SRD	 11:	nl.riskassessment.VrijgMoment 12:	nl.riskassessment.Volgnr-RGS 13:	nl.riskassessment.Status-VBW 14:	nl.riskassessment.VaststPartij 15:	nl.riskassessment.VastStMoment 16: nl.riskassessment.Sltl_Ref 17: nl.riskassessment.Beschr2 18: nl.riskassessment.RglKenm1 </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitSpecificCircumstanceType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of specific circumstances applying to an exit movement NOTE:	possible values defined and maintained by the EU A 	Postal and express consignments B	Ship and aircraft supplies C 	Road mode of transport D 	Rail mode of transport E 	Authorised economic operators</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AuthorizationCategoryType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the authorization type category. NOTE: possible values to be defined by the eCF client NOTE: may contain: 1. Import or export license 2. Warehousing 3. Procedure combination</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PackageType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a package NOTE: possible values defined and maintained by the EU: Aerosol AE Ampoule, non-protected AM Ampoule, protected AP Atomizer AT Bag BG Bag, flexible container FX Bag, large ZB Bag, multiply MB Bag, paper 5M Bag, paper, multi-wall XJ Bag, paper, multi-wall, water resistant XK Bag, plastic EC Bag, plastics film XD Bag, super bulk 43 Bag, textile 5L Bag, textile, sift proof XG Bag, textile, water resistant XH Bag, textile, without inner coat/liner XF Bag, woven plastic 5H Bag, woven plastic, sift proof XB Bag, woven plastic, water resistant XC Bag, woven plastic, without inner coat/liner XA Bale, compressed BL Bale, non-compressed BN Balloon, non-protected BF Balloon, protected BP Bar, BR Barrel BA Barrel, wooden 2C Barrel, wooden, bung type QH Barrel, wooden, removable head QJ Bars, in bundle/bunch/truss BZ Basin BM Basket BK Basket, with handle, cardboard HC Basket, with handle, plastic HA Basket, with handle, wooden HB Bin BI Board BD Board, in bundle/bunch/truss BY Bobbin BB Bolt BT Bottle, gas GB Bottle, non-protected, bulbous BS Bottle, non-protected, cylindrical BO Bottle, protected bulbous BV Barrel BA Barrel, wooden 2C Barrel, wooden, bung type QH Barrel, wooden, removable head QJ Bars, in bundle/bunch/truss BZ Basin BM Basket BK Basket, with handle, cardboard HC Basket, with handle, plastic HA Basket, with handle, wooden HB Bin BI Board BD Board, in bundle/bunch/truss BY Bobbin BB Bolt BT Bottle, gas GB Bottle, non-protected, bulbous BS Bottle, non-protected, cylindrical BO Bottle, protected bulbous BV Box, wooden, natural wood, ordinary QP Box, wooden, natural wood, with sift proof walls QQ Bucket BJ Bulk, gas (at 1 031 mbar and 15 °C) VG Bulk, liquefied gas (at abnormal temperature/pressure) VQ Bulk, liquid VL Bulk, solid, fine particles (powders) VY Bulk, solid, granular particles (grains) VR Bulk, solid, large particles (nodules) VO Bunch BH Bundle BE Butt BU Cage CG Cage, Commonwealth Handling Equipment Pool (CHEP) DG Cage, roll CW Can, cylindrical CX Can, rectangular CA Can, with handle and spout CD Canister CI Canvas CZ Capsule AV Carboy, non-protected CO Carboy, protected CP Card CM Carton CT Cartridge CQ Case CS Case, isothermic EI Case, skeleton SK Case, steel SS Case, with pallet base ED Case, with pallet base, cardboard EF Case, with pallet base, metal EH Case, with pallet base, plastic EG Case, with pallet base, wooden EE Cask CK Chest CH Churn CC Clamshell AI Coffer CF Coffin CJ Coil CL Composite packaging, glass receptacle 6P Composite packaging, glass receptacle in aluminium crate YR Composite packaging, glass receptacle in aluminium drum YQ Composite packaging, glass receptacle in expandable plastic pack YY Composite packaging, glass receptacle in fibre drum YW Composite packaging, glass receptacle in fibreboard box YX Composite packaging, glass receptacle in plywood drum YT Composite packaging, glass receptacle in solid plastic pack YZ Composite packaging, glass receptacle in steel crate box YP Composite packaging, glass receptacle in steel drum YN Composite packaging, glass receptacle in wickerwork hamper YV Composite packaging, glass receptacle in wooden box YS Composite packaging, plastic receptacle 6H Composite packaging, plastic receptacle in aluminium crate YD Composite packaging, plastic receptacle in aluminium drum YC Composite packaging, plastic receptacle in fibre drum YJ Composite packaging, plastic receptacle in fibreboard box YK Composite packaging, plastic receptacle in plastic drum YL Composite packaging, plastic receptacle in plywood box YH Composite packaging, plastic receptacle in plywood drum YG Composite packaging, plastic receptacle in solid plastic box YM Composite packaging, plastic receptacle in steel crate box YB Composite packaging, plastic receptacle in steel drum YA Composite packaging, plastic receptacle in wooden box YF Cone, AJ Container, not otherwise specified as transport equipment CN Cover CV Crate CR Crate, beer CB Crate, bulk, cardboard DK Crate, bulk, plastic DL Crate, bulk, wooden DM Crate, framed FD Crate, fruit FC Crate, milk MC Crate, multiple layer, cardboard DC Crate, multiple layer, plastic DA Crate, multiple layer, wooden DB Crate, shallow SC Creel CE Cup CU Cylinder CY Demijohn, non-protected DJ Demijohn, protected DP Dispenser DN Drum DR Drum, aluminium 1B Drum, aluminium, non-removable head QC Drum, aluminium, removable head QD Drum, fibre 1G Drum, iron DI Drum, plastic IH Drum, plastic, non-removable head QF Drum, plastic, removable head QG Drum, plywood 1D Drum, steel 1A Drum, steel, non-removable head QA Drum, steel, removable head QB Drum, wooden 1W Envelope EN Envelope, steel SV Filmpack FP Firkin FI Flask FL Foodtainer FT Footlocker FO Frame FR Girder GI Girders, in bundle/bunch/truss GZ Hamper HR Hogshead HG Ingot IN Ingots, in bundle/bunch/truss IZ Intermediate bulk container WA Intermediate bulk container, aluminium WD Intermediate bulk container, aluminium, liquid WL Intermediate bulk container, aluminium, pressurised &gt; 10 kPa WH Intermediate bulk container, composite ZS Intermediate bulk container, composite, flexible plastic, liquids ZR Intermediate bulk container, composite, flexible plastic, pressurised ZP Intermediate bulk container, composite, flexible plastic, solids ZM Intermediate bulk container, composite, rigid plastic, liquids ZQ Intermediate bulk container, composite, rigid plastic, pressurised ZN Intermediate bulk container, composite, rigid plastic, solids ZL Intermediate bulk container, fibreboard ZT Intermediate bulk container, flexible ZU Intermediate bulk container, metal WF Intermediate bulk container, metal, liquid WM Intermediate bulk container, metal, other than steel ZV Intermediate bulk container, metal, pressure 10 kPa WJ Intermediate bulk container, natural wood ZW Intermediate bulk container, natural wood, with inner liner WU Intermediate bulk container, paper, multi-wall ZA Intermediate bulk container, paper, multi-wall, water resistant ZC Intermediate bulk container, plastic film WS Intermediate bulk container, plywood ZX Intermediate bulk container, plywood, with inner liner WY Intermediate bulk container, reconstituted wood ZY Intermediate bulk container, reconstituted wood, with inner liner WZ Intermediate bulk container, rigid plastic AA Intermediate bulk container, rigid plastic, freestanding, liquids ZK Intermediate bulk container, rigid plastic, freestanding, pressurised ZH Intermediate bulk container, rigid plastic, freestanding, solids ZF Intermediate bulk container, rigid plastic, with structural equipment, solids ZD Intermediate bulk container, rigid plastic, with structural equipment, liquids ZJ Intermediate bulk container, rigid plastic, with structural equipment, pressurised ZG Intermediate bulk container, steel WC Intermediate bulk container, steel, liquid WK Intermediate bulk container, steel, pressurised &gt; 10 kPa WG Intermediate bulk container, textile without coat/liner WT Intermediate bulk container, textile, coated WV Intermediate bulk container, textile, coated and liner WX Intermediate bulk container, textile, with liner WW Intermediate bulk container, woven plastic, coated WP Intermediate bulk container, woven plastic, coated and liner WR Intermediate bulk container, woven plastic, with liner WQ Intermediate bulk container, woven plastic, without coat/liner WN Jar JR Jerry-can, cylindrical JY Jerry-can, plastic 3H Jerry-can, plastic, non-removable head QM Jerry-can, plastic, removable head QN Jerry-can, rectangular JC Jerry-can, steel 3A Jerry-can, steel, non-removable head QK Jerry-can, steel, removable head QL Jug JG Jute bag JT Keg KG Lift van LV Log LG Logs, in bundle/bunch/truss LZ Lot LT Mat MT Matchbox MX Mutually defined ZZ Nest NS Net NT Net, tube, plastic NU Net, tube, textile NV Not available NA Package PK Package, cardboard, with bottle grip-holes IK Package, display, cardboard IB Package, display, metal ID Package, display, plastic IC Package, display, wooden IA Package, flow IF Package, paper-wrapped IG Package, show IE Packet PA Pail PL Pallet PX Pallet, 100 cm × 110 cm AH Pallet, box PB Pallet, modular, collars 80 cm × 100 cm PD Pallet, modular, collars 80 cm × 120 cm PE Pallet, modular, collars 80 cm × 60 cm AF Pallet, shrink-wrapped AG Parcel PC Pen PF Pipe PI Pipes, in bundle/bunch/truss PV Pitcher PH Plank PN Planks, in bundle/bunch/truss PZ Plate PG Plates, in bundle/bunch/truss PY Pot PT Pouch PO Punnet PJ Rack RK Rack, clothing hanger RJ Receptacle, fibre AB Receptacle, glass GR Receptacle, metal MR Receptacle, paper AC Receptacle, plastic PR Receptacle, plastic-wrapped MW Receptacle, wooden AD Rednet RT Reel RL Ring RG Rod RD Rods, in bundle/bunch/truss RZ Roll RO Sachet SH Sack SA Sack, multi-wall MS Sea-chest SE Set SX Sheet ST Sheet, plastic wrapping SP Sheet metal SM Sheets, in bundle/bunch/truss SZ Shrink-wrapped SW Skid SI Slab SB Sleeve SY Slip-sheet SL Spindle SD Spool SO Suitcase SU Tank, cylindrical TY Tank, rectangular TK Tea-chest TC Tierce TI Tin TN Tray PU Tray, one layer no cover, cardboard DV Tray, one layer no cover, plastic DS Tray, one layer no cover, polystyrene DU Tray, one layer no cover, wooden DT Tray, two layers no cover, cardboard DY Tray, two layers no cover, plastic tray DW Tray, two layers no cover, wooden DX Trunk TR Truss TS Tub TB Tub, with lid TL Tube TU Tube, collapsible TD Tube, with nozzle TV Tubes, in bundle/bunch/truss TZ Tun TO Uncaged UC Unpacked or unpackaged NE Unpacked or unpackaged, multiple units NG Unpacked or unpackaged, single unit NF Vacuum-packed VP Vanpack VK Vanpack VK Vat VA Vial VI Wicker bottle WB</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="GovernmentProcedureType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of government/customs procedure. NOTE: possible (2-digit) values defined for EU countries in CCIP Annex 38 A: Export/Dispatch 10, 11, 23 B: Customs warehousing of prefinanced goods for export 76, 77 C: Re-export after a customs procedure with economic impact other than the customs warehousing procedure (inward processing, temporary importation, processing under customs control) 31 D: Re-export after customs warehousing 31 E: Outward processing 21, 22 F: Transit G: Community status of goods H: Release for free circulation 01, 02, 07, 40 41, 42, 43, 45, 48, 49, 61, 63, 68 I: Placing under a customs procedure with economic impact other than the outward processing and customs warehousing procedures (inward processing (suspension system), temporary importation, processing under customs control) 51, 53, 54, 91, 92 J: Placing in type A, B, C, E and F customs warehouses 71, 78 K: Placing in a type D customs warehouse 71, 78 Supported procedures as per annex 38 CCIP: 00 This code is used to indicate that there is no previous procedure (a) 01 	Free circulation of goods simultaneously redispatched in the context of trade between parts of the customs territory of the Community in which the provisions of Directive 77/388/EEC are applicable and parts of that territory in which these provisions do not apply, or in the context of trade between the parts of that territory where these provisions do not apply. 02 	Free circulation of goods with a view to applying the inward processing procedure (drawback system). 07 	Free circulation with simultaneous placing of goods under a warehousing procedure other than a customs warehousing procedure. 10 	Permanent export. 11 	Export of compensating products obtained from equivalent goods under the inward processing procedure (suspension system) before entering import goods for the procedure. 21 	Temporary export under the outward processing procedure. 22 	Temporary export other than that referred to under code 21. 23 	Temporary export for return in the unaltered state. 31 	Re-export. 40 	Simultaneous release for free circulation and home use of goods which are not the subject of a VAT-exempt supply. 41 	Simultaneous release for free circulation and home use of goods placed under the inward processing procedure (drawback system). 42 	Simultaneous release for free circulation and home use of goods which are the subject of a VAT-exempt supply to another Member State. 43 	Simultaneous release for free circulation and home use of goods subject to specific measures connected with the collection of an amount during the transitional period following the accession of new Member States. 45 	Release of goods for free circulation and home use for either VAT or excise duties and their placing under the tax warehouse procedure. Explanation: VAT or excise exemption by placing the goods under a fiscal warehouse procedure. 48 	Entry for home use with simultaneous release for free circulation of replacement goods under the customs outward processing procedure prior to the export of the temporary export goods. 49 	Entry for home use of Community goods in the context of trade between parts of the customs territory of the Community in which the provisions of Directive 77/388/EEC are applicable and parts of that territory in which those provisions do not apply, or in the context of trade between the parts of that territory where these provisions do not apply. Entry for home use of goods in the context of trade between the Community and the countries with which it has formed a customs union. 51 	Inward processing procedure (suspension system). 53 	Import under temporary import procedure. 54 	Inward processing (suspension system) in another Member State (without their being released for free circulation in that Member State) 61 	Re-importation with simultaneous release for free circulation and home use of goods which are not the subject of a VAT-exempt supply. 63 	Re-importation with simultaneous release for free circulation and home use of goods which are the subject of a VAT-exempt supply to another Member State. 68 	Re-importation with partial entry for home use and simultaneous entry for free circulation and placing of goods under a warehousing procedure other than a customs warehousing procedure. 71 	Placing of goods under the customs warehousing procedure. 76 	Placing under the customs warehousing procedure or in a free zone with advance payment of export refunds of products or goods intended for export without further processing. 77 	Placing in an export warehouse, free zone or free warehouse with advance payment of export refunds of processed products or goods intended for export after processing. 78 	Entry of goods for a free zone subject to type II controls. 91 	Placing of goods under processing under customs control. 1993R2454— EN— 01.01.2008 — 011.002—572 92 	Processing under customs control in another Member State (without release for free circulation in that Member State).(a) Explanation: This code is used to record the operation for the purposes of statistics on intra-Community trade. Example: Goods from a third country are processed under customs control in Belgium (9100). After undergoing processing, they are dispatched to Germany for release for free circulation (4092) or further processing (9192).</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TradeMovementType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a EU trade movement type as specified in the first sub box of SAD box 1 NOTE: possible values as defined in CCIP · EX: For trade with countries and territories situated outside of the customs territory of the Community other than the EFTA countries  For placing goods under a customs procedure referred to in columns A and E of the table in Annex 37, Title I, B)  To confer on goods a customs-approved treatment or use referred to in columns C and D of the table in Annex 37, Title I, B)  For dispatch of non-Community goods in the    context of trade between Member States · IM: For trade with countries and territories situated outside of the customs territory of the Community other than the EFTA  For placing goods under a customs procedure referred to in columns H to K of the table in Annex 37, Title I, B)  For placing non-Community goods under a customs procedure in the context of trade between Member States  · EU: In the context of trade with EFTA countries For placing goods under a customs procedure referred to in columns A, E and H to K of the table in Annex 37, Title I, B)  To confer on goods a customs-approved treatment or use referred to in columns C and D of the table in Annex 37, Title I, B) · CO: In respect of Community goods subject to specific measures during the transitional period following the accession of new Member States  Placing of pre-financed goods in a customs warehouse or free zone in respect of Community goods in the context of trade between parts of the customs territory of the Community to which the provisions of Directive 77/388/EEC are applicable and parts of that territory to which those provisions do not apply, or in the context of trade between parts of that territory where those provisions do not apply.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValuationIndicatorType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the valuation indicators used to declare whether the value of the goods is determined by specific factors NOTE: codes as defined for UCC Annex B: 4/13 Valuation indicators</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CountrySubDivisionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a country sub division. NOTE: 	see UNTDID 3166-2 code list * 	The first part is the ISO 3166-1 alpha-2 code of the country; * 	The second part is a string of up to three alphanumeric characters, which is usually obtained from national sources and stems from coding systems already in use 				in the country concerned, but may also be developed by the ISO itself. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="IdentificationMeansType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of identification means used during control (Article 247 lid 3 CCIP)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DutyTaxFeeMeasureType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a legal measure on which a duty, tax or fee is based. Note: values maintained by Arctic/Tariff: examples: 277 Import prohibition 475 Entry into free circulation (restriction) 710 Import control measure 105 Non preferential duty under end use 143 Preferential tariff quota 551 Provisional anti-dumping duty 552 Definitive anti-dumping duty 680 Export refund (basic products) 695 Additional duties 305 Value added tax 306 Excises </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="MutuallyDefinedSpecialMentionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a possible value of the AdditionalInformation object of type 'ZZZ' NOTE: 	 	The code list of mutually defined special mention types is defined and maintained by eCF. Currently it has the following default value: C1: extension of the time to present a document (in this case the time itself is included in AdditionalInformation.text attribute)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="IsicCode">
+    <xsd:annotation>
+      <xsd:documentation>International Standard Industrial Classification (ISIC) code issued by the United Nations NOTE: The following codes apply: Agriculture, forestry and fishing * 01 - Crop and animal production, hunting and related service activities * 02 - Forestry and logging * 03 - Fishing and aquaculture B - Mining and quarrying * 05 - Mining of coal and lignite * 06 - Extraction of crude petroleum and natural gas * 07 - Mining of metal ores * 08 - Other mining and quarrying * 09 - Mining support service activities C - Manufacturing * 10 - Manufacture of food products * 11 - Manufacture of beverages * 12 - Manufacture of tobacco products * 13 - Manufacture of textiles * 14 - Manufacture of wearing apparel * 15 - Manufacture of leather and related products * 16 - Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials * 17 - Manufacture of paper and paper products * 18 - Printing and reproduction of recorded media * 19 - Manufacture of coke and refined petroleum products * 20 - Manufacture of chemicals and chemical products * 21 - Manufacture of basic pharmaceutical products and pharmaceutical preparations * 22 - Manufacture of rubber and plastics products * 23 - Manufacture of other non-metallic mineral products * 24 - Manufacture of basic metals * 25 - Manufacture of fabricated metal products, except machinery and equipment * 26 - Manufacture of computer, electronic and optical products * 27 - Manufacture of electrical equipment * 28 - Manufacture of machinery and equipment n.e.c. * 29 - Manufacture of motor vehicles, trailers and semi-trailers * 30 - Manufacture of other transport equipment * 31 - Manufacture of furniture * 32 - Other manufacturing * 33 - Repair and installation of machinery and equipment D - Electricity, gas, steam and air conditioning supply * 35 - Electricity, gas, steam and air conditioning supply E - Water supply; sewerage, waste management and remediation activities * 36 - Water collection, treatment and supply * 37 - Sewerage * 38 - Waste collection, treatment and disposal activities; materials recovery * 39 - Remediation activities and other waste management services F - Construction * 41 - Construction of buildings * 42 - Civil engineering * 43 - Specialized construction activities G - Wholesale and retail trade; repair of motor vehicles and motorcycles * 45 - Wholesale and retail trade and repair of motor vehicles and motorcycles * 46 - Wholesale trade, except of motor vehicles and motorcycles * 47 - Retail trade, except of motor vehicles and motorcycles H - Transportation and storage * 49 - Land transport and transport via pipelines * 50 - Water transport * 51 - Air transport * 52 - Warehousing and support activities for transportation * 53 - Postal and courier activities I - Accommodation and food service activities * 55 - Accommodation * 56 - Food and beverage service activities J - Information and communication * 58 - Publishing activities * 59 - Motion picture, video and television programme production, sound recording and music publishing activities * 60 - Programming and broadcasting activities * 61 - Telecommunications * 62 - Computer programming, consultancy and related activities * 63 - Information service activities K - Financial and insurance activities * 64 - Financial service activities, except insurance and pension funding * 65 - Insurance, reinsurance and pension funding, except compulsory social security * 66 - Activities auxiliary to financial service and insurance activities L - Real estate activities * 68 - Real estate activities M - Professional, scientific and technical activities * 69 - Legal and accounting activities * 70 - Activities of head offices; management consultancy activities * 71 - Architectural and engineering activities; technical testing and analysis * 72 - Scientific research and development * 73 - Advertising and market research * 74 - Other professional, scientific and technical activities * 75 - Veterinary activities N - Administrative and support service activities * 77 - Rental and leasing activities * 78 - Employment activities * 79 - Travel agency, tour operator, reservation service and related activities * 80 - Security and investigation activities * 81 - Services to buildings and landscape activities * 82 - Office administrative, office support and other business support activities O - Public administration and defence; compulsory social security * 84 - Public administration and defence; compulsory social security P - Education * 85 - Education Q - Human health and social work activities * 86 - Human health activities * 87 - Residential care activities * 88 - Social work activities without accommodation R - Arts, entertainment and recreation * 90 - Creative, arts and entertainment activities * 91 - Libraries, archives, museums and other cultural activities * 92 - Gambling and betting activities * 93 - Sports activities and amusement and recreation activities S - Other service activities * 94 - Activities of membership organizations * 95 - Repair of computers and personal and household goods * 96 - Other personal service activities T - Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use * 97 - Activities of households as employers of domestic personnel * 98 - Undifferentiated goods- and services-producing activities of private households for own use U - Activities of extraterritorial organizations and bodies * 99 - Activities of extraterritorial organizations and bodies</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeListResponsibleAgentType">
+    <xsd:annotation>
+      <xsd:documentation>Object respresenting an organisation that is responsible for maintaining a code list NOTE: 	possible values 1:	eCF:	these code lists are exclusively maintained by IBM/Intrasoft; the leists are fixed and contain elements (codes) that may be used in prorgramme code or 							business rues 2:	UN:	UN/Edifact UNTDID code lists 3:	NL:		NL Customs 4:	ISO:	Iso 5:  Taric: 6:  CCIP</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidationInformationType">
+    <xsd:annotation>
+      <xsd:documentation>Object represention the type of validation information NOTE:	possible values defined and maintained by eCF: 1:  	General Validation Information 2:	Additional units 3:	Supplementary units 4:	Commodity codes 5:	Document types 6:	Tariff Action Code 7:	Tariff Condition Code 8:	Tariff Measure Id 9: 	Tariff Document occurrence type </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TariffActionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a Tariff action code Note: defined and maintained by Arctic/Tariff</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AdjustmentReasonType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of reason for adjusting an automatically determined duty/tax/fee amount NOTE:	possible values, defined and maintained by eCF: 1: Definitive duty higher than provisional (Definitive duty amount was reduced to the provisional amount because security was obtained for the provisional amount) 2: Additional costs applied to arrive at the correct VAT 3: 	Manual adjustment due to manual tax treatment code 4:	Manual adjustment due to TMS/C signal 5:	Manual adjustment due to Tariff Footnote 6:	Manual adjustment due to inability of Tariff to make automatic calculation </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="GoodsExitStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the exit status of the goods as determined by the office of exit NOTE: 	possible values defined and maintained by the EU: * States from office of exit G01:	None G02:	AER Created G03:	AER Requested G04:	Goods Presented at Exit G05:	Diversion Rejected (Final) G06:	Arrived Elsewhere (Final) G07:	Goods Not Allowed to Exit (Final) G08:	Exited (Final) G09:	Cancelled (Final)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of control instruction NOTE: possible values defined/maintained by eCF 1:	document control 2:	physical control 3:	undetermined </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageAmountType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the part of a customs debt which an obligation guarantee is meant to cover
+
+NOTE:   possible values (defined and maintained by eCF):
+
+1:   FCA = Full Coverage Amount -&gt; Level 4: to cover all amounts not covered at a lower level being the sum of the payable and the security part of the customs debt.
+
+2:   PP = Payment Part -&gt; Level 3: to cover the payment part inasmuch their constituent parts are not covered at a lower level (same as PA) The PP is the customs debt amount which is assumed to be effectively paid; equal to the sum of the Payable Vat Amount (PVA) and the Payable Non-Vat Amount (PNA)-&gt; same as PA
+
+3:   SP = Security Part -&gt; Level 3: to cover the security part inasmuch their constituent parts are not covered at a lower level. The SP is the amount to be taken as security to cover all amounts not (immediately) payable, being the sum of the DMS security (DS) and the Tariff security (TS) amounts
+
+4:   DS = DMS Security -&gt; level 2: to cover the DMS calculated security amounts inasmuch its parts are not covered at a lower level. DS is the sum of the secured relief or suspension amounts and secured provisional duties (SRA, SSA, PDS) determined by DMS.
+
+5:    TS = Tariff Security -&gt; level 2: to cover the Tariff calculated security amount inasmuch its parts are not covered at a lower level. TS is the sum of the preferential tariff security (PTS) and additional duty security (ADS) determined by Tariff, to be provided by the declarant as security should (higher) duties related to critical quota, missing preferential documents or additional duty apply
+
+6:   ASA = Additional Security Amount -&gt; level 2/1: to cover the security amount entered by a customs official to be taken as security in case of a customs position release of goods (additional security) or 'clearance (additional security). ASA is the sum of security amounts of type 'additional security' on goods item level
+
+7:   PNA = Payable Non-Vat Amount -&gt; Level 1: Part of the customs debt amount, equal to the sum of the duties/fees/taxes on goods item level, not being VAT, that is to be effectively paid (that is: not transferred, suspended, relieved or waived).
+
+8:    PVA = Payable Vat Amount -&gt; Level 1: Part of the customs debt amount, being the sum of the Value Added Tax (VAT) amounts on goods item level, that is to be effectively paid (not being transferred to the VAT declaration of the consignee of the declared goods)
+
+9:    SRA = Secured Relief Amount -&gt; Level 1: Part of the customs debt that is being relieved (exempted) and needs to be secured, being the sum of the secured relief amount amounts on goods item level
+
+11:   SSA = Secured Suspension Amount -&gt; Level 1: Part of the customs debt that is being suspended (payment postponed until brought under another customs procedure) and secured, being the sum of the suspended amounts on goods item level. NOTE: no distinction is made between secured and non-secured suspension amounts yet
+
+13:   PDS = Provisional Duty Security -&gt; Level 1: Amount to be taken as security to cover the exta duties that would have to be paid for the declaration should a provisional anti-dumping or countervailing duty apply. NOTE: sum of the security amount of type 'provisional duty' on goods item level
+
+14:   ADS = Additional Duty Security -&gt; Level 1: Amount to be taken as security to cover the extra duties that would have to be paid for the declaration under certain conditions (e.g. in case of commodities like poultry and sugar or perishables) apply. NOTE: sum of the security amount of type 'additional duty' on goods item level (same as AS)
+
+16: PA = payable amount -&gt; Level 2: to cover the payable amount inasmuch their constituent parts are not covered at a lower level (same as PP)
+
+17: AS = Additional Security -&gt; level 2: to cover the security amount entered by a customs official to be taken as security (ASA) and any trader declared security amount (TDS)
+
+20: PEA = Payable Excise Amount -&gt; Level 1: Part of the customs debt amount, being the sum of the Excise amounts on goods item level, that is to be effectively paid
+
+21: TDS = Trader Declared Security -&gt; Level 1: Security as declared by the trader in UCC Annex B DE 4/6 and 4/8
+
+22: PTS = Preferential Tariff Security-&gt; Level 1: Amount to be taken as security to cover the extra duties that would have to be paid for the declaration should the non-preferential tariff apply. Reasons could be quota, whose status was critical, has been exhausted or a preferential document, indicated to be missing in an incomplete declaration, will not be provided.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PartyIdentificationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of identification of a party NOTE:       Examples of possible values defined and supported byeCF    1.  Eori Number: Economic Operator Registration and Identification number (see furtherbelow) 2.  VAT number: Value Added tax number (NL: BTW nummer) 3.  DUNS number: Dun Bradstreet Number, being a unique nine-digit sequence for identifyingbusinesses. 4.  EAN number: European Article Number party ID number 5.  Fiscal number     6.  SSN: Social Security Number used to identify natural persons in a government context  (NL: BNS: BurgerService Nummer) 7.  User defined: Number identifying a party defined by the user that uses the party identification  8.  EU customs office ID: Number identifying a EU customs office  9.  Country specific customs office ID: Number Identifying a Customs Office in a specific country NOTE. EORI numbers will start with the ISO country code and will usually be followed by a 12 digit number based on theEO’s VAT number, eg GB 123 4567 89 000. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlTaskStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the status type of a control task: NOTE:		possible values defined/maintained by eCF: 1: Initiated (task created but not yet forwarded to control agent/no control request issued yet) 2: Started (task was started) -&gt; needed to evaluate decision point 'will control be performed -&gt; yes if not started, finished or stopped) 3: finished (all results have arrived) 4: Stopped (before being finished) e.g.: when the declaration is settled Manually outside DMS</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AdditionalMessageType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of an additional message NOTE: 	possible values, defined/maintained by eCF: 1	request for invalidation 2	request for correction 3	supplementary declaration 4	goods presentation message 5	amendment (future functionality: a customs instigated correction made by the declarant) 6	GRN amendment (future functionality: an amendment with which a declarant indicates that coverage is provided through the guarantee means identified bu a given GRN)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlResultType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a control result.
+
+NOTE:    possible values maintainded by eCF
+1        Performed
+2        Not performed - goods not available
+3        Not performed - document not presented in time
+4        Not performed - control task wasn't performed
+5        No result expected
+6        Not yet performed
+7        Perform physical control</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ObservationActionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of action a user can take with regards to an observation. NOTE: 	possible value defined and maintained by eCF (country confiigurable) 1:	Use Original 2:	Use Observed 3:	Not Controlled </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="Language">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing a (natural) language spoken or written NOTE: languages are coded using the 2 digit ISO 639-2 standard language name code list</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AeoStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the authorization level of economic operator. NOTE: possible values defined and maintained by eCF 0: EU code - =	no AEO status 1: EU code 'AEOC'= Customs Simplifications (AEO status allowing customs simplifications) 2: EU code 'AEOS' = Security and Safety (AEO status with respect to security and safety) 3: EU code 'AEOF' = Customs Simplifications/Security and Safety</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CountryRegionSubRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the sub role a country/region plays in a particular context NOTE: Possible values to be defined</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SignalType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a signal (like an error, warning or information) Note: defined and maintained by eCF</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CustomsOfficeRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Objects that represent the role that can be played by customs offices in a particular context: NOTE: defined and maintained by eCF (as a sub list of the UNTDID 3227 list of Location function code qualifiers  41    	Consignment entry customs office location 42    	Consignment exit customs office location 45    	Customs office of destination (transit) 50    	Transit customs office location 96	 	Place of lodgement of documents (Customs station where, required documents for Customs declarations, have been lodged) 111   	Customs office of despatch 114   Customs office of export 118   Customs office of departure 119   Transit guarantee customs office location 122   Customs office of destination 127   Customs office of registration of previous Customs 251   Customs office of payment</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TransportMeansIdentificationType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of identification of a means of transport. Note:    Possible values as defined by UCC: 10         IMO ship identification number        11         Name of the sea-going vessel         20         Wagon number         30         Registration number of the road vehicle         40         IATA flight number         41         Registration number of the aircraft         80         European Vessel Identification Number (ENI code)         81         Name of the inland waterways vessel</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SuspensionTreatmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of suspension treatment (of a combination of customs procedures) NOTE: defined and maintained by the client but default values provided by eCF</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DangerousGoodsType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a type of dangerous goods NOTE:  possible values defined and mainted by UN</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CustomsPositionType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of customs position. NOTE: possible values, defined/maintained by eCF: 1:   OBSOLETE (formerly 'Not Determined' was removed as it is not really a position' 2:   In Accordance (without control)         category: releasing, clearing, final 3:   Release of Goods (after control)         category: releasing, releasing only, provisional  4:   In Accordance (after control)            category: releasing, clearing, final 5:   Not in Accordance (after control)       category: releasing, clearing, final, irregular 6:   Not in Accordance (invalidate)           category: non releasing, final, irregular 7:   Not in Accordance (clearance)          category: releasing, clearing, final, irregular 8:   Granted                                  category: request, final 9:   Denied                                   category: request, final 10: No Clearance (handle externally)        category: final, irregular 12: Release of Goods (additional security)category: releasing, releasing only, provisional 13: Clearance (additional security)           category: releasing, clearing, final 14: Not in Accordance (irregularities)        category; final, non-releasing, irregular</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TraderNotificationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of notification sent to a trader NOTE:    possible values, maintained by eCF: 01    DMSACC    Notification informing the submitter that a received declaration is accepted 02 DMSRCV    Notification informing the submitter that a received message (declaration, additional message) is registered 03 DMSREJ    Notification informing the submitter that a received message (declaration, additional message) is rejected 04 DMSINC    Notification reminding the submitter that an incomplete declaration must be supplemented with the missing or incomplete elements of the incomplete declaration 05 DMSCTL    Notification informing the submitter that that Customs intends to physically inspect goods that belong to the    declaration, which also implies that these goods can not be released 06 DMSDOC    Notification telling the submitter that he has  to present one or more documents, related to the declaration.    The notification is also used to remind the submitter about a document that had to be submitted already 07 DMSRES    Notification informing the submitter about corrections that have been applied to the declaration by customs as a result of inspection 08 DMSROG    Notification informing the submitter that that the goods can be released 09 DMSCLE    	Notification informing the submitter about the clearance for the procedure, and therefore also about the release of    the goods (if this has not already been done) 10 DMSINV    	Notification informing the submitter about the invalidating of a declaration, with the reason of invalidation  11 DMSREQ    Notification informing the submitter about the customs position on the submitted request (granted or denied). In case of denial the reason for denial is indicated (text field). 13: DMSTAX   Message with which the declarant or his representative is informed about the details of the customs debt  14: DMSCPI    Coverage Pay-up Instruction. Notification informing the submitter about the need for the Financial Responsible Party must pay up a cash deposit or a lacking guarantee 15 - DMSCPR  Coverage Pay-up Reminder. Notification informing the submitter that a payup deadline has expired 16 - DMSEOG  	Notification informing the submitter about goods exit 17-  DMSEXT	Notification informing the submitter about handling the declaration externally 18 - DMSGER  	Notification reminding the submitter that Exit Results have not yet been received</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="IncoTermCode">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a Trade terms and conditions NOTE: possible instances: EXW: Ex works FCA: Free carrier FAS: Free alongside ship FOB: Free on board CFR: Cost and freight CIF: Cost, insurance and freight CPT: Carriage paid to CIP: Carriage and insurance paid to DAF: 	Delivered at frontier DES: 	Delivered ex-ship DEQ: 	Delivered ex-quay DDU: 	Delivered duty unpaid DDP: 	Delivered duty paid XXX:  	(no description: if XXX the description won't be taken from this code list table but from the description attribute in the TradeTerm 		 object that included the code) </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeListElementDescription">
+    <xsd:annotation>
+      <xsd:documentation>Description of a code list element in one language. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="legal" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Formal description of the code list element as included in legal texts in the involved language.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="_long" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Long description of the code list element in the involved language.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="explanation" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Explanation of the meaning of the code list item in the involved language</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="language" type="tns:Language">
+        <xsd:annotation>
+          <xsd:documentation>The language in which the description of the code list element is written.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="_short" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Short description of the code list element in the involved language.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CustomsOfficeCode">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a customs office code NOTE:	the codes are the customs office codes defined and maintained by the EU customs offices resorting under the customs agency, or those for which the customs agency wants to capture addtional data such as addresses, locations, organizational hierarchy, will also be stored in the party view</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContactMechanismPurposeType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the purpose for which a contact mechanism is used. NOTE: eCF maintained code list 1: 'General'</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AuthorizationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a type of authorization (license). NOTE: possible values to be defined by the eCF client NOTE: may contain: 1:	warehouse authorization type,  2:   customs procedures authorization 3:   authorizations for special procedures,  4:   authorizations for submitting declaration types</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DocumentCategory">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the category to which a preceding document (as captured in the first sub field of SAD box 40) belongs NOTE 1: WCO ID of the document category code: WCO 019 NOTE 2: possible values efined in CCIP X= summary declaration Y= initial declaration Z= preceding document</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SpecificCircumstanceType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of specific circumstances as defined in UCC Annex B: 1/7 Specific circumstance indicator</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DutyTreatmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of duty treatment (of a combination of customs procedures) NOTE: defined and maintained by the client but default values provided by eCF</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageMeansStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the status of a coverage means
+
+NOTE:    possible values defined by eCF:
+      1: Active
+      2: Suspended
+      3: Revoked</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CustomsPositionReasonType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of reason for taking a customs position NOTE 1:   Values defined and maintained by eCF            Customs position reason types (included when a customs position is taken automatically)             For CP: not in accordance (clearance):         1.   Incomplete declaration not supplemented after repeated reminders, and the goods have already been released       2.   Release was provided, customs debt is higher than reserved security, trader has insufficient security and payup did not occur in time  For CP: invalidation 3.	Invalidation at trader's request 4.  	Invalidation by customs due to major discrepancies 5.  	No exit results received 6.	Exit results indicating Goods Stopped 7.	Invalidation due to lacking coverage 8.	Exit Cancelled     </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="UnLocode">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a city as included in the UN/Locode code list NOTE 1:    UN/LOCODE, the United Nations Code for Trade and Transport Locations, is a geographic coding scheme developed and maintained by United Nations Economic Commission for Europe (UNECE), a unit of the United Nations. UN/LOCODE assigns codes to locations used in trade and transport with functions such as seaports, rail and road terminals, airports, post offices and border crossing points. The first issue in 1981 contained codes for 8,000 locations. The version from 2008 contained codes for about 60,000 locations. NOTE 2:     UN/LOCODEs have five characters. The first two characters are letters: the country code as per the table defined in ISO 3166-1 alpha.  Three remaining characters encode a location within that country. Letters are preferred, but if necessary digits 2 through 9 may be used (This avoids confusion between "O" and "0", and between "I" and "1".).</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EquipmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a transport equipment NOTE: examples equipment types defined and maintained by eCF are: 1: container 2: trailer 3: pallet</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AdditionalInformationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of additional information as specified in SAD box 44 or linked to other objects in the BOM such as Validation Results, NOTE: possible values as defined in UNTDED code list 4451: CUS:	special mentions (as included in the Declaration field corresponding to SAD box 44) -&gt; EU values are 5 digit statement codes as defined in a separate code list of 				CodeListElements of type SpecialMentionTypes captured in the AdditionalInformation.code attribute TRR:	tariff quota order number as captured in the AdditionalInformation.text attribute (not in BOM only -temporarily- in WCO message until a quota order number is 				defined in WCO message) ACD:	textual information with declaration amendment requests as captured in the AdditionalInformation.text attribute or in case of a customs position motivation AFB:	comment captured in the AdditionalInformation.text attribute in case of a customs position motivation BLF:	Examination result comment used to provide a control explanation ZZZ:	mutually defined special mentions (as included in the Declaration field corresponding to SAD box 44) -&gt;client defined values of MutuallyDefinedSpecialMentionType ACA:	Documentary requirements. Specification of the documentary requirements (used for Document type to be presented in the context of document control) ABC:	Conditions of sale or purchase -&gt; in case of DV1 data CEX:	Customs clearance instructions export ACB:	Additional information -&gt; in case of alternative proof</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DmsSupportedDeclarationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a declaration type that is supported by DMS NOTE: strictly speaking, a DmsSupportedDeclarationType is a DeclarationType and the list of DmsSupportedDeclarationTypes should be considered a category of DeclarationTypes. However, in maintaining code list and category elements, DMS applies the rule that eCF defined category elements must by a sub set of an eCF defined base code list. Since DeclarationType elements are defined by the client, while DmsSupportedDeclarationType elements are -by definition- defined an  maintained by eCF, that rule is vialated. Therefore, we require a DmsSupportedDeclarationType to be defined as a separate 'base' code list.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PaymentMethodType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of payment method: NOTE 1:   the folowing method of payment types, defined by EU, are supported: A: 	Payment in cash B:	Payment by credit card C:	Payment by cheque D:	Other (e. g. direct debit to agent's cash account) E:	Deferred or postponed payment F:	Deferred payment — customs system G:	Postponed payment — VAT system (Article 23 Sixth VAT Directive) H:	Electronic credit transfer J:	 Payment through post office administration (postal consignments) or other public sector or government department K:	Excise credit or rebate M:	Security, including cash deposit P:	From agent's cash account R:	Guarantee S:	Individual guarantee account T:	From agent's guarantee account U:	From agent's guarantee — standing authority V:	From agent's guarantee — individual authority O:	Guarantee lodged with Intervention Agency Y:	Account holder with carrier Z:	Not pre-paid</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DutyTaxFeeType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a Duty, a Tax or a Fee NOTE:   possible values defined in CCIP and maintained by Arctic Tariff: Customs duties on industrial products            A00 Customs duties on agricultural products          A10 Additional duties                            A20 Definitive antidumping duties                   A30 Provisional antidumping duties                A35 Definitive countervailing duties                A40 Provisional countervailing duties                A45 VAT                                     B00 Compensatory interest (VAT)                  B10 Interest on arrears (VAT)                      B20 Export taxes                               C00 Export taxes on agricultural products          C10 Interest on arrears                         D00 Compensatory interest (I.e. Inward processing)   D10 Duties collected on behalf of other countries      E00</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExchangeRateType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of an exchange rate</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProcessingStatusReasonType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the reason for setting a processing status NOTE: Possible values defined and maintained by eCF: 1:	Final customs debt not covered 2:	Provisional customs debt not covered </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AuthorizationCountryRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the role a country plays in the context of an authorization NOTE: Possible values defined/maintained by eCF 1: Country/Region of dispatch 2: Country/Region of export 3: Country/Region of origin 5: Country/Region of final destination</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TransactionNatureType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the nature of a transaction for valuation purposes NOTE: Defined by CCIP: the following 2 digit values are allowed where the first digit signifies the category 1       	Transactions involving actual or intended transfer of ownership against payment or other consideration (other than the transactions listed under 2, 7 and 8) 11  	Final purchase/sale 12    	Goods dispatched for viewing, trial samples, goods dispatched with right of return and transactions involving commission) 13  	Transactions involving payment in kind 14		Sale to foreign travellers for their personal use 15     	Financial leasing 2    	Return of goods already recorded under code 1;  replacement of goods free of charge 21     	Return of goods 22     	Replacement for returned goods 23     	Replacement (e.g. under terms of guarantee) for goods not returned 3      	Transactions (not temporary in nature) involving transfer of ownership but without consideration (financial or otherwise) 31		Deliveries of goods under programmes wholly or partly financed by the European Community 32		Other government aid deliveries 33 		Other aid deliveries (individuals and non-governmental organisations) 34		Other 4	   	Transactions with a view to processing or contractor repair (other than the transactions recorded under 7) 41 		Processing 42 		Repair and maintenance against payment 43 		Repair and maintenance free of charge 5     	Transactions after processing or contractor repair (other than the transactions recorded under 7) 51 		Processing 52 		Repair and maintenance against payment 53 		Repair and maintenance free of charge 6	   	Transactions not involving transfer of ownership, e.g. hire, loan, operational leasing and other temporary uses, with the exception of processing under contract or repair (delivery and return)    61		Hire, loan, operational leasing 62		Other temporary uses 7     	Transactions in connection with a joint defence programme or another intergovernmental production programme (e.g. Airbus) 8     	Delivery of building material and equipment in connection with construction or civil engineering activities constituting part of a general contract     9    	Other transactions    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValuationMethodType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of valuation of a commodity value NOTE: possible instances as defined in CCIP annex 38: 1: Transaction value of the imported goods 2: Transaction value of identical goods 3: Transaction value of similar goods 4: Deductive value method 5: Computed value method 6: Value based on the data available ('fall-back' method)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlMeansType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a means (tool, equipment or other resource) of control NOTE: possible values maintained NL Customs 004	Tracker dog 005	Other 006	Scanner 008	Flash 009	Conclusion 010	Guard 011	Observation 012	Tracker Dog – Narcotics 013	Tracker Dog – Precursors 014	Tracker Dog – Tabaco 015	Tracker Dog – Explosives 016	Tracker Dog – Money NOTE 2: the NL list also contains values that can not be considered control means. The local adapter may have to take care of this.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProcessingStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the processing status of a declaration. NOTE1:  the following status types (applicable for declaration processing states and coverage status) are defined and maintained by eCF: 1: Received 2: Rejected 3: Registered 4: Accepted 7: Under Amendment 8: Preparing for Release 9: Provisional Customs Debt Determined 10:Provisional Customs Debt Covered 11:Goods Released 12: Prepared for Clearing 13: Final Customs Debt Determined 14: Final Customs Debt Covered 15: Clearance Provided 16: Completed Successfully 17: Handled Externally (no clearance) 18: Invalidated 26: Irregularity Detected 27: Functional Exception Detected </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="OppositionType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of opposition a declaration may have launched against a control result. NOTE: 	possible values defined and maintained by eCF 1: Agreed 2: Opposed 3: Not registered 4: No advise</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DocumentType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a document NOTE: for 'additional document' (SAD box 44) the types are 4 digit codes found in the Taric database (included in the category of AllowedAdditionalDocuments) for 'previous documents' (SAD box 40) the types are 3 digit codes as specified in CCIP  (included in the category of AllowedPreviouslDocuments)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LocationType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a location playing a role in a declaration Possible values defined and maintained by UCC Annex B 5/23</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlAgentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a control agent (as an entry of a code list) Possible values defined and maintained by the client, e.g.: PhytoSanitary Service </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PreferenceType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of preferred treatment of goods NOTE 1: values are defined in CCIP NOTE 2 : the code is a concatenation of two sub codes: sub1:  1: Tariff arrangement erga omnes 2: Generalised System of Preferences (GSP) 3: Tariff preferences other than those mentioned under code 2 4: Non-imposition of customs duties under the provisions of customs union agreements concluded by the Communitythe following instances may occur: sub2: 00: None of the following 10: Tariff suspension 15: Tariff suspension with specified end-use 18: Tariff suspension with certificate confirming the special nature of the product 19: Temporary suspension for products imported with a certificate of airworthiness 20: Tariff quota (*) 23: Tariff quota with specified end-use (*) 25: Tariff quota with certificate confirming the special nature of the product (*) 28: Tariff quota following outward processing (*) 40: Special end-use resulting from the Common Customs Tariff 50: Certificate confirming the special nature of the product  (*) Where the requested tariff quota is exhausted, Member States may allow the request to be valid for any other existing preference.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DateTimeRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of role or meaning a date/time plays in a particular context</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidationResultType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a validation result. NOTE 1: Defined and maintained by eCF NOTE 2:Validation results may be grouped into several categories: 'RejectingValidationResuls' and 'AcceptingValidationResults'</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageModeType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing a coverage/payment mode NOTE: 	possible values defined/maintained by eCF 1: Immediate/cash 2: Postponed/guarantee</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidationResultQualifier">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a code qualifying a validation result NOTE: 	Possible values defined and maintained by eCF: 1:  Information 2:  Warning 3:  Error </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReliefTreatmentType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the way relief (exemption) is treated in determining the payable duty/tax/fee amount of a goods item under aspecific combination of requested, preceding and special customs procedure NOTE:	defined by the client and maintained in Arctic/Tariff</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SpecialTaskType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a special task NOTE: values defined and maintained by the client.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PartySubRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of sub role that a party may play in a certain context NOTE:   possible values maintained by UNECE (3035)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DeclaredGuaranteeType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a guarantee as part of a declaration NOTE:   possible values defined in UCC Annex B: 8/2 Guarantee type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="IncoTermLocationQualifier">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a qualifier indicating whether the trade term location is in the EU member state where the declaration is submitted, or in another member state or outside the EU. NOTE: possible values: 1: Place situated in the territory of the Member State concerned 2: Place situated in the territory of another Member State 3: Other (place situated outside the Community).</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PartyRoleStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the status of a party within its role NOTE: possible values, maintained by CCIP 2:	direct representative (sub role of party role type 'agent') 3:	indirect representative (sub role of party role type 'agent')</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TaskTriggerType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the trigger of the task carried out in the context of customs declaration management</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PartyRelationshipType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of a party relationship defined as a pair of 2 roles (the left and the rigth hand side role) played by the involved parties NOTE 1:	possible values (eCF defined/maintained) 0: no relationship 1: buyer- seller relationship in the sense of article 143 of Regulation EEC no 2454/93 2: company - subsidiary 3: parent company - daughter company 4: organization - contact person 5: customs agency - customs office 6: customs agency - covenant partner (covenant partnership) 7: supervising office - supervised office 8: economic operator - related VAT party</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExternalPartyNotificationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of notification sent to external parties NOTE:    possible values, maintained by eCF: 1 - EXTREJ: Rejection notification 2 - EXTCTL: External control notification 3 - EXTROG: Release of goods notification 4 - EXTCLE: Clearance notification 5 - EXTURJ: Update rejection notification 6 - EXTEXT: Handled externally notification 7 - EXTINV: Invalidation notification</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TaskReasonType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the reason why a task was initiated. NOTE:   Defined and maintained by eCF: 1. payup deadline expired 2. trader does not want to apply quota for the additional quantity observed during control (this may no longer beneeded as DMS allows for splitting item) NOTE 2: To inform the user in the UI of a manual task about the reason why the task was initiated (i.e. in case of atask to manually take a customs position as a result of a quota quantity addition for which the trader does not want toapply quota-&gt; this can not be handled automatically so it requires a customs position to 'Settle Manually'.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DeclarationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of a declaration as specified in the second sub box of SAD box 1 NOTE: Possible instances for declaration to bring goods under a customs procedure as defined/maintained by CCIP A for a normal declaration (normal procedure under Article 62 of the Code) B for an incomplete declaration (simplified procedure under Article 76(1)(a) of the Code) C for a simplified declaration (simplified procedure under Article 76(1)(b) of the Code) D For lodging a normal declaration (such as referred to under code A) before the declarant is in a position to present the goods. E For lodging an incomplete declaration (such as referred to under code B) before the declarant is in a position to present the goods. F For lodging a simplified declaration (such as referred to under code C) before the declarant is in a position to present the goods. X for a supplementary declaration under a simplified procedure covered by B Y for a supplementary declaration under a simplified procedure covered by C Z for a supplementary declaration under a simplified procedure under Article 76(1)(c) of the Code (entry of the goods in the records) Codes D, E and F can only be used in the framework of the procedure provided for in Article 201(2) where customs authorities authorise the lodging of a declaration before the declarant is in a position to present the goods NOTE: for summary declarations, the codes still need to be defined.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CommodityClassificationType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of classification of a commodity NOTE: possible values from the UNTDED 7143  Item number type, code list:       ZZZ:    mutually defined (used to classify nomenclature groups       SRZ:    Harmonized tariff schedule (to define the maximum 18 digit commodity code) TSP:    EU Combined Nomenclature Code       GN:      National product group code (to define national additional commodity codes)        CV:      Customs article number (Code defined by Customs authorities to an article or a group of articles for Customs purposes.' -&gt; for CDIU 'post nummer' SSO:	Un list to classify dangerous goods</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CountryType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing information about a country represented by a country code NOTE: countries are code using the 2 digit ISO 3166-1 standard country name code list </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="TariffRegulationGroupType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing information about the Tariff regulation group to which a duty/tax/fee measure belongs NOTE:	possible values defined by TAXUD or member states and managed in the Tariff system </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="MeasureUnitType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of unit in which a measurement is expressed NOTE 1: NOTE 2: UN/ECE Recommendation No.20, Codes for Units of Measure (UoM) used in international trade: ASV		% vol				%vol CCT		ct/l 				ct/l Carrying capacity in metric tonnes CEN		100 p/st 			Hundred items CEN CTM		c/k Carats	 		Carats (one metric carat = 2 x 10-4kg) DHS		kg DHS				Kilogram of dihydrostreptomycin DTN		100 kg  			Hectokilogram EUR		EUR 				Euro (used for statistical surveillance) GFI			gi F/S 				Gram of fissile isotopes GRM		g  					Gram GRT		GT					Gross tonnage HLT		hl  					Hectolitre HMT		100 m  				Hectometre KCC		kg C@5H@1@4 	Kilogram of choline chloride KGM		tonne KCl 			Tonne of potassium chloride KLT			1000 l 				1000 litres KMA		kg methylamines 	Kilogram of methylamines KMT		Kilometre 			Kilometre KNI			kg N 				Kilogram of nitrogen KNS		kg H@2O@2 		Kilogram of hydrogen peroxide KPH		kg KOH 			Kilogram of potassium hydroxide (caustic potash) KPO		kg K@2O 			Kilogram of potassium oxide KP			kg P@2O@5 		Kilogram of diphosphorus pentaoxide KSD		kg 90% sdt 		Kilogram of substance 90|% dry KSH		kg NaOH 			Kilogram of sodium hydroxide (caustic soda) KUR		kg U 				Kilogram of uranium LPA		l alc. 				Litre pure (100%) alcohol LTR		l  					Litre MIL			1000 p/st 			1000 items MPR		1000 pa 			1000 pairs (used for statistical surveillance) MTK		m$2 				Square metre MTQ		m$3 				Cubic meter MTR		m  					Metre MWH		1000 kWh 			1000 kilowatt hours NAR		p/st 				Number of items NCL		ce/el 				Number of cells NPR		pa 					Number of pairs TJO		TJ 					Terajoule (gross calorific value) TNE		1000 kg  			Tonne P1			pct					Percentage </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="LegalStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type of legal status (of a economic operator) NOTE:		possible values maintained and defined by the client, e.g: - Regular - Suspension of payment (filed for bankruptcy) - Bankrupt</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProcedureCombination">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the legitimate combinations of requested, previous and special procedures (captured in SAD box 37) Note: the ProcedureCombination code is a concatenatation of the GovernmentProcedureType code of the requested and previous procedure, and the SpecialProcedureType code</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="NotificationStatusType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of status a notification may inform about NOTE:   possible values defined and maintained by UNTDED/Edifact 4405 4:    Final (the amount has the status of finality) 39:   Approved (interpreted as granted) 41:   Rejected (interpreted as denied) 115:  Provisional </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PartyRoleAuthorizationType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the authorization type for an Authorization Holder party NOTE:   possible values maintained by UCC Annex A: 1/1 Application/ Decision code type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CustomsValueSourceType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the type a customs value source Note:	Possible values defined and maintained by eCF: 1:	Direct 2:	DV1 3:	Tax base 4:	Statistical value</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PartyRoleType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the type of role a party plays in association with another object NOTE: use one of the following UN/Edifact data element 3035 Party function code list (UNTDID as code list responsible agent): TB    Submitter (not a specific SAD box, but the sender of the SAD) To specify that the party is a submitter. AG    Declarant's agent/representative (box 14) Party authorized to act on behalf of another party DT       Declarant (box 14) [3140] Party which makes a declaration to an official body or - where legally permitted - in whose name, or on whose behalf, a declaration to an official body is made. CZ    Consignor (box 2) [3336] Party which, by contract with a carrier, consigns or sends goods with the carrier, or has them conveyed by    him. CN    Consignee (box 8) [3132] Party to which goods are consigned. AF    Transit principal (box 50) Natural or legal person responsible for the satisfactory performance of a Customs transit operation. Source:    CCC. DEN    Agent/representative, direct representation (box 14): Party authorised to act in the name and on behalf of another person. DEO    Agent/representative, indirect representation (box 14): Party authorised to act in its own name but on behalf of another person. DFW   Additional actor (AEO mutual recognition party) SE      Seller (3346) Party selling merchandise to a buyer. BY      Buyer (3002) Party to which merchandise is sold IM    Importer (3020) Party who makes - or on whose behalf a Customs clearing agent or other authorized person makes - an import    declaration. This may include a person who has possession of the goods or to whom the goods are consigned.     LC:      Party declaring the VAT EX:    Exporter (3030) Party who makes - or on whose behalf a Customs clearing agent or other authorized person makes - an export declaration. This may include a       manufacturer, seller or other person. Within a Customs union, consignor may have the same meaning as exporter. PR:    Party responsible for making a payment SY:    Surety. Natural or legal person (generally a bank or insurance company) who accepts responsibility in due legal form for the financial consequences of non-fulfillment of another's obligations to the Customs (CCC). VF: Liability holder tbd:	contact person covenant partner customs office </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AmendmentReasonType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the reason why an element in the declaration object structure was amended WCO REF: 	099 WCO NAME: 	Amendment code (changeReason) WCO DESC: 	Code specifying the reason for a change NOTE 1:		possible values defined and maintained by the client. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="RiskAreaType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the area to which a risk belongs NOTE: 	possible values, maintained by NL Customs (code list:TAB N65) ACC	Excise goods CFK	CFC CM		Cadmium DIVE	Multiple risk area’s DR		Customs duties DV		Animalfood EVOA	Waste material FF		Flora and Fauna Act FYT	Plant health rules GE		ealth comsumables GM		Drugs KB		Quality	 provisions KW		Nuclear energy act LB		Agiriculture NM		Intellectual capital PREC	Drugs precursors PV		Product savety SG		Strategical goods SM		Sanction measures VET	Vetenairy rules VG		Tranport of dangerous goods VM		Narcotics VW		Fireworks WM	Weapons and munition </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="SignalQualifier">
+    <xsd:annotation>
+      <xsd:documentation>Object representing signal qualifier NOTE: 	possible values defined and maintained by eCF 1:	Information 2: 	Warning 3: 	Error</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CountryGroupType">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing information about a group of countries represented by a country group code NOTE: country groups are coded using the numeric TARIC codes </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeListElement">
+    <xsd:annotation>
+      <xsd:documentation>Element of a code list. Abstract object describing the common features of reference data elements.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns_1:TimeAware">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="responsibleAgent" type="tns:CodeListResponsibleAgentType">
+            <xsd:annotation>
+              <xsd:documentation>The agent responsible for maintaining the code list to which the element belongs (if known)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="label" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>The default description of the code list element NOTE:  The label is the description of the code list element for internal purposes (used to meaningfully identify the code list element in business rule expressions, mapping specifications etc).</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="code" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Code by which the code list element is identified.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="descriptions" type="tns:CodeListElementDescription">
+            <xsd:annotation>
+              <xsd:documentation>The description(s) of the code list elements in the various languages</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="symbol" type="tns_2:Symbol">
+            <xsd:annotation>
+              <xsd:documentation>The symbol by which the code list element may be represented NOTE: 	symbols may apply to currencies and unti types (percentages, inches ect)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitSealsStateType">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the state of seals observed at the office of exit NOTE:	possible value defined and maintained by EU: 0: seals state is not OK 1: seals state is OK  </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:CodeListElementField"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" name="Category">
+    <xsd:annotation>
+      <xsd:documentation>Sub list of a code list to which a code list element may belong.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:CodeList">
+        <xsd:sequence>
+          <xsd:element name="parent" type="tns:CodeList">
+            <xsd:annotation>
+              <xsd:documentation>The code list of which the category is a sub list.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeList">
+    <xsd:annotation>
+      <xsd:documentation>A list of code list elements of the same type</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Id of the code list</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="elementType" type="tns:CodeListElement">
+        <xsd:annotation>
+          <xsd:documentation>The type of code list element included in the code list (a code list element sub type) NOTE: to make explicit that a code list may only include elements of the same type</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="label" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Description of the code list.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="elements" type="tns:CodeListElement">
+        <xsd:annotation>
+          <xsd:documentation>The code list elements belonging to this code list</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
