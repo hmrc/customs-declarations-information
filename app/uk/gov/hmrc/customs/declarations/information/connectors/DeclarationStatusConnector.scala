@@ -58,7 +58,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
 
     val declarationStatusPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId)).map{
-      response => logger.debugFull(s"status: ${response.status} response: ${response.body}")
+      response => logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
       response
     }
   }
