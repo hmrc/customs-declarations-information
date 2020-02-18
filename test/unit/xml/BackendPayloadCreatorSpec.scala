@@ -17,17 +17,23 @@
 package unit.xml
 
 import org.joda.time.{DateTime, DateTimeZone}
+import org.mockito.Mockito.when
+import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
+import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.play.test.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
+import util.XmlValidationService
 
 import scala.xml.NodeSeq
 
 class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
+  implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val year = 2017
   private val monthOfYear = 6
@@ -45,6 +51,22 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     def createDucrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ducr, Some(apiSubscriptionFieldsResponse))
     def createUcrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ucr, Some(apiSubscriptionFieldsResponse))
     def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
+
+    "sample MRN request passes schema validation" in {
+      validateAgainstSchema(createMrnPayload())
+    }
+
+    "sample DUCR request passes schema validation" in {
+      validateAgainstSchema(createDucrPayload())
+    }
+
+    "sample UCR request passes schema validation" in {
+      validateAgainstSchema(createUcrPayload())
+    }
+
+    "sample IR request passes schema validation" in {
+      validateAgainstSchema(createInventoryReferencePayload())
+    }
 
     "set the clientID" in {
       val result = createMrnPayload()
@@ -125,7 +147,18 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
       rd.head.text shouldBe "theInventoryReference"
     }
-    
   }
-  
+
+  private def validateAgainstSchema(xml: NodeSeq): Assertion = {
+    val mockConfiguration = mock[Configuration]
+    val propertyName: String = "xsd.locations.statusqueryresponse"
+    val xsdLocations: Seq[String] = Seq("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd")
+
+    when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
+    when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
+
+    val xmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
+
+    await(xmlValidationService.validate(xml)) should be(())
+  }
 }

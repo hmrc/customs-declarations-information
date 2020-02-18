@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Declaration 
+	xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31" 
+	xmlns:clm63055="urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B" 
+	xmlns:p="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" 
+	xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="urn:wco:datamodel:WCO:DEC-DMS:2 ../WCO_DEC_2_DMS.xsd ">
+  <p:AcceptanceDateTime>
+    <p1:DateTimeString formatCode="102">p1:DateTimeString</p1:DateTimeString>
+  </p:AcceptanceDateTime>
+  <p:FunctionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">9</p:FunctionCode>
+  <p:FunctionalReferenceID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:FunctionalReferenceID>
+  <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+  <p:IssueDateTime>
+    <p1:DateTimeString formatCode="102">p1:DateTimeString</p1:DateTimeString>
+  </p:IssueDateTime>
+  <p:IssueLocationID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:IssueLocationID>
+  <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+  <p:GoodsItemQuantity unitCode="">0.0</p:GoodsItemQuantity>
+  <p:DeclarationOfficeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:DeclarationOfficeID>
+  <p:InvoiceAmount currencyID="">0.0</p:InvoiceAmount>
+  <p:LoadingListQuantity unitCode="">0.0</p:LoadingListQuantity>
+  <p:TotalGrossMassMeasure unitCode="">0.0</p:TotalGrossMassMeasure>
+  <p:TotalPackageQuantity unitCode="">0.0</p:TotalPackageQuantity>
+  <p:SpecificCircumstancesCodeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:SpecificCircumstancesCodeCode>
+  <p:Authentication>
+    <p:Authentication languageID="EN">p:Authentication</p:Authentication>
+    <p:Authenticator>
+      <p:Name languageID="EN">p:Name</p:Name>
+    </p:Authenticator>
+  </p:Authentication>
+  <p:Submitter>
+    <p:Name languageID="EN">p:Name</p:Name>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:Address>
+      <p:CityName languageID="EN">p:CityName</p:CityName>
+      <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+      <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+      <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+      <p:Line languageID="EN">p:Line</p:Line>
+      <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+    </p:Address>
+  </p:Submitter>
+  <p:AdditionalDocument>
+    <p:CategoryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CategoryCode>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+  </p:AdditionalDocument>
+  <p:AdditionalInformation>
+    <p:StatementCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:StatementCode>
+    <p:StatementDescription languageID="EN">p:StatementDescription</p:StatementDescription>
+    <p:StatementTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:StatementTypeCode>
+    <p:Pointer>
+      <p:SequenceNumeric>0.0</p:SequenceNumeric>
+      <p:DocumentSectionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:DocumentSectionCode>
+      <p:TagID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:TagID>
+    </p:Pointer>
+  </p:AdditionalInformation>
+  <p:Agent>
+    <p:Name languageID="EN">p:Name</p:Name>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:FunctionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:FunctionCode>
+    <p:Address>
+      <p:CityName languageID="EN">p:CityName</p:CityName>
+      <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+      <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+      <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+      <p:Line languageID="EN">p:Line</p:Line>
+      <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+    </p:Address>
+  </p:Agent>
+  <p:Amendment>
+    <p:ChangeReasonCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ChangeReasonCode>
+    <p:Pointer>
+      <p:SequenceNumeric>0.0</p:SequenceNumeric>
+      <p:DocumentSectionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:DocumentSectionCode>
+      <p:TagID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:TagID>
+    </p:Pointer>
+  </p:Amendment>
+  <p:AuthorisationHolder>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:CategoryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CategoryCode>
+  </p:AuthorisationHolder>
+  <p:BorderTransportMeans>
+    <p:Name languageID="EN">p:Name</p:Name>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:IdentificationTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:IdentificationTypeCode>
+    <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+    <p:RegistrationNationalityCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RegistrationNationalityCode>
+    <p:ModeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ModeCode>
+  </p:BorderTransportMeans>
+  <p:Consignment>
+    <p:Carrier>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+    </p:Carrier>
+    <p:ConsignmentItem>
+      <p:SequenceNumeric>0.0</p:SequenceNumeric>
+      <p:Consignor>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+      </p:Consignor>
+      <p:Freight>
+        <p:PaymentMethodCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:PaymentMethodCode>
+      </p:Freight>
+    </p:ConsignmentItem>
+    <p:Consignor>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+    </p:Consignor>
+    <p:Freight>
+      <p:PaymentMethodCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:PaymentMethodCode>
+    </p:Freight>
+    <p:Itinerary>
+      <p:SequenceNumeric>0.0</p:SequenceNumeric>
+      <p:RoutingCountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RoutingCountryCode>
+    </p:Itinerary>
+  </p:Consignment>
+  <p:CurrencyExchange>
+    <p:CurrencyTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CurrencyTypeCode>
+    <p:RateNumeric>0.0</p:RateNumeric>
+  </p:CurrencyExchange>
+  <p:Declarant>
+    <p:Name languageID="EN">p:Name</p:Name>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:Address>
+      <p:CityName languageID="EN">p:CityName</p:CityName>
+      <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+      <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+      <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+      <p:Line languageID="EN">p:Line</p:Line>
+      <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+    </p:Address>
+    <p:Contact>
+      <p:Name languageID="EN">p:Name</p:Name>
+    </p:Contact>
+    <p:Communication>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+    </p:Communication>
+  </p:Declarant>
+  <p:ExitOffice>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+  </p:ExitOffice>
+  <p:Exporter>
+    <p:Name languageID="EN">p:Name</p:Name>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:Address>
+      <p:CityName languageID="EN">p:CityName</p:CityName>
+      <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+      <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+      <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+      <p:Line languageID="EN">p:Line</p:Line>
+      <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+    </p:Address>
+    <p:Contact>
+      <p:Name languageID="EN">p:Name</p:Name>
+    </p:Contact>
+    <p:Communication>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+    </p:Communication>
+  </p:Exporter>
+  <p:GoodsShipment>
+    <p:ExitDateTime>
+      <p1:DateTimeString formatCode="102">p1:DateTimeString</p1:DateTimeString>
+    </p:ExitDateTime>
+    <p:TransactionNatureCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TransactionNatureCode>
+    <p:AEOMutualRecognitionParty>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:RoleCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RoleCode>
+    </p:AEOMutualRecognitionParty>
+    <p:Buyer>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+      <p:Contact>
+        <p:Name languageID="EN">p:Name</p:Name>
+      </p:Contact>
+      <p:Communication>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+      </p:Communication>
+    </p:Buyer>
+    <p:Consignee>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+    </p:Consignee>
+    <p:Consignment>
+      <p:ContainerCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">0</p:ContainerCode>
+      <p:ArrivalTransportMeans>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:IdentificationTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:IdentificationTypeCode>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:ModeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ModeCode>
+      </p:ArrivalTransportMeans>
+      <p:DepartureTransportMeans>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:IdentificationTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:IdentificationTypeCode>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:ModeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ModeCode>
+      </p:DepartureTransportMeans>
+      <p:GoodsLocation>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:Address>
+          <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+      </p:GoodsLocation>
+      <p:LoadingLocation>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      </p:LoadingLocation>
+      <p:TransportEquipment>
+        <p:SequenceNumeric>0.0</p:SequenceNumeric>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Seal>
+          <p:SequenceNumeric>0.0</p:SequenceNumeric>
+          <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        </p:Seal>
+      </p:TransportEquipment>
+    </p:Consignment>
+    <p:Consignor>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+    </p:Consignor>
+    <p:CustomsValuation>
+      <p:FreightChargeAmount currencyID="">0.0</p:FreightChargeAmount>
+      <p:ChargeDeduction>
+        <p:ChargesTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ChargesTypeCode>
+        <p:OtherChargeDeductionAmount currencyID="">0.0</p:OtherChargeDeductionAmount>
+      </p:ChargeDeduction>
+    </p:CustomsValuation>
+    <p:Destination>
+      <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+      <p:RegionID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:RegionID>
+    </p:Destination>
+    <p:DomesticDutyTaxParty>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:RoleCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RoleCode>
+    </p:DomesticDutyTaxParty>
+    <p:ExportCountry>
+      <p:ID languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ID>
+    </p:ExportCountry>
+    <p:GovernmentAgencyGoodsItem>
+      <p:CustomsValueAmount currencyID="">0.0</p:CustomsValueAmount>
+      <p:SequenceNumeric>0.0</p:SequenceNumeric>
+      <p:StatisticalValueAmount currencyID="">0.0</p:StatisticalValueAmount>
+      <p:TransactionNatureCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TransactionNatureCode>
+      <p:AdditionalDocument>
+        <p:CategoryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CategoryCode>
+        <p:EffectiveDateTime>
+          <p1:DateTimeString formatCode="102">p1:DateTimeString</p1:DateTimeString>
+        </p:EffectiveDateTime>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:LPCOExemptionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:LPCOExemptionCode>
+        <p:Submitter>
+          <p:Name languageID="EN">p:Name</p:Name>
+          <p:RoleCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RoleCode>
+        </p:Submitter>
+        <p:WriteOff>
+          <p:QuantityQuantity unitCode="">0.0</p:QuantityQuantity>
+          <p:AmountAmount currencyID="">0.0</p:AmountAmount>
+        </p:WriteOff>
+      </p:AdditionalDocument>
+      <p:AdditionalInformation>
+        <p:StatementCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:StatementCode>
+        <p:StatementDescription languageID="EN">p:StatementDescription</p:StatementDescription>
+        <p:StatementTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:StatementTypeCode>
+      </p:AdditionalInformation>
+      <p:AEOMutualRecognitionParty>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:RoleCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RoleCode>
+      </p:AEOMutualRecognitionParty>
+      <p:Buyer>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+        <p:Contact>
+          <p:Name languageID="EN">p:Name</p:Name>
+        </p:Contact>
+        <p:Communication>
+          <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+          <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        </p:Communication>
+      </p:Buyer>
+      <p:Commodity>
+        <p:Description languageID="EN">p:Description</p:Description>
+        <p:Classification>
+          <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+          <p:IdentificationTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:IdentificationTypeCode>
+        </p:Classification>
+        <p:DangerousGoods>
+          <p:UNDGID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:UNDGID>
+        </p:DangerousGoods>
+        <p:DutyTaxFee>
+          <p:AdValoremTaxBaseAmount currencyID="">0.0</p:AdValoremTaxBaseAmount>
+          <p:DeductAmount currencyID="">0.0</p:DeductAmount>
+          <p:DutyRegimeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:DutyRegimeCode>
+          <p:SpecificTaxBaseQuantity unitCode="">0.0</p:SpecificTaxBaseQuantity>
+          <p:TaxRateNumeric>0.0</p:TaxRateNumeric>
+          <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+          <p:QuotaOrderID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:QuotaOrderID>
+          <p:Payment>
+            <p:MethodCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:MethodCode>
+            <p:TaxAssessedAmount currencyID="">0.0</p:TaxAssessedAmount>
+            <p:PaymentAmount currencyID="">0.0</p:PaymentAmount>
+          </p:Payment>
+        </p:DutyTaxFee>
+        <p:GoodsMeasure>
+          <p:GrossMassMeasure unitCode="">0.0</p:GrossMassMeasure>
+          <p:NetNetWeightMeasure unitCode="">0.0</p:NetNetWeightMeasure>
+          <p:TariffQuantity unitCode="">0.0</p:TariffQuantity>
+        </p:GoodsMeasure>
+        <p:InvoiceLine>
+          <p:ItemChargeAmount currencyID="">0.0</p:ItemChargeAmount>
+        </p:InvoiceLine>
+        <p:TransportEquipment>
+          <p:SequenceNumeric>0.0</p:SequenceNumeric>
+          <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        </p:TransportEquipment>
+      </p:Commodity>
+      <p:Consignee>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+      </p:Consignee>
+      <p:Consignor>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+      </p:Consignor>
+      <p:CustomsValuation>
+        <p:MethodCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:MethodCode>
+        <p:ChargeDeduction>
+          <p:ChargesTypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ChargesTypeCode>
+          <p:OtherChargeDeductionAmount currencyID="">0.0</p:OtherChargeDeductionAmount>
+        </p:ChargeDeduction>
+      </p:CustomsValuation>
+      <p:Destination>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:RegionID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:RegionID>
+      </p:Destination>
+      <p:DomesticDutyTaxParty>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:RoleCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:RoleCode>
+      </p:DomesticDutyTaxParty>
+      <p:ExportCountry>
+        <p:ID languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ID>
+      </p:ExportCountry>
+      <p:GovernmentProcedure>
+        <p:CurrentCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CurrentCode>
+        <p:PreviousCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:PreviousCode>
+      </p:GovernmentProcedure>
+      <p:Manufacturer>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+      </p:Manufacturer>
+      <p:Origin>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:RegionID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:RegionID>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+      </p:Origin>
+      <p:Packaging>
+        <p:SequenceNumeric>0.0</p:SequenceNumeric>
+        <p:MarksNumbersID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:MarksNumbersID>
+        <p:QuantityQuantity unitCode="">0.0</p:QuantityQuantity>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:PackingMaterialDescription languageID="EN">p:PackingMaterialDescription</p:PackingMaterialDescription>
+        <p:LengthMeasure unitCode="">0.0</p:LengthMeasure>
+        <p:WidthMeasure unitCode="">0.0</p:WidthMeasure>
+        <p:HeightMeasure unitCode="">0.0</p:HeightMeasure>
+        <p:VolumeMeasure unitCode="">0.0</p:VolumeMeasure>
+      </p:Packaging>
+      <p:PreviousDocument>
+        <p:CategoryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CategoryCode>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        <p:LineNumeric>0.0</p:LineNumeric>
+      </p:PreviousDocument>
+      <p:RefundRecipientParty>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+      </p:RefundRecipientParty>
+      <p:Seller>
+        <p:Name languageID="EN">p:Name</p:Name>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:Address>
+          <p:CityName languageID="EN">p:CityName</p:CityName>
+          <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+          <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+          <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+          <p:Line languageID="EN">p:Line</p:Line>
+          <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+        </p:Address>
+        <p:Contact>
+          <p:Name languageID="EN">p:Name</p:Name>
+        </p:Contact>
+        <p:Communication>
+          <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+          <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+        </p:Communication>
+      </p:Seller>
+      <p:UCR>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:TraderAssignedReferenceID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:TraderAssignedReferenceID>
+      </p:UCR>
+      <p:ValuationAdjustment>
+        <p:AdditionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:AdditionCode>
+      </p:ValuationAdjustment>
+    </p:GovernmentAgencyGoodsItem>
+    <p:Importer>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+      <p:Contact>
+        <p:Name languageID="EN">p:Name</p:Name>
+      </p:Contact>
+      <p:Communication>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+      </p:Communication>
+    </p:Importer>
+    <p:Invoice>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:IssueDateTime>
+        <p1:DateTimeString formatCode="102">p1:DateTimeString</p1:DateTimeString>
+      </p:IssueDateTime>
+    </p:Invoice>
+    <p:Payer>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+    </p:Payer>
+    <p:PreviousDocument>
+      <p:CategoryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CategoryCode>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+      <p:LineNumeric>0.0</p:LineNumeric>
+    </p:PreviousDocument>
+    <p:Seller>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+      <p:Contact>
+        <p:Name languageID="EN">p:Name</p:Name>
+      </p:Contact>
+      <p:Communication>
+        <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+        <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+      </p:Communication>
+    </p:Seller>
+    <p:Surety>
+      <p:Name languageID="EN">p:Name</p:Name>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:Address>
+        <p:CityName languageID="EN">p:CityName</p:CityName>
+        <p:CountryCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryCode>
+        <p:CountrySubDivisionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountrySubDivisionCode>
+        <p:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</p:CountrySubDivisionName>
+        <p:Line languageID="EN">p:Line</p:Line>
+        <p:PostcodeID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:PostcodeID>
+      </p:Address>
+    </p:Surety>
+    <p:TradeTerms>
+      <p:ConditionCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:ConditionCode>
+      <p:CountryRelationshipCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:CountryRelationshipCode>
+      <p:Description languageID="EN">p:Description</p:Description>
+      <p:LocationID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:LocationID>
+      <p:LocationName languageID="EN">p:LocationName</p:LocationName>
+    </p:TradeTerms>
+    <p:UCR>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:TraderAssignedReferenceID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:TraderAssignedReferenceID>
+    </p:UCR>
+    <p:Warehouse>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+      <p:TypeCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:TypeCode>
+    </p:Warehouse>
+  </p:GoodsShipment>
+  <p:ObligationGuarantee>
+    <p:AmountAmount currencyID="">0.0</p:AmountAmount>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    <p:ReferenceID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ReferenceID>
+    <p:SecurityDetailsCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:SecurityDetailsCode>
+    <p:AccessCode languageID="EN" listAgencyID="" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">token</p:AccessCode>
+    <p:GuaranteeOffice>
+      <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+    </p:GuaranteeOffice>
+  </p:ObligationGuarantee>
+  <p:PresentationOffice>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+  </p:PresentationOffice>
+  <p:SupervisingOffice>
+    <p:ID schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">token</p:ID>
+  </p:SupervisingOffice>
+</p:Declaration>
