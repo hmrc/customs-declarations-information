@@ -152,7 +152,7 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   private def validateAgainstSchema(xml: NodeSeq): Assertion = {
     val mockConfiguration = mock[Configuration]
     val propertyName: String = "xsd.locations.statusqueryresponse"
-    val xsdLocations: Seq[String] = Seq("/xml/MDG_Schemas/request/queryDeclarationStatusRequest.xsd")
+    val xsdLocations: Seq[String] = Seq("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd")
 
     when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
     when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
