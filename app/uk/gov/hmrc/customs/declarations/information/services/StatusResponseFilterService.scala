@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.services
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
-import scala.xml.{Node, NodeSeq, TopScope}
+import scala.xml.{NodeSeq, TopScope}
 
 @Singleton
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
@@ -43,16 +43,11 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
 
   def transform(xml: NodeSeq): NodeSeq = {
     val allNodes = extractFlattenedSeqOfAllElements(xml.head)
-    val inputPrefixToUriMap = allNodes.map(extractNamespaceBindings(_)).flatten//extractNamespaceBindings(xml.head)
+    val inputPrefixToUriMap = allNodes.map(extractNamespaceBindings(_)).flatten
       .map( nsb => (nsb.prefix -> nsb.uri))
       .toMap
 
-//    inputPrefixToUriMap.keySet.foreach( prefix => println(s"$prefix -> ${inputPrefixToUriMap(prefix)}"))
-
     val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
-
-//    println("@@@@@@")
-//    inputPrefixToOutputPrefixMap.keySet.foreach( prefix => println(s"$prefix -> ${inputPrefixToOutputPrefixMap(prefix)}"))
 
     val prefixReWriter = createPrefixTransformer(inputPrefixToOutputPrefixMap, TopScope)
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
