@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.services
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
-import scala.xml.{NodeSeq, TopScope}
+import scala.xml.{Node, NodeSeq, TopScope}
 
 @Singleton
 class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
@@ -42,11 +42,18 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   )
 
   def transform(xml: NodeSeq): NodeSeq = {
-    val inputPrefixToUriMap = extractNamespaceBindings(xml.head)
+    val allNodes = extractFlattenedSeqOfAllElements(xml.head)
+    val inputPrefixToUriMap = allNodes.map(extractNamespaceBindings(_)).flatten//extractNamespaceBindings(xml.head)
       .map( nsb => (nsb.prefix -> nsb.uri))
       .toMap
 
+//    inputPrefixToUriMap.keySet.foreach( prefix => println(s"$prefix -> ${inputPrefixToUriMap(prefix)}"))
+
     val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
+
+//    println("@@@@@@")
+//    inputPrefixToOutputPrefixMap.keySet.foreach( prefix => println(s"$prefix -> ${inputPrefixToOutputPrefixMap(prefix)}"))
+
     val prefixReWriter = createPrefixTransformer(inputPrefixToOutputPrefixMap, TopScope)
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
 
@@ -61,8 +68,8 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
 
       {decStatusDetails.map{ node =>
         val declarations = node \ "Declaration"
-        val mdgDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
-        val wcoDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
+        val mdgDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
+        val wcoDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
 
         <p:DeclarationStatusDetails>
           {prefixReWriter.transform(mdgDeclaration)}

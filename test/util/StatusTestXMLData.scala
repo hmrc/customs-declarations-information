@@ -121,7 +121,52 @@ object StatusTestXMLData {
         </n1:retrieveDeclarationStatusResponse>
       </n1:responseDetail>
     </n1:queryDeclarationStatusResponse>
-    }.filter(_ => true)
+  }.filter(_ => true)
+
+  val actualBackendStatusResponse = {
+    <v2:queryDeclarationStatusResponse xmlns:v2="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:urn="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dec="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:urn1="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:urn2="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <v2:responseCommon>
+        <v2:processingDate>2020-02-19T12:08:12.952Z</v2:processingDate>
+      </v2:responseCommon>
+      <v2:responseDetail>
+        <v2:retrieveDeclarationStatusResponse>
+          <v2:retrieveDeclarationStatusDetailsList>
+            <v2:retrieveDeclarationStatusDetails>
+              <ns3:Declaration xmlns:ns3="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:ns5="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:ns2="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:ns4="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+                <ns3:AcceptanceDateTime>
+                  <ns2:DateTimeString formatCode="304">20191010000000Z</ns2:DateTimeString>
+                </ns3:AcceptanceDateTime>
+                <ns3:ID>20GB1YQEOT8BCFGVR3</ns3:ID>
+                <ns3:VersionID>1</ns3:VersionID>
+                <ns3:ReceivedDateTime>
+                  <ns3:DateTimeString formatCode="304">20200219120306Z</ns3:DateTimeString>
+                </ns3:ReceivedDateTime>
+                <ns3:ICS>22</ns3:ICS>
+              </ns3:Declaration>
+              <ns5:Declaration xmlns:ns5="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:ns2="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:ns4="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+                <ns5:FunctionCode>9</ns5:FunctionCode>
+                <ns5:TypeCode>IMZ</ns5:TypeCode>
+                <ns5:GoodsItemQuantity>1</ns5:GoodsItemQuantity>
+                <ns5:TotalPackageQuantity>1.0</ns5:TotalPackageQuantity>
+                <ns5:Submitter>
+                  <ns5:ID>GB025115166435</ns5:ID>
+                </ns5:Submitter>
+                <ns5:GoodsShipment>
+                  <ns5:PreviousDocument>
+                    <ns5:ID>8GB830617936000-0110182</ns5:ID>
+                    <ns5:TypeCode>DCR</ns5:TypeCode>
+                  </ns5:PreviousDocument>
+                  <ns5:UCR>
+                    <ns5:TraderAssignedReferenceID>9GB010969918000-0110182</ns5:TraderAssignedReferenceID>
+                  </ns5:UCR>
+                </ns5:GoodsShipment>
+              </ns5:Declaration>
+            </v2:retrieveDeclarationStatusDetails>
+          </v2:retrieveDeclarationStatusDetailsList>
+        </v2:retrieveDeclarationStatusResponse>
+      </v2:responseDetail>
+    </v2:queryDeclarationStatusResponse>
+  }.filter(_ => true)
 
   val expectedDeclarationStatusPayload: Elem =
     <n1:queryDeclarationInformationRequest
