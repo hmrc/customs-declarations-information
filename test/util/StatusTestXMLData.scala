@@ -121,7 +121,7 @@ object StatusTestXMLData {
         </n1:retrieveDeclarationStatusResponse>
       </n1:responseDetail>
     </n1:queryDeclarationStatusResponse>
-  }.filter(_ => true)
+    }.filter(_ => true)
 
   val actualBackendStatusResponse = {
     <v2:queryDeclarationStatusResponse xmlns:v2="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:urn="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dec="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:urn1="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:urn2="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema">

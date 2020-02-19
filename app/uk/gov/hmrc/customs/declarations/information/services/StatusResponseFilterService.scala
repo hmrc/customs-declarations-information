@@ -48,7 +48,6 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
       .toMap
 
     val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
-
     val prefixReWriter = createPrefixTransformer(inputPrefixToOutputPrefixMap, TopScope)
     val decStatusDetails: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
 
