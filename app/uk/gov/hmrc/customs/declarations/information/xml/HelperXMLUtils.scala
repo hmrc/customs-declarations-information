@@ -52,4 +52,15 @@ object HelperXMLUtils {
       walkNamespaceBindingHierarchy(ns.parent, childBindings :+ ns)
     }
   }
+
+  @tailrec
+  def extractFlattenedSeqOfAllElements(node: Node, remainingNodes: Seq[Node] = Seq.empty, acc: Seq[Node] = Seq.empty): Seq[Node] = {
+    val stillToProcess = node.child ++ remainingNodes
+
+    if (stillToProcess.size < 1) {
+      acc :+ node
+    } else {
+      extractFlattenedSeqOfAllElements(stillToProcess.head, stillToProcess.tail, acc :+ node)
+    }
+  }
 }

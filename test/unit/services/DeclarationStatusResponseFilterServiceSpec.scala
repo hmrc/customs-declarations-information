@@ -24,7 +24,7 @@ import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
 import uk.gov.hmrc.play.test.UnitSpec
-import util.StatusTestXMLData.{defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
+import util.StatusTestXMLData.{defaultDateTime, actualBackendStatusResponse, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
 import util.XmlValidationService
 
 import scala.xml._
@@ -53,6 +53,12 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
 
     "ensure output passes schema validation" in new SetUp {
       validateAgainstSchema(statusResponseWithAllValues.head)
+    }
+
+    "handle actual MDG response" in new SetUp {
+      val multuStatusResponsesWithAllValues: NodeSeq = service.transform(actualBackendStatusResponse)
+
+      validateAgainstSchema(multuStatusResponsesWithAllValues.head)
     }
 
     "handle multiple DeclarationStatusDetails elements in MDG response" in new SetUp {

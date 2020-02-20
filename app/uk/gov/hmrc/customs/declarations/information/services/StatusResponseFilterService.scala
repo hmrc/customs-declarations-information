@@ -42,7 +42,8 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   )
 
   def transform(xml: NodeSeq): NodeSeq = {
-    val inputPrefixToUriMap = extractNamespaceBindings(xml.head)
+    val allNodes = extractFlattenedSeqOfAllElements(xml.head)
+    val inputPrefixToUriMap = allNodes.map(extractNamespaceBindings(_)).flatten
       .map( nsb => (nsb.prefix -> nsb.uri))
       .toMap
 
@@ -61,8 +62,8 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
 
       {decStatusDetails.map{ node =>
         val declarations = node \ "Declaration"
-        val mdgDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
-        val wcoDeclaration = declarations.filter( node => xml.head.getNamespace(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
+        val mdgDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
+        val wcoDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
 
         <p:DeclarationStatusDetails>
           {prefixReWriter.transform(mdgDeclaration)}
