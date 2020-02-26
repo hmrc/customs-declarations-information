@@ -16,16 +16,14 @@
 
 package unit.services
 
-import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
 import uk.gov.hmrc.play.test.UnitSpec
-import util.StatusTestXMLData.{defaultDateTime, actualBackendStatusResponse, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
-import util.XmlValidationService
+import util.StatusTestXMLData.{actualBackendStatusResponse, defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
+import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
@@ -42,6 +40,10 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
     })
   }
 
+  import ValidateXmlAgainstSchema._
+  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
+  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
+
   trait SetUp {
     val mockInformationLogger: InformationLogger = mock[InformationLogger]
     val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
@@ -52,20 +54,20 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
   "Status Response Filter Service" should {
 
     "ensure output passes schema validation" in new SetUp {
-      validateAgainstSchema(statusResponseWithAllValues.head)
+      xmlValidationService.validate(statusResponseWithAllValues) should be(true)
     }
 
     "handle actual MDG response" in new SetUp {
       val multuStatusResponsesWithAllValues: NodeSeq = service.transform(actualBackendStatusResponse)
 
-      validateAgainstSchema(multuStatusResponsesWithAllValues.head)
+      xmlValidationService.validate(multuStatusResponsesWithAllValues) should be(true)
     }
 
     "handle multiple DeclarationStatusDetails elements in MDG response" in new SetUp {
       val numberOfDecStatuses = 5
       val multuStatusResponsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(numberOfDecStatuses, acceptanceOrCreationDate = defaultDateTime))
 
-      validateAgainstSchema(multuStatusResponsesWithAllValues.head)
+      xmlValidationService.validate(multuStatusResponsesWithAllValues) should be(true)
 
       val node = multuStatusResponsesWithAllValues \\ "DeclarationStatusDetails"
 
@@ -154,28 +156,15 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
     "handle future extension where all optional fields are returned" in new SetUp {
       val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponseContainingAllOptionalElements(defaultDateTime))
 
-      validateAgainstSchema(responsesWithAllValues.head)
+      xmlValidationService.validate(responsesWithAllValues) should be(true)
     }
-  }
-
-  private def validateAgainstSchema(xml: NodeSeq): Assertion = {
-    val mockConfiguration = mock[Configuration]
-    val propertyName: String = "xsd.locations.statusqueryresponse"
-    val xsdLocations: Seq[String] = Seq("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
-
-    when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
-    when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
-
-    val xmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
-
-    await(xmlValidationService.validate(xml)) should be(())
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: StatusResponseFilterService): Assertion = {
     val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform( generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime) )
     val statusResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
 
-    validateAgainstSchema(statusResponseWithMissingValues.head)
+    xmlValidationService.validate(statusResponseWithMissingValues) should be(true)
 
     val node = commonPath(statusResponseWithMissingValues) \ missingElementName
 
