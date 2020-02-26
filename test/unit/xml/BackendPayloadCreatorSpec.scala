@@ -17,10 +17,7 @@
 package unit.xml
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.mockito.Mockito.when
-import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
@@ -28,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.play.test.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
-import util.XmlValidationService
+import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 
 import scala.xml.NodeSeq
 
@@ -45,6 +42,10 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   private val dateTime = new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond, DateTimeZone.UTC)
   private val payloadCreator = new BackendPayloadCreator()
 
+  import ValidateXmlAgainstSchema._
+  val schemaFile = getSchema("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd")
+  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
+
   "BackendPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
     def createMrnPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))
@@ -53,19 +54,19 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
 
     "sample MRN request passes schema validation" in {
-      validateAgainstSchema(createMrnPayload())
+      xmlValidationService.validate(createMrnPayload()) should be(true)
     }
 
     "sample DUCR request passes schema validation" in {
-      validateAgainstSchema(createDucrPayload())
+      xmlValidationService.validate(createDucrPayload()) should be(true)
     }
 
     "sample UCR request passes schema validation" in {
-      validateAgainstSchema(createUcrPayload())
+      xmlValidationService.validate(createUcrPayload()) should be(true)
     }
 
     "sample IR request passes schema validation" in {
-      validateAgainstSchema(createInventoryReferencePayload())
+      xmlValidationService.validate(createInventoryReferencePayload()) should be(true)
     }
 
     "set the clientID" in {
@@ -147,18 +148,5 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
       rd.head.text shouldBe "theInventoryReference"
     }
-  }
-
-  private def validateAgainstSchema(xml: NodeSeq): Assertion = {
-    val mockConfiguration = mock[Configuration]
-    val propertyName: String = "xsd.locations.statusqueryresponse"
-    val xsdLocations: Seq[String] = Seq("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd")
-
-    when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
-    when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
-
-    val xmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
-
-    await(xmlValidationService.validate(xml)) should be(())
   }
 }

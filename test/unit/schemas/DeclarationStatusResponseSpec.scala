@@ -16,47 +16,39 @@
 
 package unit.schemas
 
-import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.test.Helpers
+import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.play.test.UnitSpec
-import util.XmlValidationService
 
-import scala.xml.{Elem, Node, SAXException}
+import scala.xml.{Elem, SAXException}
 
 //TODO update depending on any response changes
 class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-  protected val mockConfiguration = mock[Configuration]
-  protected val mockXml = mock[Node]
-
-  protected val propertyName: String = "xsd.locations.statusqueryresponse"
-
-  protected val xsdLocations: Seq[String] = Seq(
-    "/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
-  def xmlValidationService: XmlValidationService = new XmlValidationService(mockConfiguration, schemaPropertyName = propertyName) {}
+  import ValidateXmlAgainstSchema._
+  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
+  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
-  override protected def beforeEach() {
-    reset(mockConfiguration)
-    when(mockConfiguration.getOptional[Seq[String]](propertyName)).thenReturn(Some(xsdLocations))
-    when(mockConfiguration.getOptional[Int]("xml.max-errors")).thenReturn(None)
+  def getFirstValidationException(xml: Elem): SAXException = {
+    val result = xmlValidationService.validateWithErrors(xml)
+    result.isLeft shouldBe true
+
+    result.left.get.head
   }
 
   "A status query response" should {
     "be successfully validated if correct" in {
-      val result = await(xmlValidationService.validate(ValidDeclarationStatusQueryResponseXML))
+      val result = xmlValidationService.validate(ValidDeclarationStatusQueryResponseXML)
 
-      result should be(())
+      result should be(true)
     }
 
     "fail validation if is incorrect" in {
-      val caught = intercept[SAXException] {
-        await(xmlValidationService.validate(InvalidDeclarationStatusQueryResponseXML))
-      }
+      val caught = getFirstValidationException(InvalidDeclarationStatusQueryResponseXML)
 
       caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'taggie'."
 
@@ -64,9 +56,7 @@ class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with Befo
     }
 
     "fail validation if is not filtered" in {
-      val caught = intercept[SAXException] {
-        await(xmlValidationService.validate(FullDeclarationStatusQueryResponseXML))
-      }
+      val caught = getFirstValidationException(FullDeclarationStatusQueryResponseXML)
 
       caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'n1:queryDeclarationInformationResponse'."
 
