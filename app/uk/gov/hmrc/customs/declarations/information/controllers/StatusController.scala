@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{NotFoundCode, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -43,7 +43,13 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
 
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
     val searchType = Mrn(mrn)
-    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    implicit asr: AuthorisedRequest[AnyContent] =>
+      if (mrn.isEmpty) {
+        logger.error("Missing mrn")
+        Future.successful(ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withConversationId)
+      } else {
+        search(searchType)
+    }
   }
 
   def getByDucr(ducr: String): Action[AnyContent] = actionPipeline.async {
@@ -66,8 +72,8 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
 
     searchType match {
       case s: SearchType if !s.validValue =>
-        logger.error(s"Invalid ${searchType.label}: ${searchType.value}")
-        Future.successful(errorBadRequest(errorMessage = s"Invalid ${searchType.label}").XmlResult.withConversationId)
+        logger.error(s"Invalid search for ${searchType.label}: ${searchType.value}")
+        Future.successful(errorBadRequest(errorMessage = s"Invalid Search").XmlResult.withConversationId)
 
       case s: Mrn =>
         declarationStatusService.send(searchType) map {

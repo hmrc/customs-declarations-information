@@ -1,6 +1,7 @@
 ->          /                                                 health.Routes
 ->          /                                                 dynamicDefinition.Routes
 
+GET         /mrn//status                                      @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByMrn(mrn="")
 GET         /mrn/:mrn/status                                  @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByMrn(mrn)
 GET         /ducr/:ducr/status                                @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByDucr(ducr)
 GET         /ucr/:ucr/status                                  @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByUcr(ucr)

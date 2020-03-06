@@ -102,10 +102,7 @@ class StatusControllerSpec extends UnitSpec
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
   private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultInvalidMrn = errorBadRequest("Invalid MRN").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultInvalidDucr = errorBadRequest("Invalid DUCR").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultInvalidUcr = errorBadRequest("Invalid UCR").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultInvalidInventoryReference = errorBadRequest("Invalid InventoryReference").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultInvalidSearch = errorBadRequest("Invalid Search").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
   "Declaration Status Controller for MRN queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
@@ -122,6 +119,15 @@ class StatusControllerSpec extends UnitSpec
       val result: Future[Result] = submitMrn(ValidCspDeclarationStatusRequest)
 
       status(result) shouldBe OK
+      header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
+    }
+
+    "respond with status 404 and conversationId in header for a request without an Mrn" in new SetUp() {
+      authoriseCsp()
+
+      val result: Future[Result] = controller.getByMrn("").apply(ValidCspDeclarationStatusRequest)
+
+      status(result) shouldBe NOT_FOUND
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
@@ -155,7 +161,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByMrn(invalidMrnTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidMrn
+      result shouldBe errorResultInvalidSearch
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -164,7 +170,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByDucr(invalidDucrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidDucr
+      result shouldBe errorResultInvalidSearch
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -173,7 +179,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByUcr(invalidUcrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidUcr
+      result shouldBe errorResultInvalidSearch
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -182,7 +188,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByInventoryReference(invalidInventoryReferenceTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidInventoryReference
+      result shouldBe errorResultInvalidSearch
       verifyNoMoreInteractions(mockStatusConnector)
     }
 

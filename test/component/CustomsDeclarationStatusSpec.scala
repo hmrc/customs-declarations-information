@@ -48,6 +48,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   private val inventoryReference = "some-ir"
 
   private val endpointMRN = s"/mrn/$mrn/status"
+  private val endpointMissingMRN = s"/mrn//status"
   private val endpointDUCR = s"/ducr/$ducr/status"
   private val endpointUCR = s"/ucr/$ucr/status"
   private val endpointIR = s"/inventory-reference/$inventoryReference/status"
@@ -109,12 +110,21 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
          |      
          |    </errorResponse>""".stripMargin
 
+  val invalidSearchResponse =
+    raw"""<?xml version='1.0' encoding='UTF-8'?>
+         |<errorResponse>
+         |      <code>NOT_FOUND</code>
+         |      <message>Invalid Search</message>
+         |      
+         |    </errorResponse>""".stripMargin
+
   private def createFakeRequest(endpoint: String): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*)
 
   val validCspRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
   val validNonCspRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromNonCsp
   val validMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
+  val missingMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingMRN).fromCsp
   val validDucrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointDUCR).fromCsp
   val validUcrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointUCR).fromCsp
   val validIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointIR).fromCsp
@@ -206,6 +216,24 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("v1 config was used")
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+    }
+    
+    scenario("An authorised CSP queries declaration status with missing MRN value") {
+      Given("A CSP omits the MRN")
+      startBackendStatusService()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
+
+      When("a MRN request with data is sent to the API")
+      val result: Future[Result] = route(app = app, missingMrnRequest).value
+
+      Then("a response with a 204 (NOT_FOUND) status is received")
+      status(result) shouldBe NOT_FOUND
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe invalidSearchResponse
     }
 
     scenario("An authorised CSP unsuccessfully queries declaration status by an DUCR value") {
