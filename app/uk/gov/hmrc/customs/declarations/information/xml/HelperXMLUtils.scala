@@ -54,13 +54,13 @@ object HelperXMLUtils {
   }
 
   @tailrec
-  def extractFlattenedSeqOfAllElements(node: Node, remainingNodes: Seq[Node] = Seq.empty, acc: Seq[Node] = Seq.empty): Seq[Node] = {
+  def extractNamespacesFromAllElements(node: Node, remainingNodes: Seq[Node] = Seq.empty, acc: Seq[NamespaceBinding] = Seq.empty): Seq[NamespaceBinding] = {
     val stillToProcess = node.child ++ remainingNodes
 
     if (stillToProcess.size < 1) {
-      acc :+ node
+      acc ++ extractNamespaceBindings(node)
     } else {
-      extractFlattenedSeqOfAllElements(stillToProcess.head, stillToProcess.tail, acc :+ node)
+      extractNamespacesFromAllElements(stillToProcess.head, stillToProcess.tail, acc ++ extractNamespaceBindings(node))
     }
   }
 }

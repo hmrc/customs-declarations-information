@@ -42,8 +42,7 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   )
 
   def transform(xml: NodeSeq): NodeSeq = {
-    val allNodes = extractFlattenedSeqOfAllElements(xml.head)
-    val inputPrefixToUriMap = allNodes.map(extractNamespaceBindings(_)).flatten
+    val inputPrefixToUriMap = extractNamespacesFromAllElements(xml.head)
       .map( nsb => (nsb.prefix -> nsb.uri))
       .toMap
 
