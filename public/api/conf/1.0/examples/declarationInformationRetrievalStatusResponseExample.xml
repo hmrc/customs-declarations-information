@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <p:DeclarationStatusResponse
-        xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+        xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+        xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+        xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
   <p:DeclarationStatusDetails>
     <p:Declaration>
       <p:AcceptanceDateTime>
