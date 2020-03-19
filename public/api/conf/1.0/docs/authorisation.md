@@ -1,0 +1,1 @@
+In the first release of this API any user authorised to use the API can query the status of any declaration.
