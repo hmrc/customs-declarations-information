@@ -15,10 +15,14 @@ uses:
 documentation:
   - title: Overview
     content: !include docs/overview.md
-  - title: Versioning
-    content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
+  - title: Status and roadmap
+    content: !include docs/api-status-and-roadmap.md
+  - title: Data availability and status
+    content: !include docs/data-availability-and-status.md
+  - title: Authorisation
+    content: !include docs/authorisation.md
   - title: Errors
-    content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md
+    content: !include docs/errors.md
   - title: Testing
     content: !include docs/testing.md
 
@@ -27,7 +31,10 @@ documentation:
     /{mrn}:
       uriParameters:
         mrn:
-          description: Movement Reference Number
+          description: |
+            Movement Reference Number
+
+            Must be an alphanumeric string up to 35 characters long.
           type: string
           example: "19GBL4592NCOI21NR9"
       /status:
