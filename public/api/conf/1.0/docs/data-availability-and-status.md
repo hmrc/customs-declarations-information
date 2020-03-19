@@ -2,7 +2,7 @@ Only declarations received by CDS in the last 180 days will be returned by this 
 
 The API returns a response containing these fields:
 
-<table style = "width 100%">
+<table>
   <tr><td></td><td></td></tr>
   <tr>
     <td>AcceptanceDateTime/DateTimeString</td>
