@@ -12,12 +12,17 @@ We use standard HTTP status codes to show whether an API request succeeded or no
   <tr>
     <td>Invalid MRN</td>
     <td>400 (Bad Request)</td>
-    <td>BAD_REQUEST</td>
+    <td>Invalid Search</td>
   </tr>
   <tr>
     <td>Declaration not found for given MRN</td>
     <td>404 (Not Found)</td>
-    <td>NOT_FOUND</td>
+    <td>Resource was not found</td>
+  </tr>
+  <tr>
+    <td>Missing MRN</td>
+    <td>404 (Not Found)</td>
+    <td>Invalid Search</td>
   </tr>
 </table>
 <br>
