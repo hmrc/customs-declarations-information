@@ -44,8 +44,8 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
     val searchType = Mrn(mrn)
     implicit asr: AuthorisedRequest[AnyContent] =>
-      if (mrn.isEmpty) {
-        logger.error("Missing mrn")
+      if (mrn.isEmpty || mrn.contains(" ") ) {
+        logger.error(s"Missing mrn or contains space(s): [$mrn]")
         Future.successful(ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withConversationId)
       } else {
         search(searchType)

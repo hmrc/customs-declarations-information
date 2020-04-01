@@ -131,6 +131,15 @@ class StatusControllerSpec extends UnitSpec
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
+    "respond with status 404 and conversationId in header for a request with an Mrn containing a space" in new SetUp() {
+      authoriseCsp()
+
+      val result: Future[Result] = controller.getByMrn("12345678 ").apply(ValidCspDeclarationStatusRequest)
+
+      status(result) shouldBe NOT_FOUND
+      header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
+    }
+
     "respond with status 400 for a CSP request with both a missing X-Badge-Identifier and a missing X-Submitter-Identifier" in new SetUp() {
       authoriseCsp()
 
