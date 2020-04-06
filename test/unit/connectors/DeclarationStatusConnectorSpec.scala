@@ -16,6 +16,7 @@
 
 package unit.connectors
 
+import akka.actor.ActorSystem
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -24,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
@@ -49,8 +51,9 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
+  private val actorSystem = ActorSystem("howsMySSLSpec")
 
-  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService)
+  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock[CdsLogger], actorSystem)
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 

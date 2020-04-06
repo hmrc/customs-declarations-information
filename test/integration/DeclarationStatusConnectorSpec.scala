@@ -16,6 +16,7 @@
 
 package integration
 
+import akka.pattern.CircuitBreakerOpenException
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -23,7 +24,6 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
-import uk.gov.hmrc.circuitbreaker.UnhealthyServiceException
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp, VersionOne}
@@ -44,7 +44,7 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
 
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private val numberOfCallsToTriggerStateChange = 5
-  private val unavailablePeriodDurationInMillis = 1000
+  private val unavailablePeriodDurationInMillis = 11000
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
     ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
   private implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(incomingAuthToken)))
@@ -99,8 +99,7 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       }
 
       1 to 3 foreach { _ =>
-        val k = intercept[UnhealthyServiceException](await(sendValidXml()))
-        k.getMessage shouldBe "declaration-status"
+        intercept[CircuitBreakerOpenException](await(sendValidXml()))
       }
 
       resetMockServer()
