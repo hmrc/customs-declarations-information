@@ -16,12 +16,16 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
+import java.util.concurrent.TimeUnit._
+
+import akka.actor.ActorSystem
+import akka.pattern.CircuitBreaker
 import com.google.inject._
 import org.joda.time.DateTime
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes
-import uk.gov.hmrc.circuitbreaker.{CircuitBreakerConfig, UsingCircuitBreaker}
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -32,7 +36,9 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
+import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 import scala.xml.NodeSeq
 
 @Singleton
@@ -40,9 +46,10 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val logger: InformationLogger,
                                            val backendPayloadCreator: BackendPayloadCreator,
                                            val serviceConfigProvider: ServiceConfigProvider,
-                                           val config: InformationConfigService)
-                                          (implicit ec: ExecutionContext)
-  extends UsingCircuitBreaker {
+                                           val config: InformationConfigService,
+                                           cdsLogger: CdsLogger,
+                                           sys: ActorSystem)
+                                          (implicit ec: ExecutionContext) {
 
   val configKey = "declaration-status"
 
@@ -57,10 +64,12 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
 
     val declarationStatusPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
-    withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId)).map{
-      response => logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
-      response
-    }
+    breaker
+      .withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId), defineFailure)
+      .map{ response =>
+        logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
+        response
+      }
   }
 
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
@@ -88,17 +97,18 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
       }
   }
 
-  override protected def circuitBreakerConfig: CircuitBreakerConfig =
-    CircuitBreakerConfig(
-      serviceName = configKey,
-      numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
-      unavailablePeriodDuration = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis,
-      unstablePeriodDuration = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-    )
+  cdsLogger.info(s"Circuit Breaker [$configKey] instance created with config $config")
+  lazy val breaker = new CircuitBreaker(
+    scheduler = sys.scheduler,
+    maxFailures = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
+    callTimeout = Duration(config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis, MILLISECONDS),
+    resetTimeout = Duration(config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis, MILLISECONDS)
+  )
 
-  override protected def breakOnException(t: Throwable): Boolean = t match {
-    case _: BadRequestException | _: NotFoundException | _: Upstream4xxResponse => false
-    case _ => true
+  def defineFailure(t: Try[_]): Boolean = {
+    !t.isFailure || (t.failed.get match {
+      case _: BadRequestException | _: NotFoundException | _: Upstream4xxResponse => true
+      case _ => false
+    })
   }
-
 }
