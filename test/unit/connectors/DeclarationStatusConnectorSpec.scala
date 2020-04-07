@@ -51,7 +51,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
-  private val actorSystem = ActorSystem("howsMySSLSpec")
+  private val actorSystem = ActorSystem("mockActorSystem")
 
   private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock[CdsLogger], actorSystem)
 
