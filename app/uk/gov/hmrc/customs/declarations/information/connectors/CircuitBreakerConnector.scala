@@ -39,8 +39,8 @@ abstract class CircuitBreakerConnector @Inject() (config: InformationConfigServi
   private lazy val breaker = new CircuitBreaker(
     scheduler = actorSystem.scheduler,
     maxFailures = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
-    callTimeout = Duration(config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis, MILLISECONDS),
-    resetTimeout = Duration(config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis, MILLISECONDS))
+    callTimeout = Duration(config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis, MILLISECONDS),
+    resetTimeout = Duration(config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis, MILLISECONDS))
       .onOpen(notifyOnStateChange("Open"))
       .onClose(notifyOnStateChange("Close"))
       .onHalfOpen(notifyOnStateChange("HalfOpen"))
