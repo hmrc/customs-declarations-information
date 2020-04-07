@@ -6,7 +6,6 @@ object AppDependencies {
   private val scalatestplusVersion = "3.1.3"
   private val mockitoVersion = "3.3.1"
   private val wireMockVersion = "2.26.3"
-  private val circuitBreakerVersion = "3.5.0"
   private val customsApiCommonVersion = "1.47.0"
   private val testScope = "test,it"
 
@@ -17,8 +16,6 @@ object AppDependencies {
   val wireMock = "com.github.tomakehurst" % "wiremock-jre8" % wireMockVersion % testScope
 
   val mockito =  "org.mockito" % "mockito-core" % mockitoVersion % testScope
-
-  val circuitBreaker = "uk.gov.hmrc" %% "reactive-circuit-breaker" % circuitBreakerVersion
 
   val customsApiCommon = "uk.gov.hmrc" %% "customs-api-common" % customsApiCommonVersion withSources()
 

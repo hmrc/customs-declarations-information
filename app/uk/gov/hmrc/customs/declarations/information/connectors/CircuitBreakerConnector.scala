@@ -30,13 +30,13 @@ import scala.util.Try
 abstract class CircuitBreakerConnector @Inject() (config: InformationConfigService, logger: CdsLogger, actorSystem: ActorSystem)(implicit ec: ExecutionContext) {
   protected val configKey: String
 
-  protected def breakOnException(t: Throwable): Boolean
+  protected def breakOnException(t: Throwable): Boolean = true
 
-  protected def withCircuitBreaker[T](body: => Future[T]): Future[T] =
+  final def withCircuitBreaker[T](body: => Future[T]): Future[T] =
     breaker.withCircuitBreaker(body, defineFailure)
 
   logger.info(s"Circuit Breaker [$configKey] instance created with config $config")
-  lazy val breaker = new CircuitBreaker(
+  private lazy val breaker = new CircuitBreaker(
     scheduler = actorSystem.scheduler,
     maxFailures = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
     callTimeout = Duration(config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis, MILLISECONDS),
