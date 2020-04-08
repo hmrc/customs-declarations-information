@@ -95,7 +95,16 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
         )
         +
         s"""
-           |            }
+           |            },
+           |            "fieldDefinitions":[
+           |               {
+           |                  "name": "authenticatedEori",
+           |                  "description": "What's your Economic Operator Registration and Identification (EORI) number?",
+           |                  "type": "STRING",
+           |                  "hint": "This is your EORI that will associate your application with you as a CSP",
+           |                  "shortDescription" : "EORI"
+           |               }
+           |            ]
            |         }
            |      ]
            |   }
