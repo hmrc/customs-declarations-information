@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
+import akka.actor.ActorSystem
 import com.google.inject._
 import org.joda.time.DateTime
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes
-import uk.gov.hmrc.circuitbreaker.{CircuitBreakerConfig, UsingCircuitBreaker}
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
+import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
+import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -40,11 +42,17 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val logger: InformationLogger,
                                            val backendPayloadCreator: BackendPayloadCreator,
                                            val serviceConfigProvider: ServiceConfigProvider,
-                                           val config: InformationConfigService)
-                                          (implicit ec: ExecutionContext)
-  extends UsingCircuitBreaker {
+                                           val config: InformationConfigService,
+                                           val cdsLogger: CdsLogger,
+                                           val actorSystem: ActorSystem)
+                                          (implicit val ec: ExecutionContext)
+  extends CircuitBreakerConnector {
 
-  val configKey = "declaration-status"
+  override val configKey = "declaration-status"
+
+  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
   def send[A](date: DateTime,
               correlationId: CorrelationId,
@@ -57,10 +65,11 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
 
     val declarationStatusPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
-    withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId)).map{
-      response => logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
-      response
-    }
+    withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId))
+      .map{ response =>
+        logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
+        response
+      }
   }
 
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
@@ -88,17 +97,8 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
       }
   }
 
-  override protected def circuitBreakerConfig: CircuitBreakerConfig =
-    CircuitBreakerConfig(
-      serviceName = configKey,
-      numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange,
-      unavailablePeriodDuration = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis,
-      unstablePeriodDuration = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-    )
-
   override protected def breakOnException(t: Throwable): Boolean = t match {
     case _: BadRequestException | _: NotFoundException | _: Upstream4xxResponse => false
     case _ => true
   }
-
 }
