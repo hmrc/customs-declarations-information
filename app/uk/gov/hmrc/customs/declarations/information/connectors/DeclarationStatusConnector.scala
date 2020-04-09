@@ -22,6 +22,7 @@ import org.joda.time.DateTime
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
+import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -42,12 +43,16 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val backendPayloadCreator: BackendPayloadCreator,
                                            val serviceConfigProvider: ServiceConfigProvider,
                                            val config: InformationConfigService,
-                                           cdsLogger: CdsLogger,
-                                           actorSystem: ActorSystem)
-                                          (implicit ec: ExecutionContext)
-  extends CircuitBreakerConnector(config, cdsLogger, actorSystem) {
+                                           val cdsLogger: CdsLogger,
+                                           val actorSystem: ActorSystem)
+                                          (implicit val ec: ExecutionContext)
+  extends CircuitBreakerConnector {
 
   override val configKey = "declaration-status"
+
+  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
   def send[A](date: DateTime,
               correlationId: CorrelationId,
