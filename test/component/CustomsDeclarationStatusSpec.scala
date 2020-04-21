@@ -17,8 +17,6 @@
 package component
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
-import org.joda.time.DateTime
-import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
 import org.scalatest._
 import play.api.mvc._
 import play.api.test.FakeRequest
@@ -27,9 +25,8 @@ import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, V
 import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.ValidHeaders
 import util.TestData.nonCspBearerToken
-import util.XmlOps.stringToXml
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
-import util.{AuditService, CustomsDeclarationsExternalServicesConfig, StatusTestXMLData, TestData}
+import util.{AuditService, CustomsDeclarationsExternalServicesConfig}
 
 import scala.concurrent.Future
 

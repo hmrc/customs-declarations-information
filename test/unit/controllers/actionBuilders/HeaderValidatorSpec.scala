@@ -21,7 +21,6 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.HeaderNames.ACCEPT
 import play.api.test.FakeRequest
-import play.mvc.Http.Status.BAD_REQUEST
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
@@ -37,7 +36,6 @@ import util.{ApiSubscriptionFieldsTestData, TestData}
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
 
   private val extractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
-  private val ErrorInvalidBadgeIdentifierHeader: ErrorResponse = ErrorResponse(BAD_REQUEST, BadRequestCode, s"X-Badge-Identifier header is missing or invalid")
 
   trait SetUp {
     val loggerMock: InformationLogger = mock[InformationLogger]
