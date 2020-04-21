@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.customs.declarations.information.services
 
+import akka.pattern.CircuitBreakerOpenException
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Result
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
@@ -55,6 +57,9 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
           case e: RuntimeException if e.getCause.isInstanceOf[NotFoundException] =>
             logger.error(s"declaration status call failed with 404: ${e.getMessage}", e)
             Left(ErrorResponse.ErrorNotFound.XmlResult.withConversationId)
+          case _: CircuitBreakerOpenException =>
+            logger.error("unhealthy state entered")
+            Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
           case NonFatal(e) =>
             logger.error(s"declaration status call failed: ${e.getMessage}", e)
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
@@ -73,4 +78,6 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
 
     HttpResponse(response.status, None, response.allHeaders, Some(statusResponseString))
   }
+
+  private val errorResponseServiceUnavailable = errorInternalServerError("This service is currently unavailable")
 }
