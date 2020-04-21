@@ -108,7 +108,7 @@ class StatusControllerSpec extends UnitSpec
     "process CSP request when call is authorised for CSP" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = awaitSubmitMrn(ValidCspDeclarationStatusRequest)
+      awaitSubmitMrn(ValidCspDeclarationStatusRequest)
 
       verifyCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -205,7 +205,7 @@ class StatusControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Result = awaitSubmitMrn(ValidNonCspDeclarationStatusRequest)
+      awaitSubmitMrn(ValidNonCspDeclarationStatusRequest)
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -259,7 +259,7 @@ class StatusControllerSpec extends UnitSpec
       when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](ducr).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       authoriseCsp()
 
-      val result: Result = controller.getByDucr(ducrValue).apply(ValidCspDeclarationStatusRequest)
+      await(controller.getByDucr(ducrValue).apply(ValidCspDeclarationStatusRequest))
 
       verifyCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -269,7 +269,7 @@ class StatusControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Result = controller.getByDucr(ducrValue).apply(ValidNonCspDeclarationStatusRequest)
+      await(controller.getByDucr(ducrValue).apply(ValidNonCspDeclarationStatusRequest))
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -280,7 +280,7 @@ class StatusControllerSpec extends UnitSpec
       when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](ucr).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       authoriseCsp()
 
-      val result: Result = controller.getByUcr(ucrValue).apply(ValidCspDeclarationStatusRequest)
+      await(controller.getByUcr(ucrValue).apply(ValidCspDeclarationStatusRequest))
 
       verifyCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -290,7 +290,7 @@ class StatusControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Result = controller.getByUcr(ucrValue).apply(ValidNonCspDeclarationStatusRequest)
+     await(controller.getByUcr(ucrValue).apply(ValidNonCspDeclarationStatusRequest))
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -301,7 +301,7 @@ class StatusControllerSpec extends UnitSpec
       when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](inventoryReference).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       authoriseCsp()
 
-      val result: Result = controller.getByInventoryReference(inventoryReferenceValue).apply(ValidCspDeclarationStatusRequest)
+      await(controller.getByInventoryReference(inventoryReferenceValue).apply(ValidCspDeclarationStatusRequest))
 
       verifyCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -311,7 +311,7 @@ class StatusControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Result = controller.getByInventoryReference(inventoryReferenceValue).apply(ValidNonCspDeclarationStatusRequest)
+      await(controller.getByInventoryReference(inventoryReferenceValue).apply(ValidNonCspDeclarationStatusRequest))
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }

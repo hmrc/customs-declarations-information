@@ -16,8 +16,6 @@
 
 package unit.connectors
 
-import java.util.UUID
-
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -28,7 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFi
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpReads, NotFoundException}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import uk.gov.hmrc.play.test.UnitSpec
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
@@ -54,7 +52,6 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
 
   private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockUuidService, mockLogger, mockInformationConfigService)
 
-  private val notFoundException = new NotFoundException("Emulated 404 response from a web call")
   private val badRequestException = new BadRequestException("Emulated 400 response from a web call")
   private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
 
