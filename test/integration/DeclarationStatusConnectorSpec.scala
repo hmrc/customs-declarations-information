@@ -16,7 +16,6 @@
 
 package integration
 
-import akka.pattern.CircuitBreakerOpenException
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -43,8 +42,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   private lazy val connector = app.injector.instanceOf[DeclarationStatusConnector]
 
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
-  private val numberOfCallsToTriggerStateChange = 5
-  private val unavailablePeriodDurationInMillis = 1000
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
     ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
   private implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(incomingAuthToken)))
@@ -88,31 +85,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       startBackendStatusService()
       await(sendValidXml())
       verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
-    }
-
-    "circuit breaker trips after specified number of failures" in {
-      startBackendStatusService(INTERNAL_SERVER_ERROR)
-
-      1 to numberOfCallsToTriggerStateChange foreach { _ =>
-        val k = intercept[Upstream5xxResponse](await(sendValidXml()))
-        k.reportAs shouldBe BAD_GATEWAY
-      }
-
-      1 to 3 foreach { _ =>
-        intercept[CircuitBreakerOpenException](await(sendValidXml()))
-      }
-
-      resetMockServer()
-      startBackendStatusService(ACCEPTED)
-
-      Thread.sleep(unavailablePeriodDurationInMillis)
-
-      1 to 5 foreach { _ =>
-        resetMockServer()
-        startBackendStatusService(ACCEPTED)
-        await(sendValidXml())
-        verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
-      }
     }
 
     "return a failed future when external service returns 404" in {
