@@ -55,7 +55,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
             Right(filterResponse(response, xmlResponseBody))
           }).recover{
           case e: RuntimeException if e.getCause.isInstanceOf[NotFoundException] =>
-            logger.error(s"declaration status call failed with 404: ${e.getMessage}", e)
+            logger.warn(s"declaration status call failed with 404: ${e.getMessage}")
             Left(ErrorResponse.ErrorNotFound.XmlResult.withConversationId)
           case _: CircuitBreakerOpenException =>
             logger.error("unhealthy state entered")
