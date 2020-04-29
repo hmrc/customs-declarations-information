@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{NotFoundCode, errorBadRequest}
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.NotFoundCode
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -43,13 +43,7 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
 
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
     val searchType = Mrn(mrn)
-    implicit asr: AuthorisedRequest[AnyContent] =>
-      if (mrn.isEmpty || mrn.contains(" ") ) {
-        logger.error(s"Missing mrn or contains space(s): [$mrn]")
-        Future.successful(ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withConversationId)
-      } else {
-        search(searchType)
-    }
+    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
   def getByDucr(ducr: String): Action[AnyContent] = actionPipeline.async {
@@ -72,10 +66,10 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
 
     searchType match {
       case s: SearchType if !s.validValue =>
-        logger.error(s"Invalid search for ${searchType.label}: ${searchType.value}")
-        Future.successful(errorBadRequest(errorMessage = s"Invalid Search").XmlResult.withConversationId)
+        logger.warn(s"Invalid search for ${searchType.label}: ${searchType.value}")
+        Future.successful(ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withConversationId)
 
-      case s: Mrn =>
+      case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
         declarationStatusService.send(searchType) map {
           case Right(res: HttpResponse) =>
             val id = new HasConversationId {
@@ -87,10 +81,6 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
           case Left(errorResult) =>
             errorResult
         }
-
-      case _ =>
-        logger.error(s"Not yet available ${searchType.label}: ${searchType.value}")
-        Future.successful(ErrorResponse(NOT_IMPLEMENTED, ErrorResponse.NotImplemented, "Not yet available").XmlResult.withConversationId)
     }
   }
 

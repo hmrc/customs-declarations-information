@@ -27,9 +27,10 @@ import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
 import play.api.test.Helpers.{header, _}
+import play.mvc.Http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.StatusController
@@ -102,7 +103,7 @@ class StatusControllerSpec extends UnitSpec
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
   private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultInvalidSearch = errorBadRequest("Invalid Search").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultInvalidSearch = ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
   "Declaration Status Controller for MRN queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
@@ -165,7 +166,7 @@ class StatusControllerSpec extends UnitSpec
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
-    "respond with status 400 for a request with an invalid MRN value" in new SetUp() {
+    "respond with status 404 for a request with an invalid MRN value" in new SetUp() {
       authoriseCsp()
 
       val result: Result = controller.getByMrn(invalidMrnTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
@@ -174,7 +175,7 @@ class StatusControllerSpec extends UnitSpec
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
-    "respond with status 400 for a request with an invalid DUCR value" in new SetUp() {
+    "respond with status 404 for a request with an invalid DUCR value" in new SetUp() {
       authoriseCsp()
 
       val result: Result = controller.getByDucr(invalidDucrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
@@ -183,7 +184,7 @@ class StatusControllerSpec extends UnitSpec
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
-    "respond with status 400 for a request with an invalid UCR value" in new SetUp() {
+    "respond with status 404 for a request with an invalid UCR value" in new SetUp() {
       authoriseCsp()
 
       val result: Result = controller.getByUcr(invalidUcrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
@@ -192,7 +193,7 @@ class StatusControllerSpec extends UnitSpec
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
-    "respond with status 400 for a request with an invalid InventoryReference value" in new SetUp() {
+    "respond with status 404 for a request with an invalid InventoryReference value" in new SetUp() {
       authoriseCsp()
 
       val result: Result = controller.getByInventoryReference(invalidInventoryReferenceTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))

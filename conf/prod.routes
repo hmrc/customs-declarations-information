@@ -3,8 +3,14 @@
 
 GET         /mrn//status                                      @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByMrn(mrn="")
 GET         /mrn/:mrn/status                                  @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByMrn(mrn)
+
+GET         /ducr//status                                     @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByDucr(ducr = "")
 GET         /ducr/:ducr/status                                @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByDucr(ducr)
+
+GET         /ucr//status                                      @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByUcr(ucr = "")
 GET         /ucr/:ucr/status                                  @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByUcr(ucr)
+
+GET         /inventory-reference//status                      @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByInventoryReference(inventoryReference = "")
 GET         /inventory-reference/:inventoryReference/status   @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByInventoryReference(inventoryReference)
 
 GET         /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics
