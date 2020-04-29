@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.NotFoundCode
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -67,7 +67,15 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
     searchType match {
       case s: SearchType if !s.validValue =>
         logger.warn(s"Invalid search for ${searchType.label}: ${searchType.value}")
-        Future.successful(ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withConversationId)
+
+        val appropriateResponse = if (s.valueTooLong) {
+          //this special case is a prerequisite of the CDS program
+          ErrorResponse(BAD_REQUEST, BadRequestCode, "Invalid Search")
+        } else {
+          ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search")
+        }
+
+        Future.successful(appropriateResponse.XmlResult.withConversationId)
 
       case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
         declarationStatusService.send(searchType) map {
