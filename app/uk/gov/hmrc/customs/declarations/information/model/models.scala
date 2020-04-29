@@ -74,7 +74,8 @@ sealed trait SearchType {
   val value: String
   val label: String
   val maxLength: Int
-  lazy val validValue: Boolean = if (value.length > 0 && value.length <= maxLength) true else false
+  lazy val valueTooLong: Boolean = !(value.length <= maxLength)
+  lazy val validValue: Boolean = (value.length > 0 && !valueTooLong && !value.contains(" "))
 }
 
 case class Mrn(value: String) extends SearchType {
