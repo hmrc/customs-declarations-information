@@ -42,7 +42,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   private val mrn = "some-mrn"
   private val ducr = "some-ducr"
   private val ucr = "some-ucr"
-  private val inventoryReference = "some-ir"
+  private val inventoryReference = "some%2F-ir"
 
   private val endpointMRN = s"/mrn/$mrn/status"
   private val endpointMissingMRN = s"/mrn//status"
