@@ -10,17 +10,17 @@ We use standard HTTP status codes to show whether an API request succeeded or no
     <td><strong>Message</strong></td>
   </tr>
   <tr>
-    <td>Invalid MRN</td>
+    <td>Invalid MRN, DUCR, UCR or Inventory Reference</td>
     <td>400 (Bad Request)</td>
     <td>Invalid Search</td>
   </tr>
   <tr>
-    <td>Declaration not found for given MRN</td>
+    <td>Declaration not found for given MRN, DUCR, UCR or Inventory Reference</td>
     <td>404 (Not Found)</td>
     <td>Declaration Not Found</td>
   </tr>
   <tr>
-    <td>Missing MRN</td>
+    <td>Missing MRN, DUCR, UCR or Inventory Reference</td>
     <td>404 (Not Found)</td>
     <td>Invalid Search</td>
   </tr>
