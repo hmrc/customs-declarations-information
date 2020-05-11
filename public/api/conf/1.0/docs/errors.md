@@ -17,7 +17,7 @@ We use standard HTTP status codes to show whether an API request succeeded or no
   <tr>
     <td>Declaration not found for given MRN</td>
     <td>404 (Not Found)</td>
-    <td>Resource was not found</td>
+    <td>Declaration Not Found</td>
   </tr>
   <tr>
     <td>Missing MRN</td>
