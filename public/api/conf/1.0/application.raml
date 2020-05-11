@@ -36,7 +36,7 @@ documentation:
 
             Must be a URL encoded string up to 35 characters long.
           type: string
-          example: "19GBL4592NCOI21NR9"
+          example: "20GB52P19SNIHX8PA6"
       /status:
         get:
           displayName: Get the status of a declaration by MRN
@@ -75,7 +75,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/declarationInformationRetrievalStatusResponseExample.xml
+                  example: !include examples/declarationInformationRetrievalMrnStatusResponseExample.xml
             500:
               body:
                 application/xml:
@@ -97,7 +97,7 @@ documentation:
 
              Must be a URL encoded string up to 70 characters long.
           type: string
-          example: "19GBL4592NCOI21NR9"
+          example: "8GB796458895018-G8536C"
       /status:
         get:
           displayName: Get the status of a declaration by DUCR
@@ -136,7 +136,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/declarationInformationRetrievalStatusResponseExample.xml
+                  example: !include examples/declarationInformationRetrievalDucrStatusResponseExample.xml
             500:
               body:
                 application/xml:
@@ -158,7 +158,7 @@ documentation:
 
             Must be a URL encoded string up to 35 characters long.
           type: string
-          example: "19GBL4592NCOI21NR9"
+          example: "9GB010969918000-5A8BD3F"
       /status:
         get:
           displayName: Get the status of a declaration by UCR
@@ -197,7 +197,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/declarationInformationRetrievalStatusResponseExample.xml
+                  example: !include examples/declarationInformationRetrievalUcrStatusResponseExample.xml
             500:
               body:
                 application/xml:
@@ -219,7 +219,7 @@ documentation:
 
              Must be a URL encoded string up to 70 characters long.
           type: string
-          example: "19GBL4592NCOI21NR9"
+          example: "GB%2F1234-%3A3333HZ"
       /status:
         get:
           displayName: Get the status of a declaration by Inventory Reference
@@ -258,7 +258,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/declarationInformationRetrievalStatusResponseExample.xml
+                  example: !include examples/declarationInformationRetrievalIrStatusResponseExample.xml
             500:
               body:
                 application/xml:
