@@ -59,18 +59,18 @@ The API returns a response containing these fields:
     <td>Submitting Trader. This is the ID of the initiating trader if the declaration is submitted via a CSP.</td>
   </tr>
   <tr>
-    <td>PreviousDocument/ID</td>
+    <td>GoodsShipment/PreviousDocument/ID</td>
     <td>The ID of a previous document. A DUCR or MUCR.</td>
   </tr>
   <tr>
-    <td>PreviousDocument/TypeCode</td>
+    <td>GoodsShipment/PreviousDocument/TypeCode</td>
     <td>The type of a previous document: <br><br>        
         DCR = DUCR<br>
         MCR = MUCR
      </td>
   </tr>
   <tr>
-    <td>UCR/TraderAssignedReferenceID </td>
+    <td>GoodsShipment/UCR/TraderAssignedReferenceID </td>
     <td>Reference Number or UCR. UCC data element 2/4.</td>
   </tr>
 </table>
