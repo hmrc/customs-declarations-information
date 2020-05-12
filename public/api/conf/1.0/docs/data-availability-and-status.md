@@ -1,6 +1,6 @@
 Only declarations received by CDS in the last 180 days will be returned by this API.
 
-The API returns a response containing these fields:
+The API returns a response that can contain the following fields:
 
 <table>
   <tr><td></td><td></td></tr>
@@ -74,3 +74,5 @@ The API returns a response containing these fields:
     <td>Reference Number or UCR. UCC data element 2/4.</td>
   </tr>
 </table>
+
+Please note that not all these fields are guaranteed to be present for every declaration returned.
