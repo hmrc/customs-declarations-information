@@ -61,7 +61,7 @@ trait ApiSubscriptionFieldsService {
     }
 
   }
-  
+
   private def validAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
     if (authenticatedEori.isDefined && !authenticatedEori.get.trim.isEmpty) {
       true

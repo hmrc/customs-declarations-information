@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import util.StatusTestXMLData.{actualBackendStatusResponse, defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 

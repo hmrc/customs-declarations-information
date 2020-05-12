@@ -21,7 +21,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import play.api.inject.guice.GuiceableModule
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 
 trait IntegrationTestSpec extends UnitSpec
   with BeforeAndAfterEach

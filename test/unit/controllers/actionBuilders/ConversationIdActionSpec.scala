@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.C
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
 import uk.gov.hmrc.customs.declarations.information.services.DateTimeService
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import util.TestData.{conversationId, stubUniqueIdsService}
 
 class ConversationIdActionSpec extends UnitSpec with MockitoSugar {

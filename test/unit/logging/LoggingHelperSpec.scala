@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.LoggingHelper
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{ClientId, Csp, VersionOne}
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import util.TestData._
 
 class LoggingHelperSpec extends UnitSpec with MockitoSugar {
