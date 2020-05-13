@@ -28,7 +28,7 @@ import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFields
 import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
 import util.ExternalServicesConfig._
 import util.{ApiSubscriptionFieldsTestData, TestData}

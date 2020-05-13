@@ -33,7 +33,7 @@ import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ValidatedHeadersRequest
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import util.AuthConnectorStubbing
 import util.RequestHeaders.X_CONVERSATION_ID_NAME
 import util.TestData._

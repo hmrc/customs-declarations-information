@@ -28,7 +28,7 @@ import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.H
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.model.{Eori, VersionOne}
-import uk.gov.hmrc.play.test.UnitSpec
+import util.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
 import util.{ApiSubscriptionFieldsTestData, TestData}
