@@ -18,6 +18,7 @@ import scala.language.postfixOps
 name := "customs-declarations-information"
 scalaVersion := "2.12.11"
 targetJvm := "jvm-1.8"
+val silencerVersion = "1.7.0"
 
 lazy val allResolvers = resolvers ++= Seq(
   Resolver.bintrayRepo("hmrc", "releases"),
@@ -53,7 +54,13 @@ lazy val microservice = (project in file("."))
     playPublishingSettings,
     allTest,
     scoverageSettings,
-    allResolvers
+    allResolvers,
+    // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
+    scalacOptions += "-P:silencer:pathFilters=views;routes",
+    libraryDependencies ++= Seq(
+      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
+      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    )
   )
   .settings(majorVersion := 0)
 

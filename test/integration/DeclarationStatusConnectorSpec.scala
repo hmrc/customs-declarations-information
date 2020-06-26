@@ -66,14 +66,14 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
     GuiceApplicationBuilder(overrides = Seq(TestModule.asGuiceableModule)).configure(Map(
       "microservice.services.declaration-status.host" -> Host,
       "microservice.services.declaration-status.port" -> Port,
-      "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext,
+      "microservice.services.declaration-status.context" -> CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1,
       "microservice.services.declaration-status.bearer-token" -> AuthToken
     )).build()
 
   "DeclarationStatusConnector" should {
 
     "make a correct request for a CSP" in {
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       await(sendValidXml())
       verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
@@ -82,23 +82,23 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
         ApiSubscriptionFieldsTestData.clientId, NonCsp(declarantEori), mock[Request[AnyContent]])
 
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       await(sendValidXml())
       verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
     "return a failed future when external service returns 404" in {
-      startBackendStatusService(NOT_FOUND)
+      startBackendStatusServiceV1(NOT_FOUND)
       intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[NotFoundException]
     }
 
     "return a failed future when external service returns 400" in {
-      startBackendStatusService(BAD_REQUEST)
+      startBackendStatusServiceV1(BAD_REQUEST)
       intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[BadRequestException]
     }
 
     "return a failed future when external service returns 500" in {
-      startBackendStatusService(INTERNAL_SERVER_ERROR)
+      startBackendStatusServiceV1(INTERNAL_SERVER_ERROR)
       intercept[Upstream5xxResponse](await(sendValidXml()))
     }
 

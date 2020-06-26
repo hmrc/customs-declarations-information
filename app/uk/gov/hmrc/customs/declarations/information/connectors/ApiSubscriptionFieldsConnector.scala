@@ -28,7 +28,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
-                                               uuidService: UuidService,
                                                logger: InformationLogger,
                                                config: InformationConfigService)
                                               (implicit ec: ExecutionContext) {

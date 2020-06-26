@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:DeclarationStatusResponse
+        xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+        xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+        xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+        xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+        xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+    <p:DeclarationStatusDetails>
+        <p:Declaration>
+            <p:AcceptanceDateTime>
+                <p1:DateTimeString formatCode="304">20200507060000Z</p1:DateTimeString>
+            </p:AcceptanceDateTime>
+            <p:ID>20GB52P2RHNIEFGVR5</p:ID>
+            <p:VersionID>1</p:VersionID>
+            <p:ReceivedDateTime>
+                <p:DateTimeString formatCode="304">20200507203602Z</p:DateTimeString>
+            </p:ReceivedDateTime>
+            <p:GoodsReleasedDateTime>
+                <p:DateTimeString formatCode="304">20200507203608Z</p:DateTimeString>
+            </p:GoodsReleasedDateTime>
+            <p:ICS>22</p:ICS>
+        </p:Declaration>
+        <p2:Declaration>
+            <p2:FunctionCode>9</p2:FunctionCode>
+            <p2:TypeCode>IMZ</p2:TypeCode>
+            <p2:GoodsItemQuantity>1</p2:GoodsItemQuantity>
+            <p2:TotalPackageQuantity>1.0</p2:TotalPackageQuantity>
+            <p2:Submitter>
+                <p2:ID>GB025115166433</p2:ID>
+            </p2:Submitter>
+            <p2:GoodsShipment>
+                <p2:PreviousDocument>
+                    <p2:ID>8GB796458895018-G27F2A</p2:ID>
+                    <p2:TypeCode>DCR</p2:TypeCode>
+                </p2:PreviousDocument>
+                <p2:UCR>
+                    <p2:TraderAssignedReferenceID>9GB010969918000-5A8BD3F</p2:TraderAssignedReferenceID>
+                </p2:UCR>
+            </p2:GoodsShipment>
+        </p2:Declaration>
+    </p:DeclarationStatusDetails>
+</p:DeclarationStatusResponse>

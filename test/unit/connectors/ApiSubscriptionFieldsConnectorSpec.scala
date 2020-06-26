@@ -25,13 +25,12 @@ import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, InformationConfig}
-import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
+import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import util.UnitSpec
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
 import util.ExternalServicesConfig._
-import util.{ApiSubscriptionFieldsTestData, TestData}
+import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,12 +44,11 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val mockLogger = mock[InformationLogger]
   private val mockInformationConfigService = mock[InformationConfigService]
   private val mockInformationConfig = mock[InformationConfig]
-  private val mockUuidService = mock[UuidService]
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr = TestData.TestCspAuthorisedRequest
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
-  private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockUuidService, mockLogger, mockInformationConfigService)
+  private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockInformationConfigService)
 
   private val badRequestException = new BadRequestException("Emulated 400 response from a web call")
   private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
