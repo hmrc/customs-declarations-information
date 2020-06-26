@@ -55,6 +55,10 @@ object VersionOne extends ApiVersion{
   override val value: String = "1.0"
   override val configPrefix: String = ""
 }
+object VersionTwo extends ApiVersion{
+  override val value: String = "2.0"
+  override val configPrefix: String = "v2."
+}
 
 sealed trait AuthorisedAs {
 }

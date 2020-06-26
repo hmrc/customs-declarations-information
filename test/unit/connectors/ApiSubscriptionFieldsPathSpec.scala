@@ -17,14 +17,19 @@
 package unit.connectors
 
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsPath
+import uk.gov.hmrc.customs.declarations.information.model.VersionTwo
 import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData
 
 class ApiSubscriptionFieldsPathSpec extends UnitSpec with ApiSubscriptionFieldsTestData {
 
   "ApiSubscriptionFieldsPath" should {
-    "construct path" in {
+    "construct path for v1" in {
       ApiSubscriptionFieldsPath.url("/some-context", apiSubscriptionKey) shouldBe "/some-context/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
+    }
+
+    "construct path for v2" in {
+      ApiSubscriptionFieldsPath.url("/some-context", apiSubscriptionKey.copy(version = VersionTwo)) shouldBe "/some-context/application/SOME_X_CLIENT_ID/context/some/api/context/version/2.0"
     }
   }
 }

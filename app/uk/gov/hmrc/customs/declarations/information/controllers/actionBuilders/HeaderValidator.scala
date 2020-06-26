@@ -24,13 +24,16 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders._
-import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ClientId, Eori, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, BadgeIdentifier, ClientId, Eori, VersionOne, VersionTwo}
 
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {
 
+  protected val versionsByAcceptHeader: Map[String, ApiVersion] = Map(
+    "application/vnd.hmrc.1.0+xml" -> VersionOne,
+    "application/vnd.hmrc.2.0+xml" -> VersionTwo
+  )
   private lazy val xBadgeIdentifierRegex = "^[0-9A-Z]{6,12}$".r
-  private val validAcceptHeader: String = "application/vnd.hmrc.1.0+xml"
   private lazy val xClientIdRegex = "^\\S+$".r
   private lazy val InvalidEoriHeaderRegex = "(^[\\s]*$|^.{18,}$)".r
 
@@ -40,7 +43,7 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
   def validateHeaders[A](implicit conversationIdRequest: ConversationIdRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
     implicit val headers: Headers = conversationIdRequest.headers
 
-    def hasAccept = validateHeader(ACCEPT, validAcceptHeader.equalsIgnoreCase, ErrorAcceptHeaderInvalid)
+    def hasAccept = validateHeader(ACCEPT, versionsByAcceptHeader.keySet.contains(_), ErrorAcceptHeaderInvalid)
 
     def hasXClientId = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
 
@@ -51,7 +54,7 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
       logger.debug(
         s"\n$ACCEPT header passed validation: $acceptValue"
           + s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
-      ExtractedHeadersImpl(VersionOne, ClientId(xClientIdValue))
+      ExtractedHeadersImpl(versionsByAcceptHeader(acceptValue), ClientId(xClientIdValue))
     }
     theResult
   }

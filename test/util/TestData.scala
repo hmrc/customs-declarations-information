@@ -166,12 +166,14 @@ object RequestHeaders {
   val X_CLIENT_ID_HEADER: (String, String) = X_CLIENT_ID_NAME -> ApiSubscriptionFieldsTestData.xClientId
   val X_CLIENT_ID_HEADER_INVALID: (String, String) = X_CLIENT_ID_NAME -> "This is not a UUID"
 
-  val ACCEPT_HMRC_XML = "application/vnd.hmrc.1.0+xml"
-  val ACCEPT_HMRC_XML_HEADER: (String, String) = ACCEPT -> ACCEPT_HMRC_XML
+  val ACCEPT_HMRC_XML_V1 = "application/vnd.hmrc.1.0+xml"
+  val ACCEPT_HMRC_XML_V2 = "application/vnd.hmrc.2.0+xml"
+  val ACCEPT_HMRC_XML_HEADER_V1: (String, String) = ACCEPT -> ACCEPT_HMRC_XML_V1
+  val ACCEPT_HMRC_XML_HEADER_V2: (String, String) = ACCEPT -> ACCEPT_HMRC_XML_V2
   val ACCEPT_HEADER_INVALID: (String, String) = ACCEPT -> "invalid"
 
   val ValidHeaders: Map[String, String] = Map(
-    ACCEPT_HMRC_XML_HEADER,
+    ACCEPT_HMRC_XML_HEADER_V1,
     X_CLIENT_ID_HEADER,
     X_BADGE_IDENTIFIER_HEADER
   )

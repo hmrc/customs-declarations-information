@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, VersionOne}
 import util.FakeRequests.FakeRequestOps
-import util.RequestHeaders.ValidHeaders
+import util.RequestHeaders.{ValidHeaders, ACCEPT_HMRC_XML_HEADER_V2}
 import util.TestData.nonCspBearerToken
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
 import util.{AuditService, CustomsDeclarationsExternalServicesConfig}
@@ -118,11 +118,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
          |      
          |    </errorResponse>""".stripMargin
 
-  private def createFakeRequest(endpoint: String): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest("GET", endpoint).withHeaders(ValidHeaders.-(CONTENT_TYPE).toSeq: _*)
+  private def createFakeRequest(endpoint: String, headers: Map[String, String] = ValidHeaders): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", endpoint).withHeaders(headers.-(CONTENT_TYPE).toSeq: _*)
 
   val validCspRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
   val validNonCspRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromNonCsp
+  val validNonCspRequestV2: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpoint = endpointMRN, headers = ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2).fromNonCsp
   val validMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
   val missingMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingMRN).fromCsp
   val validDucrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointDUCR).fromCsp
@@ -147,7 +148,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   feature("Declaration Information API authorises status requests from CSPs with v1.0 accept header") {
     scenario("An authorised CSP successfully requests a status") {
       Given("A CSP wants the status of a declaration")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -166,14 +167,14 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verifyAuthServiceCalledForCsp())
 
       And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
   }
 
   feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
     scenario("An authorised non-CSP successfully requests a status") {
       Given("A non-CSP wants the status of a declaration")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
 
       And("the non-CSP is authorised with its privileged application")
       authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
@@ -192,14 +193,40 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verifyAuthServiceCalledForNonCsp())
 
       And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
+    }
+  }
+  
+  feature("Declaration Information API authorises status requests from non-CSPs with v2.0 accept header") {
+    scenario("An authorised non-CSP successfully requests a status") {
+      Given("A non-CSP wants the status of a declaration")
+      startBackendStatusServiceV2()
+
+      And("the non-CSP is authorised with its privileged application")
+      authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
+      authServiceAuthorizesNonCspWithEori()
+
+      When("a GET request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validNonCspRequestV2).value
+
+      Then("a response with a 200 (OK) status is received")
+      status(result) shouldBe OK
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe validResponse
+
+      And("the request was authorised with AuthService")
+      eventually(verifyAuthServiceCalledForNonCsp())
+
+      And("v2 config was used")
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV2))))
     }
   }
 
   feature("Declaration Information API query declaration statuses by MRN") {
     scenario("An authorised CSP successfully queries declaration status by an MRN value") {
       Given("A CSP wants the status of a declaration with a given MRN")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -218,12 +245,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verifyAuthServiceCalledForCsp())
 
       And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
     
     scenario("An authorised CSP queries declaration status with missing MRN value") {
       Given("A CSP omits the MRN")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -243,7 +270,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   feature("Declaration Information API query declaration statuses by DUCR") {
     scenario("An authorised CSP successfully queries declaration status by an DUCR value") {
       Given("A CSP wants the status of a declaration associated with a given DUCR")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -262,12 +289,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verifyAuthServiceCalledForCsp())
 
       And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
 
     scenario("An authorised CSP queries declaration status with missing DUCR value") {
       Given("A CSP omits the DUCR")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -287,7 +314,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   feature("Declaration Information API query declaration statuses by UCR") {
     scenario("An authorised CSP unsuccessfully queries declaration status by an UCR value") {
       Given("A CSP wants the status of a declaration associated with a given UCR")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -306,12 +333,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verifyAuthServiceCalledForCsp())
 
       And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
 
     scenario("An authorised CSP queries declaration status with missing UCR value") {
       Given("A CSP omits the UCR")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -331,7 +358,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   feature("Declaration Information API query declaration statuses by Inventory Reference") {
     scenario("An authorised CSP unsuccessfully queries declaration status by an Inventory Reference value") {
       Given("A CSP wants the status of a declaration associated with a given Inventory Reference")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")
@@ -350,12 +377,12 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verifyAuthServiceCalledForCsp())
 
       And("v1 config was used")
-      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext))))
+      eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
 
     scenario("An authorised CSP queries declaration status with missing Inventory Reference value") {
       Given("A CSP omits the Inventory Reference")
-      startBackendStatusService()
+      startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
 
       And("the CSP is authorised with its privileged application")

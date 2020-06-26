@@ -17,6 +17,7 @@
 package util.externalservices
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.test.Helpers._
 import util.StatusTestXMLData.validBackendStatusResponse
@@ -25,11 +26,20 @@ import util._
 import scala.xml.NodeSeq
 
 trait BackendStatusDeclarationService extends WireMockRunner {
-  private val url = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContext)
+  private val urlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1)
+  private val urlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV2)
 
   val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
 
-  def startBackendStatusService(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
+  def startBackendStatusServiceV1(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
+    startBackendStatusService(urlV1, status, body)
+  }
+
+  def startBackendStatusServiceV2(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
+    startBackendStatusService(urlV2, status, body)
+  }
+
+  private def startBackendStatusService(url: UrlPattern, status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
     stubFor(post(url).
       willReturn(
         aResponse()
@@ -40,7 +50,7 @@ trait BackendStatusDeclarationService extends WireMockRunner {
   def verifyBackendStatusDecServiceWasCalledWith(requestBody: String,
                                                  expectedAuthToken: String = ExternalServicesConfig.AuthToken,
                                                  maybeUnexpectedAuthToken: Option[String] = None) {
-    verify(1, postRequestedFor(url)
+    verify(1, postRequestedFor(urlV1)
       .withHeader(CONTENT_TYPE, equalTo(XML + "; charset=utf-8"))
       .withHeader(ACCEPT, equalTo(XML))
       .withHeader(AUTHORIZATION, equalTo(s"Bearer $expectedAuthToken"))
@@ -51,7 +61,7 @@ trait BackendStatusDeclarationService extends WireMockRunner {
       )
 
     maybeUnexpectedAuthToken foreach { unexpectedAuthToken =>
-      verify(0, postRequestedFor(url).withHeader(AUTHORIZATION, equalTo(s"Bearer $unexpectedAuthToken")))
+      verify(0, postRequestedFor(urlV1).withHeader(AUTHORIZATION, equalTo(s"Bearer $unexpectedAuthToken")))
     }
   }
 }

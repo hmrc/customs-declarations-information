@@ -27,7 +27,7 @@ import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderName
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.HeaderValidator
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{Eori, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{Eori, VersionOne, VersionTwo}
 import util.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
@@ -36,6 +36,7 @@ import util.{ApiSubscriptionFieldsTestData, TestData}
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
 
   private val extractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
+  private val extractedHeadersV2 = ExtractedHeadersImpl(VersionTwo, ApiSubscriptionFieldsTestData.clientId)
 
   trait SetUp {
     val loggerMock: InformationLogger = mock[InformationLogger]
@@ -50,6 +51,9 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
     "in happy path, validation" should {
       "be successful for a valid request with accept header for V1" in new SetUp {
         validate(conversationIdRequest(ValidHeaders)) shouldBe Right(extractedHeaders)
+      }
+      "be successful for a valid request with accept header for V2" in new SetUp {
+        validate(conversationIdRequest(ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2)) shouldBe Right(extractedHeadersV2)
       }
       "allow an empty header" in new SetUp {
         validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> ""))) shouldBe Right(None)
@@ -92,8 +96,8 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
       "fail when request has invalid accept header" in new SetUp {
         validate(conversationIdRequest(ValidHeaders + ACCEPT_HEADER_INVALID)) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
-      "fail when request is for V2" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.2.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
+      "fail when request is for V3" in new SetUp {
+        validate(conversationIdRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.3.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
     }
   }
