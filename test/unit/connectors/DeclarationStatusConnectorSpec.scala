@@ -57,7 +57,6 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   private val httpException = new NotFoundException("Emulated 404 response from a web call")
@@ -69,12 +68,14 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     when(mockBackendPayloadCreator.create(correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
+  private val successfulResponse = HttpResponse(200, "")
+
   "DeclarationStatusConnector" can {
 
     "when making a successful request" should {
 
       "pass URL from config" in {
-        returnResponseForRequest(Future.successful(mock[HttpResponse]))
+        returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
 
@@ -83,7 +84,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
       }
 
       "pass in the body" in {
-        returnResponseForRequest(Future.successful(mock[HttpResponse]))
+        returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
 
@@ -92,7 +93,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
       }
 
       "prefix the config key with the prefix if passed" in {
-        returnResponseForRequest(Future.successful(mock[HttpResponse]))
+        returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
 

@@ -66,7 +66,7 @@ class StatusControllerSpec extends UnitSpec
     protected val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
     protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
-    protected val stubHttpResponse = HttpResponse(responseStatus = Status.OK, responseJson = None, responseString = Some(StatusTestXMLData.validBackendStatusResponse.toString))
+    protected val stubHttpResponse = HttpResponse(Status.OK, StatusTestXMLData.validBackendStatusResponse.toString)
 
     protected val mockStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
