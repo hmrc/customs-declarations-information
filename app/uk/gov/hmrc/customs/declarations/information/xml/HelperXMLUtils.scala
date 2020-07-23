@@ -45,7 +45,7 @@ object HelperXMLUtils {
   @tailrec
   def walkNamespaceBindingHierarchy(ns: NamespaceBinding,
                                     childBindings: Seq[NamespaceBinding] =
-                                    Seq.empty): Seq[NamespaceBinding] = {
+                                     Seq.empty): Seq[NamespaceBinding] = {
     if (ns.uri == null) {
       childBindings
     } else {
