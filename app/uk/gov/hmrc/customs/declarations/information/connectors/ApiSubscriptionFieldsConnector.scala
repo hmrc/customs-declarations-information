@@ -20,9 +20,10 @@ import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiSubscriptionKey}
-import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UuidService}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException}
+import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,6 +43,9 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
 
     http.GET[ApiSubscriptionFieldsResponse](url)
       .recoverWith {
+        case upstreamErrorResponse: UpstreamErrorResponse =>
+          logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${upstreamErrorResponse.statusCode} error=${upstreamErrorResponse.getMessage}")
+          Future.failed(upstreamErrorResponse)
         case httpError: HttpException =>
           logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
           Future.failed(new RuntimeException(httpError))
@@ -50,5 +54,4 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
           Future.failed(e)
       }
   }
-
 }

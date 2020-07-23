@@ -54,13 +54,21 @@ object HelperXMLUtils {
   }
 
   @tailrec
-  def extractNamespacesFromAllElements(node: Node, remainingNodes: Seq[Node] = Seq.empty, acc: Seq[NamespaceBinding] = Seq.empty): Seq[NamespaceBinding] = {
+  def extractNamespacesFromAllElements(
+    node: Node,
+    remainingNodes: Seq[Node] = Seq.empty,
+    acc: Seq[NamespaceBinding] = Seq.empty
+  ): Seq[NamespaceBinding] = {
     val stillToProcess = node.child ++ remainingNodes
 
     if (stillToProcess.size < 1) {
       acc ++ extractNamespaceBindings(node)
     } else {
-      extractNamespacesFromAllElements(stillToProcess.head, stillToProcess.tail, acc ++ extractNamespaceBindings(node))
+      extractNamespacesFromAllElements(
+        stillToProcess.head,
+        stillToProcess.tail,
+        acc ++ extractNamespaceBindings(node)
+      )
     }
   }
 }

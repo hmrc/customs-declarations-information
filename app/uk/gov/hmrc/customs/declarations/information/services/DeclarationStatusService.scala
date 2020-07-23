@@ -77,7 +77,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
     val statusResponseXml = statusResponseFilterService.transform(xmlResponseBody).head
     val statusResponseString = new PrettyPrinter(xmlWidth, xmlIndent).format(statusResponseXml, TopScope)
 
-    HttpResponse(response.status, None, response.allHeaders, Some(statusResponseString))
+    HttpResponse(response.status, statusResponseString, response.headers)
   }
 
   private val errorResponseServiceUnavailable = errorInternalServerError("This service is currently unavailable")

@@ -23,11 +23,10 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
+import uk.gov.hmrc.customs.declarations.information.connectors.{DeclarationStatusConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.logging.Authorization
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
 import util.TestData._
@@ -44,7 +43,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
     ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
-  private implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(incomingAuthToken)))
 
   override protected def beforeAll() {
     startMockServer()
@@ -79,9 +77,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
     }
 
     "make a correct request for a non-CSP" in {
-      implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
-        ApiSubscriptionFieldsTestData.clientId, NonCsp(declarantEori), mock[Request[AnyContent]])
-
       startBackendStatusServiceV1()
       await(sendValidXml())
       verifyBackendStatusDecServiceWasCalledWith(requestBody = StatusTestXMLData.expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
@@ -89,17 +84,17 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
 
     "return a failed future when external service returns 404" in {
       startBackendStatusServiceV1(NOT_FOUND)
-      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[NotFoundException]
+      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[Non2xxResponseException]
     }
 
     "return a failed future when external service returns 400" in {
       startBackendStatusServiceV1(BAD_REQUEST)
-      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[BadRequestException]
+      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[Non2xxResponseException]
     }
 
     "return a failed future when external service returns 500" in {
       startBackendStatusServiceV1(INTERNAL_SERVER_ERROR)
-      intercept[Upstream5xxResponse](await(sendValidXml()))
+      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[Non2xxResponseException]
     }
 
     "return a failed future when fail to connect the external service" in {

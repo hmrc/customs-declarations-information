@@ -23,7 +23,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
-import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionFieldsResponse
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
@@ -82,33 +82,33 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
     "return a failed future when external service returns 404" in {
       setupGetSubscriptionFieldsToReturn(NOT_FOUND)
 
-      intercept[RuntimeException](await(getApiSubscriptionFields)).getCause.getClass shouldBe classOf[NotFoundException]
+      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=404 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 404 (Not Found). Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
+      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=404 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 404. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
     }
 
     "return a failed future when external service returns 400" in {
       setupGetSubscriptionFieldsToReturn(BAD_REQUEST)
 
-      intercept[RuntimeException](await(getApiSubscriptionFields)).getCause.getClass shouldBe classOf[BadRequestException]
+      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=400 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 400 (Bad Request). Response body '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
+      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=400 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 400. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
     }
 
     "return a failed future when external service returns any 4xx response other than 400" in {
       setupGetSubscriptionFieldsToReturn(FORBIDDEN)
 
-      intercept[Upstream4xxResponse](await(getApiSubscriptionFields))
+      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
 
-      verifyInformationLoggerError("Call to subscription information service failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0")
+      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=403 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 403. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
     }
 
     "return a failed future when external service returns 500" in {
       setupGetSubscriptionFieldsToReturn(INTERNAL_SERVER_ERROR)
 
-      intercept[Upstream5xxResponse](await(getApiSubscriptionFields))
+      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
 
-      verifyInformationLoggerError("Call to subscription information service failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0")
+      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=500 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 500. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
     }
 
     "return a failed future when fail to connect the external service" in {

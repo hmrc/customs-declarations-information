@@ -39,7 +39,7 @@ trait BackendStatusDeclarationService extends WireMockRunner {
     startBackendStatusService(urlV2, status, body)
   }
 
-  private def startBackendStatusService(url: UrlPattern, status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
+  private def startBackendStatusService(url: UrlPattern, status: Int, body: NodeSeq): Unit = {
     stubFor(post(url).
       willReturn(
         aResponse()

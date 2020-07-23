@@ -33,6 +33,7 @@ import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
@@ -46,7 +47,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val cdsLogger: CdsLogger,
                                            val actorSystem: ActorSystem)
                                           (implicit val ec: ExecutionContext)
-  extends CircuitBreakerConnector {
+  extends CircuitBreakerConnector with HttpErrorFunctions {
 
   override val configKey = "declaration-status"
 
@@ -86,8 +87,15 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
   private def post[A](xml: NodeSeq, url: String, correlationId: CorrelationId)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
     logger.debug(s"Sending request to $url. Headers ${hc.headers} Payload: ${xml.toString()}")
 
-    http.POSTString[HttpResponse](url, xml.toString())
-      .recoverWith {
+    http.POSTString[HttpResponse](url, xml.toString()).map { response =>
+      response.status match {
+        case status if is2xx(status) =>
+          response
+
+        case status => //1xx, 3xx, 4xx, 5xx
+          throw new Non2xxResponseException(status)
+      }
+    }.recoverWith {
         case httpError: HttpException =>
           logger.error(s"Call to declaration status failed. url=$url")
           Future.failed(new RuntimeException(httpError))
