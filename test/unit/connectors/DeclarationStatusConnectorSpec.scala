@@ -31,7 +31,7 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
@@ -58,8 +58,6 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
   private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
-
-  private val httpException = new NotFoundException("Emulated 404 response from a web call")
 
   override protected def beforeEach() {
     reset(mockWsPost, mockServiceConfigProvider)
@@ -109,15 +107,6 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
           awaitRequest
         }
         caught shouldBe TestData.emulatedServiceFailure
-      }
-
-      "wrap an underlying error when service call fails with an http exception" in {
-        returnResponseForRequest(Future.failed(httpException))
-
-        val caught = intercept[RuntimeException] {
-          awaitRequest
-        }
-        caught.getCause shouldBe httpException
       }
     }
 
