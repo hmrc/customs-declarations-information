@@ -84,22 +84,22 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
 
     "return a failed future when external service returns 404" in {
       startBackendStatusServiceV1(NOT_FOUND)
-      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[Non2xxResponseException]
+      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe NOT_FOUND
     }
 
     "return a failed future when external service returns 400" in {
       startBackendStatusServiceV1(BAD_REQUEST)
-      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[Non2xxResponseException]
+      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe BAD_REQUEST
     }
 
     "return a failed future when external service returns 500" in {
       startBackendStatusServiceV1(INTERNAL_SERVER_ERROR)
-      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[Non2xxResponseException]
+      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe INTERNAL_SERVER_ERROR
     }
 
     "return a failed future when fail to connect the external service" in {
       stopMockServer()
-      intercept[RuntimeException](await(sendValidXml())).getCause.getClass shouldBe classOf[BadGatewayException]
+      intercept[BadGatewayException](await(sendValidXml())).responseCode shouldBe BAD_GATEWAY
       startMockServer()
     }
   }

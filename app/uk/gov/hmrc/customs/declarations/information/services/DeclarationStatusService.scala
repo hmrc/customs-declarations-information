@@ -27,7 +27,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Left
@@ -55,9 +55,12 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
             val xmlResponseBody = XML.loadString(response.body)
             Right(filterResponse(response, xmlResponseBody))
           }).recover{
-          case e: RuntimeException if e.getCause.isInstanceOf[NotFoundException] =>
+          case e: HttpException if e.responseCode == NOT_FOUND =>
             logger.warn(s"declaration status call failed with 404: ${e.getMessage}")
             Left(DeclarationStatusService.customNotFoundResponse.XmlResult.withConversationId)
+          case e: HttpException =>
+            logger.warn(s"declaration status call failed with ${e.responseCode}: ${e.getMessage}")
+            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
           case _: CircuitBreakerOpenException =>
             logger.error("unhealthy state entered")
             Left(errorResponseServiceUnavailable.XmlResult.withConversationId)

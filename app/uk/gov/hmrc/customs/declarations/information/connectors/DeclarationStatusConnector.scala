@@ -97,8 +97,8 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
       }
     }.recoverWith {
         case httpError: HttpException =>
-          logger.error(s"Call to declaration status failed. url=$url")
-          Future.failed(new RuntimeException(httpError))
+          logger.error(s"Call to declaration status failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
+          Future.failed(httpError)
         case e: Throwable =>
           logger.error(s"Call to declaration status failed. url=$url")
           Future.failed(e)
@@ -106,7 +106,11 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
   }
 
   override protected def breakOnException(t: Throwable): Boolean = t match {
-    case _: BadRequestException | _: NotFoundException | _: Upstream4xxResponse => false
+    case e: Non2xxResponseException => e.responseCode match {
+      case 400 => false //BadRequest
+      case 404 => false //NotFound
+      case _ => true
+    }
     case _ => true
   }
 }

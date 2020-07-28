@@ -27,14 +27,14 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
 import util.TestData.{correlationId, _}
@@ -113,7 +113,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new RuntimeException(new NotFoundException("nothing here"))))
+        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(404)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(DeclarationStatusService.customNotFoundResponse.XmlResult.withConversationId)
