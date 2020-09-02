@@ -19,10 +19,10 @@ package uk.gov.hmrc.customs.declarations.information.services
 import akka.pattern.CircuitBreakerOpenException
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Result
-import play.mvc.Http.Status.NOT_FOUND
+import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{NotFoundCode, errorInternalServerError}
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{InternalServerErrorCode, NotFoundCode, errorInternalServerError}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Left
 import scala.util.control.NonFatal
-import scala.xml.{Elem, PrettyPrinter, TopScope, XML}
+import scala.xml.{Elem, NodeSeq, PrettyPrinter, TopScope, XML}
 
 @Singleton
 class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResponseFilterService,
@@ -52,9 +52,16 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
+            val v: HttpResponse = response
             val xmlResponseBody = XML.loadString(response.body)
             Right(filterResponse(response, xmlResponseBody))
           }).recover{
+          case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
+            val body = XML.loadString(e.response.body)
+            val errorCode: NodeSeq = body \ "errorCode"
+            matchErrorCode(errorCode)
+          case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
+            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
           case e: HttpException if e.responseCode == NOT_FOUND =>
             logger.warn(s"declaration status call failed with 404: ${e.getMessage}")
             Left(DeclarationStatusService.customNotFoundResponse.XmlResult.withConversationId)
@@ -70,6 +77,21 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
         }
       case Left(result) =>
         Future.successful(Left(result))
+    }
+  }
+
+
+  private def matchErrorCode[A](errorCode: NodeSeq)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
+    errorCode.text.toLowerCase() match {
+      case "cds60001" =>
+        Left(ErrorResponse(NOT_FOUND, errorCode.text, "Declaration not found").XmlResult.withConversationId)
+      case "cds60002" =>
+        Left(ErrorResponse(BAD_REQUEST, errorCode.text, "Search parameter invalid").XmlResult.withConversationId)
+      case "cds60003" =>
+        Left(ErrorResponse(INTERNAL_SERVER_ERROR, errorCode.text, "Internal server error").XmlResult.withConversationId)
+      case _ =>
+        logger.info(s"Unknown errorCode received: ${errorCode.text}")
+        Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
     }
   }
 

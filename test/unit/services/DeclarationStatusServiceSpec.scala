@@ -25,6 +25,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers
+import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector, Non2xxResponseException}
@@ -40,6 +41,7 @@ import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSub
 import util.TestData.{correlationId, _}
 
 import scala.concurrent.Future
+import scala.util.Left
 
 class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
   private val dateTime = new DateTime()
@@ -107,13 +109,81 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       val result: Either[Result, HttpResponse] = send()
       result shouldBe Left(missingEoriResult)
     }
-    
+
+    "return 404 error response when backend call fails with 500 and errorCode CDS60001" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60001</cds:errorCode>
+                                               |        <cds:errorMessage>Declaration not found</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+        )
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
+    }
+
+    "return 404 error response when backend call fails with 500 and errorCode CDS60002" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60002</cds:errorCode>
+                                               |        <cds:errorMessage>Search parameter invalid</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid").XmlResult.withConversationId)
+    }
+
+    "return 404 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60003</cds:errorCode>
+                                               |        <cds:errorMessage>Internal server error</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
+    }
+
+    "return 500 error response when backend call fails with 403" in new SetUp() {
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+    }
+
     "return 404 error response when backend call fails with 404" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(404)))
+        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(DeclarationStatusService.customNotFoundResponse.XmlResult.withConversationId)
