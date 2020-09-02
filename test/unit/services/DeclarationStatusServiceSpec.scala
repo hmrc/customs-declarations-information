@@ -64,7 +64,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
     when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
-      meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]]))
+      meq[SearchType](searchType))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(mockHttpResponse))
     when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
     when(mockHttpResponse.headers).thenReturn(any[Map[String, Seq[String]]])
@@ -123,13 +123,13 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
     }
 
-    "return 404 error response when backend call fails with 500 and errorCode CDS60002" in new SetUp() {
+    "return 400 error response when backend call fails with 500 and errorCode CDS60002" in new SetUp() {
       when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
                                                |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
                                                |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -142,13 +142,13 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid").XmlResult.withConversationId)
     }
 
-    "return 404 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
+    "return 500 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
       when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
                                                |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
                                                |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -161,7 +161,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
@@ -172,7 +172,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
+        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
@@ -183,7 +183,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
+        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(DeclarationStatusService.customNotFoundResponse.XmlResult.withConversationId)
@@ -194,7 +194,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
+        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)

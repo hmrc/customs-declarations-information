@@ -52,15 +52,17 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
-            val v: HttpResponse = response
             val xmlResponseBody = XML.loadString(response.body)
             Right(filterResponse(response, xmlResponseBody))
           }).recover{
           case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
             val body = XML.loadString(e.response.body)
             val errorCode: NodeSeq = body \ "errorCode"
-            matchErrorCode(errorCode)
+            val errorCodeText = errorCode.text
+            logger.warn(s"declaration status call failed with 500: $errorCodeText")
+            matchErrorCode(errorCodeText)
           case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
+            logger.warn(s"declaration status call failed with 403: ${e.getMessage}")
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
           case e: HttpException if e.responseCode == NOT_FOUND =>
             logger.warn(s"declaration status call failed with 404: ${e.getMessage}")
@@ -81,16 +83,15 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
   }
 
 
-  private def matchErrorCode[A](errorCode: NodeSeq)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
-    errorCode.text.toLowerCase() match {
+  private def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
+    errorCodeText.toLowerCase() match {
       case "cds60001" =>
-        Left(ErrorResponse(NOT_FOUND, errorCode.text, "Declaration not found").XmlResult.withConversationId)
+        Left(ErrorResponse(NOT_FOUND, errorCodeText, "Declaration not found").XmlResult.withConversationId)
       case "cds60002" =>
-        Left(ErrorResponse(BAD_REQUEST, errorCode.text, "Search parameter invalid").XmlResult.withConversationId)
+        Left(ErrorResponse(BAD_REQUEST, errorCodeText, "Search parameter invalid").XmlResult.withConversationId)
       case "cds60003" =>
-        Left(ErrorResponse(INTERNAL_SERVER_ERROR, errorCode.text, "Internal server error").XmlResult.withConversationId)
+        Left(ErrorResponse(INTERNAL_SERVER_ERROR, errorCodeText, "Internal server error").XmlResult.withConversationId)
       case _ =>
-        logger.info(s"Unknown errorCode received: ${errorCode.text}")
         Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
     }
   }
