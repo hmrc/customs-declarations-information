@@ -34,9 +34,12 @@ class InformationDocumentationController @Inject()(assets: Assets,
   private lazy val mayBeV1WhitelistedApplicationIds = configuration.getOptional[Seq[String]]("api.access.version-1.0.whitelistedApplicationIds")
   private lazy val mayBeV2WhitelistedApplicationIds = configuration.getOptional[Seq[String]]("api.access.version-2.0.whitelistedApplicationIds")
 
+  private lazy val v1Enabled = configuration.getOptional[Boolean]("api.access.version-1.0.enabled").getOrElse(true)
+  private lazy val v2Enabled = configuration.getOptional[Boolean]("api.access.version-2.0.enabled").getOrElse(true)
+
   def definition(): Action[AnyContent] = Action {
     logger.debugWithoutRequestContext("InformationDocumentationController definition endpoint has been called")
     Ok(uk.gov.hmrc.customs.declarations.information.views.txt.definition(
-      mayBeV1WhitelistedApplicationIds, mayBeV2WhitelistedApplicationIds)).as(MimeTypes.JSON)
+      mayBeV1WhitelistedApplicationIds, mayBeV2WhitelistedApplicationIds, v1Enabled, v2Enabled)).as(MimeTypes.JSON)
   }
 }
