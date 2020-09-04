@@ -42,6 +42,10 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
     "api.access.version-2.0.whitelistedApplicationIds.0" -> "v2AppId-1",
     "api.access.version-2.0.whitelistedApplicationIds.1" -> "v2AppId-2")
 
+  private val v1AndV2Disabled = Map(
+    "api.access.version-1.0.enabled" -> "false",
+    "api.access.version-2.0.enabled" -> "false")
+
   private def getApiDefinitionWith(configMap: Map[String, Any]) =
     new InformationDocumentationController(mock[Assets], Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
       .definition()
@@ -73,9 +77,16 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
       contentAsJson(result) mustBe expectedJson(expectedV1WhitelistedAppIds = None, expectedV2WhitelistedAppIds = Some(v2WhitelistedAppIdsConfigs.values))
     }
 
+    "be correct when V1 is not enabled and V2 is not enabled" in {
+      val result = getApiDefinitionWith(v1AndV2Disabled)(FakeRequest())
+
+      status(result) mustBe 200
+      contentAsJson(result) mustBe expectedJson(expectedV1WhitelistedAppIds = None, expectedV2WhitelistedAppIds = None, false, false)
+    }
+
   }
 
-  private def expectedJson(expectedV1WhitelistedAppIds: Option[Iterable[String]], expectedV2WhitelistedAppIds: Option[Iterable[String]]) =
+  private def expectedJson(expectedV1WhitelistedAppIds: Option[Iterable[String]], expectedV2WhitelistedAppIds: Option[Iterable[String]], v1Enabled: Boolean  = true, v2Enabled: Boolean = true) =
     Json.parse(
       s"""
          |{
@@ -95,7 +106,7 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
          |         {
          |            "version":"1.0",
          |            "status":"BETA",
-         |            "endpointsEnabled":true,
+         |            "endpointsEnabled":$v1Enabled,
          |            "access":{
          |               """.stripMargin
         +
@@ -119,7 +130,7 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
          |         {
          |            "version":"2.0",
          |            "status":"BETA",
-         |            "endpointsEnabled":true,
+         |            "endpointsEnabled":$v2Enabled,
          |            "access":{
          |               """.stripMargin
         +
