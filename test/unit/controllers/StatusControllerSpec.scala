@@ -27,7 +27,6 @@ import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
 import play.api.test.Helpers.{header, _}
-import play.mvc.Http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
@@ -40,12 +39,12 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FakeRequests._
 import util.RequestHeaders._
 import util.TestData._
-import util.{AuthConnectorStubbing, StatusTestXMLData}
+import util.XmlOps.stringToXml
+import util.{AuthConnectorStubbing, StatusTestXMLData, UnitSpec}
 
 import scala.concurrent.Future
 import scala.xml.NodeSeq
@@ -103,8 +102,10 @@ class StatusControllerSpec extends UnitSpec
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
   private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultInvalidSearch = errorBadRequest("Invalid Search").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultNotFound = ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+
+  private val errorResultSearchParameterTooLong = errorBadRequest("Search parameter too long").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultMissingSearchParameter = errorBadRequest("Missing search parameter").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultCDS60002 = errorBadRequest("Search parameter invalid", "CDS60002").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
   "Declaration Status Controller for MRN queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
@@ -124,21 +125,24 @@ class StatusControllerSpec extends UnitSpec
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
-    "respond with status 404 and conversationId in header for a request without an Mrn" in new SetUp() {
+    "respond with status 400 and conversationId in header for a request without an Mrn" in new SetUp() {
       authoriseCsp()
 
       val result: Future[Result] = controller.getByMrn("").apply(ValidCspDeclarationStatusRequest)
 
-      status(result) shouldBe NOT_FOUND
+      status(result) shouldBe BAD_REQUEST
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Missing search parameter</message></errorResponse>")
+
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
-    "respond with status 404 and conversationId in header for a request with an Mrn containing a space" in new SetUp() {
+    "respond with status 400 and conversationId in header for a request with an Mrn containing a space" in new SetUp() {
       authoriseCsp()
 
       val result: Future[Result] = controller.getByMrn("12345678 ").apply(ValidCspDeclarationStatusRequest)
 
-      status(result) shouldBe NOT_FOUND
+      status(result) shouldBe BAD_REQUEST
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60002</code><message>Search parameter invalid</message></errorResponse>")
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
@@ -172,7 +176,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByMrn(invalidMrnTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidSearch
+      result shouldBe errorResultSearchParameterTooLong
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -181,7 +185,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByMrn("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultMissingSearchParameter
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -190,7 +194,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByMrn("mrn withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -199,7 +203,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByDucr(invalidDucrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidSearch
+      result shouldBe errorResultSearchParameterTooLong
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -208,7 +212,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByDucr("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultMissingSearchParameter
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -217,7 +221,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByDucr("ducr withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -226,7 +230,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByUcr(invalidUcrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidSearch
+      result shouldBe errorResultSearchParameterTooLong
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -235,7 +239,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByUcr("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultMissingSearchParameter
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -244,7 +248,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByDucr("ucr withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -253,7 +257,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByInventoryReference(invalidInventoryReferenceTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultInvalidSearch
+      result shouldBe errorResultSearchParameterTooLong
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -262,7 +266,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByInventoryReference("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultMissingSearchParameter
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
@@ -271,7 +275,7 @@ class StatusControllerSpec extends UnitSpec
 
       val result: Result = controller.getByInventoryReference("ir withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
-      result shouldBe errorResultNotFound
+      result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
