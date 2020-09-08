@@ -70,9 +70,11 @@ class StatusController @Inject()(val validateAndExtractHeadersAction: ValidateAn
 
         val appropriateResponse = if (s.valueTooLong) {
           //this special case is a prerequisite of the CDS program
-          ErrorResponse(BAD_REQUEST, BadRequestCode, "Invalid Search")
+          ErrorResponse(BAD_REQUEST, BadRequestCode, "Search parameter too long")
+        } else if(s.valueTooShort) {
+          ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing search parameter")
         } else {
-          ErrorResponse(NOT_FOUND, NotFoundCode, "Invalid Search")
+          ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid")
         }
 
         Future.successful(appropriateResponse.XmlResult.withConversationId)

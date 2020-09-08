@@ -23,8 +23,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, VersionOne}
 import util.FakeRequests.FakeRequestOps
-import util.RequestHeaders.{ValidHeaders, ACCEPT_HMRC_XML_HEADER_V2}
+import util.RequestHeaders.{ACCEPT_HMRC_XML_HEADER_V2, ValidHeaders}
 import util.TestData.nonCspBearerToken
+import util.XmlOps.stringToXml
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
 import util.{AuditService, CustomsDeclarationsExternalServicesConfig}
 
@@ -117,6 +118,15 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
          |      <message>Invalid Search</message>
          |      
          |    </errorResponse>""".stripMargin
+
+  val missingSearchResponse =
+    raw"""<?xml version='1.0' encoding='UTF-8'?>
+         |<errorResponse>
+         |      <code>BAD_REQUEST</code>
+         |      <message>Missing search parameter</message>
+         |
+         |    </errorResponse>""".stripMargin
+
 
   private def createFakeRequest(endpoint: String, headers: Map[String, String] = ValidHeaders): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("GET", endpoint).withHeaders(headers.-(CONTENT_TYPE).toSeq: _*)
@@ -259,11 +269,11 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       When("a MRN request with data is sent to the API")
       val result: Future[Result] = route(app = app, missingMrnRequest).value
 
-      Then("a response with a 404 (NOT_FOUND) status is received")
-      status(result) shouldBe NOT_FOUND
+      Then("a response with a 400 status is received")
+      status(result) shouldBe BAD_REQUEST
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe invalidSearchResponse
+      stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
     }
   }
 
@@ -303,11 +313,11 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       When("a DUCR request with data is sent to the API")
       val result: Future[Result] = route(app = app, missingDucrRequest).value
 
-      Then("a response with a 404 (NOT_FOUND) status is received")
-      status(result) shouldBe NOT_FOUND
+      Then("a response with a 400 status is received")
+      status(result) shouldBe BAD_REQUEST
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe invalidSearchResponse
+      stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
     }
   }
 
@@ -347,11 +357,11 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       When("a UCR request with data is sent to the API")
       val result: Future[Result] = route(app = app, missingUcrRequest).value
 
-      Then("a response with a 404 (NOT_FOUND) status is received")
-      status(result) shouldBe NOT_FOUND
+      Then("a response with a 400 status is received")
+      status(result) shouldBe BAD_REQUEST
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe invalidSearchResponse
+      stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
     }
   }
 
@@ -391,11 +401,11 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       When("a UCR request with data is sent to the API")
       val result: Future[Result] = route(app = app, missingIrRequest).value
 
-      Then("a response with a 404 (NOT_FOUND) status is received")
-      status(result) shouldBe NOT_FOUND
+      Then("a response with a 400 status is received")
+      status(result) shouldBe BAD_REQUEST
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe invalidSearchResponse
+      stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
     }
   }
 }
