@@ -78,17 +78,6 @@ documentation:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
                   example: !include examples/example_messages/Trade%20Test%2011.0%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
-            500:
-              body:
-                application/xml:
-                  description: Internal server error
-                  type: !include schemas/customs/error.xsd
-                  example: |
-                      <?xml version="1.0" encoding="UTF-8"?>
-                      <errorResponse>
-                          <code>INTERNAL_SERVER_ERROR</code>
-                          <message>Internal server error</message>
-                      </errorResponse>
 
   /ducr:
     /{ducr}:
@@ -139,17 +128,6 @@ documentation:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
                   example: !include examples/declarationInformationRetrievalDucrStatusResponseExample.xml
-            500:
-              body:
-                application/xml:
-                  description: Internal server error
-                  type: !include schemas/customs/error.xsd
-                  example: |
-                      <?xml version="1.0" encoding="UTF-8"?>
-                      <errorResponse>
-                          <code>INTERNAL_SERVER_ERROR</code>
-                          <message>Internal server error</message>
-                      </errorResponse>
 
   /ucr:
     /{ucr}:
@@ -200,17 +178,6 @@ documentation:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
                   example: !include examples/declarationInformationRetrievalUcrStatusResponseExample.xml
-            500:
-              body:
-                application/xml:
-                  description: Internal server error
-                  type: !include schemas/customs/error.xsd
-                  example: |
-                      <?xml version="1.0" encoding="UTF-8"?>
-                      <errorResponse>
-                          <code>INTERNAL_SERVER_ERROR</code>
-                          <message>Internal server error</message>
-                      </errorResponse>
 
   /inventory-reference:
     /{inventoryReference}:
@@ -261,14 +228,3 @@ documentation:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
                   example: !include examples/declarationInformationRetrievalIrStatusResponseExample.xml
-            500:
-              body:
-                application/xml:
-                  description: Internal server error
-                  type: !include schemas/customs/error.xsd
-                  example: |
-                      <?xml version="1.0" encoding="UTF-8"?>
-                      <errorResponse>
-                          <code>INTERNAL_SERVER_ERROR</code>
-                          <message>Internal server error</message>
-                      </errorResponse>
