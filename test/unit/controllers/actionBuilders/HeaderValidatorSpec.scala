@@ -19,7 +19,6 @@ package unit.controllers.actionBuilders
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.HeaderNames.ACCEPT
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
@@ -28,10 +27,9 @@ import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.H
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, Eori, VersionOne, VersionTwo}
-import util.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
-import util.{ApiSubscriptionFieldsTestData, TestData}
+import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
 
@@ -84,20 +82,11 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
       
     }
     "in unhappy path, validation" should {
-      "fail when request is missing accept header" in new SetUp {
-        validate(apiVersionRequest(ValidHeaders - ACCEPT)) shouldBe Left(ErrorAcceptHeaderInvalid)
-      }
       "fail when request is missing X-Client-ID header" in new SetUp {
         validate(apiVersionRequest(ValidHeaders - XClientIdHeaderName)) shouldBe Left(ErrorInternalServerError)
       }
       "fail when request has invalid X-Client-ID header" in new SetUp {
         validate(apiVersionRequest(ValidHeaders + X_CLIENT_ID_HEADER_INVALID)) shouldBe Left(ErrorInternalServerError)
-      }
-      "fail when request has invalid accept header" in new SetUp {
-        validate(apiVersionRequest(ValidHeaders + ACCEPT_HEADER_INVALID)) shouldBe Left(ErrorAcceptHeaderInvalid)
-      }
-      "fail when request is for V3" in new SetUp {
-        validate(apiVersionRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.3.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
     }
   }

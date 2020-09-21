@@ -43,18 +43,14 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
   def validateHeaders[A](implicit apiVersionRequest: ApiVersionRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
     implicit val headers: Headers = apiVersionRequest.headers
 
-    def hasAccept = validateHeader(ACCEPT, versionsByAcceptHeader.keySet.contains(_), ErrorAcceptHeaderInvalid)
-
     def hasXClientId = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
 
     val theResult: Either[ErrorResponse, ExtractedHeaders] = for {
-      acceptValue <- hasAccept.right
       xClientIdValue <- hasXClientId.right
     } yield {
       logger.debug(
-        s"\n$ACCEPT header passed validation: $acceptValue"
-          + s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
-      ExtractedHeadersImpl(versionsByAcceptHeader(acceptValue), ClientId(xClientIdValue))
+          s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
+      ExtractedHeadersImpl(apiVersionRequest.requestedApiVersion, ClientId(xClientIdValue))
     }
     theResult
   }

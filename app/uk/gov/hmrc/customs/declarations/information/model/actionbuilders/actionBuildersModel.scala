@@ -102,7 +102,7 @@ case class ValidatedHeadersRequest[A](conversationId: ConversationId,
                                       requestedApiVersion: ApiVersion,
                                       clientId: ClientId,
                                       request: Request[A]
-) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders with HasApiVersion
 
 // Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,
@@ -110,4 +110,4 @@ case class AuthorisedRequest[A](conversationId: ConversationId,
                                 clientId: ClientId,
                                 authorisedAs: AuthorisedAs,
                                 request: Request[A]
-) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs
+) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion
