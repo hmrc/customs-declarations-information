@@ -28,7 +28,7 @@ object ActionBuilderModelHelper {
     }
   }
 
-  implicit class UniqueIdsRequestOps[A](val avr: ApiVersionRequest[A]) extends AnyVal {
+  implicit class ApiVersionRequestOps[A](val avr: ApiVersionRequest[A]) extends AnyVal {
     def toValidatedHeadersRequest(eh: ExtractedHeaders): ValidatedHeadersRequest[A] = ValidatedHeadersRequest(
       avr.conversationId,
       avr.requestedApiVersion,
