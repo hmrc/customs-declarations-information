@@ -29,11 +29,11 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeadersImpl}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest, ExtractedHeadersImpl}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
-import util.TestData.declarantEori
+import util.TestData.{declarantEori}
 
 object TestData {
   val conversationIdValue = "38400000-8cf0-11bd-b23e-10b96e4ef00d"
@@ -104,15 +104,22 @@ object TestData {
     override def correlation: CorrelationId = correlationId
   }
 
-  val TestFakeRequest = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
+  val TestFakeRequestV1 = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
+  val TestFakeRequestV2 = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.2.0+xml"))
 
   def testFakeRequestWithMaybeBadgeIdEoriPair(maybeBadgeIdString: Option[String] = Some(badgeIdentifier.value),
                                               maybeEoriString: Option[String] = Some(declarantEori.value)): FakeRequest[AnyContentAsEmpty.type] = {
     val headers = Headers(maybeBadgeIdString.fold(("",""))(badgeId => (X_BADGE_IDENTIFIER_NAME, badgeId)), maybeEoriString.fold(("",""))(eori => (X_SUBMITTER_IDENTIFIER_NAME, eori)))
     FakeRequest().withHeaders(headers.remove("")) //better to not add empty string tuple in first place
   }
-  
-  val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequest)
+
+  val TestApiVersionRequestV1 = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
+  val TestApiVersionRequestV2 = ApiVersionRequest(conversationId, VersionTwo, TestFakeRequestV2)
+  val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequestV1)
+
+  val TestConversationIdRequestWithV1Headers = ConversationIdRequest(conversationId, TestFakeRequestV1)
+  val TestConversationIdRequestWithV2Headers = ConversationIdRequest(conversationId, TestFakeRequestV2)
+
   val TestExtractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestConversationIdRequest.toValidatedHeadersRequest(TestExtractedHeaders)
   val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))

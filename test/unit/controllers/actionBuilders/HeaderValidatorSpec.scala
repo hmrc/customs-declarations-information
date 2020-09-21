@@ -26,8 +26,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.HeaderValidator
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{Eori, VersionOne, VersionTwo}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, Eori, VersionOne, VersionTwo}
 import util.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
@@ -42,39 +42,39 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
     val loggerMock: InformationLogger = mock[InformationLogger]
     val validator = new HeaderValidator(loggerMock)
 
-    def validate(c: ConversationIdRequest[_]): Either[ErrorResponse, ExtractedHeaders] = {
-      validator.validateHeaders(c)
+    def validate(avr: ApiVersionRequest[_]): Either[ErrorResponse, ExtractedHeaders] = {
+      validator.validateHeaders(avr)
     }
   }
 
   "HeaderValidator" can {
     "in happy path, validation" should {
       "be successful for a valid request with accept header for V1" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders)) shouldBe Right(extractedHeaders)
+        validate(apiVersionRequest(ValidHeaders)) shouldBe Right(extractedHeaders)
       }
       "be successful for a valid request with accept header for V2" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2)) shouldBe Right(extractedHeadersV2)
+        validate(apiVersionRequest(ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2, VersionTwo)) shouldBe Right(extractedHeadersV2)
       }
       "allow an empty header" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> ""))) shouldBe Right(None)
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> ""))) shouldBe Right(None)
       }
       "allow only spaces in the header but treat as empty" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "       "))) shouldBe Right(None)
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "       "))) shouldBe Right(None)
       }
       "allow headers with leading spaces" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "  0123456789"))) shouldBe Right(Some(Eori("  0123456789")))
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "  0123456789"))) shouldBe Right(Some(Eori("  0123456789")))
       }
       "allow headers with trailing spaces" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "0123456789    "))) shouldBe Right(Some(Eori("0123456789    ")))
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "0123456789    "))) shouldBe Right(Some(Eori("0123456789    ")))
       }
       "allow headers with embedded spaces" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "01234  56789"))) shouldBe Right(Some(Eori("01234  56789")))
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "01234  56789"))) shouldBe Right(Some(Eori("01234  56789")))
       }
       "allow special characters" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "!£$%^&*()-_=+/<>@"))) shouldBe Right(Some(Eori("!£$%^&*()-_=+/<>@")))
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "!£$%^&*()-_=+/<>@"))) shouldBe Right(Some(Eori("!£$%^&*()-_=+/<>@")))
       }
       "log info level when valid" in new SetUp {
-        validator.eoriMustBeValidIfPresent(conversationIdRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "ABCABC")))
+        validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> "ABCABC")))
 
         PassByNameVerifier(loggerMock, "info")
           .withByNameParam[String]("X-Submitter-Identifier header passed validation: ABCABC")
@@ -85,23 +85,23 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
     }
     "in unhappy path, validation" should {
       "fail when request is missing accept header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders - ACCEPT)) shouldBe Left(ErrorAcceptHeaderInvalid)
+        validate(apiVersionRequest(ValidHeaders - ACCEPT)) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
       "fail when request is missing X-Client-ID header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders - XClientIdHeaderName)) shouldBe Left(ErrorInternalServerError)
+        validate(apiVersionRequest(ValidHeaders - XClientIdHeaderName)) shouldBe Left(ErrorInternalServerError)
       }
       "fail when request has invalid X-Client-ID header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + X_CLIENT_ID_HEADER_INVALID)) shouldBe Left(ErrorInternalServerError)
+        validate(apiVersionRequest(ValidHeaders + X_CLIENT_ID_HEADER_INVALID)) shouldBe Left(ErrorInternalServerError)
       }
       "fail when request has invalid accept header" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + ACCEPT_HEADER_INVALID)) shouldBe Left(ErrorAcceptHeaderInvalid)
+        validate(apiVersionRequest(ValidHeaders + ACCEPT_HEADER_INVALID)) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
       "fail when request is for V3" in new SetUp {
-        validate(conversationIdRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.3.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
+        validate(apiVersionRequest(ValidHeaders + (ACCEPT -> "application/vnd.hmrc.3.0+xml"))) shouldBe Left(ErrorAcceptHeaderInvalid)
       }
     }
   }
 
-  private def conversationIdRequest(requestMap: Map[String, String]): ConversationIdRequest[_] =
-    ConversationIdRequest(TestData.conversationId, FakeRequest().withHeaders(requestMap.toSeq: _*))
+  private def apiVersionRequest(requestMap: Map[String, String], apiVersion: ApiVersion = VersionOne): ApiVersionRequest[_] =
+    ApiVersionRequest(TestData.conversationId, apiVersion, FakeRequest().withHeaders(requestMap.toSeq: _*))
 }

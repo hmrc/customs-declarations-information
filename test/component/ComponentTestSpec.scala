@@ -46,11 +46,9 @@ trait ComponentTestSpec extends FeatureSpec
   when(mockDateTimeService.nowUtc()).thenReturn(new DateTime(dateTime, DateTimeZone.UTC))
   when(mockDateTimeService.zonedDateTimeUtc).thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime), ZoneId.of("UTC")))
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder()
-    .overrides(bind[DateTimeService].toInstance(mockDateTimeService))
-    .overrides(bind[UniqueIdsService].toInstance(stubUniqueIdsService))
-    .configure(Map(
+  protected val configMap: Map[String, Any] = Map(
     "xml.max-errors" -> 2,
+    "metrics.jvm" -> false,
     "microservice.services.auth.host" -> ExternalServicesConfig.Host,
     "microservice.services.auth.port" -> ExternalServicesConfig.Port,
     "microservice.services.declaration-status.host" -> ExternalServicesConfig.Host,
@@ -67,6 +65,13 @@ trait ComponentTestSpec extends FeatureSpec
     "auditing.enabled" -> false,
     "auditing.consumer.baseUri.host" -> ExternalServicesConfig.Host,
     "auditing.consumer.baseUri.port" -> ExternalServicesConfig.Port
-  )).build()
+  )
+
+  def app(values: Map[String, Any] = configMap): Application = new GuiceApplicationBuilder()
+    .overrides(bind[DateTimeService].toInstance(mockDateTimeService))
+    .overrides(bind[UniqueIdsService].toInstance(stubUniqueIdsService))
+    .configure(values).build()
+
+  override implicit lazy val app: Application = app()
 
 }

@@ -60,6 +60,10 @@ trait HasConversationId {
   val conversationId: ConversationId
 }
 
+trait HasApiVersion {
+  val requestedApiVersion: ApiVersion
+}
+
 trait ExtractedHeaders {
   val requestedApiVersion: ApiVersion
   val clientId: ClientId
@@ -86,6 +90,12 @@ case class ExtractedHeadersImpl(requestedApiVersion: ApiVersion, clientId: Clien
 case class ConversationIdRequest[A](conversationId: ConversationId,
                                     request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId
+
+// Available after ShutterCheckAction
+case class ApiVersionRequest[A](conversationId: ConversationId,
+                                requestedApiVersion: ApiVersion,
+                                request: Request[A]
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion
 
 // Available after ValidatedHeadersAction builder
 case class ValidatedHeadersRequest[A](conversationId: ConversationId,
