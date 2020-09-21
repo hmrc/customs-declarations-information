@@ -17,22 +17,17 @@
 package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
 import javax.inject.{Inject, Singleton}
-import play.api.http.HeaderNames.ACCEPT
 import play.api.mvc.Headers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders._
-import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, BadgeIdentifier, ClientId, Eori, VersionOne, VersionTwo}
+import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ClientId, Eori}
 
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {
 
-  protected val versionsByAcceptHeader: Map[String, ApiVersion] = Map(
-    "application/vnd.hmrc.1.0+xml" -> VersionOne,
-    "application/vnd.hmrc.2.0+xml" -> VersionTwo
-  )
   private lazy val xBadgeIdentifierRegex = "^[0-9A-Z]{6,12}$".r
   private lazy val xClientIdRegex = "^\\S+$".r
   private lazy val InvalidEoriHeaderRegex = "(^[\\s]*$|^.{18,}$)".r
@@ -50,7 +45,7 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
     } yield {
       logger.debug(
           s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
-      ExtractedHeadersImpl(apiVersionRequest.requestedApiVersion, ClientId(xClientIdValue))
+      ExtractedHeadersImpl(ClientId(xClientIdValue))
     }
     theResult
   }

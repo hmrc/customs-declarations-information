@@ -33,8 +33,7 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
 
-  private val extractedHeaders = ExtractedHeadersImpl(VersionOne, ApiSubscriptionFieldsTestData.clientId)
-  private val extractedHeadersV2 = ExtractedHeadersImpl(VersionTwo, ApiSubscriptionFieldsTestData.clientId)
+  private val extractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
 
   trait SetUp {
     val loggerMock: InformationLogger = mock[InformationLogger]
@@ -51,7 +50,7 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with M
         validate(apiVersionRequest(ValidHeaders)) shouldBe Right(extractedHeaders)
       }
       "be successful for a valid request with accept header for V2" in new SetUp {
-        validate(apiVersionRequest(ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2, VersionTwo)) shouldBe Right(extractedHeadersV2)
+        validate(apiVersionRequest(ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2, VersionTwo)) shouldBe Right(extractedHeaders)
       }
       "allow an empty header" in new SetUp {
         validator.eoriMustBeValidIfPresent(apiVersionRequest(ValidHeaders + (X_SUBMITTER_IDENTIFIER_NAME -> ""))) shouldBe Right(None)

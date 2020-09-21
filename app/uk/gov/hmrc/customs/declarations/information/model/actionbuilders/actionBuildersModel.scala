@@ -28,12 +28,12 @@ object ActionBuilderModelHelper {
     }
   }
 
-  implicit class UniqueIdsRequestOps[A](val cir: ConversationIdRequest[A]) extends AnyVal {
+  implicit class UniqueIdsRequestOps[A](val avr: ApiVersionRequest[A]) extends AnyVal {
     def toValidatedHeadersRequest(eh: ExtractedHeaders): ValidatedHeadersRequest[A] = ValidatedHeadersRequest(
-      cir.conversationId,
-      eh.requestedApiVersion,
+      avr.conversationId,
+      avr.requestedApiVersion,
       eh.clientId,
-      cir.request
+      avr.request
     )
   }
 
@@ -65,7 +65,6 @@ trait HasApiVersion {
 }
 
 trait ExtractedHeaders {
-  val requestedApiVersion: ApiVersion
   val clientId: ClientId
 }
 
@@ -77,7 +76,7 @@ trait HasBadgeIdentifier {
   val badgeIdentifier: BadgeIdentifier
 }
 
-case class ExtractedHeadersImpl(requestedApiVersion: ApiVersion, clientId: ClientId) extends ExtractedHeaders
+case class ExtractedHeadersImpl(clientId: ClientId) extends ExtractedHeaders
 
 /*
  * We need multiple WrappedRequest classes to reflect additions to context during the request processing pipeline.
