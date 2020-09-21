@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.logging
 import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
 import play.api.mvc.Request
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasAuthorisedAs, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasApiVersion, HasAuthorisedAs, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp}
 
 object LoggingHelper {
@@ -52,8 +52,13 @@ object LoggingHelper {
   private def format(r: HasConversationId): String = {
     def conversationId = s"[conversationId=${r.conversationId}]"
 
+    def apiVersion = r match {
+      case a: HasApiVersion => s"[requestedApiVersion=${a.requestedApiVersion}]"
+      case _ => ""
+    }
+
     def extractedHeaders = r match {
-      case h: ExtractedHeaders => s"[clientId=${h.clientId}][requestedApiVersion=${h.requestedApiVersion}]"
+      case h: ExtractedHeaders => s"[clientId=${h.clientId}]"
       case _ => ""
     }
     def authorised = r match {
@@ -64,7 +69,7 @@ object LoggingHelper {
         }
       case _ => ""
     }
-    s"$conversationId$extractedHeaders$authorised"
+    s"$conversationId$extractedHeaders$apiVersion$authorised"
   }
 
   def formatMessageFull(msg: String, r: HasConversationId with Request[_]): String = {

@@ -28,12 +28,12 @@ object ActionBuilderModelHelper {
     }
   }
 
-  implicit class UniqueIdsRequestOps[A](val cir: ConversationIdRequest[A]) extends AnyVal {
+  implicit class ApiVersionRequestOps[A](val avr: ApiVersionRequest[A]) extends AnyVal {
     def toValidatedHeadersRequest(eh: ExtractedHeaders): ValidatedHeadersRequest[A] = ValidatedHeadersRequest(
-      cir.conversationId,
-      eh.requestedApiVersion,
+      avr.conversationId,
+      avr.requestedApiVersion,
       eh.clientId,
-      cir.request
+      avr.request
     )
   }
 
@@ -60,8 +60,11 @@ trait HasConversationId {
   val conversationId: ConversationId
 }
 
-trait ExtractedHeaders {
+trait HasApiVersion {
   val requestedApiVersion: ApiVersion
+}
+
+trait ExtractedHeaders {
   val clientId: ClientId
 }
 
@@ -73,7 +76,7 @@ trait HasBadgeIdentifier {
   val badgeIdentifier: BadgeIdentifier
 }
 
-case class ExtractedHeadersImpl(requestedApiVersion: ApiVersion, clientId: ClientId) extends ExtractedHeaders
+case class ExtractedHeadersImpl(clientId: ClientId) extends ExtractedHeaders
 
 /*
  * We need multiple WrappedRequest classes to reflect additions to context during the request processing pipeline.
@@ -87,12 +90,18 @@ case class ConversationIdRequest[A](conversationId: ConversationId,
                                     request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId
 
+// Available after ShutterCheckAction
+case class ApiVersionRequest[A](conversationId: ConversationId,
+                                requestedApiVersion: ApiVersion,
+                                request: Request[A]
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion
+
 // Available after ValidatedHeadersAction builder
 case class ValidatedHeadersRequest[A](conversationId: ConversationId,
                                       requestedApiVersion: ApiVersion,
                                       clientId: ClientId,
                                       request: Request[A]
-) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders with HasApiVersion
 
 // Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,
@@ -100,4 +109,4 @@ case class AuthorisedRequest[A](conversationId: ConversationId,
                                 clientId: ClientId,
                                 authorisedAs: AuthorisedAs,
                                 request: Request[A]
-) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs
+) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion

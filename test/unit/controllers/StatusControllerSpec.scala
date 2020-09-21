@@ -33,7 +33,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.StatusController
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, HeaderValidator, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, HeaderValidator, ShutterCheckAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
@@ -53,16 +53,19 @@ class StatusControllerSpec extends UnitSpec
   with Matchers with MockitoSugar with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
+
+    protected val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
+    when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
+
+    protected val mockInformationLogger: InformationLogger = mock[InformationLogger]
     override val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
     protected val mockStatusResponseFilterService: StatusResponseFilterService = mock[StatusResponseFilterService]
     protected val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
-    protected val mockInformationLogger: InformationLogger = mock[InformationLogger]
     protected val headerValidator = new HeaderValidator(mockInformationLogger)
     protected val mockCdsLogger: CdsLogger = mock[CdsLogger]
     protected val mockErrorResponse: ErrorResponse = mock[ErrorResponse]
     protected val mockResult: Result = mock[Result]
-    protected val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
     protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
     protected val stubHttpResponse = HttpResponse(Status.OK, StatusTestXMLData.validBackendStatusResponse.toString)
@@ -73,18 +76,20 @@ class StatusControllerSpec extends UnitSpec
     protected val dateTime = new DateTime()
 
     protected val stubAuthStatusAction: AuthAction = new AuthAction(customsAuthService, headerValidator, mockInformationLogger)
+    protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger), mockInformationLogger)
     protected val stubDeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService,
-      mockApiSubscriptionFieldsConnector, mockInformationLogger, mockStatusConnector, mockDateTimeService, stubUniqueIdsService)
+        mockApiSubscriptionFieldsConnector, mockInformationLogger, mockStatusConnector, mockDateTimeService, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: StatusController = new StatusController(
-      stubValidateAndExtractHeadersAction,
-      stubAuthStatusAction,
-      stubConversationIdAction,
-      stubDeclarationStatusService,
-      Helpers.stubControllerComponents(),
-      mockInformationLogger) {}
+        stubShutterCheckAction,
+        stubValidateAndExtractHeadersAction,
+        stubAuthStatusAction,
+        stubConversationIdAction,
+        stubDeclarationStatusService,
+        Helpers.stubControllerComponents(),
+        mockInformationLogger) {}
 
     protected def awaitSubmitMrn(request: Request[AnyContent]): Result = {
       controller.getByMrn(mrnValue).apply(request)
@@ -98,6 +103,7 @@ class StatusControllerSpec extends UnitSpec
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
     when(mockStatusResponseFilterService.transform(any[NodeSeq])).thenReturn(<xml>some xml</xml>)
+
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)

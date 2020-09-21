@@ -25,7 +25,7 @@ import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{HeaderValidator, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ValidatedHeadersRequest}
 import util.UnitSpec
 import util.RequestHeaders
 import util.TestData._
@@ -41,10 +41,10 @@ class ValidateAndExtractHeadersActionSpec extends UnitSpec with MockitoSugar wit
 
   "HeaderValidationAction when validation succeeds" should {
     "extract headers from incoming request and copy relevant values on to the ValidatedHeaderRequest" in new SetUp {
-      val conversationIdRequest: ConversationIdRequest[AnyContentAsEmpty.type] = TestConversationIdRequest
-      when(mockHeaderStatusValidator.validateHeaders(any[ConversationIdRequest[_]])).thenReturn(Right(TestExtractedHeaders))
+      val apiVersionRequestV1: ApiVersionRequest[AnyContentAsEmpty.type] = TestApiVersionRequestV1
+      when(mockHeaderStatusValidator.validateHeaders(any[ApiVersionRequest[_]])).thenReturn(Right(TestExtractedHeaders))
 
-      val actualResult: Either[Result, ValidatedHeadersRequest[_]] = await(validateAndExtractHeadersAction.refine(conversationIdRequest))
+      val actualResult: Either[Result, ValidatedHeadersRequest[_]] = await(validateAndExtractHeadersAction.refine(apiVersionRequestV1))
 
       actualResult shouldBe Right(TestValidatedHeadersRequest)
     }
@@ -52,10 +52,10 @@ class ValidateAndExtractHeadersActionSpec extends UnitSpec with MockitoSugar wit
 
   "HeaderValidationAction when validation fails" should {
     "return error with conversation Id in the headers" in new SetUp {
-      val conversationIdRequest: ConversationIdRequest[AnyContentAsEmpty.type] = TestConversationIdRequest
-      when(mockHeaderStatusValidator.validateHeaders(any[ConversationIdRequest[_]])).thenReturn(Left(ErrorContentTypeHeaderInvalid))
+      val apiVersionRequestV1: ApiVersionRequest[AnyContentAsEmpty.type] = TestApiVersionRequestV1
+      when(mockHeaderStatusValidator.validateHeaders(any[ApiVersionRequest[_]])).thenReturn(Left(ErrorContentTypeHeaderInvalid))
 
-      val actualResult: Either[Result, ValidatedHeadersRequest[_]] = await(validateAndExtractHeadersAction.refine(conversationIdRequest))
+      val actualResult: Either[Result, ValidatedHeadersRequest[_]] = await(validateAndExtractHeadersAction.refine(apiVersionRequestV1))
 
       actualResult shouldBe Left(ErrorContentTypeHeaderInvalid.XmlResult.withHeaders(RequestHeaders.X_CONVERSATION_ID_NAME -> conversationIdValue))
     }

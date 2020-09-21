@@ -20,7 +20,7 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.api.common.config.{ConfigValidatedNelAdaptor, CustomsValidatedNel}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{InformationCircuitBreakerConfig, InformationConfig}
+import uk.gov.hmrc.customs.declarations.information.model.{InformationCircuitBreakerConfig, InformationConfig, InformationShutterConfig}
 
 @Singleton
 class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelAdaptor, logger: InformationLogger) {
@@ -31,6 +31,8 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
   private val numberOfCallsToTriggerStateChangeNel = root.int("circuitBreaker.numberOfCallsToTriggerStateChange")
   private val unavailablePeriodDurationInMillisNel = root.int("circuitBreaker.unavailablePeriodDurationInMillis")
   private val unstablePeriodDurationInMillisNel = root.int("circuitBreaker.unstablePeriodDurationInMillis")
+  private val v1ShutteredNel = root.maybeBoolean("shutter.v1")
+  private val v2ShutteredNel = root.maybeBoolean("shutter.v2")
 
   private val declarationStatusRequestDaysLimit = root.int("declarationStatus.requestDaysLimit")
 
@@ -40,12 +42,17 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
     apiSubscriptionFieldsServiceUrlNel, declarationStatusRequestDaysLimit
   ) mapN InformationConfig
 
+  private val validatedDeclarationsShutterConfig: CustomsValidatedNel[InformationShutterConfig] = (
+    v1ShutteredNel, v2ShutteredNel
+  ) mapN InformationShutterConfig
+
   private val validatedInformationCircuitBreakerConfig: CustomsValidatedNel[InformationCircuitBreakerConfig] = (
     numberOfCallsToTriggerStateChangeNel, unavailablePeriodDurationInMillisNel, unstablePeriodDurationInMillisNel
   ) mapN InformationCircuitBreakerConfig
 
   private val customsConfigHolder =
     (validatedInformationConfig,
+      validatedDeclarationsShutterConfig,
       validatedInformationCircuitBreakerConfig
     ) mapN CustomsConfigHolder fold(
       fe = { nel =>
@@ -59,8 +66,11 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
 
   val informationConfig: InformationConfig = customsConfigHolder.informationConfig
 
+  val informationShutterConfig: InformationShutterConfig = customsConfigHolder.informationShutterConfig
+
   val informationCircuitBreakerConfig: InformationCircuitBreakerConfig = customsConfigHolder.informationCircuitBreakerConfig
 
   private case class CustomsConfigHolder(informationConfig: InformationConfig,
+                                         informationShutterConfig: InformationShutterConfig,
                                          informationCircuitBreakerConfig: InformationCircuitBreakerConfig)
 }
