@@ -130,4 +130,12 @@ trait ExpectedTestResponses {
       |  <message>Unauthorised request</message>
       |</errorResponse>
     """.stripMargin
+
+  protected val ServiceUnavailableError: String =
+    """<?xml version='1.0' encoding='UTF-8'?>
+      |<errorResponse>
+      |      <code>SERVER_ERROR</code>
+      |      <message>The 'customs/declarations-information' API is currently unavailable</message>
+      |</errorResponse>
+    """.stripMargin
 }

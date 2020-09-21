@@ -20,7 +20,7 @@ import akka.actor.ActorSystem
 import com.google.inject._
 import org.joda.time.DateTime
 import play.api.http.HeaderNames._
-import play.api.http.MimeTypes
+import play.api.http.{MimeTypes, Status}
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
@@ -47,7 +47,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
                                            val cdsLogger: CdsLogger,
                                            val actorSystem: ActorSystem)
                                           (implicit val ec: ExecutionContext)
-  extends CircuitBreakerConnector with HttpErrorFunctions {
+  extends CircuitBreakerConnector with HttpErrorFunctions with Status {
 
   override val configKey = "declaration-status"
 
@@ -107,8 +107,8 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
 
   override protected def breakOnException(t: Throwable): Boolean = t match {
     case e: Non2xxResponseException => e.responseCode match {
-      case 400 => false //BadRequest
-      case 404 => false //NotFound
+      case BAD_REQUEST => false //BadRequest
+      case NOT_FOUND => false //NotFound
       case _ => true
     }
     case _ => true

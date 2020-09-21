@@ -18,6 +18,7 @@ package component
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest._
+import play.api.Application
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
@@ -25,6 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, V
 import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.{ValidHeaders, ACCEPT_HMRC_XML_HEADER_V2}
 import util.TestData.nonCspBearerToken
+import util.XmlOps.stringToXml
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
 import util.{AuditService, CustomsDeclarationsExternalServicesConfig}
 
@@ -144,6 +146,29 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   override protected def afterAll() {
     stopMockServer()
   }
+
+  feature("Declaration Information API returns unavailable when a version is shuttered") {
+    scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
+      Given("A CSP wants to submit a customs declaration information request to a shuttered version")
+
+      implicit lazy val app: Application = super.app(configMap + ("shutter.v1" -> "true"))
+
+      startBackendStatusServiceV1()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
+
+      When("a request with data is sent to the API")
+      val result: Future[Result] = route(app = app, validCspRequest).value
+
+      Then("a response with a 503 (SERVICE_UNAVAILABLE) status is received")
+      status(result) shouldBe SERVICE_UNAVAILABLE
+
+      And("the response body is empty")
+      stringToXml(contentAsString(result)) shouldBe stringToXml(ServiceUnavailableError)
+      }
+    }
 
   feature("Declaration Information API authorises status requests from CSPs with v1.0 accept header") {
     scenario("An authorised CSP successfully requests a status") {

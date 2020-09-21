@@ -19,6 +19,9 @@ package uk.gov.hmrc.customs.declarations.information.model
 case class InformationConfig(apiSubscriptionFieldsBaseUrl: String,
                              declarationStatusRequestDaysLimit: Int)
 
+case class InformationShutterConfig(v1Shuttered: Option[Boolean],
+                                     v2Shuttered: Option[Boolean])
+
 case class InformationCircuitBreakerConfig(numberOfCallsToTriggerStateChange: Int,
                                            unavailablePeriodDurationInMillis: Int,
                                            unstablePeriodDurationInMillis: Int)
