@@ -44,7 +44,7 @@ class ShutterCheckAction @Inject()(logger: InformationLogger,
   extends ActionRefiner[ConversationIdRequest, ApiVersionRequest] {
     actionName =>
 
-  private val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "The 'customs/declarations-information' API is currently unavailable").XmlResult
+  private val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "Service unavailable").XmlResult
 
   protected val versionsByAcceptHeader: Map[String, ApiVersion] = Map(
     "application/vnd.hmrc.1.0+xml" -> VersionOne,
@@ -77,8 +77,10 @@ class ShutterCheckAction @Inject()(logger: InformationLogger,
         } else {
           val apiVersion: ApiVersion = versionsByAcceptHeader(v)
           if (versionShuttered(apiVersion)) {
+            logger.warn(s"version ${apiVersion.toString} requested but is shuttered")
             serviceUnavailableResult
           } else {
+            logger.debug(s"$ACCEPT header passed validation with: $apiVersion")
             Right(ApiVersionRequest(cir.conversationId, apiVersion, cir.request))
           }
         }
