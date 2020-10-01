@@ -135,7 +135,7 @@ trait ExpectedTestResponses {
     """<?xml version='1.0' encoding='UTF-8'?>
       |<errorResponse>
       |      <code>SERVER_ERROR</code>
-      |      <message>The 'customs/declarations-information' API is currently unavailable</message>
+      |      <message>Service unavailable</message>
       |</errorResponse>
     """.stripMargin
 }
