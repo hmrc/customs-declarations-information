@@ -66,11 +66,7 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
 
     val declarationStatusPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
-    withCircuitBreaker(post(declarationStatusPayload, config.url, correlationId))
-      .map{ response =>
-        logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
-        response
-      }
+    withCircuitBreaker(post(declarationStatusPayload, config.url))
   }
 
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
@@ -84,10 +80,11 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     )
   }
 
-  private def post[A](xml: NodeSeq, url: String, correlationId: CorrelationId)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
+  private def post[A](xml: NodeSeq, url: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
     logger.debug(s"Sending request to $url. Headers ${hc.headers} Payload: ${xml.toString()}")
 
     http.POSTString[HttpResponse](url, xml.toString()).map { response =>
+      logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
       response.status match {
         case status if is2xx(status) =>
           response
@@ -106,8 +103,8 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
 
   override protected def breakOnException(t: Throwable): Boolean = t match {
     case e: Non2xxResponseException => e.responseCode match {
-      case BAD_REQUEST => false //BadRequest
-      case NOT_FOUND => false //NotFound
+      case BAD_REQUEST => false
+      case NOT_FOUND => false
       case _ => true
     }
     case _ => true
