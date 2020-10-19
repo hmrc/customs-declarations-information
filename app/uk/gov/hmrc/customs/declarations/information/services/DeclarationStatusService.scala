@@ -18,6 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.services
 
 import akka.pattern.CircuitBreakerOpenException
 import javax.inject.{Inject, Singleton}
+import play.api.http.HttpEntity
 import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
@@ -59,22 +60,21 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
             val body = XML.loadString(e.response.body)
             val errorCode: NodeSeq = body \ "errorCode"
             val errorCodeText = errorCode.text
-            logger.warn(s"declaration status call failed with 500: $errorCodeText")
             matchErrorCode(errorCodeText)
           case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
-            logger.warn(s"declaration status call failed with 403: ${e.getMessage}")
+            logger.warn(s"declaration status call failed with backend status code of 403: ${e.getMessage} so returning 500 to consumer")
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
           case e: HttpException if e.responseCode == NOT_FOUND =>
-            logger.warn(s"declaration status call failed with 404: ${e.getMessage}")
+            logger.warn(s"declaration status call failed with backend status code of 404: ${e.getMessage} so returning 500 to consumer")
             Left(DeclarationStatusService.customNotFoundResponse.XmlResult.withConversationId)
           case e: HttpException =>
-            logger.warn(s"declaration status call failed with ${e.responseCode}: ${e.getMessage}")
+            logger.warn(s"declaration status call failed with backend status code of ${e.responseCode}: ${e.getMessage} so returning 500 to consumer")
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
           case _: CircuitBreakerOpenException =>
-            logger.error("unhealthy state entered")
+            logger.error("unhealthy state entered so returning 500 to consumer with message service unavailble")
             Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
           case NonFatal(e) =>
-            logger.error(s"declaration status call failed: ${e.getMessage}", e)
+            logger.error(s"declaration status call failed: ${e.getMessage} so returning 500 to consumer", e)
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
         }
       case Left(result) =>
@@ -84,15 +84,28 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
 
 
   private def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
+    
+    def logFailureOutcome(errorResult: Result, statusCode: Int): Unit = {
+      logger.warn(s"declaration status call failed with backend status code of 500 and error: $errorCodeText so returning to consumer response status $statusCode and response body: ${errorResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
+    }
+    
     errorCodeText.toLowerCase() match {
       case "cds60001" =>
-        Left(ErrorResponse(NOT_FOUND, errorCodeText, "Declaration not found").XmlResult.withConversationId)
+        val errorResult = ErrorResponse(NOT_FOUND, errorCodeText, "Declaration not found").XmlResult.withConversationId
+        logFailureOutcome(errorResult, NOT_FOUND)
+        Left(errorResult)
       case "cds60002" =>
-        Left(ErrorResponse(BAD_REQUEST, errorCodeText, "Search parameter invalid").XmlResult.withConversationId)
+        val errorResult = ErrorResponse(BAD_REQUEST, errorCodeText, "Search parameter invalid").XmlResult.withConversationId
+        logFailureOutcome(errorResult, BAD_REQUEST)
+        Left(errorResult)
       case "cds60003" =>
-        Left(ErrorResponse(INTERNAL_SERVER_ERROR, errorCodeText, "Internal server error").XmlResult.withConversationId)
+        val errorResult: Result = ErrorResponse(INTERNAL_SERVER_ERROR, errorCodeText, "Internal server error").XmlResult.withConversationId
+        logFailureOutcome(errorResult, INTERNAL_SERVER_ERROR)
+        Left(errorResult)
       case _ =>
-        Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+        val errorResult = ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId
+        logFailureOutcome(errorResult, INTERNAL_SERVER_ERROR)
+        Left(errorResult)
     }
   }
 

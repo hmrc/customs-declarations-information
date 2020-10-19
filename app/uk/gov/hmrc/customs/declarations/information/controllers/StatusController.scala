@@ -70,7 +70,6 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
         logger.warn(s"Invalid search for ${searchType.label}: ${searchType.value}")
 
         val appropriateResponse = if (s.valueTooLong) {
-          //this special case is a prerequisite of the CDS program
           ErrorResponse(BAD_REQUEST, BadRequestCode, "Search parameter too long")
         } else if(s.valueTooShort) {
           ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing search parameter")
@@ -86,8 +85,8 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
             val id = new HasConversationId {
               override val conversationId = asr.conversationId
             }
-            logger.info(s"Declaration information request by ${searchType.getClass.getSimpleName} processed successfully.")(id)
-            logger.debug(s"Returning filtered declaration status request with status code 200 and body\n ${res.body}")(id)
+            logger.info(s"Declaration information request by ${searchType.getClass.getSimpleName} processed successfully.")
+            logger.debug(s"Returning filtered declaration status request with status code ${res.status} and body\n ${res.body}")
             Ok(res.body).withConversationId.as(ContentTypes.XML)
           case Left(errorResult) =>
             errorResult
