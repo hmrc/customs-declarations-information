@@ -131,7 +131,6 @@ zipWcoXsds := { mappings: Seq[PathMapping] =>
         val exampleMessagesPaths = Path.selectSubpaths(dir / "examples", exampleMessagesFilter)
         val zipFile = targetDir / "api" / "conf" / dir.getName / "wco-status-schemas.zip"
         IO.zip(wcoXsdPaths ++ exampleMessagesPaths, zipFile)
-        println(s"Created zip $zipFile")
         zipFile
       }
   zipFiles.pair(relativeTo(targetDir)) ++ mappings

@@ -84,11 +84,11 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
 
 
   private def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
-    
+
     def logFailureOutcome(errorResult: Result, statusCode: Int): Unit = {
       logger.warn(s"declaration status call failed with backend status code of 500 and error: $errorCodeText so returning to consumer response status $statusCode and response body: ${errorResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
     }
-    
+
     errorCodeText.toLowerCase() match {
       case "cds60001" =>
         val errorResult = ErrorResponse(NOT_FOUND, errorCodeText, "Declaration not found").XmlResult.withConversationId

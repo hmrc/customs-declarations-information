@@ -29,7 +29,7 @@ trait IntegrationTestSpec extends UnitSpec
   with Eventually
 
 case class IntegrationTestModule(mockLogger: InformationLogger) extends AbstractModule {
-  def configure(): Unit = {
+  override def configure(): Unit = {
     bind(classOf[InformationLogger]) toInstance mockLogger
   }
 
