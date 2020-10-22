@@ -20,7 +20,7 @@ import com.google.inject.AbstractModule
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 class CustomsDeclarationsInformationModule extends AbstractModule {
-  def configure() {
+  override def configure() {
     // asEagerSingleton forces evaluation at application startup time
     bind(classOf[InformationConfigService]).asEagerSingleton()
   }

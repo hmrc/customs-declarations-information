@@ -18,13 +18,13 @@ package unit.services
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.{Configuration, Mode}
+import play.api.Configuration
 import uk.gov.hmrc.customs.api.common.config.ConfigValidatedNelAdaptor
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
-import util.UnitSpec
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.MockitoPassByNameHelper.PassByNameVerifier
+import util.UnitSpec
 
 class InformationConfigServiceSpec extends UnitSpec with MockitoSugar {
   private val validAppConfig: Config = ConfigFactory.parseString(
@@ -61,7 +61,7 @@ class InformationConfigServiceSpec extends UnitSpec with MockitoSugar {
     "throw an exception when configuration is invalid, that contains AGGREGATED error messages" in {
       val expectedErrorMessage =
         """
-          |Could not find config api-subscription-fields.host
+          |Could not find config key 'api-subscription-fields.host'
           |Service configuration not found for key: api-subscription-fields.context
           |Could not find config key 'declarationStatus.requestDaysLimit'
           |Could not find config key 'circuitBreaker.numberOfCallsToTriggerStateChange'
@@ -77,6 +77,6 @@ class InformationConfigServiceSpec extends UnitSpec with MockitoSugar {
     }
   }
 
-  private def testServicesConfig(configuration: Configuration) = new ServicesConfig(configuration, new RunMode(configuration, Mode.Test)) {}
+  private def testServicesConfig(configuration: Configuration) = new ServicesConfig(configuration) {}
 
 }
