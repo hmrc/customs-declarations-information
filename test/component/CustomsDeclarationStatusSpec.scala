@@ -59,53 +59,51 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information", version = VersionOne)
 
   private def validResponse() =
-    raw"""<p:DeclarationStatusResponse 
-      |xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
-      |  <p:DeclarationStatusDetails>
-      |    <p:Declaration>
-      |      <p:AcceptanceDateTime>
-      |        <p1:DateTimeString formatCode="304">20190702110757Z</p1:DateTimeString>
-      |      </p:AcceptanceDateTime>
-      |      <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
-      |      <p:VersionID>1</p:VersionID>
-      |      <p:ReceivedDateTime>
-      |        <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
-      |      </p:ReceivedDateTime>
-      |      <p:GoodsReleasedDateTime>
-      |        <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
-      |      </p:GoodsReleasedDateTime>
-      |      <p:ROE>6</p:ROE>
-      |      <p:ICS>15</p:ICS>
-      |      <p:IRC>000</p:IRC>
-      |    </p:Declaration>
-      |    <p2:Declaration>
-      |      <p2:FunctionCode>9</p2:FunctionCode>
-      |      <p2:TypeCode>IMZ</p2:TypeCode>
-      |      <p2:GoodsItemQuantity>100</p2:GoodsItemQuantity>
-      |      <p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
-      |      <p2:Submitter>
-      |        <p2:ID>GB123456789012000</p2:ID>
-      |      </p2:Submitter>
-      |      <p2:GoodsShipment>
-      |        <p2:PreviousDocument>
-      |          <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
-      |          <p2:TypeCode>DCR</p2:TypeCode>
-      |        </p2:PreviousDocument>
-      |        <p2:PreviousDocument>
-      |          <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
-      |          <p2:TypeCode>MCR</p2:TypeCode>
-      |        </p2:PreviousDocument>
-      |        <p2:UCR>
-      |          <p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
-      |        </p2:UCR>
-      |      </p2:GoodsShipment>
-      |    </p2:Declaration>
-      |  </p:DeclarationStatusDetails>
-      |</p:DeclarationStatusResponse>
-      |""".stripMargin
+    """<p:DeclarationStatusResponse xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+      |      <p:DeclarationStatusDetails>
+      |          <p:Declaration>
+      |                <p:AcceptanceDateTime>
+      |                  <p1:DateTimeString formatCode="304">20190702110757Z</p1:DateTimeString>
+      |                </p:AcceptanceDateTime>
+      |                <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
+      |                <p:VersionID>1</p:VersionID>
+      |                <p:ReceivedDateTime>
+      |                  <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+      |                </p:ReceivedDateTime>
+      |                <p:GoodsReleasedDateTime>
+      |                  <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+      |                </p:GoodsReleasedDateTime>
+      |                <p:ROE>6</p:ROE>
+      |                <p:ICS>15</p:ICS>
+      |                <p:IRC>000</p:IRC>
+      |              </p:Declaration>
+      |          <p2:Declaration>
+      |                <p2:FunctionCode>9</p2:FunctionCode>
+      |                <p2:TypeCode>IMZ</p2:TypeCode>
+      |                <p2:GoodsItemQuantity>100</p2:GoodsItemQuantity>
+      |                <p2:TotalPackageQuantity>10</p2:TotalPackageQuantity>
+      |                <p2:Submitter>
+      |                  <p2:ID>GB123456789012000</p2:ID>
+      |                </p2:Submitter>
+      |                <p2:GoodsShipment>
+      |                  <p2:PreviousDocument>
+      |                    <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
+      |                    <p2:TypeCode>DCR</p2:TypeCode>
+      |                  </p2:PreviousDocument>
+      |                  <p2:PreviousDocument>
+      |                    <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
+      |                    <p2:TypeCode>MCR</p2:TypeCode>
+      |                  </p2:PreviousDocument>
+      |                  <p2:UCR>
+      |                    <p2:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</p2:TraderAssignedReferenceID>
+      |                  </p2:UCR>
+      |                </p2:GoodsShipment>
+      |              </p2:Declaration>
+      |        </p:DeclarationStatusDetails>
+      |    </p:DeclarationStatusResponse>""".stripMargin
 
   val notImplementedResponse =
-    raw"""<?xml version='1.0' encoding='UTF-8'?>
+    """<?xml version='1.0' encoding='UTF-8'?>
          |<errorResponse>
          |      <code>NOT_IMPLEMENTED</code>
          |      <message>Not yet available</message>
@@ -113,7 +111,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
          |    </errorResponse>""".stripMargin
 
   val invalidSearchResponse =
-    raw"""<?xml version='1.0' encoding='UTF-8'?>
+    """<?xml version='1.0' encoding='UTF-8'?>
          |<errorResponse>
          |      <code>NOT_FOUND</code>
          |      <message>Invalid Search</message>
@@ -121,7 +119,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
          |    </errorResponse>""".stripMargin
 
   val missingSearchResponse =
-    raw"""<?xml version='1.0' encoding='UTF-8'?>
+    """<?xml version='1.0' encoding='UTF-8'?>
          |<errorResponse>
          |      <code>BAD_REQUEST</code>
          |      <message>Missing search parameter</message>

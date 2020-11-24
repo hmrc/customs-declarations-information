@@ -82,7 +82,7 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
       case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
         declarationStatusService.send(searchType) map {
           case Right(res: HttpResponse) =>
-            val id = new HasConversationId {
+            new HasConversationId {
               override val conversationId = asr.conversationId
             }
             logger.info(s"Declaration information request by ${searchType.getClass.getSimpleName} processed successfully.")
