@@ -33,7 +33,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Left
 import scala.util.control.NonFatal
-import scala.xml.{Elem, NodeSeq, PrettyPrinter, TopScope, XML}
+import scala.xml.{Elem, NodeSeq, XML}
 
 @Singleton
 class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResponseFilterService,
@@ -110,13 +110,8 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
   }
 
   private def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
-    val xmlWidth = 120
-    val xmlIndent = 2
-
     val statusResponseXml = statusResponseFilterService.transform(xmlResponseBody).head
-    val statusResponseString = new PrettyPrinter(xmlWidth, xmlIndent).format(statusResponseXml, TopScope)
-
-    HttpResponse(response.status, statusResponseString, response.headers)
+    HttpResponse(response.status, statusResponseXml.toString(), response.headers)
   }
 
   private val errorResponseServiceUnavailable = errorInternalServerError("This service is currently unavailable")

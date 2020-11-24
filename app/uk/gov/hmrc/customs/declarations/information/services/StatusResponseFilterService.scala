@@ -58,7 +58,6 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
     xmlns:p4={NameSpaceP4}
     xmlns:xsi={NameSpaceXsi}
     xsi:schemaLocation={NameSpaceP}>
-
       {decStatusDetails.map{ node =>
         val declarations = node \ "Declaration"
         val mdgDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "http://gov.uk/customs/declarationInformationRetrieval/status/v2")
