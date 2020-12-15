@@ -17,6 +17,7 @@
 package uk.gov.hmrc.customs.declarations.information.services
 
 import akka.pattern.CircuitBreakerOpenException
+
 import javax.inject.{Inject, Singleton}
 import play.api.http.HttpEntity
 import play.api.mvc.Result
@@ -27,9 +28,11 @@ import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionF
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
 
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Left
 import scala.util.control.NonFatal
@@ -53,8 +56,10 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
-            val xmlResponseBody = XML.loadString(response.body)
-            Right(filterResponse(response, xmlResponseBody))
+            val startTime = LocalDateTime.now
+            val filteredResponse = filterResponse(response, XML.loadString(response.body))
+            logFilteringDuration(startTime)
+            Right(filteredResponse)
           }).recover{
           case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
             val body = XML.loadString(e.response.body)
@@ -115,6 +120,12 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
   }
 
   private val errorResponseServiceUnavailable = errorInternalServerError("This service is currently unavailable")
+
+  private def logFilteringDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit ={
+    val duration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
+    logger.info(s"Xml declaration filtering was $duration ms")
+  }
+
 }
 
 object DeclarationStatusService {

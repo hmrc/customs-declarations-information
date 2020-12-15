@@ -27,13 +27,15 @@ import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.logging.Authorization
 
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
@@ -82,8 +84,11 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
   private def post[A](xml: NodeSeq, url: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
     logger.debug(s"Sending request to $url. Headers ${hc.headers} Payload: ${xml.toString()}")
 
+    val startTime = LocalDateTime.now
     http.POSTString[HttpResponse](url, xml.toString()).map { response =>
+      logCallDuration(startTime)
       logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
+
       response.status match {
         case status if is2xx(status) =>
           response
@@ -108,4 +113,10 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     }
     case _ => true
   }
+
+  protected def logCallDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit ={
+    val callDuration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
+    logger.info(s"Outbound call duration was $callDuration ms")
+  }
+
 }

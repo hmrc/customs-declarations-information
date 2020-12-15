@@ -19,11 +19,10 @@ package unit.services
 import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
-import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, StatusResponseFilterService}
-import util.UnitSpec
-import util.StatusTestXMLData.{actualBackendStatusResponse, defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
+import uk.gov.hmrc.customs.declarations.information.services.StatusResponseFilterService
+import util.StatusTestXMLData.{actualBackendStatusResponse, defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
+import util.UnitSpec
 
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
@@ -45,9 +44,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSu
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
-    val mockInformationLogger: InformationLogger = mock[InformationLogger]
-    val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
-    implicit val service = new StatusResponseFilterService(mockInformationLogger, mockInformationConfigService)
+    implicit val service = new StatusResponseFilterService()
     val statusResponseWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime))
   }
 
