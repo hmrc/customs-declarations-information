@@ -17,12 +17,10 @@
 package uk.gov.hmrc.customs.declarations.information.services
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-
 import scala.xml.{NodeSeq, TopScope}
 
 @Singleton
-class StatusResponseFilterService @Inject() (informationLogger: InformationLogger, informationConfigService: InformationConfigService) {
+class StatusResponseFilterService @Inject() () {
   import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils._
 
   val NameSpaceP="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
@@ -33,12 +31,12 @@ class StatusResponseFilterService @Inject() (informationLogger: InformationLogge
   val NameSpaceXsi="http://www.w3.org/2001/XMLSchema-instance"
 
   private val outputUriToPrefixMap = Map(
-    (NameSpaceXsi -> "xsi"),
-    (NameSpaceP -> "p"),
-    (NameSpaceP1 -> "p1"),
-    (NameSpaceP2 -> "p2"),
-    (NameSpaceP3 -> "p3"),
-    (NameSpaceP4 -> "p4")
+    NameSpaceXsi -> "xsi",
+    NameSpaceP -> "p",
+    NameSpaceP1 -> "p1",
+    NameSpaceP2 -> "p2",
+    NameSpaceP3 -> "p3",
+    NameSpaceP4 -> "p4"
   )
 
   def transform(xml: NodeSeq): NodeSeq = {
