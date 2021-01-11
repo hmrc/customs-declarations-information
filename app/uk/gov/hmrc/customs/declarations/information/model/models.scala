@@ -23,7 +23,7 @@ import play.api.libs.json.{JsString, Reads, Writes}
 case class RequestedVersion(versionNumber: String, configPrefix: Option[String])
 
 case class ClientId(value: String) extends AnyVal {
-  override def toString: String = value.toString
+  override def toString: String = value
 }
 
 case class ConversationId(uuid: UUID) extends AnyVal {
@@ -31,7 +31,7 @@ case class ConversationId(uuid: UUID) extends AnyVal {
 }
 
 case class Eori(value: String) extends AnyVal {
-  override def toString: String = value.toString
+  override def toString: String = value
 }
 object Eori {
   implicit val writer: Writes[Eori] = Writes[Eori] { x => JsString(x.value) }
@@ -43,7 +43,7 @@ case class CorrelationId(uuid: UUID) extends AnyVal {
 }
 
 case class BadgeIdentifier(value: String) extends AnyVal {
-  override def toString: String = value.toString
+  override def toString: String = value
 }
 
 sealed trait ApiVersion {
@@ -79,30 +79,31 @@ sealed trait SearchType {
   val label: String
   val maxLength: Int
   lazy val valueTooLong: Boolean = !(value.length <= maxLength)
-  lazy val valueTooShort: Boolean = value.length == 0
-  lazy val validValue: Boolean = value.length > 0 && !valueTooLong && !value.contains(" ")
+  lazy val valueTooShort: Boolean = value.isEmpty
+  lazy val validValue: Boolean = value.nonEmpty && !valueTooLong && !value.contains(" ")
 }
 
 case class Mrn(value: String) extends SearchType {
-  override def toString: String = value.toString
+  override def toString: String = value
   val label = "MRN"
   val maxLength: Int = mrnAndUcrMaxLength
 }
 
 case class Ducr(value: String) extends SearchType {
-  override def toString: String = value.toString
+  override def toString: String = value
   val label = "DUCR"
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
 }
 
 case class Ucr(value: String) extends SearchType {
-  override def toString: String = value.toString
+  override def toString: String = value
   val label = "UCR"
   val maxLength: Int = mrnAndUcrMaxLength
 }
 
 case class InventoryReference(value: String) extends SearchType {
-  override def toString: String = value.toString
+  override def toString: String = value
   val label = "InventoryReference"
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
+  override lazy val validValue: Boolean = value.nonEmpty && !valueTooLong
 }
