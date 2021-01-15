@@ -54,6 +54,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   private val endpointMissingUCR = s"/ucr//status"
   private val endpointIR = s"/inventory-reference/$inventoryReference/status"
   private val endpointMissingIR = s"/inventory-reference//status"
+  private val endpointIRWithSpaces = s"/inventory-reference/123%20%20%20789/status"
 
   private val apiSubscriptionKeyForXClientId =
     ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information", version = VersionOne)
@@ -141,6 +142,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   val missingUcrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingUCR).fromCsp
   val validIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointIR).fromCsp
   val missingIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingIR).fromCsp
+  val spacesIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointIRWithSpaces).fromCsp
 
   override protected def beforeAll() {
     startMockServer()
@@ -420,7 +422,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       And("the CSP is authorised with its privileged application")
       authServiceAuthorizesCSP()
 
-      When("a UCR request with data is sent to the API")
+      When("an inventory-reference request with data is sent to the API")
       val result: Future[Result] = route(app = app, missingIrRequest).value
 
       Then("a response with a 400 status is received")
@@ -428,6 +430,24 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
+    }
+
+    scenario("An authorised CSP queries declaration status with Inventory Reference value containing spaces") {
+      Given("A CSP omits the Inventory Reference")
+      startBackendStatusServiceV1()
+      startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
+
+      And("the CSP is authorised with its privileged application")
+      authServiceAuthorizesCSP()
+
+      When("an inventory-reference request with spaces is sent to the API")
+      val result: Future[Result] = route(app = app, spacesIrRequest).value
+
+      Then("a response with a 200 (OK) status is received")
+      status(result) shouldBe OK
+
+      And("the response body is a valid status xml")
+      contentAsString(result) shouldBe validResponse()
     }
   }
 }

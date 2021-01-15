@@ -99,7 +99,7 @@ class StatusControllerSpec extends UnitSpec
       controller.getByMrn(mrnValue).apply(request)
     }
 
-    when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](mrn).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+    when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
     when(mockStatusResponseFilterService.transform(any[NodeSeq])).thenReturn(<xml>some xml</xml>)
@@ -186,7 +186,7 @@ class StatusControllerSpec extends UnitSpec
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
-    "respond with status 404 for a request with an MRN value that is too short" in new SetUp() {
+    "respond with status 400 for a request with an MRN value that is too short" in new SetUp() {
       authoriseCsp()
 
       val result: Result = controller.getByMrn("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
@@ -195,91 +195,10 @@ class StatusControllerSpec extends UnitSpec
       verifyNoMoreInteractions(mockStatusConnector)
     }
 
-    "respond with status 404 for a request with an MRN value that contains a space" in new SetUp() {
+    "respond with status 400 for a request with an MRN value that contains a space" in new SetUp() {
       authoriseCsp()
 
       val result: Result = controller.getByMrn("mrn withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultCDS60002
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 400 for a request with a DUCR value that is to long" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByDucr(invalidDucrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultSearchParameterTooLong
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 404 for a request with a DUCR value that is too short" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByDucr("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultMissingSearchParameter
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 404 for a request with an DUCR value that contains a space" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByDucr("ducr withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultCDS60002
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 400 for a request with a UCR value that is too long" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByUcr(invalidUcrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultSearchParameterTooLong
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 404 for a request with a UCR value that is too short" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByUcr("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultMissingSearchParameter
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 404 for a request with an UCR value that contains a space" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByDucr("ucr withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultCDS60002
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 400 for a request with an InventoryReference value that is too long" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByInventoryReference(invalidInventoryReferenceTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultSearchParameterTooLong
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 404 for a request with a InventoryReference value that is too short" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByInventoryReference("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
-
-      result shouldBe errorResultMissingSearchParameter
-      verifyNoMoreInteractions(mockStatusConnector)
-    }
-
-    "respond with status 404 for a request with a InventoryReference value that contains a space" in new SetUp() {
-      authoriseCsp()
-
-      val result: Result = controller.getByInventoryReference("ir withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
 
       result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockStatusConnector)
@@ -357,6 +276,34 @@ class StatusControllerSpec extends UnitSpec
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
+
+    "respond with status 400 for a request with a DUCR value that is too short" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByDucr("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultMissingSearchParameter
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
+    "respond with status 400 for a request with an DUCR value that contains a space" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByDucr("ducr withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultCDS60002
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
+    "respond with status 400 for a request with a DUCR value that is to long" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByDucr(invalidDucrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultSearchParameterTooLong
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
   }
 
   "Declaration Status Controller for UCR queries" should {
@@ -378,6 +325,34 @@ class StatusControllerSpec extends UnitSpec
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
+
+    "respond with status 400 for a request with a UCR value that is too long" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByUcr(invalidUcrTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultSearchParameterTooLong
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
+    "respond with status 400 for a request with a UCR value that is too short" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByUcr("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultMissingSearchParameter
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
+    "respond with status 400 for a request with an UCR value that contains a space" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByDucr("ucr withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultCDS60002
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
   }
 
   "Declaration Status Controller for inventory-reference queries" should {
@@ -399,6 +374,25 @@ class StatusControllerSpec extends UnitSpec
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
+
+    "respond with status 400 for a request with an InventoryReference value that is too long" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByInventoryReference(invalidInventoryReferenceTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultSearchParameterTooLong
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
+    "respond with status 400 for a request with a InventoryReference value that is too short" in new SetUp() {
+      authoriseCsp()
+
+      val result: Result = controller.getByInventoryReference("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+
+      result shouldBe errorResultMissingSearchParameter
+      verifyNoMoreInteractions(mockStatusConnector)
+    }
+
   }
 
 }
