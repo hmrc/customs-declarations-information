@@ -22,6 +22,7 @@ import play.api.Application
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
+import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionKey, VersionOne}
 import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.{ACCEPT_HMRC_XML_HEADER_V2, ValidHeaders}
@@ -30,6 +31,9 @@ import util.XmlOps.stringToXml
 import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
 import util.{AuditService, CustomsDeclarationsExternalServicesConfig}
 
+import java.io.StringReader
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.Schema
 import scala.concurrent.Future
 
 class CustomsDeclarationStatusSpec extends ComponentTestSpec
@@ -58,6 +62,9 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
   private val apiSubscriptionKeyForXClientId =
     ApiSubscriptionKey(clientId = clientId, context = "customs%2Fdeclarations-information", version = VersionOne)
+
+  protected val xsdErrorLocationV1: String = "/api/conf/1.0/schemas/customs/error.xsd"
+  private val schemaErrorV1: Schema = ValidateXmlAgainstSchema.getSchema(xsdErrorLocationV1).get
 
   private def validResponse() =
     """<p:DeclarationStatusResponse xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
@@ -176,6 +183,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is empty")
       stringToXml(contentAsString(result)) shouldBe stringToXml(ServiceUnavailableError)
+      schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(ServiceUnavailableError)))
       }
     }
 
@@ -298,6 +306,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
+      schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(missingSearchResponse)))
     }
   }
 
@@ -342,6 +351,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
+      schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(missingSearchResponse)))
     }
   }
 
@@ -386,6 +396,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
+      schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(missingSearchResponse)))
     }
   }
 
@@ -430,6 +441,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       stringToXml(contentAsString(result)) shouldBe stringToXml(missingSearchResponse)
+      schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(missingSearchResponse)))
     }
 
     scenario("An authorised CSP queries declaration status with Inventory Reference value containing spaces") {
