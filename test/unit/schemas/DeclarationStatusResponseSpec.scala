@@ -24,7 +24,6 @@ import util.UnitSpec
 
 import scala.xml.{Elem, SAXException}
 
-//TODO update depending on any response changes
 class DeclarationStatusResponseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
