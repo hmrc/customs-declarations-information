@@ -34,14 +34,6 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
   private val mockService = mock[HttpErrorHandler]
   private val mockLogger = mock[InformationLogger]
 
-  private val v1WhitelistedAppIdsConfigs = Map(
-    "api.access.version-1.0.whitelistedApplicationIds.0" -> "v1AppId-1",
-    "api.access.version-1.0.whitelistedApplicationIds.1" -> "v1AppId-2")
-
-  private val v2WhitelistedAppIdsConfigs = Map(
-    "api.access.version-2.0.whitelistedApplicationIds.0" -> "v2AppId-1",
-    "api.access.version-2.0.whitelistedApplicationIds.1" -> "v2AppId-2")
-
   private val v1AndV2Disabled = Map(
     "api.access.version-1.0.enabled" -> "false",
     "api.access.version-2.0.enabled" -> "false")
@@ -60,33 +52,19 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
       val result = getApiDefinitionWith(Map())(FakeRequest())
 
       status(result) mustBe 200
-      contentAsJson(result) mustBe expectedJson(None, None)
-    }
-
-    "be correct when V1 is PRIVATE & V2 is public" in {
-      val result = getApiDefinitionWith(v1WhitelistedAppIdsConfigs)(FakeRequest())
-
-      status(result) mustBe 200
-      contentAsJson(result) mustBe expectedJson(expectedV1WhitelistedAppIds = Some(v1WhitelistedAppIdsConfigs.values), expectedV2WhitelistedAppIds = None)
-    }
-
-    "be correct when V1 is PUBLIC & V2 is private" in {
-      val result = getApiDefinitionWith(v2WhitelistedAppIdsConfigs)(FakeRequest())
-
-      status(result) mustBe 200
-      contentAsJson(result) mustBe expectedJson(expectedV1WhitelistedAppIds = None, expectedV2WhitelistedAppIds = Some(v2WhitelistedAppIdsConfigs.values))
+      contentAsJson(result) mustBe expectedJson()
     }
 
     "be correct when V1 is not enabled and V2 is not enabled" in {
       val result = getApiDefinitionWith(v1AndV2Disabled)(FakeRequest())
 
       status(result) mustBe 200
-      contentAsJson(result) mustBe expectedJson(expectedV1WhitelistedAppIds = None, expectedV2WhitelistedAppIds = None, false, false)
+      contentAsJson(result) mustBe expectedJson(false, false)
     }
 
   }
 
-  private def expectedJson(expectedV1WhitelistedAppIds: Option[Iterable[String]], expectedV2WhitelistedAppIds: Option[Iterable[String]], v1Enabled: Boolean  = true, v2Enabled: Boolean = true) =
+  private def expectedJson(v1Enabled: Boolean  = true, v2Enabled: Boolean = true) =
     Json.parse(
       s"""
          |{
@@ -108,52 +86,38 @@ class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar 
          |            "status":"BETA",
          |            "endpointsEnabled":$v1Enabled,
          |            "access":{
-         |               """.stripMargin
-        +
-        expectedV1WhitelistedAppIds.fold(""" "type":"PUBLIC" """)(ids =>
-          """ "type":"PRIVATE", "whitelistedApplicationIds":[ """.stripMargin
-            + ids.map(x => s""" "$x" """).mkString(",") + "]"
-        )
-        +
-        s"""
-           |            },
-           |            "fieldDefinitions":[
-           |               {
-           |                  "name": "authenticatedEori",
-           |                  "description": "What's your Economic Operator Registration and Identification (EORI) number?",
-           |                  "type": "STRING",
-           |                  "hint": "This is your EORI that will associate your application with you as a CSP",
-           |                  "shortDescription" : "EORI"
-           |               }
-           |            ]
-           |         },
+         |              "type":"PRIVATE"
+         |            },
+         |            "fieldDefinitions":[
+         |               {
+         |                  "name": "authenticatedEori",
+         |                  "description": "What's your Economic Operator Registration and Identification (EORI) number?",
+         |                  "type": "STRING",
+         |                  "hint": "This is your EORI that will associate your application with you as a CSP",
+         |                  "shortDescription" : "EORI"
+         |               }
+         |            ]
+         |         },
          |         {
          |            "version":"2.0",
          |            "status":"BETA",
          |            "endpointsEnabled":$v2Enabled,
          |            "access":{
-         |               """.stripMargin
-        +
-        expectedV2WhitelistedAppIds.fold(""" "type":"PUBLIC" """)(ids =>
-          """ "type":"PRIVATE", "whitelistedApplicationIds":[ """.stripMargin
-            + ids.map(x => s""" "$x" """).mkString(",") + "]"
-        )
-        +
-        s"""
-           |            },
-           |            "fieldDefinitions":[
-           |               {
-           |                  "name": "authenticatedEori",
-           |                  "description": "What's your Economic Operator Registration and Identification (EORI) number?",
-           |                  "type": "STRING",
-           |                  "hint": "This is your EORI that will associate your application with you as a CSP",
-           |                  "shortDescription" : "EORI"
-           |               }
-           |            ]
-           |         }
-           |      ]
-           |   }
-           |}
+         |               "type":"PRIVATE"
+         |            },
+         |            "fieldDefinitions":[
+         |               {
+         |                  "name": "authenticatedEori",
+         |                  "description": "What's your Economic Operator Registration and Identification (EORI) number?",
+         |                  "type": "STRING",
+         |                  "hint": "This is your EORI that will associate your application with you as a CSP",
+         |                  "shortDescription" : "EORI"
+         |               }
+         |            ]
+         |         }
+         |      ]
+         |   }
+         |}
       """.stripMargin)
 
 }

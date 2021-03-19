@@ -26,101 +26,14 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class DefinitionSpecWithWhitelistedAppId extends ComponentTestSpec
-  with Matchers {
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder().configure(Map(
-    "api.access.version-1.0.whitelistedApplicationIds.0" -> "someId-1",
-    "api.access.version-2.0.whitelistedApplicationIds.0" -> "someId-2"
-  )).build()
-
-  feature("Ensure definition file") {
-
-    scenario("is correct when there are whitelisted applicationIds") {
-
-      Given("the API is available")
-      val request = FakeRequest("GET", "/api/definition")
-
-      When("api definition is requested")
-      val result: Option[Future[Result]] = route(app = app, request)
-
-      Then(s"a response with a 200 status is received")
-      val resultFuture = result.get
-      status(resultFuture) shouldBe OK
-
-      And("the response body is correct")
-      contentAsJson(resultFuture) shouldBe Json.parse(
-        """
-          |{
-          |  "scopes": [
-          |    {
-          |      "key": "write:customs-declarations-information",
-          |      "name": "Request the status of a declaration",
-          |      "description": "Request the status of a declaration"
-          |    }
-          |  ],
-          |  "api": {
-          |    "name": "Customs Declarations Information",
-          |    "description": "Retrieve declaration status information",
-          |    "context": "customs/declarations-information",
-          |    "categories": ["CUSTOMS"],
-          |    "versions": [
-          |      {
-          |        "version": "1.0",
-          |        "status": "BETA",
-          |        "endpointsEnabled": true,
-          |        "access": {
-          |          "type": "PRIVATE",
-          |          "whitelistedApplicationIds": [
-          |          "someId-1"
-          |          ]
-          |        },
-          |        "fieldDefinitions": [
-          |          {
-          |            "name": "authenticatedEori",
-          |            "description": "What's your Economic Operator Registration and Identification (EORI) number?",
-          |            "type": "STRING",
-          |            "hint": "This is your EORI that will associate your application with you as a CSP",
-          |            "shortDescription" : "EORI"
-          |          }
-          |        ]
-          |      },
-          |      {
-          |        "version": "2.0",
-          |        "status": "BETA",
-          |        "endpointsEnabled": true,
-          |        "access": {
-          |          "type": "PRIVATE",
-          |          "whitelistedApplicationIds": [
-          |          "someId-2"
-          |          ]
-          |        },
-          |        "fieldDefinitions": [
-          |          {
-          |            "name": "authenticatedEori",
-          |            "description": "What's your Economic Operator Registration and Identification (EORI) number?",
-          |            "type": "STRING",
-          |            "hint": "This is your EORI that will associate your application with you as a CSP",
-          |            "shortDescription" : "EORI"
-          |          }
-          |        ]
-          |      }
-          |    ]
-          |  }
-          |}
-        """.stripMargin)
-    }
-  }
-}
-
-class DefinitionSpecWithoutWhitelistedAppId extends ComponentTestSpec
+class DefinitionSpec extends ComponentTestSpec
   with Matchers {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder().build()
 
   feature("Ensure definition file") {
 
-    scenario("is correct when there are no whitelisted applicationIds") {
+    scenario("is correct") {
 
       Given("the API is available")
       val request = FakeRequest("GET", "/api/definition")
@@ -154,7 +67,7 @@ class DefinitionSpecWithoutWhitelistedAppId extends ComponentTestSpec
           |        "status": "BETA",
           |        "endpointsEnabled": true,
           |        "access": {
-          |          "type": "PUBLIC"
+          |          "type": "PRIVATE"
           |        },
           |        "fieldDefinitions": [
           |          {
@@ -171,7 +84,7 @@ class DefinitionSpecWithoutWhitelistedAppId extends ComponentTestSpec
           |        "status": "BETA",
           |        "endpointsEnabled": true,
           |        "access": {
-          |          "type": "PUBLIC"
+          |          "type": "PRIVATE"
           |        },
           |        "fieldDefinitions": [
           |          {
