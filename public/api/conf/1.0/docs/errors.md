@@ -1,4 +1,6 @@
-We use standard HTTP status codes to show whether an API request succeeded or not.
+We use standard HTTP status codes to show whether an API request succeeded or not. The table lists errors that apply to all endpoints. 
+
+Errors specific to the search endpoint are listed with that endpoint below.  
 
 **Error scenarios**
 

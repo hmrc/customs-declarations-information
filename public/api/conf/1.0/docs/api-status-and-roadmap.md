@@ -1,18 +1,7 @@
 This API is currently in beta - expect some breaking changes.
 
-This API provides endpoints for getting the status of a declaration by:
-  
-- MRN
-- Declaration Unique Consignment Reference (DUCR)
-- Unique Consignment Reference (UCR)
-- Inventory Reference
+Endpoints provided by this service are:
 
-The format of these endpoints are:
-
-- /mrn/{mrn}/status
-- /ducr/{ducr}/status
-- /ucr/{ucr}/status
-- /inventory-reference/{inventory-reference}/status
-
-
-If you would like to suggest other features or discuss priorities, [contact us](https://developer.service.hmrc.gov.uk/developer/support).
+- search for a declaration based on role, category, date, goods location code and status.
+- get a list of versions of a declaration
+- get the status of a declaration by MRN, DUCR, UCR or inventory reference
