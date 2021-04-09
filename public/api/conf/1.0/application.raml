@@ -97,9 +97,9 @@ documentation:
           description: The page number of the results. Default value is 1.
           type: integer
           required: false
-        declarationSubmissionChannel:
-          description: Internal use only. Only valid value is AuthenticatedPartyOnly.
-          type: string
+        authenticatedParty:
+          description: Internal use only [MOVE TO PRIVATE ENDPOINT?] 
+          type: boolean
           required: false
       responses:
         200:
@@ -107,7 +107,7 @@ documentation:
             application/xml:
               description: Successful response payload
               type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-              example: !include examples/example_messages/Trade%20Test%2015.0.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
+              example: !include examples/example_messages/Trade%20Test%2014.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
         400:
           body:
             application/xml:
@@ -212,7 +212,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/example_messages/Trade%20Test%2015.0.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
+                  example: !include examples/example_messages/Trade%20Test%2014.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
       /full:
         get:
           displayName: Get the full declaration by MRN [NEW]
@@ -250,9 +250,9 @@ documentation:
               description: The version of a declaration. Omitting this parameter will return the latest version.  
               type: integer
               required: false
-            declarationSubmissionChannel:
+            authenticatedParty:
               description: Internal use only 
-              type: string
+              type: boolean
               required: false
           responses:
             200:
@@ -260,7 +260,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/example_messages/Trade%20Test%2015.0.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
+                  example: !include examples/example_messages/Trade%20Test%2014.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
       /versions:
         get:
           displayName: Get a list of declaration versions by MRN [NEW]
@@ -294,9 +294,9 @@ documentation:
           (annotations.scope): "write:customs-declarations-information"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
           queryParameters:
-            declarationSubmissionChannel:
-              description: Internal use only. Only valid value is AuthenticatedPartyOnly.
-              type: string
+            authenticatedParty:
+              description: Internal use only 
+              type: boolean
               required: false
           responses:
             200:
@@ -304,7 +304,7 @@ documentation:
                 application/xml:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/example_messages/Trade%20Test%2015.0.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
+                  example: !include examples/example_messages/Trade%20Test%2014.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
 
   /ducr:
     /{ducr}:
