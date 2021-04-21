@@ -36,6 +36,7 @@ class InformationLoggerSpec extends UnitSpec with MockitoSugar {
     implicit val implicitVpr: AuthorisedRequest[AnyContentAsEmpty.type] = ApiVersionRequest(conversationId, VersionOne, FakeRequest()
       .withHeaders("Content-Type" -> "Some-Content-Type"))
       .toValidatedHeadersRequest(TestExtractedHeaders)
+      .toInternalClientIdsRequest(false)
       .toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
   }
 

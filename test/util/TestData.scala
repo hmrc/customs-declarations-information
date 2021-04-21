@@ -16,9 +16,6 @@
 
 package util
 
-import java.util.UUID
-import java.util.UUID.fromString
-
 import com.google.inject.AbstractModule
 import org.joda.time.DateTime
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -33,7 +30,10 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVer
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
-import util.TestData.{declarantEori}
+import util.TestData.declarantEori
+
+import java.util.UUID
+import java.util.UUID.fromString
 
 object TestData {
   val conversationIdValue = "38400000-8cf0-11bd-b23e-10b96e4ef00d"
@@ -113,16 +113,17 @@ object TestData {
     FakeRequest().withHeaders(headers.remove("")) //better to not add empty string tuple in first place
   }
 
+  val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequestV1)
   val TestApiVersionRequestV1 = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
   val TestApiVersionRequestV2 = ApiVersionRequest(conversationId, VersionTwo, TestFakeRequestV2)
-  val TestConversationIdRequest = ConversationIdRequest(conversationId, TestFakeRequestV1)
 
   val TestConversationIdRequestWithV1Headers = ConversationIdRequest(conversationId, TestFakeRequestV1)
   val TestConversationIdRequestWithV2Headers = ConversationIdRequest(conversationId, TestFakeRequestV2)
 
   val TestExtractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestApiVersionRequestV1.toValidatedHeadersRequest(TestExtractedHeaders)
-  val TestCspAuthorisedRequest = TestValidatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
+  val TestInternalClientIdsRequest = TestValidatedHeadersRequest.toInternalClientIdsRequest(false)
+  val TestCspAuthorisedRequest = TestInternalClientIdsRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
   val TestValidatedHeadersRequestNoBadgeIdNoEori = TestApiVersionRequestV1.toValidatedHeadersRequest(TestExtractedHeaders)
 
   lazy val TestValidatedHeadersRequestWithValidBadgeIdEoriPair =

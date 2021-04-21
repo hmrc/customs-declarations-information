@@ -38,6 +38,17 @@ object ActionBuilderModelHelper {
   }
 
   implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) {
+
+    def toInternalClientIdsRequest(authenticatedParty: Boolean): InternalClientIdsRequest[A] = InternalClientIdsRequest(
+      vhr.conversationId,
+      vhr.requestedApiVersion,
+      vhr.clientId,
+      authenticatedParty,
+      vhr.request
+    )
+  }
+
+  implicit class InternalClientIdsRequestOps[A](val vhr: InternalClientIdsRequest[A]) {
     def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
 
     def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
@@ -46,6 +57,7 @@ object ActionBuilderModelHelper {
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
+      vhr.authenticatedParty,
       authorisedAs,
       vhr.request
     )
@@ -103,10 +115,19 @@ case class ValidatedHeadersRequest[A](conversationId: ConversationId,
                                       request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with ExtractedHeaders with HasApiVersion
 
+// Available after InternalClientIdsCheckAction
+case class InternalClientIdsRequest[A](conversationId: ConversationId,
+                                       requestedApiVersion: ApiVersion,
+                                       clientId: ClientId,
+                                       authenticatedParty: Boolean,
+                                       request: Request[A]
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders
+
 // Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,
                                 requestedApiVersion: ApiVersion,
                                 clientId: ClientId,
+                                authenticatedParty: Boolean,
                                 authorisedAs: AuthorisedAs,
                                 request: Request[A]
 ) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion
