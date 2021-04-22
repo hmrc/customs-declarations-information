@@ -44,26 +44,14 @@ class VersionsController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                   (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
   def list(mrn: String, authenticatedParty: Option[Boolean]): Action[AnyContent] = actionPipeline.async {
-    val mrn1 = Mrn(mrn)
-    implicit asr: AuthorisedRequest[AnyContent] => search(mrn1)
+    implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
   }
 
   private def search(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-      if (!mrn.validValue)
-        logger.warn(s"Invalid versions call for MRN: ${mrn.value}")
-
-        val appropriateResponse = if (mrn.valueTooLong) {
-          ErrorResponse(BAD_REQUEST, BadRequestCode, "Search parameter too long")
-        } else if(mrn.valueTooShort) {
-          ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing search parameter")
-        } else {
-          ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid")
-        }
-
-        Future.successful(appropriateResponse.XmlResult.withConversationId)
-
+    validateMrn(mrn) match {
+      case Right(()) =>
         declarationVersionsService.send(mrn) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
@@ -75,6 +63,24 @@ class VersionsController @Inject()(val shutterCheckAction: ShutterCheckAction,
           case Left(errorResult) =>
             errorResult
         }
+      case Left(result) =>
+        Future.successful(result)
+    }
+  }
+  
+  private def validateMrn(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
+    if(mrn.validValue) {
+      Right()
+    } else {
+      val appropriateResponse = if (mrn.valueTooLong) {
+        ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN too long")
+      } else if (mrn.valueTooShort) {
+        ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing MRN")
+      } else {
+        ErrorResponse(BAD_REQUEST, "CDS60002", "MRN invalid")
+      }
+      Left(appropriateResponse.XmlResult.withConversationId)
+    }
   }
 
   private val actionPipeline: ActionBuilder[AuthorisedRequest, AnyContent] =
