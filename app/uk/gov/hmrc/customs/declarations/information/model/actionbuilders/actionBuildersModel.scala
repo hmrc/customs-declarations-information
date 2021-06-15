@@ -39,11 +39,11 @@ object ActionBuilderModelHelper {
 
   implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) {
 
-    def toInternalClientIdsRequest(authenticatedParty: Boolean): InternalClientIdsRequest[A] = InternalClientIdsRequest(
+    def toInternalClientIdsRequest(declarationSubmissionChannel: Option[String]): InternalClientIdsRequest[A] = InternalClientIdsRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
-      authenticatedParty,
+      declarationSubmissionChannel,
       vhr.request
     )
   }
@@ -57,7 +57,7 @@ object ActionBuilderModelHelper {
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
-      vhr.authenticatedParty,
+      vhr.declarationSubmissionChannel,
       authorisedAs,
       vhr.request
     )
@@ -119,7 +119,7 @@ case class ValidatedHeadersRequest[A](conversationId: ConversationId,
 case class InternalClientIdsRequest[A](conversationId: ConversationId,
                                        requestedApiVersion: ApiVersion,
                                        clientId: ClientId,
-                                       authenticatedParty: Boolean,
+                                       declarationSubmissionChannel: Option[String], //could or should be type or enum
                                        request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders
 
@@ -127,7 +127,7 @@ case class InternalClientIdsRequest[A](conversationId: ConversationId,
 case class AuthorisedRequest[A](conversationId: ConversationId,
                                 requestedApiVersion: ApiVersion,
                                 clientId: ClientId,
-                                authenticatedParty: Boolean,
+                                declarationSubmissionChannel: Option[String],
                                 authorisedAs: AuthorisedAs,
                                 request: Request[A]
 ) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion

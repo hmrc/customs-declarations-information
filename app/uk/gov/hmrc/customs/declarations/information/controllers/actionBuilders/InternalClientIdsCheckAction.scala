@@ -43,27 +43,22 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
   extends ActionRefiner[ValidatedHeadersRequest, InternalClientIdsRequest] {
 
   override def executionContext: ExecutionContext = ec
+  
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
     implicit val id: ValidatedHeadersRequest[A] = vhr
-    val authenticatedParty = convertToBoolean(vhr.request.getQueryString("authenticatedParty"))
+    val declarationSubmissionChannel = vhr.request.getQueryString("declarationSubmissionChannel")
     val path = vhr.request.path
-    logger.debug(s"path is $path and authenticatedParty is $authenticatedParty")
+    logger.debug(s"path is $path and declarationSubmissionChannel is $declarationSubmissionChannel")
 
-    if (path.endsWith("status") && vhr.request.getQueryString("authenticatedParty").isDefined) {
-      logger.warn("rejected attempt to call status endpoint with authenticatedParty parameter")
-      Left(errorBadRequest("authenticatedParty parameter not permitted in status request").XmlResult.withConversationId)
-    } else if (authenticatedParty && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
-      Left(errorBadRequest("authenticatedParty parameter is for internal use only").XmlResult.withConversationId)
+    if (path.endsWith("status") && declarationSubmissionChannel.isDefined) {
+      logger.warn("rejected attempt to call status endpoint with declarationSubmissionChannel parameter") //maybe this check not needed
+      Left(errorBadRequest("declarationSubmissionChannel parameter not permitted in status request").XmlResult.withConversationId)
+    } else if (declarationSubmissionChannel.isDefined && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
+      Left(errorBadRequest("declarationSubmissionChannel parameter is for internal use only").XmlResult.withConversationId)
     }
     else {
-      Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, authenticatedParty, vhr.request))
+      Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, declarationSubmissionChannel, vhr.request))
     }
   }
-  
-  private def convertToBoolean(param: Option[String]): Boolean = {
-    param.fold(false){p =>
-      if(p.equalsIgnoreCase("true")) true else false
-    }
-  }
-  
+
 }

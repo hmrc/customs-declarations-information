@@ -44,7 +44,7 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
 
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
-    ApiSubscriptionFieldsTestData.clientId, false, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+    ApiSubscriptionFieldsTestData.clientId, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   override protected def beforeAll() {
     startMockServer()

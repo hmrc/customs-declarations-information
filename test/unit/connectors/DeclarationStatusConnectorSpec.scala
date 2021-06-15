@@ -55,7 +55,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, false, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   override protected def beforeEach() {
     reset(mockWsPost, mockServiceConfigProvider)

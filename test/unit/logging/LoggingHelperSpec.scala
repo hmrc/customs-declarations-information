@@ -45,7 +45,7 @@ class LoggingHelperSpec extends UnitSpec with MockitoSugar {
         "IGNORE" -> "IGNORE"
       )
     )
-  private val internalClientIdsRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("some-client-id"), requestMock).toInternalClientIdsRequest(false)
+  private val internalClientIdsRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("some-client-id"), requestMock).toInternalClientIdsRequest(None)
 
   "LoggingHelper" should {
 

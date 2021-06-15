@@ -50,7 +50,8 @@ class DeclarationVersionsService @Inject()(override val apiSubFieldsConnector: A
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
 
-    //TODO All this is valid for versions endpoint. It's also the exact same as the status endpoint. Consider extracting to common code.
+    //TODO All this is valid for versions endpoint. It's also the exact same as the status endpoint.
+    // Extract to common code. Note there are more error codes for the versions endpoint.
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
@@ -115,7 +116,7 @@ class DeclarationVersionsService @Inject()(override val apiSubFieldsConnector: A
   }
 
   /**
-   * This may not be needed for this versions endpoint
+   * Removed call to filter for now. But it will be needed.
    * @param response
    * @param xmlResponseBody
    * @return
