@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.VersionResponseFilterService
-import util.VersionTestXMLData.{actualBackendVersionResponse, defaultDateTime, generateDeclarationVersionResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
+import util.VersionTestXMLData.{actualBackendVersionResponse, defaultDateTime, generateDeclarationVersionResponse, generateDeclarationResponseContainingAllOptionalElements}
 import util.UnitSpec
 
 import scala.xml._
@@ -48,7 +48,7 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec with MockitoS
     val versionResponseWithAllValues: NodeSeq = service.transform(generateDeclarationVersionResponse(creationDate = defaultDateTime))
   }
 
-  "Status Response Filter Service" should {
+  "Version Response Filter Service" should {
 
     "ensure output passes schema validation" in new SetUp {
       xmlValidationService.validate(versionResponseWithAllValues) should be(true)
@@ -105,7 +105,7 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec with MockitoS
     }
 
     "handle future extension where all optional fields are returned" in new SetUp {
-      val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponseContainingAllOptionalElements(defaultDateTime))
+      val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationResponseContainingAllOptionalElements(defaultDateTime))
 
       xmlValidationService.validate(responsesWithAllValues) should be(true)
     }
