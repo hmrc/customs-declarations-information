@@ -21,7 +21,7 @@ import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
 
 import scala.xml.{Elem, Node, NodeSeq, XML}
 
-object StatusTestXMLData {
+object VersionTestXMLData {
 
   val defaultDateTime = DateTime.now(DateTimeZone.UTC)
     .withYear(2020)
@@ -123,49 +123,82 @@ object StatusTestXMLData {
     </n1:queryDeclarationStatusResponse>
     }.filter(_ => true)
 
-  val actualBackendStatusResponse = {
-    <v2:queryDeclarationStatusResponse xmlns:v2="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:urn="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dec="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:urn1="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:urn2="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-      <v2:responseCommon>
-        <v2:processingDate>2020-02-19T12:08:12.952Z</v2:processingDate>
-      </v2:responseCommon>
-      <v2:responseDetail>
-        <v2:retrieveDeclarationStatusResponse>
-          <v2:retrieveDeclarationStatusDetailsList>
-            <v2:retrieveDeclarationStatusDetails>
-              <ns3:Declaration xmlns:ns3="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:ns5="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:ns2="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:ns4="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-                <ns3:AcceptanceDateTime>
-                  <ns2:DateTimeString formatCode="304">20191010000000Z</ns2:DateTimeString>
-                </ns3:AcceptanceDateTime>
-                <ns3:ID>20GB1YQEOT8BCFGVR3</ns3:ID>
-                <ns3:VersionID>1</ns3:VersionID>
-                <ns3:ReceivedDateTime>
-                  <ns3:DateTimeString formatCode="304">20200219120306Z</ns3:DateTimeString>
-                </ns3:ReceivedDateTime>
-                <ns3:ICS>22</ns3:ICS>
-              </ns3:Declaration>
-              <ns5:Declaration xmlns:ns5="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns="http://dmirs.core.ecf/DeclarationInformationRetrieval" xmlns:ns2="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:ns4="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
-                <ns5:FunctionCode>9</ns5:FunctionCode>
-                <ns5:TypeCode>IMZ</ns5:TypeCode>
-                <ns5:GoodsItemQuantity>1</ns5:GoodsItemQuantity>
-                <ns5:TotalPackageQuantity>1.0</ns5:TotalPackageQuantity>
-                <ns5:Submitter>
-                  <ns5:ID>GB025115166435</ns5:ID>
-                </ns5:Submitter>
-                <ns5:GoodsShipment>
-                  <ns5:PreviousDocument>
-                    <ns5:ID>8GB830617936000-0110182</ns5:ID>
-                    <ns5:TypeCode>DCR</ns5:TypeCode>
-                  </ns5:PreviousDocument>
-                  <ns5:UCR>
-                    <ns5:TraderAssignedReferenceID>9GB010969918000-0110182</ns5:TraderAssignedReferenceID>
-                  </ns5:UCR>
-                </ns5:GoodsShipment>
-              </ns5:Declaration>
-            </v2:retrieveDeclarationStatusDetails>
-          </v2:retrieveDeclarationStatusDetailsList>
-        </v2:retrieveDeclarationStatusResponse>
-      </v2:responseDetail>
-    </v2:queryDeclarationStatusResponse>
+  val actualBackendVersionResponse = {
+    <n1:retrieveDeclarationVersionResponse xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+                                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                           xmlns:Q1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                                           xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion"
+                                           xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionResponse.xsd">
+      <n1:responseCommon>
+        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
+      </n1:responseCommon>
+      <n1:responseDetail>
+        <n1:RetrieveDeclarationVersionResponse>
+          <n1:RetrieveDeclarationVersionDetailsList>
+            <n1:RetrieveDeclarationVersionDetails>
+              <n1:Declaration>
+                <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
+                <n1:VersionID>2</n1:VersionID>
+                <n1:CreatedDateTime>
+                  <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
+                </n1:CreatedDateTime>
+                <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
+              </n1:Declaration>
+              <od:Declaration>
+                <od:FunctionCode>9</od:FunctionCode>
+                <od:TypeCode>IM</od:TypeCode>
+                <od:GoodsShipment>
+                  <od:Consignment>
+                    <od:GoodsLocation>
+                      <od:ID>LIVLIVLIVR</od:ID>
+                      <od:TypeCode>14</od:TypeCode>
+                    </od:GoodsLocation>
+                  </od:Consignment>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
+                    <od:TypeCode>DCS</od:TypeCode>
+                  </od:PreviousDocument>
+                </od:GoodsShipment>
+              </od:Declaration>
+            </n1:RetrieveDeclarationVersionDetails>
+            <n1:RetrieveDeclarationVersionDetails>
+              <n1:Declaration>
+                <n1:ID>18GB9JLC3CU1LFGVR3</n1:ID>
+                <n1:VersionID>1</n1:VersionID>
+                <n1:CreatedDateTime>
+                  <n1:DateTimeString formatCode="304">20190703120957Z</n1:DateTimeString>
+                </n1:CreatedDateTime>
+                <n1:LRN>30GBAKZ81EQJ2WXYZ</n1:LRN>
+              </n1:Declaration>
+              <od:Declaration>
+                <od:FunctionCode>9</od:FunctionCode>
+                <od:TypeCode>IM</od:TypeCode>
+                <od:GoodsShipment>
+                  <od:Consignment>
+                    <od:GoodsLocation>
+                      <od:ID>LIVLIVLIVR</od:ID>
+                      <od:TypeCode>15</od:TypeCode>
+                    </od:GoodsLocation>
+                  </od:Consignment>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVX</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVZ</od:ID>
+                    <od:TypeCode>DCS</od:TypeCode>
+                  </od:PreviousDocument>
+                </od:GoodsShipment>
+              </od:Declaration>
+            </n1:RetrieveDeclarationVersionDetails>
+          </n1:RetrieveDeclarationVersionDetailsList>
+        </n1:RetrieveDeclarationVersionResponse>
+      </n1:responseDetail>
+    </n1:retrieveDeclarationVersionResponse>
   }.filter(_ => true)
 
   val expectedDeclarationStatusPayload: Elem =
@@ -191,123 +224,78 @@ object StatusTestXMLData {
       </n1:requestDetail>
     </n1:queryDeclarationInformationRequest>
 
-  def generateDeclarationStatusResponse(noOfDeclarationStatusResponses: Int = 1, acceptanceOrCreationDate: DateTime): NodeSeq = {
-    val items = 0 until noOfDeclarationStatusResponses
-    val content = items.map(index => generateDeclarationStatusDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate.plusMonths(index)), generateStandardResponseWCODeclaration()))
+  def generateDeclarationVersionResponse(noOfDeclarationVersionResponses: Int = 1, creationDate: DateTime): NodeSeq = {
+    val items = noOfDeclarationVersionResponses to 1 by -1
+    val content = items.map(index => generateDeclarationVersionDetailsElement(generateHMRCDeclaration(creationDate.plusMonths(index), index), generateStandardResponseWCODeclaration()))
 
     generateRootElements(content)
   }
 
   private def generateRootElements(content: Seq[NodeSeq]): Elem =
-    <n1:queryDeclarationStatusResponse
+    <n1:retrieveDeclarationVersionResponse
       xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
-      xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-      xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
-      xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusResponse.xsd">
+      xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion"
+      xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionResponse.xsd">
       <n1:responseCommon>
         <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
       </n1:responseCommon>
       <n1:responseDetail>
-        <n1:retrieveDeclarationStatusResponse>
-          <n1:retrieveDeclarationStatusDetailsList>
+        <n1:RetrieveDeclarationVersionResponse>
+          <n1:RetrieveDeclarationVersionDetailsList>
             {content}
-          </n1:retrieveDeclarationStatusDetailsList>
-        </n1:retrieveDeclarationStatusResponse>
+          </n1:RetrieveDeclarationVersionDetailsList>
+        </n1:RetrieveDeclarationVersionResponse>
       </n1:responseDetail>
-    </n1:queryDeclarationStatusResponse>
+    </n1:retrieveDeclarationVersionResponse>
 
-  private def generateDeclarationStatusDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq =
-    <n1:retrieveDeclarationStatusDetails>
+  private def generateDeclarationVersionDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq =
+    <n1:RetrieveDeclarationVersionDetails>
       {hmrcDeclaration}
       {wcoDeclaration}
-    </n1:retrieveDeclarationStatusDetails>
+    </n1:RetrieveDeclarationVersionDetails>
 
 
-  private def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime, withOptionalElements: Boolean = false): Elem =
+  private def generateHMRCDeclaration(creationDate: DateTime, versionId: Int) =
     <n1:Declaration>
-      <n1:AcceptanceDateTime>
-        <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
-      </n1:AcceptanceDateTime>
-      {if (withOptionalElements){
-        <n1:CancellationDateTime>
-          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
-        </n1:CancellationDateTime>
-        <n1:FunctionalReferenceID>token</n1:FunctionalReferenceID>
-      }}
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
-      {if (withOptionalElements){
-        <n1:RejectionDateTime>
-          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
-        </n1:RejectionDateTime>
-      }}
-      <n1:VersionID>1</n1:VersionID>
-      {if (withOptionalElements){
-        <n1:DutyTaxFee>
-          <n1:Payment>
-            <n1:ReferenceID >token</n1:ReferenceID>
-            <n1:TaxAssessedAmount currencyID="GBP">0.0</n1:TaxAssessedAmount>
-            <n1:DueDateTime>
-              <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
-            </n1:DueDateTime>
-            <n1:PaymentAmount currencyID="GBP">0.0</n1:PaymentAmount>
-            <n1:ObligationGuarantee>
-              <n1:ReferenceID>token</n1:ReferenceID>
-            </n1:ObligationGuarantee>
-          </n1:Payment>
-        </n1:DutyTaxFee>
-        <n1:GoodsShipment>
-          <n1:GovernmentAgencyGoodsItem>
-            <n1:SequenceNumeric>0.0</n1:SequenceNumeric>
-            <n1:Commodity>
-              <n1:DutyTaxFee/>
-            </n1:Commodity>
-          </n1:GovernmentAgencyGoodsItem>
-        </n1:GoodsShipment>
-      }}
-      <n1:ReceivedDateTime>
-        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(-1).toString(dateTimeFormat)}</n1:DateTimeString>
-      </n1:ReceivedDateTime>
-      <n1:GoodsReleasedDateTime>
-        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(1).toString(dateTimeFormat)}</n1:DateTimeString>
-      </n1:GoodsReleasedDateTime>
-      <n1:ROE>6</n1:ROE>
-      <n1:ICS>15</n1:ICS>
-      <n1:IRC>000</n1:IRC>
+      <n1:VersionID>{versionId}</n1:VersionID>
+      <n1:CreatedDateTime>
+        <n1:DateTimeString formatCode="304">{creationDate.toString(dateTimeFormat)}</n1:DateTimeString>
+      </n1:CreatedDateTime>
+      <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
     </n1:Declaration>
 
   private def generateStandardResponseWCODeclaration(): Elem =
     <od:Declaration>
       <od:FunctionCode>9</od:FunctionCode>
       <od:TypeCode>IMZ</od:TypeCode>
-      <od:GoodsItemQuantity>100</od:GoodsItemQuantity>
-      <od:TotalPackageQuantity>10</od:TotalPackageQuantity>
-      <od:Submitter>
-        <od:ID>GB123456789012000</od:ID>
-      </od:Submitter>
       <od:GoodsShipment>
+        <od:Consignment>
+          <od:GoodsLocation>
+            <od:ID>LIVLIVLIVR</od:ID>
+            <od:TypeCode>14</od:TypeCode>
+          </od:GoodsLocation>
+        </od:Consignment>
         <od:PreviousDocument>
           <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
           <od:TypeCode>DCR</od:TypeCode>
         </od:PreviousDocument>
         <od:PreviousDocument>
           <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
-          <od:TypeCode>MCR</od:TypeCode>
+          <od:TypeCode>DCS</od:TypeCode>
         </od:PreviousDocument>
-        <od:UCR>
-          <od:TraderAssignedReferenceID>20GBAKZ81EQJ2WXYZ</od:TraderAssignedReferenceID>
-        </od:UCR>
       </od:GoodsShipment>
     </od:Declaration>
 
   def generateDeclarationStatusResponseContainingAllOptionalElements(acceptanceOrCreationDate: DateTime): NodeSeq = {
-    val content = generateDeclarationStatusDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate, withOptionalElements = true), getWcoDeclarationWithAllElementsPopulated())
+    val content = generateDeclarationVersionDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate, 1), getWcoDeclarationWithAllElementsPopulated)
 
     generateRootElements(content)
   }
 
-  private def getWcoDeclarationWithAllElementsPopulated(): Node = {
+  private def getWcoDeclarationWithAllElementsPopulated: Node = {
     XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml").head
   }
 }
