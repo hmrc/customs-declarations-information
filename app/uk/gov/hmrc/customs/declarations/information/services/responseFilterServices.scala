@@ -55,7 +55,7 @@ abstract class ResponseFilterService() {
   protected val NameSpaceP3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"//wco Declaration complex type definition
   protected val NameSpaceP4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
   protected val NameSpaceXsi="http://www.w3.org/2001/XMLSchema-instance"
-  
+
   protected val rootElementLabel: String
   protected val detailsElementLabel: String
 
@@ -89,7 +89,7 @@ abstract class ResponseFilterService() {
         val declarations = node \ "Declaration"
         val mdgDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == NameSpaceP)
         val wcoDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
-  
+
         <p:details>
           {prefixReWriter.transform(mdgDeclaration)}
           {prefixReWriter.transform(wcoDeclaration)}
