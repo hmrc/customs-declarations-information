@@ -16,7 +16,6 @@
 
 package unit.services
 
-import java.util.UUID
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{reset, verify, when}
@@ -35,27 +34,30 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{Author
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
 import util.TestData.{correlationId, _}
+import util.UnitSpec
 
+import java.util.UUID
 import scala.concurrent.Future
 import scala.util.Left
 
-class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
+class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
   private val dateTime = new DateTime()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
-  protected lazy val mockStatusResponseFilterService: StatusResponseFilterService = mock[StatusResponseFilterService]
+  protected lazy val mockVersionResponseFilterService: VersionResponseFilterService = mock[VersionResponseFilterService]
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
   protected lazy val mockLogger: InformationLogger = mock[InformationLogger]
+  //TODO replace with version connector
   protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
+  //TODO replace with version payload decorator
   protected lazy val mockPayloadDecorator: BackendPayloadCreator = mock[BackendPayloadCreator]
   protected lazy val mockDateTimeProvider: DateTimeService = mock[DateTimeService]
   protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
   protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
-  protected val searchType = Mrn("theMrn")
+  protected val mrn = Mrn("theMrn")
   protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
@@ -63,23 +65,23 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
     when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
-      meq[SearchType](searchType))(any[AuthorisedRequest[_]]))
+      meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(mockHttpResponse))
     when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
     when(mockHttpResponse.headers).thenReturn(any[Map[String, Seq[String]]])
-    when(mockStatusResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
+    when(mockVersionResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
 
-    protected lazy val service: DeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockApiSubscriptionFieldsConnector,
+    protected lazy val service: DeclarationVersionService = new DeclarationVersionService(mockVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
       mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
-      await(service.send(searchType) (vpr, hc))
+      await(service.send(mrn) (vpr, hc))
     }
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationStatusConnector, mockHttpResponse, mockStatusResponseFilterService)
+    reset(mockDateTimeProvider, mockDeclarationStatusConnector, mockHttpResponse, mockVersionResponseFilterService)
   }
 
   "Business Service" should {
@@ -87,14 +89,14 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), searchType)(TestCspAuthorisedRequest)
+      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
       implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, None, searchType)(nonCspRequest)
+      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
     }
 
     "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
@@ -114,7 +116,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
                                                |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
                                                |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
                                                |        <cds:errorCode>CDS60001</cds:errorCode>
-                                               |        <cds:errorMessage>Declaration not found</cds:errorMessage>
+                                               |        <cds:errorMessage>Declaration Not Found</cds:errorMessage>
                                                |        <cds:source/>
                                                |      </cds:errorDetail>""".stripMargin
         )
@@ -122,7 +124,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[SearchType](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
@@ -141,10 +143,29 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid").XmlResult.withConversationId)
+    }
+    
+    "return 400 error response when backend call fails with 500 and errorCode CDS60011" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60011</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Declaration Submission Channel</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
@@ -160,7 +181,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
@@ -171,7 +192,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
@@ -182,7 +203,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, NotFoundCode, "Declaration not found").XmlResult.withConversationId)
@@ -193,7 +214,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
+        meq[SearchType](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
