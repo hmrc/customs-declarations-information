@@ -97,10 +97,6 @@ documentation:
           description: The page number of the results. Default value is 1.
           type: integer
           required: false
-        authenticatedParty:
-          description: Internal use only [MOVE TO PRIVATE ENDPOINT?] 
-          type: boolean
-          required: false
       responses:
         200:
           body:
@@ -250,10 +246,6 @@ documentation:
               description: The version of a declaration. Omitting this parameter will return the latest version.  
               type: integer
               required: false
-            authenticatedParty:
-              description: Internal use only 
-              type: boolean
-              required: false
           responses:
             200:
               body:
@@ -294,10 +286,6 @@ documentation:
           (annotations.scope): "write:customs-declarations-information"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
           queryParameters:
-            authenticatedParty:
-              description: Internal use only 
-              type: boolean
-              required: false
           responses:
             200:
               body:
