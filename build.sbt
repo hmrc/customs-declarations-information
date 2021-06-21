@@ -20,11 +20,6 @@ scalaVersion := "2.12.11"
 targetJvm := "jvm-1.8"
 val silencerVersion = "1.7.0"
 
-lazy val allResolvers = resolvers ++= Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  Resolver.jcenterRepo
-)
-
 lazy val ComponentTest = config("component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
 
@@ -54,7 +49,6 @@ lazy val microservice = (project in file("."))
     playPublishingSettings,
     allTest,
     scoverageSettings,
-    allResolvers,
     // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
     scalacOptions += "-P:silencer:pathFilters=views;routes",
     libraryDependencies ++= Seq(
