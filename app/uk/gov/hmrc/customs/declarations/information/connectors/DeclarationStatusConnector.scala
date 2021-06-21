@@ -32,7 +32,6 @@ import uk.gov.hmrc.customs.declarations.information.services.InformationConfigSe
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.logging.Authorization
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -113,10 +112,10 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
   }
 
   private def post[A](xml: NodeSeq, url: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
-    logger.debug(s"Sending request to $url. Headers ${hc.headers} Payload: ${xml.toString()}")
+    logger.debug(s"Sending request to $url. Headers ${hc.extraHeaders} Payload: ${xml.toString()}")
 
     val startTime = LocalDateTime.now
-    http.POSTString[HttpResponse](url, xml.toString()).map { response =>
+    http.POSTString[HttpResponse](url, xml.toString(), hc.extraHeaders ++ hc.headers(Seq(AUTHORIZATION))).map { response =>
       logCallDuration(startTime)
       logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
 

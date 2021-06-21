@@ -37,10 +37,8 @@ lazy val allTest = Seq(testAll := (test in ComponentTest)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala)
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .enablePlugins(SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
-  .enablePlugins(SbtArtifactory)
   .configs(testConfig: _*)
   .settings(
     commonSettings,
@@ -70,7 +68,6 @@ lazy val integrationComponentTestSettings =
   inConfig(CdsIntegrationComponentTest)(Defaults.testTasks) ++
     Seq(
       testOptions in CdsIntegrationComponentTest := Seq(Tests.Filter(integrationComponentTestFilter)),
-      fork in CdsIntegrationComponentTest := false,
       parallelExecution in CdsIntegrationComponentTest := false,
       addTestReportOption(CdsIntegrationComponentTest, "int-comp-test-reports"),
       testGrouping in CdsIntegrationComponentTest := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
@@ -89,7 +86,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
       ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
       ,".*(Reverse|AuthService|BuildInfo|Routes).*"
     ).mkString(";"),
-  coverageMinimum := 97,
+  coverageMinimumStmtTotal := 97,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false
@@ -131,5 +128,3 @@ zipWcoXsds := { mappings: Seq[PathMapping] =>
 }
 
 pipelineStages := Seq(zipWcoXsds)
-
-evictionWarningOptions in update := EvictionWarningOptions.default.withWarnTransitiveEvictions(false)
