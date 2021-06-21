@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.VersionResponseFilterService
-import util.VersionTestXMLData.{actualBackendVersionResponse, defaultDateTime, generateDeclarationVersionResponse, generateDeclarationResponseContainingAllOptionalElements}
+import util.VersionTestXMLData.{validBackendVersionResponse, defaultDateTime, generateDeclarationVersionResponse, generateDeclarationResponseContainingAllOptionalElements}
 import util.UnitSpec
 
 import scala.xml._
@@ -55,7 +55,7 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec with MockitoS
     }
 
     "handle actual backend response" in new SetUp {
-      val multiVersionResponsesWithAllValues: NodeSeq = service.transform(actualBackendVersionResponse)
+      val multiVersionResponsesWithAllValues: NodeSeq = service.transform(validBackendVersionResponse)
 
       xmlValidationService.validate(multiVersionResponsesWithAllValues) should be(true)
     }

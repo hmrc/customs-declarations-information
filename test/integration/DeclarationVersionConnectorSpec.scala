@@ -23,24 +23,24 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
-import uk.gov.hmrc.customs.declarations.information.connectors.{DeclarationStatusConnector, Non2xxResponseException}
+import uk.gov.hmrc.customs.declarations.information.connectors.{DeclarationVersionConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.http._
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
-import util.CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1
+import util.CustomsDeclarationsExternalServicesConfig.BackendVersionDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
-import util.StatusTestXMLData.expectedStatusPayloadRequest
 import util.TestData._
+import util.VersionTestXMLData.expectedVersionPayloadRequest
 import util._
 import util.externalservices.BackendDeclarationService
 
-class DeclarationStatusConnectorSpec extends IntegrationTestSpec
+class DeclarationVersionConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
   with MockitoSugar
   with BackendDeclarationService {
 
-  private lazy val connector = app.injector.instanceOf[DeclarationStatusConnector]
+  private lazy val connector = app.injector.instanceOf[DeclarationVersionConnector]
 
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
@@ -64,38 +64,38 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
 
   override implicit lazy val app: Application =
     GuiceApplicationBuilder(overrides = Seq(TestModule.asGuiceableModule)).configure(Map(
-      "microservice.services.declaration-status.host" -> Host,
-      "microservice.services.declaration-status.port" -> Port,
-      "microservice.services.declaration-status.context" -> BackendStatusDeclarationServiceContextV1,
-      "microservice.services.declaration-status.bearer-token" -> AuthToken
+      "microservice.services.declaration-version.host" -> Host,
+      "microservice.services.declaration-version.port" -> Port,
+      "microservice.services.declaration-version.context" -> BackendVersionDeclarationServiceContextV1,
+      "microservice.services.declaration-version.bearer-token" -> AuthToken
     )).build()
 
-  "DeclarationStatusConnector" should {
+  "DeclarationVersionConnector" should {
 
     "make a correct request for a CSP" in {
-      startBackendStatusServiceV1()
+      startBackendVersionServiceV1()
       await(sendValidXml())
-      verifyBackendDecServiceWasCalledWith(requestBody = expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+      verifyBackendDecServiceWasCalledWith(BackendVersionDeclarationServiceContextV1, requestBody = expectedVersionPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
     "make a correct request for a non-CSP" in {
-      startBackendStatusServiceV1()
+      startBackendVersionServiceV1()
       await(sendValidXml())
-      verifyBackendDecServiceWasCalledWith(requestBody = expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
+      verifyBackendDecServiceWasCalledWith(BackendVersionDeclarationServiceContextV1, requestBody = expectedVersionPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
     "return a failed future when external service returns 404" in {
-      startBackendStatusServiceV1(NOT_FOUND)
+      startBackendVersionServiceV1(NOT_FOUND)
       intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe NOT_FOUND
     }
 
     "return a failed future when external service returns 400" in {
-      startBackendStatusServiceV1(BAD_REQUEST)
+      startBackendVersionServiceV1(BAD_REQUEST)
       intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe BAD_REQUEST
     }
 
     "return a failed future when external service returns 500" in {
-      startBackendStatusServiceV1(INTERNAL_SERVER_ERROR)
+      startBackendVersionServiceV1(INTERNAL_SERVER_ERROR)
       intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe INTERNAL_SERVER_ERROR
     }
 

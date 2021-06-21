@@ -42,7 +42,32 @@ object VersionTestXMLData {
     .appendTimeZoneOffset("Z", false, 2, 2)
     .toFormatter
 
-  val actualBackendVersionResponse = {
+  val expectedVersionPayloadRequest = {
+    <ns1:retrieveDeclarationVersionRequest
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion"
+    xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd">
+      <ns1:requestCommon>
+        <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+        <ns1:conversationID>5d2ab59f-da76-446d-b645-38e6fdfa2e98</ns1:conversationID>
+        <ns1:correlationID>c7422214-ed73-48ab-b03b-e709275af5ad</ns1:correlationID>
+        <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
+        <ns1:dateTimeStamp>2021-05-17T09:30:47Z</ns1:dateTimeStamp>
+        <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+        <ns1:originatingPartyID>BADGEID123</ns1:originatingPartyID>
+      </ns1:requestCommon>
+      <ns1:requestDetail>
+        <ns1:RetrieveDeclarationVersionRequest>
+          <ns1:ServiceRequestParameters>
+            <ns1:MRN>someMrn</ns1:MRN>
+            <ns1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</ns1:DeclarationSubmissionChannel>
+          </ns1:ServiceRequestParameters>
+        </ns1:RetrieveDeclarationVersionRequest>
+      </ns1:requestDetail>
+    </ns1:retrieveDeclarationVersionRequest>
+  }
+  
+  val validBackendVersionResponse = {
     <n1:retrieveDeclarationVersionResponse xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xmlns:Q1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
