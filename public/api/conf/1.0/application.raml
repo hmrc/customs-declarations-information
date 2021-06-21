@@ -97,10 +97,6 @@ documentation:
           description: The page number of the results. Default value is 1.
           type: integer
           required: false
-        declarationSubmissionChannel:
-          description: Internal use only. Only valid value is AuthenticatedPartyOnly.
-          type: string
-          required: false
       responses:
         200:
           body:
@@ -250,10 +246,6 @@ documentation:
               description: The version of a declaration. Omitting this parameter will return the latest version.  
               type: integer
               required: false
-            declarationSubmissionChannel:
-              description: Internal use only 
-              type: string
-              required: false
           responses:
             200:
               body:
@@ -294,10 +286,6 @@ documentation:
           (annotations.scope): "write:customs-declarations-information"
           securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
           queryParameters:
-            declarationSubmissionChannel:
-              description: Internal use only. Only valid value is AuthenticatedPartyOnly.
-              type: string
-              required: false
           responses:
             200:
               body:
