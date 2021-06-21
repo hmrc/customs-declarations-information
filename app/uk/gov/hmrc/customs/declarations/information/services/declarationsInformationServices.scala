@@ -22,7 +22,7 @@ import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, NotFoundCode, errorInternalServerError}
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector, Non2xxResponseException}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationConnector, DeclarationStatusConnector, DeclarationVersionConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -69,7 +69,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
 class DeclarationVersionService @Inject()(versionResponseFilterService: VersionResponseFilterService,
                                           override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                           override val logger: InformationLogger,
-                                          connector: DeclarationStatusConnector,
+                                          connector: DeclarationVersionConnector,
                                           dateTimeProvider: DateTimeService,
                                           uniqueIdsService: UniqueIdsService)
                                          (implicit override val ec: ExecutionContext)
@@ -96,7 +96,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
 
 abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                             override val logger: InformationLogger,
-                                            connector: DeclarationStatusConnector,
+                                            connector: DeclarationConnector,
                                             dateTimeProvider: DateTimeService,
                                             uniqueIdsService: UniqueIdsService)
                                            (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {

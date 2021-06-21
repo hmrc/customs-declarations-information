@@ -40,17 +40,48 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 @Singleton
-class DeclarationStatusConnector @Inject()(val http: HttpClient,
-                                           val logger: InformationLogger,
-                                           val backendPayloadCreator: BackendPayloadCreator,
-                                           val serviceConfigProvider: ServiceConfigProvider,
-                                           val config: InformationConfigService,
-                                           val cdsLogger: CdsLogger,
-                                           val actorSystem: ActorSystem)
-                                          (implicit val ec: ExecutionContext)
-  extends CircuitBreakerConnector with HttpErrorFunctions with Status {
+class DeclarationStatusConnector @Inject()(http: HttpClient,
+                                           logger: InformationLogger,
+                                           backendPayloadCreator: BackendPayloadCreator,
+                                           serviceConfigProvider: ServiceConfigProvider,
+                                           config: InformationConfigService,
+                                           override val cdsLogger: CdsLogger,
+                                           override val actorSystem: ActorSystem)
+                                          (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
 
   override val configKey = "declaration-status"
+
+  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+}
+
+@Singleton
+class DeclarationVersionConnector @Inject()(http: HttpClient,
+                                            logger: InformationLogger,
+                                            backendPayloadCreator: BackendPayloadCreator,
+                                            serviceConfigProvider: ServiceConfigProvider,
+                                            config: InformationConfigService,
+                                            override val cdsLogger: CdsLogger,
+                                            override val actorSystem: ActorSystem)
+                                          (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+
+  override val configKey = "declaration-version"
+
+  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+}
+
+abstract class DeclarationConnector @Inject()(http: HttpClient,
+                                              logger: InformationLogger,
+                                              backendPayloadCreator: BackendPayloadCreator,
+                                              serviceConfigProvider: ServiceConfigProvider,
+                                              config: InformationConfigService)
+                                          (implicit val ec: ExecutionContext)
+  extends CircuitBreakerConnector with HttpErrorFunctions with Status {
 
   override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
@@ -66,18 +97,18 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
 
-    val declarationStatusPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
-    withCircuitBreaker(post(declarationStatusPayload, config.url))
+    val declarationPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
+    withCircuitBreaker(post(declarationPayload, config.url))
   }
 
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
     Seq(
-        (X_FORWARDED_HOST, "MDTP"),
-        (XCorrelationIdHeaderName, correlationId.toString),
-        (XConversationIdHeaderName, conversationId.toString),
-        (DATE, date.toString("EEE, dd MMM yyyy HH:mm:ss z")),
-        (CONTENT_TYPE, MimeTypes.XML + "; charset=utf-8"),
-        (ACCEPT, MimeTypes.XML)
+      (X_FORWARDED_HOST, "MDTP"),
+      (XCorrelationIdHeaderName, correlationId.toString),
+      (XConversationIdHeaderName, conversationId.toString),
+      (DATE, date.toString("EEE, dd MMM yyyy HH:mm:ss z")),
+      (CONTENT_TYPE, MimeTypes.XML + "; charset=utf-8"),
+      (ACCEPT, MimeTypes.XML)
     )
   }
 
@@ -96,13 +127,13 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
           throw new Non2xxResponseException(response, status)
       }
     }.recoverWith {
-        case httpError: HttpException =>
-          logger.error(s"Call to declaration status failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
-          Future.failed(httpError)
-        case e: Throwable =>
-          logger.error(s"Call to declaration status failed. url=$url")
-          Future.failed(e)
-      }
+      case httpError: HttpException =>
+        logger.error(s"Call to $configKey failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
+        Future.failed(httpError)
+      case e: Throwable =>
+        logger.error(s"Call to $configKey failed. url=$url")
+        Future.failed(e)
+    }
   }
 
   override protected def breakOnException(t: Throwable): Boolean = t match {

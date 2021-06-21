@@ -28,7 +28,7 @@ import util.FakeRequests.FakeRequestOps
 import util.RequestHeaders.{ACCEPT_HMRC_XML_HEADER_V2, ValidHeaders}
 import util.TestData.nonCspBearerToken
 import util.XmlOps.stringToXml
-import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendStatusDeclarationService}
+import util.externalservices.{ApiSubscriptionFieldsService, AuthService, BackendDeclarationService}
 import util.{AuditService, CustomsDeclarationsExternalServicesConfig}
 
 import java.io.StringReader
@@ -41,7 +41,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   with ExpectedTestResponses
   with Matchers
   with OptionValues
-  with BackendStatusDeclarationService
+  with BackendDeclarationService
   with ApiSubscriptionFieldsService
   with AuthService {
 
