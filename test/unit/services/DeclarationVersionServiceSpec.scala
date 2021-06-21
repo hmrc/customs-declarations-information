@@ -26,7 +26,7 @@ import play.api.test.Helpers
 import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{NotFoundCode, errorInternalServerError}
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector, Non2xxResponseException}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -50,8 +50,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
   protected lazy val mockVersionResponseFilterService: VersionResponseFilterService = mock[VersionResponseFilterService]
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
   protected lazy val mockLogger: InformationLogger = mock[InformationLogger]
-  //TODO replace with version connector
-  protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
+  protected lazy val mockDeclarationVersionConnector: DeclarationVersionConnector = mock[DeclarationVersionConnector]
   //TODO replace with version payload decorator
   protected lazy val mockPayloadDecorator: BackendPayloadCreator = mock[BackendPayloadCreator]
   protected lazy val mockDateTimeProvider: DateTimeService = mock[DateTimeService]
@@ -63,7 +62,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
 
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
-    when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(mockHttpResponse))
@@ -73,7 +72,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
 
     protected lazy val service: DeclarationVersionService = new DeclarationVersionService(mockVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService)
+      mockLogger, mockDeclarationVersionConnector, mockDateTimeProvider, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
       await(service.send(mrn) (vpr, hc))
@@ -81,7 +80,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationStatusConnector, mockHttpResponse, mockVersionResponseFilterService)
+    reset(mockDateTimeProvider, mockDeclarationVersionConnector, mockHttpResponse, mockVersionResponseFilterService)
   }
 
   "Business Service" should {
@@ -89,14 +88,14 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
+      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
       implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationStatusConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
+      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
     }
 
     "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
@@ -120,7 +119,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
                                                |        <cds:source/>
                                                |      </cds:errorDetail>""".stripMargin
         )
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -139,7 +138,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
                                                |        <cds:source/>
                                                |      </cds:errorDetail>""".stripMargin
       )
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -158,7 +157,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
                                                |        <cds:source/>
                                                |      </cds:errorDetail>""".stripMargin
       )
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -177,7 +176,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
                                                |        <cds:source/>
                                                |      </cds:errorDetail>""".stripMargin
       )
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -188,7 +187,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     }
 
     "return 500 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -199,7 +198,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     }
 
     "return 404 error response when backend call fails with 404" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -210,7 +209,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

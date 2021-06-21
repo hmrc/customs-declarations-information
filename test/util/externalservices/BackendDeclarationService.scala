@@ -21,25 +21,36 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.test.Helpers._
 import util.StatusTestXMLData.validBackendStatusResponse
+import util.VersionTestXMLData.validBackendVersionResponse
 import util._
 
 import scala.xml.NodeSeq
 
-trait BackendStatusDeclarationService extends WireMockRunner {
-  private val urlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1)
-  private val urlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV2)
+trait BackendDeclarationService extends WireMockRunner {
+  private val statusUrlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1)
+  private val statusUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV2)
+  private val versionUrlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendVersionDeclarationServiceContextV1)
+  private val versionUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendVersionDeclarationServiceContextV2)
 
   val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
 
   def startBackendStatusServiceV1(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
-    startBackendStatusService(urlV1, status, body)
+    startBackendService(statusUrlV1, status, body)
   }
 
   def startBackendStatusServiceV2(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
-    startBackendStatusService(urlV2, status, body)
+    startBackendService(statusUrlV2, status, body)
   }
 
-  private def startBackendStatusService(url: UrlPattern, status: Int, body: NodeSeq): Unit = {
+  def startBackendVersionServiceV1(status: Int = OK, body: NodeSeq = validBackendVersionResponse): Unit = {
+    startBackendService(versionUrlV1, status, body)
+  }
+
+  def startBackendVersionServiceV2(status: Int = OK, body: NodeSeq = validBackendVersionResponse): Unit = {
+    startBackendService(versionUrlV2, status, body)
+  }
+
+  private def startBackendService(url: UrlPattern, status: Int, body: NodeSeq): Unit = {
     stubFor(post(url).
       willReturn(
         aResponse()
@@ -47,10 +58,11 @@ trait BackendStatusDeclarationService extends WireMockRunner {
           .withBody(body.toString())))
   }
 
-  def verifyBackendStatusDecServiceWasCalledWith(requestBody: String,
-                                                 expectedAuthToken: String = ExternalServicesConfig.AuthToken,
-                                                 maybeUnexpectedAuthToken: Option[String] = None) {
-    verify(1, postRequestedFor(urlV1)
+  def verifyBackendDecServiceWasCalledWith(url: String = CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1,
+                                           requestBody: String,
+                                           expectedAuthToken: String = ExternalServicesConfig.AuthToken,
+                                           maybeUnexpectedAuthToken: Option[String] = None) {
+    verify(1, postRequestedFor(urlMatching(url))
       .withHeader(CONTENT_TYPE, equalTo(XML + "; charset=utf-8"))
       .withHeader(ACCEPT, equalTo(XML))
       .withHeader(AUTHORIZATION, equalTo(s"Bearer $expectedAuthToken"))
@@ -61,7 +73,7 @@ trait BackendStatusDeclarationService extends WireMockRunner {
       )
 
     maybeUnexpectedAuthToken foreach { unexpectedAuthToken =>
-      verify(0, postRequestedFor(urlV1).withHeader(AUTHORIZATION, equalTo(s"Bearer $unexpectedAuthToken")))
+      verify(0, postRequestedFor(statusUrlV1).withHeader(AUTHORIZATION, equalTo(s"Bearer $unexpectedAuthToken")))
     }
   }
 }

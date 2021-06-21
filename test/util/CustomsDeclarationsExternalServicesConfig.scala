@@ -19,6 +19,8 @@ package util
 object CustomsDeclarationsExternalServicesConfig {
   val BackendStatusDeclarationServiceContextV1 = "/backendStatusDecServiceV1/submit"
   val BackendStatusDeclarationServiceContextV2 = "/backendStatusDecServiceV2/submit"
+  val BackendVersionDeclarationServiceContextV1 = "/backendVersionDecServiceV1/submit"
+  val BackendVersionDeclarationServiceContextV2 = "/backendVersionDecServiceV2/submit"
   val ApiSubscriptionFieldsContext = "/api-subscription-fields/field"
   val AuditContext = "/write/audit.*"
 }
