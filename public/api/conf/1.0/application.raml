@@ -18,7 +18,7 @@ documentation:
     content: !include docs/overview.md
   - title: Service Features
     content: !include docs/api-status-and-roadmap.md
-  - title: Data availability [TO BE UPDATED]
+  - title: Data availability
     content: !include docs/data-availability-and-status.md
   - title: API Authorisation
     content: !include docs/authorisation.md
@@ -32,7 +32,7 @@ documentation:
 /customs/declarations-information:
   /search:
     get:
-      displayName: Search for declarations [NEW]
+      displayName: Search for declarations [WIP]
       description: Retrieve a list of declarations matching the query parameters [EXAMPLE RESPONSE TO BE UPDATED]
       headers:
         Accept:
@@ -209,9 +209,49 @@ documentation:
                   description: Successful response payload
                   type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
                   example: !include examples/example_messages/Trade%20Test%2015.0.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
+      /version:
+        get:
+          displayName: Get a list of declaration versions by MRN [NEW]
+          description: Get a list of declaration versions with the given MRN.
+          headers:
+            Accept:
+              description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+              type: string
+              required: true
+              example: application/vnd.hmrc.1.0+xml
+            X-Badge-Identifier:
+              description: |
+                Represents the end-user who is interacting with the subscribed application.
+
+                CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+                Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
+              type: string
+              required: false
+              example: ABC123
+            X-Submitter-Identifier:
+              description: |
+                The EORI associated with the originating owner of the declaration.
+
+                CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+                Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
+              type: string
+              required: false
+              example: GB123456789000
+          (annotations.scope): "write:customs-declarations-information"
+          securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
+          queryParameters:
+          responses:
+            200:
+              body:
+                application/xml:
+                  description: Successful response payload
+                  type: !include schemas/wco/declaration/DeclarationInformationRetrievalVersionResponse.xsd
+                  example: !include examples/declarationInformationVersionResponseExample.xml
       /full:
         get:
-          displayName: Get the full declaration by MRN [NEW]
+          displayName: Get the full declaration by MRN [WIP]
           description: Get the full declaration with the given MRN. [EXAMPLE RESPONSE TO BE UPDATED]
           headers:
             Accept:
@@ -246,46 +286,6 @@ documentation:
               description: The version of a declaration. Omitting this parameter will return the latest version.  
               type: integer
               required: false
-          responses:
-            200:
-              body:
-                application/xml:
-                  description: Successful response payload
-                  type: !include schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd
-                  example: !include examples/example_messages/Trade%20Test%2015.0.1%20Sample%20Messages/TT_IM01c/TT_IM01c_DIS%20Status%20API%20Response_v1.1.xml
-      /versions:
-        get:
-          displayName: Get a list of declaration versions by MRN [NEW]
-          description: Get a list of declaration versions with the given MRN. [EXAMPLE RESPONSE TO BE UPDATED]
-          headers:
-            Accept:
-              description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
-              type: string
-              required: true
-              example: application/vnd.hmrc.1.0+xml
-            X-Badge-Identifier:
-              description: |
-                Represents the end-user who is interacting with the subscribed application.
-
-                CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
-
-                Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
-              type: string
-              required: false
-              example: ABC123
-            X-Submitter-Identifier:
-              description: |
-                The EORI associated with the originating owner of the declaration.
-
-                CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
-
-                Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
-              type: string
-              required: false
-              example: GB123456789000
-          (annotations.scope): "write:customs-declarations-information"
-          securedBy: [ sec.oauth_2_0: { scopes: [ "write:customs-declarations-information" ] } ]
-          queryParameters:
           responses:
             200:
               body:
