@@ -46,15 +46,16 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
   
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
     implicit val id: ValidatedHeadersRequest[A] = vhr
-    val declarationSubmissionChannel = vhr.request.getQueryString("declarationSubmissionChannel")
+    val declarationSubmissionChannel = vhr.request.getQueryString("declarationSubmissionChannel") //TODO can be pulled from the prod.routes
     val path = vhr.request.path
     logger.debug(s"path is $path and declarationSubmissionChannel is $declarationSubmissionChannel")
 
     if (path.endsWith("status") && declarationSubmissionChannel.isDefined) {
       logger.warn("rejected attempt to call status endpoint with declarationSubmissionChannel parameter") //maybe this check not needed
       Left(errorBadRequest("declarationSubmissionChannel parameter not permitted in status request").XmlResult.withConversationId)
-    } else if (declarationSubmissionChannel.isDefined && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
-      Left(errorBadRequest("declarationSubmissionChannel parameter is for internal use only").XmlResult.withConversationId)
+    } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0
+        && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
+      Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
     }
     else {
       Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, declarationSubmissionChannel, vhr.request))
