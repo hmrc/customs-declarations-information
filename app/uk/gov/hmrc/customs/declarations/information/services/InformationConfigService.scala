@@ -38,8 +38,10 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
 
   private val apiSubscriptionFieldsServiceUrlNel = apiSubscriptionFieldsService.serviceUrl
 
+  private val internalClientIdsNel: CustomsValidatedNel[Seq[String]] = root.stringSeq("internal.clientIds")
+
   private val validatedInformationConfig: CustomsValidatedNel[InformationConfig] = (
-    apiSubscriptionFieldsServiceUrlNel, declarationStatusRequestDaysLimit
+    apiSubscriptionFieldsServiceUrlNel, declarationStatusRequestDaysLimit, internalClientIdsNel
   ) mapN InformationConfig
 
   private val validatedDeclarationsShutterConfig: CustomsValidatedNel[InformationShutterConfig] = (

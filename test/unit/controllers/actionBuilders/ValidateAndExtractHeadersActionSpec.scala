@@ -36,7 +36,7 @@ class ValidateAndExtractHeadersActionSpec extends UnitSpec with MockitoSugar wit
     implicit val ec = Helpers.stubControllerComponents().executionContext
     val mockLogger: InformationLogger = mock[InformationLogger]
     val mockHeaderStatusValidator: HeaderValidator = mock[HeaderValidator]
-    val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(mockHeaderStatusValidator, mockLogger)
+    val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(mockHeaderStatusValidator)
   }
 
   "HeaderValidationAction when validation succeeds" should {
