@@ -26,7 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{Author
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedAsCsp, BadgeIdentifier, Csp, Eori}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +57,7 @@ class AuthAction @Inject()(customsAuthService: CustomsAuthService,
 
   override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val implicitIcir: InternalClientIdsRequest[A] = icir
-    implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(rh.headers)
+    implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap{
       case Right(maybeAuthorisedAsCspWithIdentifierHeaders) =>
