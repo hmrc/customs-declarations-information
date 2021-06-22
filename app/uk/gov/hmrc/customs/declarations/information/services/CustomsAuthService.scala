@@ -27,8 +27,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 import uk.gov.hmrc.customs.declarations.information.model.{Eori, NonCsp}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Left

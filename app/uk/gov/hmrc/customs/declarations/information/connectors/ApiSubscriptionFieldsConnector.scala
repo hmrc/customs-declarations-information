@@ -16,15 +16,14 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
-import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiSubscriptionKey}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, UpstreamErrorResponse}
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, UpstreamErrorResponse}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
