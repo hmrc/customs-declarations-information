@@ -16,25 +16,25 @@
 
 package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
-import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId, HasRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId, HasRequest, InternalClientIdsRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedAsCsp, BadgeIdentifier, Csp, Eori}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Left
 
 /** Action builder that attempts to authorise request as a CSP or else NON CSP
  * <ul>
- * <li/>INPUT - `ValidatedHeadersRequest`
+ * <li/>INPUT - `InternalClientIdsRequest`
  * <li/>OUTPUT - `AuthorisedRequest` - authorised will be `AuthorisedAs.Csp` or `AuthorisedAs.NonCsp`
  * <li/>ERROR -
  * <ul>
@@ -43,21 +43,20 @@ import scala.util.Left
  * <li/>401 if not authorised as CSP or non-CSP
  * <li/>500 on any downstream errors returning 500
  * </ul>
- * </ul>
  */
 @Singleton
 class AuthAction @Inject()(customsAuthService: CustomsAuthService,
                            headerValidator: HeaderValidator,
                            logger: InformationLogger)
                           (implicit ec: ExecutionContext)
-  extends ActionRefiner[ValidatedHeadersRequest, AuthorisedRequest] {
+  extends ActionRefiner[InternalClientIdsRequest, AuthorisedRequest] {
 
   protected[this] def executionContext: ExecutionContext = ec
 
   private def errorResponseMissingIdentifiers = errorBadRequest(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName headers are missing")
 
-  override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitVhr: ValidatedHeadersRequest[A] = vhr
+  override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitIcir: InternalClientIdsRequest[A] = icir
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(rh.headers)
 
     authAsCspWithMandatoryAuthHeaders.flatMap{
@@ -67,10 +66,10 @@ class AuthAction @Inject()(customsAuthService: CustomsAuthService,
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
-              Right(vhr.toNonCspAuthorisedRequest(nonCspData.eori))
+              Right(icir.toNonCspAuthorisedRequest(nonCspData.eori))
           }
         }{ cspData =>
-          Future.successful(Right(vhr.toCspAuthorisedRequest(cspData)))
+          Future.successful(Right(icir.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>
         Future.successful(Left(result.XmlResult.withConversationId))

@@ -21,7 +21,7 @@ import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -35,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
+                                 val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                  val authAction: AuthAction,
                                  val conversationIdAction: ConversationIdAction,
                                  val declarationStatusService: DeclarationStatusService,
@@ -99,5 +100,6 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
       conversationIdAction andThen
       shutterCheckAction andThen
       validateAndExtractHeadersAction andThen
+      internalClientIdsCheckAction andThen
       authAction
 }

@@ -45,28 +45,28 @@ class LoggingHelperSpec extends UnitSpec with MockitoSugar {
         "IGNORE" -> "IGNORE"
       )
     )
-  private val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("some-client-id"), requestMock)
+  private val internalClientIdsRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("some-client-id"), requestMock).toInternalClientIdsRequest(None)
 
   "LoggingHelper" should {
 
     "testFormatInfo" in {
-      LoggingHelper.formatInfo("Info message", validatedHeadersRequest) shouldBe expectedMessage("Info message")
+      LoggingHelper.formatInfo("Info message", internalClientIdsRequest) shouldBe expectedMessage("Info message")
     }
 
     "testFormatInfo with authorisation" in {
-      LoggingHelper.formatInfo("Info message", validatedHeadersRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))) shouldBe expectedMessage("Info message", "[authorisedAs=Csp(Some(ZZ123456789000), Some(BADGEID123))]")
+      LoggingHelper.formatInfo("Info message", internalClientIdsRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))) shouldBe expectedMessage("Info message", "[authorisedAs=Csp(Some(ZZ123456789000), Some(BADGEID123))]")
     }
 
     "testFormatError" in {
-      LoggingHelper.formatError("Error message", validatedHeadersRequest) shouldBe expectedMessage("Error message")
+      LoggingHelper.formatError("Error message", internalClientIdsRequest) shouldBe expectedMessage("Error message")
     }
 
     "testFormatWarn" in {
-      LoggingHelper.formatWarn("Warn message", validatedHeadersRequest) shouldBe expectedMessage("Warn message")
+      LoggingHelper.formatWarn("Warn message", internalClientIdsRequest) shouldBe expectedMessage("Warn message")
     }
 
     "testFormatDebug" in {
-      LoggingHelper.formatDebug("Debug message", validatedHeadersRequest) shouldBe expectedMessage("Debug message")
+      LoggingHelper.formatDebug("Debug message", internalClientIdsRequest) shouldBe expectedMessage("Debug message")
     }
 
     "testFormatDebugFull" in {

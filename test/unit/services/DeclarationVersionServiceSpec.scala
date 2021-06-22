@@ -92,7 +92,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
-      implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest.toNonCspAuthorisedRequest(declarantEori)
+      implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
       result.right.get.body shouldBe "<xml>transformed</xml>"
       verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
