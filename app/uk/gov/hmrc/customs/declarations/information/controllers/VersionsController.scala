@@ -67,7 +67,7 @@ class VersionsController @Inject()(val shutterCheckAction: ShutterCheckAction,
         Future.successful(result)
     }
   }
-  
+
   private def validateMrn(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
     if(mrn.validValue) {
       Right()

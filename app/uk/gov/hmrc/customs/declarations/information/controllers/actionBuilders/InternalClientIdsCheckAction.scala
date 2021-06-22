@@ -43,7 +43,7 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
   extends ActionRefiner[ValidatedHeadersRequest, InternalClientIdsRequest] {
 
   override def executionContext: ExecutionContext = ec
-  
+
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
     implicit val id: ValidatedHeadersRequest[A] = vhr
     val declarationSubmissionChannel = vhr.request.getQueryString("declarationSubmissionChannel")

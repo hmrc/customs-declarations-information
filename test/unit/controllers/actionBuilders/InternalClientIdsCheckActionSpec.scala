@@ -18,21 +18,19 @@ package unit.controllers.actionBuilders
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.Result
-import play.api.test.{FakeRequest, Helpers}
 import play.api.test.Helpers.{contentAsString, _}
+import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.InternalClientIdsCheckAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, InformationConfig, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import util.TestData.conversationId
 import util.UnitSpec
 import util.XmlOps.stringToXml
 
 import java.util.UUID
 
-class InternalIdActionSpec extends UnitSpec with MockitoSugar {
+class InternalClientIdsCheckActionSpec extends UnitSpec with MockitoSugar {
 
   trait SetUp {
     protected implicit val ec = Helpers.stubControllerComponents().executionContext

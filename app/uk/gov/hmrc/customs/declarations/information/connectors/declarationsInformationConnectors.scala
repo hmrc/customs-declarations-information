@@ -99,7 +99,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
     val declarationPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationPayload, config.url, headers))
   }
-  
+
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
     Seq(
       (X_FORWARDED_HOST, "MDTP"),
