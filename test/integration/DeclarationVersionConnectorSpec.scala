@@ -67,7 +67,8 @@ class DeclarationVersionConnectorSpec extends IntegrationTestSpec
       "microservice.services.declaration-version.host" -> Host,
       "microservice.services.declaration-version.port" -> Port,
       "microservice.services.declaration-version.context" -> BackendVersionDeclarationServiceContextV1,
-      "microservice.services.declaration-version.bearer-token" -> AuthToken
+      "microservice.services.declaration-version.bearer-token" -> AuthToken,
+      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$")
     )).build()
 
   "DeclarationVersionConnector" should {

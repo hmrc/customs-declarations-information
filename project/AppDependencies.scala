@@ -3,7 +3,7 @@ import sbt._
 object AppDependencies {
 
   private val scalatestplusVersion = "4.0.3"
-  private val mockitoVersion = "3.5.9"
+  private val mockitoVersion = "3.11.1"
   private val wireMockVersion = "2.28.1"
   private val customsApiCommonVersion = "1.56.0"
   private val testScope = "test,it"

@@ -67,7 +67,8 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       "microservice.services.declaration-status.host" -> Host,
       "microservice.services.declaration-status.port" -> Port,
       "microservice.services.declaration-status.context" -> BackendStatusDeclarationServiceContextV1,
-      "microservice.services.declaration-status.bearer-token" -> AuthToken
+      "microservice.services.declaration-status.bearer-token" -> AuthToken,
+      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$")
     )).build()
 
   "DeclarationStatusConnector" should {
