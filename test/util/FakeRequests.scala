@@ -25,10 +25,10 @@ import util.TestData.{cspBearerToken, nonCspBearerToken}
 
 object FakeRequests {
 
-  lazy val ValidCspDeclarationStatusRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromCsp
+  lazy val ValidCspDeclarationRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromCsp
   lazy val ValidCspDeclarationVersionRequestWithDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/versions?declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromCsp
   lazy val ValidCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/versions?declarationSubmissionChannel=AuthenticatedPartyOnly1").withHeaders(ValidHeaders.toSeq: _*).fromCsp
-  lazy val ValidNonCspDeclarationStatusRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
+  lazy val ValidNonCspDeclarationRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
   lazy val ValidNonCspDeclarationVersionRequestWithDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/versions?declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
   lazy val ValidNonCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/versions?declarationSubmissionChannel=AuthenticatedPartyOnly1").withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
 

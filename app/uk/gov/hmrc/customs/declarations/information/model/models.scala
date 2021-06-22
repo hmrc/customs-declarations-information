@@ -95,10 +95,6 @@ case class Ducr(value: String) extends SearchType {
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
 }
 
-case class AuthenticatedPartyOnly() {
-  override def toString: String = "AuthenticatedPartyOnly"
-}
-
 case class Ucr(value: String) extends SearchType {
   override def toString: String = value
   val label = "UCR"

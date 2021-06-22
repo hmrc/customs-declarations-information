@@ -46,18 +46,27 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
   
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
     implicit val id: ValidatedHeadersRequest[A] = vhr
-    val declarationSubmissionChannel = vhr.request.getQueryString("declarationSubmissionChannel") //TODO can be pulled from the prod.routes
+    val declarationSubmissionChannel = vhr.request.getQueryString("declarationSubmissionChannel")
     val path = vhr.request.path
     logger.debug(s"path is $path and declarationSubmissionChannel is $declarationSubmissionChannel")
 
     if (path.endsWith("status") && declarationSubmissionChannel.isDefined) {
+
       logger.warn("rejected attempt to call status endpoint with declarationSubmissionChannel parameter") //maybe this check not needed
       Left(errorBadRequest("declarationSubmissionChannel parameter not permitted in status request").XmlResult.withConversationId)
-    } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0
-        && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
+
+    } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0) {
+
+      logger.info(s"AuthenticatedPartyOnly parameter passed is invalid: $declarationSubmissionChannel")
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
-    }
-    else {
+
+    } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") == 0
+      && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
+
+      logger.info(s"AuthenticatedPartyOnly parameter passed but clientId: ${vhr.clientId.value} is not an internal clientId")
+      Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
+
+    } else {
       Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, declarationSubmissionChannel, vhr.request))
     }
   }

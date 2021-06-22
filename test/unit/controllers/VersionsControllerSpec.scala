@@ -42,11 +42,10 @@ import util.FakeRequests._
 import util.RequestHeaders._
 import util.TestData._
 import util.XmlOps.stringToXml
-import util.{AuthConnectorStubbing, StatusTestXMLData, UnitSpec}
+import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 
 import java.util.UUID
 import scala.concurrent.Future
-import scala.xml.NodeSeq
 
 class VersionsControllerSpec extends UnitSpec
   with Matchers with MockitoSugar with BeforeAndAfterEach {
@@ -67,7 +66,7 @@ class VersionsControllerSpec extends UnitSpec
     protected val mockResult: Result = mock[Result]
     protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
-    protected val stubHttpResponse = HttpResponse(Status.OK, StatusTestXMLData.validBackendStatusResponse.toString)
+    protected val stubHttpResponse = HttpResponse(Status.OK, VersionTestXMLData.validBackendVersionResponse.toString)
 
     protected val mockVersionConnector: DeclarationVersionConnector = mock[DeclarationVersionConnector]
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
@@ -109,21 +108,21 @@ class VersionsControllerSpec extends UnitSpec
   private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
   private val errorResultMrnTooLong = errorBadRequest("MRN too long").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultMissingMrn = errorBadRequest("Missing MRN").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
-  private val errorResultCDS60002 = errorBadRequest("MRN invalid", "CDS60002").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultMissingMrn = errorBadRequest("Missing MRN parameter").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultCDS60002 = errorBadRequest("MRN parameter invalid", "CDS60002").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
   "Declaration Version Controller for MRN queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
       authoriseCsp()
 
-      awaitSubmitMrn(ValidCspDeclarationStatusRequest)
+      awaitSubmitMrn(ValidCspDeclarationRequest)
 
       verifyCspAuthorisationCalled(numberOfTimes = 1)
     }
 
-    "process CSP request when call is authorised for CSP and declarationSubmissionChannel is set" in new SetUp() {
+    "process CSP request when call is authorised for CSP and declarationSubmissionChannel is set and is internal clientId" in new SetUp() {
       authoriseCsp()
-
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
       val result: Future[Result] = submitMrn(ValidCspDeclarationVersionRequestWithDeclarationSubmissionChannel, Some("AuthenticatedPartyOnly"))
       status(result) shouldBe OK
       verifyCspAuthorisationCalled(numberOfTimes = 1)
@@ -140,7 +139,7 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 200 and conversationId in header for a processed valid CSP request" in new SetUp() {
       authoriseCsp()
 
-      val result: Future[Result] = submitMrn(ValidCspDeclarationStatusRequest)
+      val result: Future[Result] = submitMrn(ValidCspDeclarationRequest)
 
       status(result) shouldBe OK
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
@@ -149,10 +148,10 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 400 and conversationId in header for a request without an Mrn" in new SetUp() {
       authoriseCsp()
 
-      val result: Future[Result] = controller.list("").apply(ValidCspDeclarationStatusRequest)
+      val result: Future[Result] = controller.list("").apply(ValidCspDeclarationRequest)
 
       status(result) shouldBe BAD_REQUEST
-      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Missing MRN</message></errorResponse>")
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Missing MRN parameter</message></errorResponse>")
 
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
@@ -160,17 +159,17 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 400 and conversationId in header for a request with an Mrn containing a space" in new SetUp() {
       authoriseCsp()
 
-      val result: Future[Result] = controller.list("12345678 ").apply(ValidCspDeclarationStatusRequest)
+      val result: Future[Result] = controller.list("12345678 ").apply(ValidCspDeclarationRequest)
 
       status(result) shouldBe BAD_REQUEST
-      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60002</code><message>MRN invalid</message></errorResponse>")
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60002</code><message>MRN parameter invalid</message></errorResponse>")
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
     }
 
     "respond with status 400 for a CSP request with both a missing X-Badge-Identifier and a missing X-Submitter-Identifier" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = awaitSubmitMrn(ValidCspDeclarationStatusRequest.withHeaders(ValidCspDeclarationStatusRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
+      val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders(ValidCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       result shouldBe errorResultMissingIdentifiers
       verifyNoMoreInteractions(mockVersionConnector)
     }
@@ -178,7 +177,7 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 500 for a CSP request with a missing X-Client-ID" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = awaitSubmitMrn(ValidCspDeclarationStatusRequest.withHeaders(ValidCspDeclarationStatusRequest.headers.remove(X_CLIENT_ID_NAME)))
+      val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders(ValidCspDeclarationRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
       verifyNoMoreInteractions(mockVersionConnector)
     }
@@ -186,7 +185,7 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 400 for a CSP request with an invalid X-Badge-Identifier" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = awaitSubmitMrn(ValidCspDeclarationStatusRequest.withHeaders((ValidHeaders + X_BADGE_IDENTIFIER_HEADER_INVALID_CHARS).toSeq: _*))
+      val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders((ValidHeaders + X_BADGE_IDENTIFIER_HEADER_INVALID_CHARS).toSeq: _*))
 
       result shouldBe errorResultBadgeIdentifier
       verifyNoMoreInteractions(mockVersionConnector)
@@ -195,7 +194,7 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 400 for a request with an MRN value that is too long" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = controller.list(invalidMrnTooLong).apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+      val result: Result = controller.list(invalidMrnTooLong).apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
       result shouldBe errorResultMrnTooLong
       verifyNoMoreInteractions(mockVersionConnector)
     }
@@ -203,7 +202,7 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 400 for a request with an MRN value that is too short" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = controller.list("").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+      val result: Result = controller.list("").apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
 
       result shouldBe errorResultMissingMrn
       verifyNoMoreInteractions(mockVersionConnector)
@@ -212,7 +211,7 @@ class VersionsControllerSpec extends UnitSpec
     "respond with status 400 for a request with an MRN value that contains a space" in new SetUp() {
       authoriseCsp()
 
-      val result: Result = controller.list("mrn withASpace").apply(ValidCspDeclarationStatusRequest.withHeaders(ValidHeaders.toSeq: _*))
+      val result: Result = controller.list("mrn withASpace").apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
 
       result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockVersionConnector)
@@ -222,7 +221,7 @@ class VersionsControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      awaitSubmitMrn(ValidNonCspDeclarationStatusRequest)
+      awaitSubmitMrn(ValidNonCspDeclarationRequest)
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -230,7 +229,7 @@ class VersionsControllerSpec extends UnitSpec
     "process non-CSP request when call is authorised for non-CSP with declarationSubmissionChannel set" in new SetUp() {
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
-
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
       awaitSubmitMrn(ValidNonCspDeclarationVersionRequestWithDeclarationSubmissionChannel)
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
@@ -252,7 +251,7 @@ class VersionsControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Future[Result] = submitMrn(ValidNonCspDeclarationStatusRequest)
+      val result: Future[Result] = submitMrn(ValidNonCspDeclarationRequest)
 
       status(result) shouldBe OK
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
@@ -262,7 +261,7 @@ class VersionsControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Result = awaitSubmitMrn(ValidNonCspDeclarationStatusRequest.withHeaders(ValidNonCspDeclarationStatusRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
+      val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       status(result) shouldBe OK
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
     }
@@ -271,7 +270,7 @@ class VersionsControllerSpec extends UnitSpec
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
-      val result: Result = awaitSubmitMrn(ValidNonCspDeclarationStatusRequest.withHeaders(ValidNonCspDeclarationStatusRequest.headers.remove(X_CLIENT_ID_NAME)))
+      val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
       verifyNoMoreInteractions(mockVersionConnector)
     }
@@ -286,7 +285,7 @@ class VersionsControllerSpec extends UnitSpec
 
       authoriseCsp()
 
-      val result: Result = awaitSubmitMrn(ValidCspDeclarationStatusRequest)
+      val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest)
 
       result.header.status shouldBe INTERNAL_SERVER_ERROR
     }
