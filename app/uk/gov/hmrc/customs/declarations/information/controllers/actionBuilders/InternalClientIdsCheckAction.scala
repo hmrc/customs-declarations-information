@@ -57,13 +57,13 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
 
     } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0) {
 
-      logger.info(s"AuthenticatedPartyOnly parameter passed is invalid: $declarationSubmissionChannel")
+      logger.info(s"declarationSubmissionChannel parameter passed is invalid: $declarationSubmissionChannel")
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
 
     } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") == 0
       && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
 
-      logger.info(s"AuthenticatedPartyOnly parameter passed but clientId: ${vhr.clientId.value} is not an internal clientId")
+      logger.info(s"declarationSubmissionChannel parameter passed but clientId: ${vhr.clientId.value} is not an internal clientId")
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
 
     } else {
