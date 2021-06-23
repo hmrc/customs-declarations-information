@@ -20,11 +20,6 @@ scalaVersion := "2.12.11"
 targetJvm := "jvm-1.8"
 val silencerVersion = "1.7.0"
 
-lazy val allResolvers = resolvers ++= Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  Resolver.jcenterRepo
-)
-
 lazy val ComponentTest = config("component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
 
@@ -42,10 +37,8 @@ lazy val allTest = Seq(testAll := (test in ComponentTest)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala)
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .enablePlugins(SbtDistributablesPlugin)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
-  .enablePlugins(SbtArtifactory)
   .configs(testConfig: _*)
   .settings(
     commonSettings,
@@ -54,7 +47,6 @@ lazy val microservice = (project in file("."))
     playPublishingSettings,
     allTest,
     scoverageSettings,
-    allResolvers,
     // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
     scalacOptions += "-P:silencer:pathFilters=views;routes",
     libraryDependencies ++= Seq(
@@ -76,7 +68,6 @@ lazy val integrationComponentTestSettings =
   inConfig(CdsIntegrationComponentTest)(Defaults.testTasks) ++
     Seq(
       testOptions in CdsIntegrationComponentTest := Seq(Tests.Filter(integrationComponentTestFilter)),
-      fork in CdsIntegrationComponentTest := false,
       parallelExecution in CdsIntegrationComponentTest := false,
       addTestReportOption(CdsIntegrationComponentTest, "int-comp-test-reports"),
       testGrouping in CdsIntegrationComponentTest := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
@@ -89,13 +80,13 @@ lazy val playPublishingSettings: Seq[sbt.Setting[_]] = Seq(credentials += SbtCre
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(
-      "<empty>"
-      ,"Reverse.*"
-      ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
-      ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
-      ,".*(Reverse|AuthService|BuildInfo|Routes).*"
-    ).mkString(";"),
-  coverageMinimum := 97,
+    "<empty>"
+    ,"Reverse.*"
+    ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
+    ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
+    ,".*(Reverse|AuthService|BuildInfo|Routes).*"
+  ).mkString(";"),
+  coverageMinimumStmtTotal := 97,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   parallelExecution in Test := false
@@ -137,5 +128,3 @@ zipWcoXsds := { mappings: Seq[PathMapping] =>
 }
 
 pipelineStages := Seq(zipWcoXsds)
-
-evictionWarningOptions in update := EvictionWarningOptions.default.withWarnTransitiveEvictions(false)

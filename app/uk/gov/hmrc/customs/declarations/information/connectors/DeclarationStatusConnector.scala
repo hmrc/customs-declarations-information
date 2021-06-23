@@ -32,7 +32,7 @@ import uk.gov.hmrc.customs.declarations.information.services.InformationConfigSe
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
-import uk.gov.hmrc.http.logging.Authorization
+
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -64,10 +64,10 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
-    implicit val hc: HeaderCarrier = HeaderCarrier(extraHeaders = getHeaders(date, asr.conversationId, correlationId), authorization = Some(Authorization(bearerToken)))
+    val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
 
     val declarationStatusPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
-    withCircuitBreaker(post(declarationStatusPayload, config.url))
+    withCircuitBreaker(post(declarationStatusPayload, config.url, headers))
   }
 
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
@@ -81,11 +81,12 @@ class DeclarationStatusConnector @Inject()(val http: HttpClient,
     )
   }
 
-  private def post[A](xml: NodeSeq, url: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier) = {
-    logger.debug(s"Sending request to $url. Headers ${hc.headers} Payload: ${xml.toString()}")
+  private def post[A](xml: NodeSeq, url: String, headers: Seq[(String, String)])(implicit asr: AuthorisedRequest[A]) = {
+    logger.debug(s"Sending request to $url. Headers $headers Payload: ${xml.toString()}")
+    implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
     val startTime = LocalDateTime.now
-    http.POSTString[HttpResponse](url, xml.toString()).map { response =>
+    http.POSTString[HttpResponse](url, xml.toString(), headers).map { response =>
       logCallDuration(startTime)
       logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
 
