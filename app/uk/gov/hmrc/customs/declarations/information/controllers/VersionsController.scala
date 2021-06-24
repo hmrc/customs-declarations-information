@@ -52,7 +52,7 @@ class VersionsController @Inject()(val shutterCheckAction: ShutterCheckAction,
 
     validateMrn(mrn) match {
       case Right(()) =>
-        declarationVersionService.send(mrn) map {
+        declarationVersionService.send(Right(mrn)) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId

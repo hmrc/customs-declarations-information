@@ -30,7 +30,7 @@ import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatus
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.BackendStatusPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.StatusTestXMLData.expectedStatusPayloadRequest
@@ -45,7 +45,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock[ServiceConfigProvider]
   private val mockInformationConfigService = mock[InformationConfigService]
-  private val mockBackendPayloadCreator = mock[BackendPayloadCreator]
+  private val mockBackendPayloadCreator = mock[BackendStatusPayloadCreator]
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
@@ -61,7 +61,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockBackendPayloadCreator.create(correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
+    when(mockBackendPayloadCreator.create(conversationId, correlationId, date, Left(mrn), Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
   private val successfulResponse = HttpResponse(200, "")
@@ -113,7 +113,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
         when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(null)
 
         val caught = intercept[IllegalArgumentException] {
-          await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
+          await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), Left(mrn)))
         }
         caught.getMessage shouldBe "config not found"
       }
@@ -121,7 +121,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with MockitoSugar with Bef
   }
 
   private def awaitRequest = {
-    await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
+    await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), Left(mrn)))
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {

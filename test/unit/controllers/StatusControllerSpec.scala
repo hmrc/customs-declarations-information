@@ -100,7 +100,7 @@ class StatusControllerSpec extends UnitSpec
       controller.getByMrn(mrnValue).apply(request)
     }
 
-    when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+    when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
     when(mockStatusResponseFilterService.transform(any[NodeSeq])).thenReturn(<xml>some xml</xml>)
@@ -247,7 +247,7 @@ class StatusControllerSpec extends UnitSpec
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](mrn).asInstanceOf[SearchType])(any[AuthorisedRequest[_]]))
+        meq[Either[SearchType, Mrn]](Left(mrn)))(any[AuthorisedRequest[_]]))
         .thenReturn(Future.failed(emulatedServiceFailure))
 
       authoriseCsp()
@@ -260,7 +260,7 @@ class StatusControllerSpec extends UnitSpec
 
   "Declaration Status Controller for DUCR queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
-      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](ducr).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(ducr)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       authoriseCsp()
 
       await(controller.getByDucr(ducrValue).apply(ValidCspDeclarationRequest))
@@ -269,7 +269,7 @@ class StatusControllerSpec extends UnitSpec
     }
 
     "process non-CSP request when call is authorised for non-CSP" in new SetUp() {
-      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](ducr).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(ducr)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
@@ -309,7 +309,7 @@ class StatusControllerSpec extends UnitSpec
 
   "Declaration Status Controller for UCR queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
-      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](ucr).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(ucr)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       authoriseCsp()
 
       await(controller.getByUcr(ucrValue).apply(ValidCspDeclarationRequest))
@@ -318,7 +318,7 @@ class StatusControllerSpec extends UnitSpec
     }
 
     "process non-CSP request when call is authorised for non-CSP" in new SetUp() {
-      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](ucr).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(ucr)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 
@@ -358,7 +358,7 @@ class StatusControllerSpec extends UnitSpec
 
   "Declaration Status Controller for inventory-reference queries" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
-      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](inventoryReference).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(inventoryReference)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       authoriseCsp()
 
       await(controller.getByInventoryReference(inventoryReferenceValue).apply(ValidCspDeclarationRequest))
@@ -367,7 +367,7 @@ class StatusControllerSpec extends UnitSpec
     }
 
     "process non-CSP request when call is authorised for non-CSP" in new SetUp() {
-      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](inventoryReference).asInstanceOf[SearchType])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+      when(mockStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Left(inventoryReference)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
 

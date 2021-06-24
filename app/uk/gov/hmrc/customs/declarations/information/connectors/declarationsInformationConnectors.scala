@@ -29,7 +29,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.{BackendPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
@@ -41,7 +41,7 @@ import scala.xml.NodeSeq
 @Singleton
 class DeclarationStatusConnector @Inject()(http: HttpClient,
                                            logger: InformationLogger,
-                                           backendPayloadCreator: BackendPayloadCreator,
+                                           backendPayloadCreator: BackendStatusPayloadCreator,
                                            serviceConfigProvider: ServiceConfigProvider,
                                            config: InformationConfigService,
                                            override val cdsLogger: CdsLogger,
@@ -59,7 +59,7 @@ class DeclarationStatusConnector @Inject()(http: HttpClient,
 @Singleton
 class DeclarationVersionConnector @Inject()(http: HttpClient,
                                             logger: InformationLogger,
-                                            backendPayloadCreator: BackendPayloadCreator,
+                                            backendPayloadCreator: BackendVersionPayloadCreator,
                                             serviceConfigProvider: ServiceConfigProvider,
                                             config: InformationConfigService,
                                             override val cdsLogger: CdsLogger,
@@ -90,13 +90,13 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
-              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
+              eitherMrnOrSearchType: Either[SearchType, Mrn])(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
 
-    val declarationPayload = backendPayloadCreator.create(correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
+    val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, eitherMrnOrSearchType, maybeApiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationPayload, config.url, headers))
   }
 

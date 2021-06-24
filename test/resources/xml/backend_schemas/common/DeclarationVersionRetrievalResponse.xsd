@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" xmlns:Q1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:Q2="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/" targetNamespace="http://gov.uk/customs/retrieveDeclarationVersion" elementFormDefault="qualified" version="1.0">
+	<xs:import namespace="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/" schemaLocation="cmm_20170222/cmmCodeListTypes.xsd"/>
+	<xs:import namespace="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" schemaLocation="WCO_DS/WCO_DEC_DS_2_DMS.xsd"/>
+	<xs:import namespace="urn:wco:datamodel:WCO:Response_DS:DMS:2" schemaLocation="WCO_DS/WCO_RES_DS_2_DMS.xsd"/>
+	<xs:import namespace="urn:wco:datamodel:WCO:DEC-DMS:2" schemaLocation="WCO_DEC_2_DMS.xsd"/>
+	<xs:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" schemaLocation="UNECE/UnqualifiedDataType_6_DMS.xsd"/>
+	<xs:import namespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" schemaLocation="cmm_20170222/cmmValueTypes.xsd"/>
+	<!-- ==================================================================================================== -->
+	<!-- Declaration Information Retrieval Status Request/Response definitions							      -->
+	<!-- Request the status of an individual declaration, identified by MRN, DUCR, Inventory Reference or UCR -->
+	<!-- ==================================================================================================== -->
+	<xs:complexType name="DeclarationVersionDetails">
+		<xs:sequence>
+			<xs:element name="Declaration" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="TraderNotificationResponseDeclaration">
+							<xs:sequence>
+								<xs:element name="CreatedDateTime" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation xml:lang="EN">
+											<Format>an..35</Format>
+											<DictionaryEntryName>
+                					Declaration. Created. Date Time
+                				</DictionaryEntryName>
+											<NamedComplexType>
+                					DeclarationCreatedDateTimeType
+                				</NamedComplexType>
+											<XMLTag>CreatedDateTime</XMLTag>
+										</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:choice>
+											<xs:element name="DateTimeString">
+												<xs:complexType>
+													<xs:simpleContent>
+														<xs:restriction base="udt:DateTimeType">
+															<xs:maxLength value="35"/>
+														</xs:restriction>
+													</xs:simpleContent>
+												</xs:complexType>
+											</xs:element>
+										</xs:choice>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="LRN" minOccurs="1" maxOccurs="1">
+									<xs:annotation>
+										<xs:documentation xml:lang="EN">
+											<DictionaryEntryName>
+                					LRN
+                				</DictionaryEntryName>
+											<NamedComplexType>
+                					LRNType
+                				</NamedComplexType>
+											<XMLTag>LRN</XMLTag>
+										</xs:documentation>
+									</xs:annotation>
+									<xs:simpleType>
+										<xs:restriction base="xs:string"/>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element ref="od:Declaration" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TraderNotificationResponseDeclaration">
+		<xs:annotation>
+			<xs:documentation xml:lang="EN">
+				<WCOID>42A</WCOID>
+				<WCOName>Declaration</WCOName>
+				<WCODescription>Any statement or action, in any form prescribed or accepted by
+          the Governmental Agency, giving information or particulars required by the
+          Governmental Agency
+        </WCODescription>
+			</xs:documentation>
+			<xs:documentation>
+				<WCOUsageDeclarationIM>X</WCOUsageDeclarationIM>
+				<WCOUsageDeclarationEX>X</WCOUsageDeclarationEX>
+				<WCOUsageDeclarationCRI>X</WCOUsageDeclarationCRI>
+				<WCOUsageDeclarationCRE>X</WCOUsageDeclarationCRE>
+				<WCOUsageDeclarationCONV>X</WCOUsageDeclarationCONV>
+				<WCOUsageDeclarationTRT>X</WCOUsageDeclarationTRT>
+				<WCOUsage_Response>X</WCOUsage_Response>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ID" type="otnds:DeclarationIdentificationIDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="EN">
+						<WCOFormat>an..70</WCOFormat>
+					</xs:documentation>
+					<xs:documentation>
+						<TDEDUID>1004</TDEDUID>
+						<TDEDName>Document. Identifier</TDEDName>
+					</xs:documentation>
+					<xs:documentation xml:lang="EN">
+						<WCOID>D014</WCOID>
+						<WCOName>Document reference number</WCOName>
+						<WCODescription>Reference number identifying a specific document
+            </WCODescription>
+					</xs:documentation>
+					<xs:documentation>
+						<DictionaryEntryName>Declaration. Identification. Identifier
+            </DictionaryEntryName>
+						<NamedComplexType>DeclarationIdentificationIDType</NamedComplexType>
+						<XMLTag>ID</XMLTag>
+						<UniquePositionID>336</UniquePositionID>
+						<WCOUsageDeclarationIM>X</WCOUsageDeclarationIM>
+						<WCOUsageDeclarationEX>X</WCOUsageDeclarationEX>
+						<WCOUsageDeclarationCRI>X</WCOUsageDeclarationCRI>
+						<WCOUsageDeclarationCRE>X</WCOUsageDeclarationCRE>
+						<WCOUsageDeclarationCONV>X</WCOUsageDeclarationCONV>
+						<WCOUsageDeclarationTRT>X</WCOUsageDeclarationTRT>
+						<WCOUsageUPU>X</WCOUsageUPU>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VersionID" type="otnds:DeclarationVersionIDType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="EN">
+						<WCOFormat>an..9</WCOFormat>
+					</xs:documentation>
+					<xs:documentation>
+						<TDEDUID>1057</TDEDUID>
+						<TDEDName>Version. Identifier</TDEDName>
+					</xs:documentation>
+					<xs:documentation xml:lang="EN">
+						<WCOID>383</WCOID>
+						<WCOName>Version number</WCOName>
+						<WCODescription>The sequential number that determines the version of a
+              specific document/message number
+            </WCODescription>
+					</xs:documentation>
+					<xs:documentation>
+						<DictionaryEntryName>Declaration. Version. Identifier
+            </DictionaryEntryName>
+						<NamedComplexType>DeclarationVersionIDType</NamedComplexType>
+						<XMLTag>VersionID</XMLTag>
+						<WCOUsageDeclarationIM>X</WCOUsageDeclarationIM>
+						<WCOUsageDeclarationEX>X</WCOUsageDeclarationEX>
+						<WCOUsageDeclarationTRT>X</WCOUsageDeclarationTRT>
+						<WCOUsage_Response>X</WCOUsage_Response>
+						<UniquePositionID>10289</UniquePositionID>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

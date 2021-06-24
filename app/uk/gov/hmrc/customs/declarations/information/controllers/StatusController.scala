@@ -81,7 +81,7 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
         Future.successful(appropriateResponse.XmlResult.withConversationId)
 
       case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
-        declarationStatusService.send(searchType) map {
+        declarationStatusService.send(Left(searchType)) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId
