@@ -1,9 +1,9 @@
 
 # Customs Declarations Information
 
-This API permits requesting the status of a declaration.
+This API permits requesting the status and versions of a declaration.
 
-The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in the request URL. The endpoint returns a set of latest status details.
+For the status endpoints The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in the request URL. The endpoint returns a set of latest status details.
 
 
 ## GET Status Request 
@@ -24,7 +24,21 @@ The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in 
 
  ```
 ---
+## GET Version Request
+ ### `GET /mrn/{mrn}/version`
 
+### curl command
+ ```
+  curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/version" \
+   -H 'Accept: application/vnd.hmrc.1.0+xml' \
+   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
+   -H 'X-Badge-Identifier: {Badge Id}' \
+   -H 'X-Submitter-Identifier: {Submitter Id}' \
+   -H 'X-Client-ID: {Valid Client Id}' \
+   -H 'cache-control: no-cache' 
+
+ ```
+---
 
 ### Lookup of `authenticatedEori` from `api-subscription-fields` service for CSPs only
 
