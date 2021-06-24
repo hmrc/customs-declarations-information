@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://gov.uk/customs/retrieveDeclarationVersion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../common/DeclarationVersionServiceMessages.xsd"/>
+	<xs:element name="retrieveDeclarationVersionResponse">
+		<xs:annotation>
+			<xs:documentation>Response containing full declaration version information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="responseCommon">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="processingDate" type="xs:dateTime"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="responseDetail">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RetrieveDeclarationVersionResponse" type="n1:RetrieveDeclarationVersionResponse"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

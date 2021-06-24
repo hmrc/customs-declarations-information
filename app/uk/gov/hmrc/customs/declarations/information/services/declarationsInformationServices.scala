@@ -24,7 +24,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, NotFoundCode, errorInternalServerError}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationConnector, DeclarationStatusConnector, DeclarationVersionConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.SearchType
+import uk.gov.hmrc.customs.declarations.information.model.{Mrn, SearchType}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
@@ -91,7 +91,6 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
     val responseXml = versionResponseFilterService.transform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
-
 }
 
 abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
@@ -113,14 +112,14 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
   protected val backendCDS60003InternalServerErrorResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", ErrorInternalServerError.message)
   protected val backendCDS60011InvalidSubmissionChannelResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter")
 
-  def send[A](searchType: SearchType)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
+  def send[A](eitherMrnOrSearchType: Either[SearchType, Mrn])(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
 
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
-        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
+        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, eitherMrnOrSearchType)
           .map(response => {
             val startTime = LocalDateTime.now
             val filteredResponse = filterResponse(response, XML.loadString(response.body))

@@ -123,7 +123,12 @@ object TestData {
   val TestExtractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestApiVersionRequestV1.toValidatedHeadersRequest(TestExtractedHeaders)
   val TestInternalClientIdsRequest = TestValidatedHeadersRequest.toInternalClientIdsRequest(None)
+  val TestInternalClientIdsRequestWithDeclarationSubmissionChannel = TestValidatedHeadersRequest.toInternalClientIdsRequest(Some("AuthenticatedPartyOnly"))
+  val TestCspWithoutBadgeAuthorisedRequest = TestInternalClientIdsRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), None))
   val TestCspAuthorisedRequest = TestInternalClientIdsRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
+  val TestCspAuthorisedRequestWithDeclarationSubmissionChannel = TestInternalClientIdsRequestWithDeclarationSubmissionChannel.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
+  val TestNonCspAuthorisedRequest = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
+  val TestNonCspAuthorisedRequestWithDeclarationSubmissionChannel = TestInternalClientIdsRequestWithDeclarationSubmissionChannel.toNonCspAuthorisedRequest(declarantEori)
   val TestValidatedHeadersRequestNoBadgeIdNoEori = TestApiVersionRequestV1.toValidatedHeadersRequest(TestExtractedHeaders)
 
   lazy val TestValidatedHeadersRequestWithValidBadgeIdEoriPair =

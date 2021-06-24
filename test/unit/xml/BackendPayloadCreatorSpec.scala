@@ -21,11 +21,13 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.{BackendStatusPayloadCreator, BackendVersionPayloadCreator}
 import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
+import util.VersionTestXMLData.{validCspVerionRequestPayload, validCspVerionRequestPayloadWithDeclarationSubmissionChannel, validCspVerionRequestWithoutBadgePayload, validNonCspVerionRequestPayload, validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel}
+import util.XmlOps.stringToXml
 
 import scala.xml.NodeSeq
 
@@ -40,18 +42,60 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   private val secondOfMinute = 0
   private val millisOfSecond = 0
   private val dateTime = new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond, DateTimeZone.UTC)
-  private val payloadCreator = new BackendPayloadCreator()
+  private val statusPayloadCreator = new BackendStatusPayloadCreator()
+  private val versionPayloadCreator = new BackendVersionPayloadCreator()
 
   import ValidateXmlAgainstSchema._
-  val schemaFile = getSchema("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd")
-  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
+  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd").get)
+  def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveDeclarationVersionRequest.xsd").get)
 
-  "BackendPayloadCreator" should {
+  "BackendStatusPayloadCreator.createVersionPayload" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
-    def createMrnPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))
-    def createDucrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ducr, Some(apiSubscriptionFieldsResponse))
-    def createUcrPayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, ucr, Some(apiSubscriptionFieldsResponse))
-    def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
+
+    def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = versionPayloadCreator.create(conversationId, correlationId, dateTime, Right(mrn), Some(apiSubscriptionFieldsResponse))(ar)
+
+    "sample Version request passes schema validation" in {
+      xmlVersionValidationService.validate(createVersionPayload(TestCspAuthorisedRequest)) should be(true)
+    }
+
+    "non csp version request is created correctly" in {
+      val actual = createVersionPayload(TestNonCspAuthorisedRequest)
+      xmlVersionValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspVerionRequestPayload)
+    }
+
+    "non csp version request is with declarationSubmissionChannel created correctly" in {
+      val actual = createVersionPayload(TestNonCspAuthorisedRequestWithDeclarationSubmissionChannel)
+      xmlVersionValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel)
+    }
+
+    "csp version request with badge identifier is created correctly" in {
+      val actual = createVersionPayload(TestCspAuthorisedRequest)
+      xmlVersionValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestPayload)
+    }
+
+    "csp version request without badge identifier is created correctly" in {
+      val actual = createVersionPayload(TestCspWithoutBadgeAuthorisedRequest)
+      xmlVersionValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestWithoutBadgePayload)
+    }
+
+    "csp version request with badge identifier and DeclarationSubmissionChannel is created correctly" in {
+      val actual = createVersionPayload(TestCspAuthorisedRequestWithDeclarationSubmissionChannel)
+      xmlVersionValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestPayloadWithDeclarationSubmissionChannel)
+    }
+
+  }
+
+  "BackendStatusPayloadCreator" should {
+    implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
+    def createMrnPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(mrn), Some(apiSubscriptionFieldsResponse))
+    def createDucrPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(ducr), Some(apiSubscriptionFieldsResponse))
+    def createUcrPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(ucr), Some(apiSubscriptionFieldsResponse))
+    def createInventoryReferencePayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(inventoryReference), Some(apiSubscriptionFieldsResponse))
 
     "sample MRN request passes schema validation" in {
       xmlValidationService.validate(createMrnPayload()) should be(true)

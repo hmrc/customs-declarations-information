@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:Q1="http://gov.uk/customs/declarationVersionService/disGatewayHeader/v1" xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" targetNamespace="http://gov.uk/customs/retrieveDeclarationVersion" elementFormDefault="qualified" version="1.0">
+	<xs:import namespace="http://gov.uk/customs/declarationVersionService/disGatewayHeader/v1" schemaLocation="disGatewayHeader.xsd"/>
+	<xs:include schemaLocation="DeclarationVersionRetrievalResponse.xsd"/>
+	<xs:import namespace="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" schemaLocation="cmm_20170222/cmmServiceTypes.xsd"/>
+	<xs:import namespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" schemaLocation="cmm_20170222/cmmValueTypes.xsd"/>
+	<xs:import namespace="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" schemaLocation="WCO_DS/WCO_DEC_DS_2_DMS.xsd"/>
+	<!-- ==================================================================================================== -->
+	<!-- Declaration Information Retrieval Status Request/Response definitions							      -->
+	<!-- Request the status of an individual declaration, identified by MRN, DUCR, Inventory Reference or UCR -->
+	<!-- ==================================================================================================== -->
+	<xs:complexType name="RetrieveDeclarationVersionRequest">
+		<xs:sequence>
+			<xs:element name="ServiceRequestParameters" type="ServiceRequestParameters" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetrieveDeclarationVersionResponse">
+		<xs:sequence>
+			<xs:element name="RetrieveDeclarationVersionDetailsList" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RetrieveDeclarationVersionDetails" type="DeclarationVersionDetails" minOccurs="1" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ServiceRequestParameters">
+		<xs:annotation>
+			<xs:documentation>
+						Request for declaration information
+					</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MRN" type="tns_1:MRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="DeclarationSubmissionChannel" type="DeclarationSubmissionChannelType" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- DeclarationSubmissionChannelType -->
+	<xs:simpleType name="DeclarationSubmissionChannelType">
+		<xs:annotation>
+			<xs:documentation>Definition of DeclarationSubmissionChannelType.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="24"/>
+			<xs:pattern value="([a-zA-Z0-9])*"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

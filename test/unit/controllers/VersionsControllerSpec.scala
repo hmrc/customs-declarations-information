@@ -99,7 +99,7 @@ class VersionsControllerSpec extends UnitSpec
       controller.list(mrnValue, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[SearchType](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+    when(mockVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
   }
@@ -280,7 +280,7 @@ class VersionsControllerSpec extends UnitSpec
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[SearchType](mrn))(any[AuthorisedRequest[_]]))
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]]))
         .thenReturn(Future.failed(emulatedServiceFailure))
 
       authoriseCsp()

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" targetNamespace="http://gov.uk/customs/retrieveDeclarationVersion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../common/DeclarationVersionServiceMessages.xsd"/>
+	<xs:element name="retrieveDeclarationVersionRequest">
+		<xs:annotation>
+			<xs:documentation>Request to retrieve declaration version</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="requestCommon">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="clientID" type="n1:UUIDType"/>
+							<xs:element name="conversationID" type="n1:UUIDType"/>
+							<xs:element name="correlationID" type="n1:UUIDType"/>
+							<xs:element name="badgeIdentifier" type="n1:BadgeIDType" minOccurs="0"/>
+							<xs:element name="dateTimeStamp" type="xs:dateTime"/>
+							<xs:element name="authenticatedPartyID">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="originatingPartyID" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="requestDetail">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RetrieveDeclarationVersionRequest" type="n1:RetrieveDeclarationVersionRequest"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="UUIDType">
+		<xs:restriction base="xs:string">
+			<xs:length value="36"/>
+			<xs:pattern value="[0-9a-fA-F]{32}|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BadgeIDType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="12"/>
+			<xs:pattern value="[0-9A-Z]{6,12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

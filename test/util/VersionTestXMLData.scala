@@ -42,6 +42,113 @@ object VersionTestXMLData {
     .appendTimeZoneOffset("Z", false, 2, 2)
     .toFormatter
 
+  val validNonCspVerionRequestPayload =
+    """<ns1:retrieveDeclarationVersionRequest xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
+      |xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      |          <ns1:requestCommon>
+      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+      |          </ns1:requestCommon>
+      |          <ns1:requestDetail>
+      |            <ns1:RetrieveDeclarationVersionRequest>
+      |              <ns1:ServiceRequestParameters>
+      |                <ns1:MRN>theMrn</ns1:MRN>
+      |              </ns1:ServiceRequestParameters>
+      |            </ns1:RetrieveDeclarationVersionRequest>
+      |          </ns1:requestDetail>
+      |        </ns1:retrieveDeclarationVersionRequest>
+      |""".stripMargin
+
+  val validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel =
+    """<ns1:retrieveDeclarationVersionRequest xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
+      |xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      |          <ns1:requestCommon>
+      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+      |          </ns1:requestCommon>
+      |          <ns1:requestDetail>
+      |            <ns1:RetrieveDeclarationVersionRequest>
+      |              <ns1:ServiceRequestParameters>
+      |                <ns1:MRN>theMrn</ns1:MRN>
+      |                <ns1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</ns1:DeclarationSubmissionChannel>
+      |              </ns1:ServiceRequestParameters>
+      |            </ns1:RetrieveDeclarationVersionRequest>
+      |          </ns1:requestDetail>
+      |        </ns1:retrieveDeclarationVersionRequest>
+      |""".stripMargin
+
+  val validCspVerionRequestPayload =
+    """<ns1:retrieveDeclarationVersionRequest xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
+      |xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      |          <ns1:requestCommon>
+      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+      |            <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
+      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+      |            <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
+      |          </ns1:requestCommon>
+      |          <ns1:requestDetail>
+      |            <ns1:RetrieveDeclarationVersionRequest>
+      |              <ns1:ServiceRequestParameters>
+      |                <ns1:MRN>theMrn</ns1:MRN>
+      |              </ns1:ServiceRequestParameters>
+      |            </ns1:RetrieveDeclarationVersionRequest>
+      |          </ns1:requestDetail>
+      |        </ns1:retrieveDeclarationVersionRequest>
+      |""".stripMargin
+
+  val validCspVerionRequestPayloadWithDeclarationSubmissionChannel =
+    """<ns1:retrieveDeclarationVersionRequest xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
+      |xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      |          <ns1:requestCommon>
+      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+      |            <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
+      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+      |            <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
+      |          </ns1:requestCommon>
+      |          <ns1:requestDetail>
+      |            <ns1:RetrieveDeclarationVersionRequest>
+      |              <ns1:ServiceRequestParameters>
+      |                <ns1:MRN>theMrn</ns1:MRN>
+      |                <ns1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</ns1:DeclarationSubmissionChannel>
+      |              </ns1:ServiceRequestParameters>
+      |            </ns1:RetrieveDeclarationVersionRequest>
+      |          </ns1:requestDetail>
+      |        </ns1:retrieveDeclarationVersionRequest>
+      |""".stripMargin
+
+  val validCspVerionRequestWithoutBadgePayload =
+    """<ns1:retrieveDeclarationVersionRequest xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
+      |xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      |          <ns1:requestCommon>
+      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+      |            <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
+      |          </ns1:requestCommon>
+      |          <ns1:requestDetail>
+      |            <ns1:RetrieveDeclarationVersionRequest>
+      |              <ns1:ServiceRequestParameters>
+      |                <ns1:MRN>theMrn</ns1:MRN>
+      |              </ns1:ServiceRequestParameters>
+      |            </ns1:RetrieveDeclarationVersionRequest>
+      |          </ns1:requestDetail>
+      |        </ns1:retrieveDeclarationVersionRequest>
+      |""".stripMargin
+
   val expectedVersionPayloadRequest = {
     <ns1:retrieveDeclarationVersionRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -66,7 +173,7 @@ object VersionTestXMLData {
       </ns1:requestDetail>
     </ns1:retrieveDeclarationVersionRequest>
   }
-  
+
   val validBackendVersionResponse = {
     <n1:retrieveDeclarationVersionResponse xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
