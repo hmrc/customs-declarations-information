@@ -1,1 +1,1 @@
-Only the authorised API users can query the status of any declaration.
+Only the authorised API users can query the status, search or get versions of a declaration.
