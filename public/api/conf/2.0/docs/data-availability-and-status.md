@@ -1,6 +1,8 @@
 Only declarations received by CDS in the last 180 days will be returned by this API.
 
-The API returns a response that can contain the following fields:
+**Status Endpoints**
+
+The status endpoints return a response that can contain the following fields:
 
 <table>
   <tr><td></td><td></td></tr>
@@ -72,6 +74,56 @@ The API returns a response that can contain the following fields:
   <tr>
     <td>GoodsShipment/UCR/TraderAssignedReferenceID </td>
     <td>Reference Number or UCR. UCC data element 2/4.</td>
+  </tr>
+</table>
+
+Please note that not all of these fields are guaranteed to be present for every declaration returned.
+
+**Version Endpoint**
+
+The version endpoint returns a response that can contain the following fields:
+
+<table>
+  <tr><td></td><td></td></tr>
+  <tr>
+    <td>ID</td>
+    <td>Movement Reference Number (MRN).</td>
+  </tr>
+  <tr>
+    <td>VersionID</td>
+    <td>Declaration version number.</td>
+  </tr>
+  <tr>
+    <td>CreatedDateTime/DateTimeString</td>
+    <td>Date and time on which the declaration version was created.</td>
+  </tr>
+  <tr>
+    <td>LRN</td>
+    <td>Local reference number.</td>
+  </tr>
+  <tr>
+    <td>FunctionCode</td>
+    <td>Function code is always set to 9.</td>
+  </tr>
+  <tr>
+    <td>TypeCode</td>
+    <td>Declaration type. UCC data elements 1/1 + 1/2.</td>
+  </tr>
+  <tr>
+    <td>GoodsShipment/Consignment/GoodsLocation/ID</td>
+    <td>Goods location code.</td>
+  </tr>
+  <tr>
+    <td>GoodsShipment/Consignment/GoodsLocation/TypeCode</td>
+    <td>Goods location type code.</td>
+  </tr>
+  <tr>
+    <td>GoodsShipment/PreviousDocument/ID</td>
+    <td>The ID of a previous document. A DUCR or MUCR.</td>
+  </tr>
+  <tr>
+    <td>GoodsShipment/PreviousDocument/TypeCode</td>
+    <td>The type of a previous document.</td>
   </tr>
 </table>
 

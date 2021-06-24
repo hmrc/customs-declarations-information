@@ -52,13 +52,13 @@ class DefinitionSpec extends ComponentTestSpec
           |  "scopes": [
           |    {
           |      "key": "write:customs-declarations-information",
-          |      "name": "Request the status of a declaration",
-          |      "description": "Request the status of a declaration"
+          |      "name": "Request details of a declaration",
+          |      "description": "Search for and request details of a declaration"
           |    }
           |  ],
           |  "api": {
           |    "name": "Customs Declarations Information",
-          |    "description": "Retrieve declaration status information",
+          |    "description": "Retrieve declaration information",
           |    "context": "customs/declarations-information",
           |    "categories": ["CUSTOMS"],
           |    "versions": [
