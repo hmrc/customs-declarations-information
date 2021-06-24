@@ -3,10 +3,11 @@
 
 This API permits requesting the status and versions of a declaration.
 
-For the status endpoints The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in the request URL. The endpoint returns a set of latest status details.
-
 
 ## GET Status Request 
+
+The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in the request URL. The endpoint returns the latest set of status details.
+
  ### `GET /mrn/{mrn}/status`
  ### `GET /ducr/{ducr}/status`
  ### `GET /ucr/{ucr}/status`
@@ -25,6 +26,9 @@ For the status endpoints The user must supply an MRN, DUCR, UCR or inventory ref
  ```
 ---
 ## GET Version Request
+
+The user must supply an MRN as a parameter in the request URL. The endpoint returns the latest versions of a declaration with the most recent first.
+
  ### `GET /mrn/{mrn}/version`
 
 ### curl command
