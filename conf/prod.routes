@@ -13,7 +13,7 @@ GET         /ucr/:ucr/status                                  @uk.gov.hmrc.custo
 GET         /inventory-reference//status                      @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByInventoryReference(inventoryReference = "")
 GET         /inventory-reference/:inventoryReference/status   @uk.gov.hmrc.customs.declarations.information.controllers.StatusController.getByInventoryReference(inventoryReference)
 
-GET         /mrn//versions                                    @uk.gov.hmrc.customs.declarations.information.controllers.VersionsController.list(mrn = "", declarationSubmissionChannel: Option[String])
-GET         /mrn/:mrn/versions                                @uk.gov.hmrc.customs.declarations.information.controllers.VersionsController.list(mrn, declarationSubmissionChannel: Option[String])
+GET         /mrn//version                                     @uk.gov.hmrc.customs.declarations.information.controllers.VersionController.list(mrn = "", declarationSubmissionChannel: Option[String])
+GET         /mrn/:mrn/version                                 @uk.gov.hmrc.customs.declarations.information.controllers.VersionController.list(mrn, declarationSubmissionChannel: Option[String])
 
 GET         /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics

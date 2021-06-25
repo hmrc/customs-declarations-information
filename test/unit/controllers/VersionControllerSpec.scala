@@ -30,7 +30,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector, DeclarationVersionConnector}
-import uk.gov.hmrc.customs.declarations.information.controllers.VersionsController
+import uk.gov.hmrc.customs.declarations.information.controllers.VersionController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -47,7 +47,7 @@ import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 import java.util.UUID
 import scala.concurrent.Future
 
-class VersionsControllerSpec extends UnitSpec
+class VersionControllerSpec extends UnitSpec
   with Matchers with MockitoSugar with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
@@ -78,16 +78,16 @@ class VersionsControllerSpec extends UnitSpec
     protected val stubInternalClientIdsCheckAction: InternalClientIdsCheckAction = new InternalClientIdsCheckAction(mockInformationLogger, mockInformationConfigService)
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubVersionResponseFilterService: VersionResponseFilterService = new VersionResponseFilterService()
-    protected val stubDeclarationVersionsService = new DeclarationVersionService(stubVersionResponseFilterService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockVersionConnector, mockDateTimeService, stubUniqueIdsService)
+    protected val stubDeclarationVersionService = new DeclarationVersionService(stubVersionResponseFilterService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockVersionConnector, mockDateTimeService, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
-    protected val controller: VersionsController = new VersionsController(
+    protected val controller: VersionController = new VersionController(
       stubShutterCheckAction,
       stubValidateAndExtractHeadersAction,
       stubAuthStatusAction,
       stubConversationIdAction,
       stubInternalClientIdsCheckAction,
-      stubDeclarationVersionsService,
+      stubDeclarationVersionService,
       Helpers.stubControllerComponents(),
       mockInformationLogger) {}
 
