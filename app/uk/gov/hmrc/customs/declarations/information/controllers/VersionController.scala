@@ -33,15 +33,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class VersionsController @Inject()(val shutterCheckAction: ShutterCheckAction,
-                                   val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
-                                   val authAction: AuthAction,
-                                   val conversationIdAction: ConversationIdAction,
-                                   val internalClientIdsCheckAction: InternalClientIdsCheckAction,
-                                   val declarationVersionService: DeclarationVersionService,
-                                   val cc: ControllerComponents,
-                                   val logger: InformationLogger)
-                                  (implicit val ec: ExecutionContext) extends BackendController(cc) {
+class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
+                                  val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
+                                  val authAction: AuthAction,
+                                  val conversationIdAction: ConversationIdAction,
+                                  val internalClientIdsCheckAction: InternalClientIdsCheckAction,
+                                  val declarationVersionService: DeclarationVersionService,
+                                  val cc: ControllerComponents,
+                                  val logger: InformationLogger)
+                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
   def list(mrn: String, declarationSubmissionChannel: Option[String] = None): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
