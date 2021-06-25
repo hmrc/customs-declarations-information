@@ -118,14 +118,6 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
          |      
          |    </errorResponse>""".stripMargin
 
-  val invalidSearchResponse =
-    """<?xml version='1.0' encoding='UTF-8'?>
-         |<errorResponse>
-         |      <code>NOT_FOUND</code>
-         |      <message>Invalid Search</message>
-         |      
-         |    </errorResponse>""".stripMargin
-
   val missingSearchResponse =
     """<?xml version='1.0' encoding='UTF-8'?>
          |<errorResponse>
