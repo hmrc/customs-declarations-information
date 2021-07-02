@@ -133,7 +133,7 @@ class VersionControllerSpec extends UnitSpec
 
       val result: Future[Result] = submitMrn(ValidCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel, Some("AuthenticatedPartyOnly1"))
       status(result) shouldBe BAD_REQUEST
-      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Invalid declarationSubmissionChannel parameter</message></errorResponse>")
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60011</code><message>Invalid declarationSubmissionChannel parameter</message></errorResponse>")
     }
 
     "respond with status 200 and conversationId in header for a processed valid CSP request" in new SetUp() {
@@ -243,7 +243,7 @@ class VersionControllerSpec extends UnitSpec
 
       status(result) shouldBe BAD_REQUEST
 
-      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Invalid declarationSubmissionChannel parameter</message></errorResponse>")
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60011</code><message>Invalid declarationSubmissionChannel parameter</message></errorResponse>")
 
     }
 

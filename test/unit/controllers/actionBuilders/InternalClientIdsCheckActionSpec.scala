@@ -55,7 +55,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec with MockitoSugar {
     protected val declarationSubmissionChannelInvalid: String =
       """<?xml version='1.0' encoding='UTF-8'?>
         |<errorResponse>
-        |      <code>BAD_REQUEST</code>
+        |      <code>CDS60011</code>
         |      <message>Invalid declarationSubmissionChannel parameter</message>
         |</errorResponse>
     """.stripMargin
