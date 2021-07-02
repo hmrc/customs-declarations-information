@@ -107,7 +107,7 @@ class VersionControllerSpec extends UnitSpec
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
   private val errorResultMissingIdentifiers = errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 
-  private val errorResultMrnTooLong = errorBadRequest("MRN too long").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
+  private val errorResultMrnTooLong = errorBadRequest("MRN parameter too long").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
   private val errorResultMissingMrn = errorBadRequest("Missing MRN parameter").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
   private val errorResultCDS60002 = errorBadRequest("MRN parameter invalid", "CDS60002").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
 

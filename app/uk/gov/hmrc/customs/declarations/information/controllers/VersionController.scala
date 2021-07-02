@@ -73,10 +73,13 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
       Right()
     } else {
       val appropriateResponse = if (mrn.valueTooLong) {
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN too long")
+        logger.info(s"MRN parameter passed was too long: $mrn")
+        ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN parameter too long")
       } else if (mrn.valueTooShort) {
+        logger.info(s"MRN parameter passed was missing: $mrn")
         ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing MRN parameter")
       } else {
+        logger.info(s"MRN parameter passed was invalid: $mrn")
         ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
       }
       Left(appropriateResponse.XmlResult.withConversationId)
