@@ -50,7 +50,9 @@ trait ApiSubscriptionFieldsService {
           if (validAuthenticatedEori(response.fields.authenticatedEori)) {
             Right(Some(response))
           } else {
-            Left(errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId)
+            val msg = "Missing authenticated eori in service lookup"
+            logger.warn(msg)
+            Left(errorInternalServerError(msg).XmlResult.withConversationId)
           }
       }).recover {
         case NonFatal(e) =>
