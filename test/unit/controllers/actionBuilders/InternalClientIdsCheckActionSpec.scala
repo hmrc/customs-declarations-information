@@ -55,7 +55,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec with MockitoSugar {
     protected val declarationSubmissionChannelInvalid: String =
       """<?xml version='1.0' encoding='UTF-8'?>
         |<errorResponse>
-        |      <code>BAD_REQUEST</code>
+        |      <code>CDS60011</code>
         |      <message>Invalid declarationSubmissionChannel parameter</message>
         |</errorResponse>
     """.stripMargin
@@ -99,9 +99,9 @@ class InternalClientIdsCheckActionSpec extends UnitSpec with MockitoSugar {
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSubmissionChannelInvalid)
     }
 
-    "reject version payload with valid declarationSubmissionChannel with external client id" in new SetUp {
+    "reject version payload with valid declarationSubmissionChannel and invalid external client id" in new SetUp {
 
-      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("NOTMATCH"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=INVALID"))
+      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("NOTMATCH"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
 
       val result = await(internalClientIdAction.refine(validatedHeadersRequest)).left.get
       status(result) shouldBe BAD_REQUEST

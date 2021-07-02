@@ -43,6 +43,8 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
   extends ActionRefiner[ValidatedHeadersRequest, InternalClientIdsRequest] {
 
   override def executionContext: ExecutionContext = ec
+  
+  val declarationSubmissionChannelErrorCode = "CDS60011"
 
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
     implicit val id: ValidatedHeadersRequest[A] = vhr
@@ -58,13 +60,13 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
     } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0) {
 
       logger.info(s"declarationSubmissionChannel parameter passed is invalid: $declarationSubmissionChannel")
-      Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
+      Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", declarationSubmissionChannelErrorCode).XmlResult.withConversationId)
 
     } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") == 0
       && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
 
       logger.info(s"declarationSubmissionChannel parameter passed but clientId: ${vhr.clientId.value} is not an internal clientId")
-      Left(errorBadRequest("Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
+      Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", declarationSubmissionChannelErrorCode).XmlResult.withConversationId)
 
     } else {
       Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, declarationSubmissionChannel, vhr.request))
