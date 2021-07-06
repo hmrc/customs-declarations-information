@@ -166,6 +166,25 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
     }
 
+    "return 500 error response when backend call fails with 500 and errorCode not CDS60003" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>an-error-code</cds:errorCode>
+                                               |        <cds:errorMessage>Internal server error</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Left(searchType)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error").XmlResult.withConversationId)
+    }
+
     "return 500 error response when backend call fails with 403" in new SetUp() {
       when(mockDeclarationStatusConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],

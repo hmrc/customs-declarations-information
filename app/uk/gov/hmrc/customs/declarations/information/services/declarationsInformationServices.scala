@@ -54,7 +54,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
       case "cds60001" => processError(backendCDS60001NotFoundResponse)
       case "cds60002" => processError(backendCDS60002SearchInvalidResponse)
       case "cds60003" => processError(backendCDS60003InternalServerErrorResponse)
-      case _ => processError(backendCDS60003InternalServerErrorResponse)
+      case _ => processError(ErrorInternalServerError)
     }
   }
 
@@ -83,7 +83,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
       case "cds60002" => processError(backendCDS60002MrnInvalidResponse)
       case "cds60003" => processError(backendCDS60003InternalServerErrorResponse)
       case "cds60011" => processError(backendCDS60011InvalidSubmissionChannelResponse)
-      case _ => processError(backendCDS60003InternalServerErrorResponse)
+      case _ => processError(ErrorInternalServerError)
     }
   }
 
