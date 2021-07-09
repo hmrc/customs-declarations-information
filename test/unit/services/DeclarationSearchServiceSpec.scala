@@ -32,7 +32,7 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
-import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.BackendStatusPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
 import util.TestData.{correlationId, _}
@@ -42,16 +42,18 @@ import java.util.UUID
 import scala.concurrent.Future
 import scala.util.Left
 
-class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
+class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
   private val dateTime = new DateTime()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
-  protected lazy val mockVersionResponseFilterService: VersionResponseFilterService = mock[VersionResponseFilterService]
+  protected lazy val mockSearchResponseFilterService: SearchResponseFilterService = mock[SearchResponseFilterService]
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
   protected lazy val mockLogger: InformationLogger = mock[InformationLogger]
+  //TODO replace with search connector
   protected lazy val mockDeclarationVersionConnector: DeclarationVersionConnector = mock[DeclarationVersionConnector]
-  protected lazy val mockPayloadDecorator: BackendVersionPayloadCreator = mock[BackendVersionPayloadCreator]
+  //TODO replace with search payload decorator
+  protected lazy val mockPayloadDecorator: BackendStatusPayloadCreator = mock[BackendStatusPayloadCreator]
   protected lazy val mockDateTimeProvider: DateTimeService = mock[DateTimeService]
   protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
   protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
@@ -67,10 +69,10 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
       .thenReturn(Future.successful(mockHttpResponse))
     when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
     when(mockHttpResponse.headers).thenReturn(any[Map[String, Seq[String]]])
-    when(mockVersionResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
+    when(mockSearchResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
 
-    protected lazy val service: DeclarationVersionService = new DeclarationVersionService(mockVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
+    protected lazy val service: DeclarationSearchService = new DeclarationSearchService(mockSearchResponseFilterService, mockApiSubscriptionFieldsConnector,
       mockLogger, mockDeclarationVersionConnector, mockDateTimeProvider, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
@@ -79,7 +81,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationVersionConnector, mockHttpResponse, mockVersionResponseFilterService)
+    reset(mockDateTimeProvider, mockDeclarationVersionConnector, mockHttpResponse, mockSearchResponseFilterService)
   }
 
   "Business Service" should {
@@ -147,6 +149,139 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid").XmlResult.withConversationId)
     }
     
+    "return 500 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60003</cds:errorCode>
+                                               |        <cds:errorMessage>Internal server error</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
+    }
+
+    "return 500 error response when backend call fails with 500 and errorCode CDS60005" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60005</cds:errorCode>
+                                               |        <cds:errorMessage>Page Number is Out of Bound</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60005", "pageNumber parameter out of bounds").XmlResult.withConversationId)
+    }
+
+    "return 500 error response when backend call fails with 500 and errorCode CDS60006" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60006</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Party Role</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60006", "Invalid partyRole parameter").XmlResult.withConversationId)
+    }
+
+    "return 500 error response when backend call fails with 500 and errorCode CDS60007" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60007</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Declaration Status</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60007", "Invalid declarationStatus parameter").XmlResult.withConversationId)
+    }
+
+    "return 500 error response when backend call fails with 500 and errorCode CDS60008" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60008</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Declaration Category</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60008", "Invalid declarationCategory parameter").XmlResult.withConversationId)
+    }
+
+    "return 500 error response when backend call fails with 500 and errorCode CDS60009" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60009</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Date Range</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60009", "Invalid date parameters").XmlResult.withConversationId)
+    }
+    
+    "return 500 error response when backend call fails with 500 and errorCode CDS60010" in new SetUp() {
+      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+                                               |        <cds:errorCode>CDS60010</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Goods Location Code</cds:errorMessage>
+                                               |        <cds:source/>
+                                               |      </cds:errorDetail>""".stripMargin
+      )
+      when(mockDeclarationVersionConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60010", "Invalid goodsLocationCode parameter").XmlResult.withConversationId)
+    }
+
     "return 400 error response when backend call fails with 500 and errorCode CDS60011" in new SetUp() {
       when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
                                                |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
@@ -166,12 +301,12 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
     }
 
-    "return 500 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
+    "return 400 error response when backend call fails with 500 and errorCode CDS60012" in new SetUp() {
       when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
                                                |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
                                                |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60003</cds:errorCode>
-                                               |        <cds:errorMessage>Internal server error</cds:errorMessage>
+                                               |        <cds:errorCode>CDS60012</cds:errorCode>
+                                               |        <cds:errorMessage>Invalid Page Number</cds:errorMessage>
                                                |        <cds:source/>
                                                |      </cds:errorDetail>""".stripMargin
       )
@@ -182,7 +317,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60012", "Invalid pageNumber parameter").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode not CDS60003" in new SetUp() {

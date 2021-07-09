@@ -82,13 +82,55 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
       case "cds60001" => processError(backendCDS60001NotFoundResponse)
       case "cds60002" => processError(backendCDS60002MrnInvalidResponse)
       case "cds60003" => processError(backendCDS60003InternalServerErrorResponse)
-      case "cds60011" => processError(backendCDS60011InvalidSubmissionChannelResponse)
+      case "cds60011" => processError(backendCDS60011SubmissionChannelInvalidResponse)
       case _ => processError(ErrorInternalServerError)
     }
   }
 
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
     val responseXml = versionResponseFilterService.transform(xmlResponseBody).head
+    HttpResponse(response.status, responseXml.toString(), response.headers)
+  }
+}
+
+@Singleton
+class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResponseFilterService,
+                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
+                                          override val logger: InformationLogger,
+                                          connector: DeclarationVersionConnector,
+                                          dateTimeProvider: DateTimeService,
+                                          uniqueIdsService: UniqueIdsService)
+                                         (implicit override val ec: ExecutionContext)
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
+
+  protected val endpointName: String = "search"
+  protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60005", "pageNumber parameter out of bounds")
+  protected val backendCDS60006PartyRoleInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60006", "Invalid partyRole parameter")
+  protected val backendCDS60007DeclarationStatusInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60007", "Invalid declarationStatus parameter")
+  protected val backendCDS60008DeclarationCategoryInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60008", "Invalid declarationCategory parameter")
+  protected val backendCDS60009DateInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60009", "Invalid date parameters")
+  protected val backendCDS60010GoodsLocationCodeInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60010", "Invalid goodsLocationCode parameter")
+  protected val backendCDS60012PageNumberInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60012", "Invalid pageNumber parameter")
+
+  protected def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
+    errorCodeText.toLowerCase() match {
+      case "cds60001" => processError(backendCDS60001NotFoundResponse)
+      case "cds60002" => processError(backendCDS60002MrnInvalidResponse)
+      case "cds60003" => processError(backendCDS60003InternalServerErrorResponse)
+      case "cds60005" => processError(backendCDS60005PageOutOfBoundsResponse)
+      case "cds60006" => processError(backendCDS60006PartyRoleInvalidResponse)
+      case "cds60007" => processError(backendCDS60007DeclarationStatusInvalidResponse)
+      case "cds60008" => processError(backendCDS60008DeclarationCategoryInvalidResponse)
+      case "cds60009" => processError(backendCDS60009DateInvalidResponse)
+      case "cds60010" => processError(backendCDS60010GoodsLocationCodeInvalidResponse)
+      case "cds60011" => processError(backendCDS60011SubmissionChannelInvalidResponse)
+      case "cds60012" => processError(backendCDS60012PageNumberInvalidResponse)
+      case _ => processError(ErrorInternalServerError)
+    }
+  }
+
+  protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
+    val responseXml = searchResponseFilterService.transform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
 }
@@ -110,7 +152,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
   protected val backendCDS60002MrnInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
   protected val backendCDS60002SearchInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid")
   protected val backendCDS60003InternalServerErrorResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", ErrorInternalServerError.message)
-  protected val backendCDS60011InvalidSubmissionChannelResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter")
+  protected val backendCDS60011SubmissionChannelInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter")
 
   def send[A](eitherMrnOrSearchType: Either[SearchType, Mrn])(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
 
