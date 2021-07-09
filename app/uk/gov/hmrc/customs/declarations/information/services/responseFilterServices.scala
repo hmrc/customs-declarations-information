@@ -19,7 +19,35 @@ package uk.gov.hmrc.customs.declarations.information.services
 import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils.{createPrefixTransformer, extractNamespacesFromAllElements}
 
 import javax.inject.{Inject, Singleton}
-import scala.xml.{NodeSeq, TopScope}
+import scala.xml.transform.RuleTransformer
+import scala.xml.{NodeSeq, Text, TopScope}
+
+@Singleton
+class SearchResponseFilterService @Inject()() extends ResponseFilterService {
+
+  override protected val NameSpaceP="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
+  override protected val rootElementLabel: String = "DeclarationSearchResponse"
+  override protected val detailsElementLabel: String = "DeclarationSearchDetails"
+
+  def transform(xml: NodeSeq): NodeSeq = {
+    val declarationDetailsPath: NodeSeq = xml \ "responseDetail" \ "declarationSummary" \ "DeclarationSummaryDataList" \\ "DeclarationSummaryData"
+    transform(xml, declarationDetailsPath)
+  }
+
+  override def endNodes(xml: NodeSeq, rule: RuleTransformer): NodeSeq = {
+    val newLineAndIndentation = "\n        "
+    val endNodesPath = xml \ "responseDetail" \ "declarationSummary" \ "DeclarationSummaryDataList"
+    val currentPageNumber = endNodesPath \\ "CurrentPageNumber"
+    val totalResultsAvailable = endNodesPath \\ "TotalResultsAvailable"
+    val totalPagesAvailable = endNodesPath \\ "TotalPagesAvailable"
+    val noResultsReturned = endNodesPath \\ "NoResultsReturned"
+
+    Seq(rule.transform(currentPageNumber).head, Text(newLineAndIndentation),
+        rule.transform(totalResultsAvailable).head, Text(newLineAndIndentation),
+        rule.transform(totalPagesAvailable).head, Text(newLineAndIndentation),
+        rule.transform(noResultsReturned).head)
+  }
+}
 
 @Singleton
 class VersionResponseFilterService @Inject()() extends ResponseFilterService {
@@ -59,6 +87,8 @@ abstract class ResponseFilterService() {
   protected val rootElementLabel: String
   protected val detailsElementLabel: String
 
+  protected def endNodes(xml: NodeSeq, rule: RuleTransformer): NodeSeq = NodeSeq.Empty
+
   def transform(xml: NodeSeq, declarationDetailsPath: NodeSeq): NodeSeq = {
 
     val outputUriToPrefixMap = Map(
@@ -94,7 +124,7 @@ abstract class ResponseFilterService() {
           {prefixReWriter.transform(mdgDeclaration)}
           {prefixReWriter.transform(wcoDeclaration)}
         </p:details>.copy(label = detailsElementLabel)
-      }}
+      }}{endNodes(xml, prefixReWriter)}
     </p:root>.copy(label = rootElementLabel)
   }
 

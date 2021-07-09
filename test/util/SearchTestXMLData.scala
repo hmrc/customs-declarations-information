@@ -1,0 +1,192 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package util
+
+import org.joda.time.format.DateTimeFormatterBuilder
+import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
+
+import scala.xml.{Elem, Node, NodeSeq, XML}
+
+object SearchTestXMLData {
+
+  val defaultDateTime = DateTime.now(DateTimeZone.UTC)
+    .withYear(2020)
+    .withMonthOfYear(6)
+    .withDayOfMonth(15)
+    .withHourOfDay(12)
+    .withMinuteOfHour(30)
+    .withSecondOfMinute(0)
+    .withMillisOfSecond(0)
+
+  val dateTimeFormat = new DateTimeFormatterBuilder()
+    .appendYear(4, 4)
+    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
+    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
+    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
+    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
+    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
+    .appendTimeZoneOffset("Z", false, 2, 2)
+    .toFormatter
+
+  val validBackendSearchResponse = {
+    <n1:retrieveDeclarationSummaryDataResponse
+    xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+    xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+    xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
+    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1 retrieveDeclarationSummaryDataResponse.xsd">
+      <n1:responseCommon>
+        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
+      </n1:responseCommon>
+      <n1:responseDetail>
+        <n1:declarationSummary>
+          <n1:DeclarationSummaryDataList>
+            <n1:DeclarationSummaryData>
+              <n1:Declaration>
+                <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
+                <n1:ReceivedDateTime>
+                  <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
+                </n1:ReceivedDateTime>
+                <n1:ROE>6</n1:ROE>
+                <n1:ICS>15</n1:ICS>
+                <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
+              </n1:Declaration>
+              <od:Declaration>
+                <od:FunctionCode>9</od:FunctionCode>
+                <od:TypeCode>IM</od:TypeCode>
+                <od:Submitter>
+                  <od:ID>GB123456789012000</od:ID>
+                </od:Submitter>
+                <od:Declarant>
+                  <od:ID>GB123456789012000</od:ID>
+                </od:Declarant>
+                <od:GoodsShipment>
+                  <od:Consignee>
+                    <od:ID>GB123456789012123</od:ID>
+                  </od:Consignee>
+                  <od:Consignment>
+                    <od:GoodsLocation>
+                      <od:ID>LIVLIVLIVR</od:ID>
+                      <od:TypeCode>14</od:TypeCode>
+                    </od:GoodsLocation>
+                  </od:Consignment>
+                  <od:Consignor>
+                    <od:ID>GB123456789012987</od:ID>
+                  </od:Consignor>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
+                    <od:TypeCode>DCR</od:TypeCode>
+                  </od:PreviousDocument>
+                  <od:PreviousDocument>
+                    <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
+                    <od:TypeCode>MCR</od:TypeCode>
+                  </od:PreviousDocument>
+                </od:GoodsShipment>
+              </od:Declaration>
+            </n1:DeclarationSummaryData>
+            <n1:CurrentPageNumber>1</n1:CurrentPageNumber>
+            <n1:TotalResultsAvailable>1</n1:TotalResultsAvailable>
+            <n1:TotalPagesAvailable>1</n1:TotalPagesAvailable>
+            <n1:NoResultsReturned>false</n1:NoResultsReturned>
+          </n1:DeclarationSummaryDataList>
+        </n1:declarationSummary>
+      </n1:responseDetail>
+    </n1:retrieveDeclarationSummaryDataResponse>
+  }.filter(_ => true)
+
+  def generateDeclarationSearchResponse(noOfDeclarationSearchResults: Int = 1, receivedDate: DateTime): NodeSeq = {
+    val items = noOfDeclarationSearchResults to 1 by -1
+    val content = items.map(index => generateDeclarationSearchDetailsElement(generateHMRCDeclaration(receivedDate.plusMonths(index)), generateStandardResponseWCODeclaration()))
+
+    generateRootElements(content, noOfDeclarationSearchResults)
+  }
+
+  private def generateRootElements(content: Seq[NodeSeq], noOfDeclarationSearchResults: Int = 1): Elem =
+    <n1:retrieveDeclarationSummaryDataResponse
+    xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
+    xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+    xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
+    xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1 retrieveDeclarationSummaryDataResponse.xsd">
+      <n1:responseCommon>
+        <n1:processingDate>2001-12-17T09:30:47Z</n1:processingDate>
+      </n1:responseCommon>
+      <n1:responseDetail>
+        <n1:declarationSummary>
+          <n1:DeclarationSummaryDataList>
+            {content}
+            <n1:CurrentPageNumber>1</n1:CurrentPageNumber>
+            <n1:TotalResultsAvailable>{noOfDeclarationSearchResults}</n1:TotalResultsAvailable>
+            <n1:TotalPagesAvailable>2</n1:TotalPagesAvailable>
+            <n1:NoResultsReturned>false</n1:NoResultsReturned>
+          </n1:DeclarationSummaryDataList>
+        </n1:declarationSummary>
+      </n1:responseDetail>
+    </n1:retrieveDeclarationSummaryDataResponse>
+
+  private def generateDeclarationSearchDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq =
+    <n1:DeclarationSummaryData>
+      {hmrcDeclaration}
+      {wcoDeclaration}
+    </n1:DeclarationSummaryData>
+
+
+  private def generateHMRCDeclaration(receivedDate: DateTime) =
+    <n1:Declaration>
+      <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
+      <n1:ReceivedDateTime>
+        <n1:DateTimeString formatCode="304">{receivedDate.toString(dateTimeFormat)}</n1:DateTimeString>
+      </n1:ReceivedDateTime>
+      <n1:ROE>6</n1:ROE>
+      <n1:ICS>15</n1:ICS>
+      <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
+    </n1:Declaration>
+  
+  private def generateStandardResponseWCODeclaration(): Elem =
+    <od:Declaration>
+      <od:FunctionCode>9</od:FunctionCode>
+      <od:TypeCode>IMZ</od:TypeCode>
+      <od:GoodsShipment>
+        <od:Consignment>
+          <od:GoodsLocation>
+            <od:ID>LIVLIVLIVR</od:ID>
+            <od:TypeCode>14</od:TypeCode>
+          </od:GoodsLocation>
+        </od:Consignment>
+        <od:PreviousDocument>
+          <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
+          <od:TypeCode>DCR</od:TypeCode>
+        </od:PreviousDocument>
+        <od:PreviousDocument>
+          <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
+          <od:TypeCode>DCS</od:TypeCode>
+        </od:PreviousDocument>
+      </od:GoodsShipment>
+    </od:Declaration>
+
+  def generateDeclarationResponseContainingAllOptionalElements(receivedDate: DateTime): NodeSeq = {
+    val content = generateDeclarationSearchDetailsElement(generateHMRCDeclaration(receivedDate), getWcoDeclarationWithAllElementsPopulated)
+
+    generateRootElements(content)
+  }
+
+  private def getWcoDeclarationWithAllElementsPopulated: Node = {
+    XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml").head
+  }
+}
