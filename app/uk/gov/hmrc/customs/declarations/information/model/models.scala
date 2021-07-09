@@ -46,6 +46,22 @@ case class BadgeIdentifier(value: String) extends AnyVal {
   override def toString: String = value
 }
 
+case class PartyRole(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class DeclarationCategory(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class GoodsLocationCode(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class DeclarationStatus(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
 sealed trait ApiVersion {
   val value: String
   val configPrefix: String
