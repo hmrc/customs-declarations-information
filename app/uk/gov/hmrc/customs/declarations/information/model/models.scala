@@ -62,6 +62,10 @@ case class DeclarationStatus(value: String) extends AnyVal {
   override def toString: String = value
 }
 
+case class DeclarationSubmissionChannel(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
 sealed trait ApiVersion {
   val value: String
   val configPrefix: String

@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId, HasRequest, InternalClientIdsRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId, HasRequest, InternalClientIdsRequest, SearchParametersRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedAsCsp, BadgeIdentifier, Csp, Eori}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -49,14 +49,14 @@ class AuthAction @Inject()(customsAuthService: CustomsAuthService,
                            headerValidator: HeaderValidator,
                            logger: InformationLogger)
                           (implicit ec: ExecutionContext)
-  extends ActionRefiner[InternalClientIdsRequest, AuthorisedRequest] {
+  extends ActionRefiner[SearchParametersRequest, AuthorisedRequest] {
 
   protected[this] def executionContext: ExecutionContext = ec
 
   private def errorResponseMissingIdentifiers = errorBadRequest(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName headers are missing")
 
-  override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitIcir: InternalClientIdsRequest[A] = icir
+  override def refine[A](icir: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitIcir: SearchParametersRequest[A] = icir
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap{

@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.services.DeclarationVersionService
+import uk.gov.hmrc.customs.declarations.information.services.{DeclarationSearchService, DeclarationVersionService}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -41,92 +41,17 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
                                  val authAction: AuthAction,
                                  val conversationIdAction: ConversationIdAction,
-                                 val internalClientIdsCheckAction: InternalClientIdsCheckAction,
-                                 val declarationVersionService: DeclarationVersionService,
+                                 val internalClientIdsCheckAction: SearchParametersCheckAction,
+                                 val declarationSearchService: DeclarationSearchService,
                                  val cc: ControllerComponents,
                                  val logger: InformationLogger)
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
-  private val validDeclarationCategories = Seq("IM", "EX", "CO", "ALL")
-  private val goodsLocationCodeRegex: Regex = "^[a-zA-Z0-9]{1,12}$".r
-  private val validDeclarationStatuses = Seq("CLEARED", "UNCLEARED", "REJECTED", "ALL")
-  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
-  def list(partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String], declarationStatus: Option[String], dateFrom: Option[String], dateTo: Option[String], pageNumber: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
+
+  def list(partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String], declarationStatus: Option[String],
+           dateFrom: Option[String], dateTo: Option[String], pageNumber: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(""))
-  }
-
-  def validatePartyRole(partyRole: Option[String]):  Either[ErrorResponse, PartyRole] = {
-
-    partyRole.filter(pr => "submitter".compareToIgnoreCase(pr) == 0).map( pr => PartyRole(pr))
-      .toRight(errorBadRequest("Invalid partyRole parameter", "CDS60006"))
-  };
-
-
-  def validateDeclarationCategory(declarationCategory: Option[String]):  Either[ErrorResponse, DeclarationCategory] = {
-    declarationCategory.filter(dc => validDeclarationCategories.contains(dc.toUpperCase)).map(dc => DeclarationCategory(dc))
-      .toRight(errorBadRequest("Invalid declarationCategory parameter", "CDS60008"))
-  }
-
-  def validateGoodsLocationCode(goodsLocationCode: Option[String])(implicit request: HasConversationId):  Either[ErrorResponse, Option[GoodsLocationCode]] = {
-    goodsLocationCode match {
-      case Some(glc) =>
-        if (goodsLocationCodeRegex.findFirstIn(glc).nonEmpty) {
-          Right(Some(GoodsLocationCode(glc)))
-        } else {
-          Left(errorBadRequest("Invalid goodsLocationCode parameter", "CDS60010"))
-        }
-      case None => Right(None)
-    }
-  }
-
-  def validateDeclarationStatus(declarationStatus: Option[String]): Either[ErrorResponse, Option[DeclarationStatus]] = {
-
-    declarationStatus match {
-      case Some(ds) =>
-        if (validDeclarationStatuses.contains(ds.toUpperCase)) {
-          Right(Some(DeclarationStatus(ds)))
-        } else {
-          Left(errorBadRequest("Invalid declarationStatus parameter", "CDS60007"))
-        }
-      case None => Right(None)
-    }
-  }
-
-
-
-  def validateDate(date: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Date]] = {
-
-    date match {
-      case Some(d) => try {
-        val dateAsDateType = dateFormat.parse(d)
-        Right(Some(dateAsDateType))
-      } catch {
-        case pe: ParseException =>
-          logger.warn(s"Date format incorrect: $d ParseException: $pe")
-          Left(ErrorGenericBadRequest)
-      }
-      case None => Right(None)
-    }
-  }
-
-  def validatePageNumber(pageNumber: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Int]] = {
-    pageNumber match {
-      case Some(pn) => try {
-        val validInteger = Integer.parseInt(pn.trim) //TODO can we trim?
-        if (validInteger > 0) {
-          Right(Some(validInteger))
-        } else {
-          logger.info(s"pageNumber query parameter was invalid: $pn")
-          Left(ErrorGenericBadRequest)
-        }
-      } catch {
-        case nfe: NumberFormatException =>
-          logger.info(s"pageNumber query parameter was invalid: $pn exception: $nfe")
-          Left(ErrorGenericBadRequest)
-      }
-      case None => Right(None)
-    }
   }
 
   private def search(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
@@ -134,7 +59,7 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
 
     validateMrn(mrn) match {
       case Right(()) =>
-        declarationVersionService.send(Right(mrn)) map {
+        declarationSearchService.send(Right(mrn)) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId

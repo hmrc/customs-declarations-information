@@ -20,6 +20,8 @@ import play.api.mvc.{Request, Result, WrappedRequest}
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.model._
 
+import java.util.Date
+
 object ActionBuilderModelHelper {
 
   implicit class AddConversationId(val result: Result) extends AnyVal {
@@ -62,6 +64,20 @@ object ActionBuilderModelHelper {
       vhr.request
     )
   }
+  implicit class SearchParametersRequestOps[A](val vhr: SearchParametersRequest[A]) {
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+
+    private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
+      vhr.conversationId,
+      vhr.requestedApiVersion,
+      vhr.clientId,
+      vhr.declarationSubmissionChannel,
+      authorisedAs,
+      vhr.request
+    )
+  }
 }
 
 trait HasRequest[A] {
@@ -86,6 +102,16 @@ trait HasAuthorisedAs {
 
 trait HasBadgeIdentifier {
   val badgeIdentifier: BadgeIdentifier
+}
+
+trait HasSearchParameters {
+  val partyRole: PartyRole
+  val declarationCategory: DeclarationCategory
+  val goodsLocationCode: Option[GoodsLocationCode]
+  val declarationStatus: Option[DeclarationStatus]
+  val dateFrom: Option[Date]
+  val dateTo: Option[Date]
+  val pageNumber: Option[Int]
 }
 
 case class ExtractedHeadersImpl(clientId: ClientId) extends ExtractedHeaders
@@ -122,6 +148,23 @@ case class InternalClientIdsRequest[A](conversationId: ConversationId,
                                        declarationSubmissionChannel: Option[String], //could or should be type or enum
                                        request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders
+
+// Available after SearchParametersCheckAction
+case class SearchParametersRequest[A](conversationId: ConversationId,
+                                      requestedApiVersion: ApiVersion,
+                                      clientId: ClientId,
+                                      declarationSubmissionChannel: Option[String], //could or should be type or enum
+                                      request: Request[A],
+                                      partyRole: PartyRole,
+                                      declarationCategory: DeclarationCategory,
+                                      goodsLocationCode: Option[GoodsLocationCode],
+                                      declarationStatus: Option[DeclarationStatus],
+                                      dateFrom: Option[Date],
+                                      dateTo: Option[Date],
+                                      pageNumber: Option[Int]
+                                      ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasSearchParameters {
+
+}
 
 // Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,
