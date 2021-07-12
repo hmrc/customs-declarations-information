@@ -21,12 +21,12 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.xml.{BackendStatusPayloadCreator, BackendVersionPayloadCreator}
+import uk.gov.hmrc.customs.declarations.information.xml.{BackendSearchPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
 import util.UnitSpec
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
-import util.VersionTestXMLData.{validCspVerionRequestPayload, validCspVerionRequestPayloadWithDeclarationSubmissionChannel, validCspVerionRequestWithoutBadgePayload, validNonCspVerionRequestPayload, validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel}
+import util.VersionTestXMLData.{validCspVerionRequestPayload, validCspVerionRequestPayloadWithDeclarationSubmissionChannel, validCspVerionRequestWithoutBadgePayload, validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel, validNonCspVersionRequestPayload}
 import util.XmlOps.stringToXml
 
 import scala.xml.NodeSeq
@@ -44,12 +44,60 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   private val dateTime = new DateTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond, DateTimeZone.UTC)
   private val statusPayloadCreator = new BackendStatusPayloadCreator()
   private val versionPayloadCreator = new BackendVersionPayloadCreator()
+  private val searchPayloadCreator = new BackendSearchPayloadCreator()
 
   import ValidateXmlAgainstSchema._
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/queryDeclarationStatusRequest.xsd").get)
   def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveDeclarationVersionRequest.xsd").get)
+  def xmlSearchValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveDeclarationSummaryDataResponse.xsd").get)
 
-  "BackendStatusPayloadCreator.createVersionPayload" should {
+  //TODO re-write these tests when the search payload creator is done. Plus add others to cover other parameters in search request.
+  "BackendSearchPayloadCreator" should {
+    implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
+
+    def createSearchPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = searchPayloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
+
+    "sample search request passes schema validation" in {
+      xmlSearchValidationService.validate(createSearchPayload(TestCspAuthorisedRequest)) should be(true)
+    }
+
+    "non csp search request is created correctly" in {
+      val actual = createSearchPayload(TestNonCspAuthorisedRequest)
+      xmlSearchValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspVersionRequestPayload)
+    }
+
+    "non csp search request with declarationSubmissionChannel created correctly" in {
+      val actual = createSearchPayload(TestNonCspAuthorisedRequestWithDeclarationSubmissionChannel)
+      xmlSearchValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel)
+    }
+
+    "non csp search request with multiple optional elements created correctly" in {
+      fail("test needs to be written")
+    }
+
+    "csp search request with badge identifier is created correctly" in {
+      val actual = createSearchPayload(TestCspAuthorisedRequest)
+      xmlSearchValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestPayload)
+    }
+
+    "csp version request without badge identifier is created correctly" in {
+      val actual = createSearchPayload(TestCspWithoutBadgeAuthorisedRequest)
+      xmlSearchValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestWithoutBadgePayload)
+    }
+
+    "csp search request with badge identifier and DeclarationSubmissionChannel is created correctly" in {
+      val actual = createSearchPayload(TestCspAuthorisedRequestWithDeclarationSubmissionChannel)
+      xmlSearchValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestPayloadWithDeclarationSubmissionChannel)
+    }
+
+  }
+  
+  "BackendVersionPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
     def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = versionPayloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
@@ -61,7 +109,7 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
     "non csp version request is created correctly" in {
       val actual = createVersionPayload(TestNonCspAuthorisedRequest)
       xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validNonCspVerionRequestPayload)
+      stringToXml(actual) shouldBe stringToXml(validNonCspVersionRequestPayload)
     }
 
     "non csp version request is with declarationSubmissionChannel created correctly" in {

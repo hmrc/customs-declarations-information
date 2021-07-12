@@ -42,6 +42,93 @@ object SearchTestXMLData {
     .appendTimeZoneOffset("Z", false, 2, 2)
     .toFormatter
 
+  val validNonCspSearchRequestPayload =
+    """<ns1:retrieveDeclarationSummaryDataRequest
+      |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      |          xmlns:ns1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+      |          <ns1:requestCommon>
+      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+      |          </ns1:requestCommon>
+      |           </ns1:requestCommon>
+      |            <ns1:requestDetail>
+      |              <ns1:partyRole>submitter</ns1:partyRole>
+      |              <ns1:declarationCategory>IM</ns1:declarationCategory>
+      |              <ns1:declarationStatus>all</ns1:declarationStatus>
+      |              <ns1:goodsLocationCode>BELBELOB4</ns1:goodsLocationCode>
+      |              <ns1:dateRange>
+      |                <ns1:dateFrom>2021-04-01</ns1:dateFrom>
+      |                <ns1:dateTo>2021-04-04</ns1:dateTo>
+      |              </ns1:dateRange>
+      |              <ns1:pageNumber>2</ns1:pageNumber>
+      |              <ns1:declarationSubmissionChannel>AuthenticatedPartyOnly</ns1:declarationSubmissionChannel>
+      |            </ns1:requestDetail>
+      |          </ns1:retrieveDeclarationSummaryDataRequest>
+      |""".stripMargin
+
+
+  val validCspSearchRequestPayload =
+      """<ns1:retrieveDeclarationSummaryDataRequest
+        |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        |          xmlns:ns1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+        |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest DeclarationInformationRetrievalSearchResponse.xsd">
+        |            <ns1:requestCommon>
+        |              <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+        |              <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+        |              <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+        |              <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
+        |              <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+        |              <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+        |              <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
+        |            </ns1:requestCommon>
+        |            <ns1:requestDetail>
+        |              <ns1:partyRole>submitter</ns1:partyRole>
+        |              <ns1:declarationCategory>IM</ns1:declarationCategory>
+        |              <ns1:declarationStatus>all</ns1:declarationStatus>
+        |              <ns1:goodsLocationCode>BELBELOB4</ns1:goodsLocationCode>
+        |              <ns1:dateRange>
+        |                <ns1:dateFrom>2021-04-01</ns1:dateFrom>
+        |                <ns1:dateTo>2021-04-04</ns1:dateTo>
+        |              </ns1:dateRange>
+        |              <ns1:pageNumber>2</ns1:pageNumber>
+        |              <ns1:declarationSubmissionChannel>AuthenticatedPartyOnly</ns1:declarationSubmissionChannel>
+        |            </ns1:requestDetail>
+        |          </ns1:retrieveDeclarationSummaryDataRequest>
+        |""".stripMargin
+  
+  val expectedSearchPayloadRequest = {
+    <ns1:retrieveDeclarationSummaryDataRequest
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ns1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+    xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest DeclarationInformationRetrievalSearchResponse.xsd">
+      <ns1:requestCommon>
+        <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
+        <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
+        <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
+        <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
+        <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
+        <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
+        <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
+      </ns1:requestCommon>
+      <ns1:requestDetail>
+        <ns1:partyRole>submitter</ns1:partyRole>
+        <ns1:declarationCategory>IM</ns1:declarationCategory>
+        <ns1:declarationStatus>all</ns1:declarationStatus>
+        <ns1:goodsLocationCode>BELBELOB4</ns1:goodsLocationCode>
+        <ns1:dateRange>
+          <ns1:dateFrom>2021-04-01</ns1:dateFrom>
+          <ns1:dateTo>2021-04-04</ns1:dateTo>
+        </ns1:dateRange>
+        <ns1:pageNumber>2</ns1:pageNumber>
+        <ns1:declarationSubmissionChannel>AuthenticatedPartyOnly</ns1:declarationSubmissionChannel>
+      </ns1:requestDetail>
+    </ns1:retrieveDeclarationSummaryDataRequest>
+  }
+
   val validBackendSearchResponse = {
     <n1:retrieveDeclarationSummaryDataResponse
     xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
@@ -109,6 +196,52 @@ object SearchTestXMLData {
     </n1:retrieveDeclarationSummaryDataResponse>
   }.filter(_ => true)
 
+  val validFilteredSearchResponseXML: Elem = {
+    <p:DeclarationSearchResponse xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
+                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                 xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+                                 xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                                 xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+                                 xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+                                 xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1">
+      <p:DeclarationSearchDetails>
+        <p:Declaration>
+          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
+          <p:ReceivedDateTime>
+            <p:DateTimeString formatCode="304">20200715123000Z</p:DateTimeString>
+          </p:ReceivedDateTime>
+          <p:ROE>6</p:ROE>
+          <p:ICS>15</p:ICS>
+          <p:LRN>20GBAKZ81EQJ2WXYZ</p:LRN>
+        </p:Declaration>
+        <p2:Declaration>
+          <p2:FunctionCode>9</p2:FunctionCode>
+          <p2:TypeCode>IMZ</p2:TypeCode>
+          <p2:GoodsShipment>
+            <p2:Consignment>
+              <p2:GoodsLocation>
+                <p2:ID>LIVLIVLIVR</p2:ID>
+                <p2:TypeCode>14</p2:TypeCode>
+              </p2:GoodsLocation>
+            </p2:Consignment>
+            <p2:PreviousDocument>
+              <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
+              <p2:TypeCode>DCR</p2:TypeCode>
+            </p2:PreviousDocument>
+            <p2:PreviousDocument>
+              <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
+              <p2:TypeCode>DCS</p2:TypeCode>
+            </p2:PreviousDocument>
+          </p2:GoodsShipment>
+        </p2:Declaration>
+      </p:DeclarationSearchDetails>
+      <p:CurrentPageNumber>1</p:CurrentPageNumber>
+      <p:TotalResultsAvailable>1</p:TotalResultsAvailable>
+      <p:TotalPagesAvailable>2</p:TotalPagesAvailable>
+      <p:NoResultsReturned>false</p:NoResultsReturned>
+    </p:DeclarationSearchResponse>
+  }
+  
   def generateDeclarationSearchResponse(noOfDeclarationSearchResults: Int = 1, receivedDate: DateTime): NodeSeq = {
     val items = noOfDeclarationSearchResults to 1 by -1
     val content = items.map(index => generateDeclarationSearchDetailsElement(generateHMRCDeclaration(receivedDate.plusMonths(index)), generateStandardResponseWCODeclaration()))

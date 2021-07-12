@@ -42,7 +42,7 @@ object VersionTestXMLData {
     .appendTimeZoneOffset("Z", false, 2, 2)
     .toFormatter
 
-  val validNonCspVerionRequestPayload =
+  val validNonCspVersionRequestPayload =
     """<ns1:retrieveDeclarationVersionRequest xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <ns1:requestCommon>
@@ -251,6 +251,48 @@ object VersionTestXMLData {
       </n1:responseDetail>
     </n1:retrieveDeclarationVersionResponse>
   }.filter(_ => true)
+
+  val validFilteredVersionResponseXML: Elem = {
+    <p:DeclarationVersionResponse xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion"
+                                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                  xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+                                  xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                                  xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+                                  xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+                                  xmlns:p="http://gov.uk/customs/retrieveDeclarationVersion">
+      <p:DeclarationVersionDetails>
+        <p:Declaration>
+          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
+          <p:VersionID>1</p:VersionID>
+          <p:CreatedDateTime>
+            <p:DateTimeString formatCode="304">20200715123000Z</p:DateTimeString>
+          </p:CreatedDateTime>
+          <p:LRN>20GBAKZ81EQJ2WXYZ</p:LRN>
+        </p:Declaration>
+        <p2:Declaration>
+          <p2:FunctionCode>9</p2:FunctionCode>
+          <p2:TypeCode>IMZ</p2:TypeCode>
+          <p2:GoodsShipment>
+            <p2:Consignment>
+              <p2:GoodsLocation>
+                <p2:ID>LIVLIVLIVR</p2:ID>
+                <p2:TypeCode>14</p2:TypeCode>
+              </p2:GoodsLocation>
+            </p2:Consignment>
+            <p2:PreviousDocument>
+              <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
+              <p2:TypeCode>DCR</p2:TypeCode>
+            </p2:PreviousDocument>
+            <p2:PreviousDocument>
+              <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
+              <p2:TypeCode>DCS</p2:TypeCode>
+            </p2:PreviousDocument>
+          </p2:GoodsShipment>
+        </p2:Declaration>
+      </p:DeclarationVersionDetails>
+    </p:DeclarationVersionResponse>
+  }
+  
 
   def generateDeclarationVersionResponse(noOfDeclarationVersionResponses: Int = 1, creationDate: DateTime): NodeSeq = {
     val items = noOfDeclarationVersionResponses to 1 by -1

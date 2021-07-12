@@ -40,7 +40,7 @@ class BackendVersionPayloadCreator() extends BackendPayloadCreator {
     <ns1:retrieveDeclarationVersionRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion"
-    xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd">
+    xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd">
       <ns1:requestCommon>
         {Seq[NodeSeq](
         <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>, Text(newLineAndIndentation),
