@@ -41,11 +41,16 @@ object ActionBuilderModelHelper {
 
   implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) {
 
-    def toInternalClientIdsRequest(declarationSubmissionChannel: Option[String]): InternalClientIdsRequest[A] = InternalClientIdsRequest(
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+
+    private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
-      declarationSubmissionChannel,
+      None,
+      authorisedAs,
       vhr.request
     )
   }
@@ -105,13 +110,7 @@ trait HasBadgeIdentifier {
 }
 
 trait HasSearchParameters {
-  val partyRole: PartyRole
-  val declarationCategory: DeclarationCategory
-  val goodsLocationCode: Option[GoodsLocationCode]
-  val declarationStatus: Option[DeclarationStatus]
-  val dateFrom: Option[Date]
-  val dateTo: Option[Date]
-  val pageNumber: Option[Int]
+  val searchParameters: Option[SearchParameters]
 }
 
 case class ExtractedHeadersImpl(clientId: ClientId) extends ExtractedHeaders
@@ -155,16 +154,18 @@ case class SearchParametersRequest[A](conversationId: ConversationId,
                                       clientId: ClientId,
                                       declarationSubmissionChannel: Option[String], //could or should be type or enum
                                       request: Request[A],
-                                      partyRole: PartyRole,
-                                      declarationCategory: DeclarationCategory,
-                                      goodsLocationCode: Option[GoodsLocationCode],
-                                      declarationStatus: Option[DeclarationStatus],
-                                      dateFrom: Option[Date],
-                                      dateTo: Option[Date],
-                                      pageNumber: Option[Int]
+                                      searchParameters: Option[SearchParameters]
                                       ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasSearchParameters {
 
 }
+
+case class SearchParameters(partyRole: PartyRole,
+                            declarationCategory: DeclarationCategory,
+                            goodsLocationCode: Option[GoodsLocationCode],
+                            declarationStatus: Option[DeclarationStatus],
+                            dateFrom: Option[Date],
+                            dateTo: Option[Date],
+                            pageNumber: Option[Int])
 
 // Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,

@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBad
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{DeclarationCategory, DeclarationStatus, DeclarationSubmissionChannel, GoodsLocationCode, PartyRole}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, ValidatedHeadersRequest, SearchParametersRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import java.text.{ParseException, SimpleDateFormat}
@@ -33,11 +33,10 @@ import scala.util.matching.Regex
 
 /** Action builder that checks use of authenticatedParty parameter
  * <ul>
- * <li/>INPUT - `ValidatedHeadersRequest`
+ * <li/>INPUT - `InternalClientIdsRequest`
  * <li/>OUTPUT - `SearchParametersRequest`
  * <li/>ERROR -
  * <ul>
- * <li/>400 if used when calling the /status endpoint
  * <li/>400 if called externally i.e. clientId not present in config
  * </ul>
  */
@@ -45,7 +44,7 @@ import scala.util.matching.Regex
 class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
                                             val configService: InformationConfigService)
                                            (implicit ec: ExecutionContext)
-  extends ActionRefiner[ValidatedHeadersRequest, SearchParametersRequest] {
+  extends ActionRefiner[InternalClientIdsRequest, SearchParametersRequest] {
 
   override def executionContext: ExecutionContext = ec
 
@@ -57,8 +56,8 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
 
   val declarationSubmissionChannelErrorCode = "CDS60011"
 
-  override def refine[A](icr: ValidatedHeadersRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
-    implicit val id: ValidatedHeadersRequest[A] = icr
+  override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
+    implicit val id: InternalClientIdsRequest[A] = icr
 
     val maybePartyRole = icr.request.getQueryString("declarationSubmissionChannel")
     val maybeDeclarationCategory = icr.request.getQueryString("declarationSubmissionChannel")
@@ -77,9 +76,8 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     dateFrom <- validateDate(maybeDateFrom).right
     dateTo <- validateDate(maybeDateTo).right
     pageNumber <- validatePageNumber(maybePageNumber).right
-    declarationSubmissionChannel <- validateDeclarationSubmissionChannel(maybeDeclarationSubmissionChannel).right
-  } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, Some("NOT REAL"), icr.request,
-    partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)
+  } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel, icr.request,
+    Some(SearchParameters(partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)))
 
     if(searchParameters.isLeft) {
       Left(searchParameters.left.get.XmlResult.withConversationId)
@@ -158,18 +156,4 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       case None => Right(None)
     }
   }
-
-  def validateDeclarationSubmissionChannel[A](declarationSubmissionChannel: Option[String])(implicit icr: ValidatedHeadersRequest[A]): Either[ErrorResponse, Option[DeclarationSubmissionChannel]] = {
-
-    declarationSubmissionChannel match {
-      case Some(ds) =>
-        if (validDeclarationSubmissionChannel.contains(ds) && configService.informationConfig.internalClientIds.contains(icr.clientId.value)) {
-          Right(Some(DeclarationSubmissionChannel(ds)))
-        } else {
-          Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", "CDS60011"))
-        }
-      case None => Right(None)
-    }
-  }
-
 }

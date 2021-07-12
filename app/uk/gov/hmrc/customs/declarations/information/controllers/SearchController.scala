@@ -39,57 +39,33 @@ import scala.util.matching.Regex
 @Singleton
 class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
-                                 val authAction: AuthAction,
+                                 val authAction: SearchAuthAction,
                                  val conversationIdAction: ConversationIdAction,
-                                 val internalClientIdsCheckAction: SearchParametersCheckAction,
+                                 val searchParamtersCheckAction: SearchParametersCheckAction,
+                                 val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                  val declarationSearchService: DeclarationSearchService,
                                  val cc: ControllerComponents,
                                  val logger: InformationLogger)
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
-
-
   def list(partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String], declarationStatus: Option[String],
            dateFrom: Option[String], dateTo: Option[String], pageNumber: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
-    implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(""))
+    implicit asr: AuthorisedRequest[AnyContent] => search()
   }
 
-  private def search(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
+  private def search()(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-    validateMrn(mrn) match {
-      case Right(()) =>
-        declarationSearchService.send(Right(mrn)) map {
-          case Right(res: HttpResponse) =>
-            new HasConversationId {
-              override val conversationId = asr.conversationId
-            }
-            logger.info(s"Declaration information versions processed successfully.")
-            logger.debug(s"Returning declaration information versions response with status code ${res.status} and body\n ${res.body}")
-            Ok(res.body).withConversationId.as(ContentTypes.XML)
-          case Left(errorResult) =>
-            errorResult
+    declarationSearchService.send(Right(Mrn(""))) map {
+      case Right(res: HttpResponse) =>
+        new HasConversationId {
+          override val conversationId = asr.conversationId
         }
-      case Left(result) =>
-        Future.successful(result)
-    }
-  }
-
-  private def validateMrn(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
-    if(mrn.validValue) {
-      Right()
-    } else {
-      val appropriateResponse = if (mrn.valueTooLong) {
-        logger.info(s"MRN parameter is too long: $mrn")
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN parameter too long")
-      } else if (mrn.valueTooShort) {
-        logger.info(s"MRN parameter is missing: $mrn")
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing MRN parameter")
-      } else {
-        logger.info(s"MRN parameter is invalid: $mrn")
-        ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
-      }
-      Left(appropriateResponse.XmlResult.withConversationId)
+        logger.info(s"Declaration information versions processed successfully.")
+        logger.debug(s"Returning declaration information versions response with status code ${res.status} and body\n ${res.body}")
+        Ok(res.body).withConversationId.as(ContentTypes.XML)
+      case Left(errorResult) =>
+        errorResult
     }
   }
 
@@ -99,5 +75,6 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
       shutterCheckAction andThen
       validateAndExtractHeadersAction andThen
       internalClientIdsCheckAction andThen
+      searchParamtersCheckAction andThen
       authAction
 }
