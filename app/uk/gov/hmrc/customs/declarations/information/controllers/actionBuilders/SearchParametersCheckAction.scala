@@ -18,11 +18,11 @@ package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBadRequest, errorBadRequest}
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{DeclarationCategory, DeclarationStatus, DeclarationSubmissionChannel, GoodsLocationCode, PartyRole}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.{DeclarationCategory, DeclarationStatus, GoodsLocationCode, PartyRole}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import java.text.{ParseException, SimpleDateFormat}
@@ -51,10 +51,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   private val validDeclarationCategories = Seq("IM", "EX", "CO", "ALL")
   private val goodsLocationCodeRegex: Regex = "^[a-zA-Z0-9]{1,12}$".r
   private val validDeclarationStatuses = Seq("CLEARED", "UNCLEARED", "REJECTED", "ALL")
-  private val validDeclarationSubmissionChannel = Seq("AuthenticatedPartyOnly")
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-
-  val declarationSubmissionChannelErrorCode = "CDS60011"
 
   override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
     implicit val id: InternalClientIdsRequest[A] = icr
@@ -66,7 +63,6 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     val maybeDateFrom = icr.request.getQueryString("dateFrom")
     val maybeDateTo = icr.request.getQueryString("dateTo")
     val maybePageNumber = icr.request.getQueryString("pageNumber")
-    val maybeDeclarationSubmissionChannel = icr.request.getQueryString("declarationSubmissionChannel")
 
   val searchParameters: Either[ErrorResponse, SearchParametersRequest[A]] = for {
     partyRole <- validatePartyRole(maybePartyRole).right
@@ -89,13 +85,13 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   def validatePartyRole(partyRole: Option[String]):  Either[ErrorResponse, PartyRole] = {
 
     partyRole.filter(pr => "submitter".compareToIgnoreCase(pr) == 0).map( pr => PartyRole(pr))
-      .toRight(errorBadRequest("Invalid maybePartyRole parameter", "CDS60006"))
+      .toRight(errorBadRequest("Invalid partyRole parameter", "CDS60006"))
   }
 
 
   def validateDeclarationCategory(declarationCategory: Option[String]):  Either[ErrorResponse, DeclarationCategory] = {
     declarationCategory.filter(dc => validDeclarationCategories.contains(dc.toUpperCase)).map(dc => DeclarationCategory(dc))
-      .toRight(errorBadRequest("Invalid maybeDeclarationCategory parameter", "CDS60008"))
+      .toRight(errorBadRequest("Invalid declarationCategory parameter", "CDS60008"))
   }
 
   def validateGoodsLocationCode(goodsLocationCode: Option[String])(implicit request: HasConversationId):  Either[ErrorResponse, Option[GoodsLocationCode]] = {
@@ -104,19 +100,21 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
         if (goodsLocationCodeRegex.findFirstIn(glc).nonEmpty) {
           Right(Some(GoodsLocationCode(glc)))
         } else {
-          Left(errorBadRequest("Invalid maybeDoodsLocationCode parameter", "CDS60010"))
+          logger.info(s"goodsLocationCode query parameter was invalid: $glc")
+          Left(errorBadRequest("Invalid goodsLocationCode parameter", "CDS60010"))
         }
       case None => Right(None)
     }
   }
 
-  def validateDeclarationStatus(declarationStatus: Option[String]): Either[ErrorResponse, Option[DeclarationStatus]] = {
+  def validateDeclarationStatus(declarationStatus: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[DeclarationStatus]] = {
 
     declarationStatus match {
       case Some(ds) =>
         if (validDeclarationStatuses.contains(ds.toUpperCase)) {
           Right(Some(DeclarationStatus(ds)))
         } else {
+          logger.info(s"declarationStatus query parameter was invalid: $ds")
           Left(errorBadRequest("Invalid declarationStatus parameter", "CDS60007"))
         }
       case None => Right(None)
@@ -131,8 +129,8 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
         Right(Some(dateAsDateType))
       } catch {
         case pe: ParseException =>
-          logger.warn(s"Date format incorrect: $d ParseException: $pe")
-          Left(ErrorGenericBadRequest)
+          logger.info(s"Date format incorrect: $d ParseException: $pe")
+          Left(errorBadRequest("Invalid date parameters", "CDS60009"))
       }
       case None => Right(None)
     }
@@ -146,12 +144,12 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
           Right(Some(validInteger))
         } else {
           logger.info(s"pageNumber query parameter was invalid: $pn")
-          Left(ErrorGenericBadRequest)
+          Left(errorBadRequest("Invalid pageNumber parameter", "CDS60012"))
         }
       } catch {
         case nfe: NumberFormatException =>
           logger.info(s"pageNumber query parameter was invalid: $pn exception: $nfe")
-          Left(ErrorGenericBadRequest)
+          Left(errorBadRequest("Invalid pageNumber parameter", "CDS60012"))
       }
       case None => Right(None)
     }

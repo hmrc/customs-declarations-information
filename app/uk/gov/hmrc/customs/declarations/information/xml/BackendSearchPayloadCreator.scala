@@ -21,7 +21,7 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
 import javax.inject.Singleton
-import scala.xml.{NodeSeq, Text}
+import scala.xml.NodeSeq
 
 @Singleton
 class BackendSearchPayloadCreator() extends BackendPayloadCreator {

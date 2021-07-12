@@ -19,21 +19,13 @@ package unit.controllers.actionBuilders
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status
-import play.api.http.Status.UNAUTHORIZED
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode, errorBadRequest}
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames.XConversationIdHeaderName
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, HeaderValidator, SearchAuthAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{HeaderValidator, SearchAuthAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ValidatedHeadersRequest
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
-import util.RequestHeaders.X_CONVERSATION_ID_NAME
 import util.TestData._
 import util.{AuthConnectorStubbing, UnitSpec}
 

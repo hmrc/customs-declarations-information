@@ -18,30 +18,24 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.services.{DeclarationSearchService, DeclarationVersionService}
+import uk.gov.hmrc.customs.declarations.information.services.DeclarationSearchService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.text.{ParseException, SimpleDateFormat}
-import java.time.ZonedDateTime
-import java.util.Date
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.matching.Regex
 
 @Singleton
 class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
                                  val authAction: SearchAuthAction,
                                  val conversationIdAction: ConversationIdAction,
-                                 val searchParamtersCheckAction: SearchParametersCheckAction,
+                                 val searchParametersCheckAction: SearchParametersCheckAction,
                                  val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                  val declarationSearchService: DeclarationSearchService,
                                  val cc: ControllerComponents,
@@ -76,6 +70,6 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
       shutterCheckAction andThen
       validateAndExtractHeadersAction andThen
       internalClientIdsCheckAction andThen
-      searchParamtersCheckAction andThen
+      searchParametersCheckAction andThen
       authAction
 }
