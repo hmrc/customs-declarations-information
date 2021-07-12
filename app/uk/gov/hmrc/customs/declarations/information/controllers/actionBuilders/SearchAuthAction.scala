@@ -53,8 +53,8 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
 
   override protected[this] def executionContext: ExecutionContext = ec
 
-  override def refine[A](icir: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitIcir: SearchParametersRequest[A] = icir
+  override def refine[A](spr: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitIcir: SearchParametersRequest[A] = spr
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap{
@@ -64,10 +64,10 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
-              Right(icir.toNonCspAuthorisedRequest(nonCspData.eori))
+              Right(spr.toNonCspAuthorisedRequest(nonCspData.eori))
           }
         }{ cspData =>
-          Future.successful(Right(icir.toCspAuthorisedRequest(cspData)))
+          Future.successful(Right(spr.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>
         Future.successful(Left(result.XmlResult.withConversationId))

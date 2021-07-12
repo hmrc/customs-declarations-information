@@ -31,9 +31,12 @@ class BackendVersionPayloadCreator() extends BackendPayloadCreator {
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
                          date: DateTime,
-                         eitherMrnOrSearchType: Either[SearchType, Mrn],
+                         searchType: SearchType,
                          maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
   (implicit asr: AuthorisedRequest[A]): NodeSeq = {
+
+    val searchTypeAsType = searchType.asInstanceOf[Mrn]
+
     <ns1:retrieveDeclarationVersionRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion"
@@ -62,7 +65,7 @@ class BackendVersionPayloadCreator() extends BackendPayloadCreator {
       <ns1:requestDetail>
         <ns1:RetrieveDeclarationVersionRequest>
           <ns1:ServiceRequestParameters>
-            <ns1:MRN>{eitherMrnOrSearchType.right.get}</ns1:MRN>
+            <ns1:MRN>{searchTypeAsType}</ns1:MRN>
             {asr.declarationSubmissionChannel.fold(NodeSeq.Empty)(apo => <ns1:DeclarationSubmissionChannel>{apo}</ns1:DeclarationSubmissionChannel>)}
           </ns1:ServiceRequestParameters>
         </ns1:RetrieveDeclarationVersionRequest>

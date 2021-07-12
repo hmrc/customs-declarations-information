@@ -52,7 +52,7 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   "BackendStatusPayloadCreator.createVersionPayload" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
-    def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = versionPayloadCreator.create(conversationId, correlationId, dateTime, Right(mrn), Some(apiSubscriptionFieldsResponse))(ar)
+    def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = versionPayloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
 
     "sample Version request passes schema validation" in {
       xmlVersionValidationService.validate(createVersionPayload(TestCspAuthorisedRequest)) should be(true)
@@ -92,10 +92,10 @@ class BackendPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
   "BackendStatusPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
-    def createMrnPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(mrn), Some(apiSubscriptionFieldsResponse))
-    def createDucrPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(ducr), Some(apiSubscriptionFieldsResponse))
-    def createUcrPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(ucr), Some(apiSubscriptionFieldsResponse))
-    def createInventoryReferencePayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, Left(inventoryReference), Some(apiSubscriptionFieldsResponse))
+    def createMrnPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))
+    def createDucrPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, ducr, Some(apiSubscriptionFieldsResponse))
+    def createUcrPayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, ucr, Some(apiSubscriptionFieldsResponse))
+    def createInventoryReferencePayload(): NodeSeq = statusPayloadCreator.create(conversationId, correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
 
     "sample MRN request passes schema validation" in {
       xmlValidationService.validate(createMrnPayload()) should be(true)

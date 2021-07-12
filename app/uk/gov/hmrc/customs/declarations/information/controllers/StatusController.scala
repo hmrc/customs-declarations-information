@@ -63,11 +63,11 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
     implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
-  private def search(searchType: SearchType)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
+  private def search(searchType: StatusSearchType)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
     searchType match {
-      case s: SearchType if !s.validValue =>
+      case s: StatusSearchType if !s.validValue =>
         logger.warn(s"Invalid search for ${searchType.label}: ${searchType.value}")
 
         val appropriateResponse = if (s.valueTooLong) {
@@ -81,7 +81,7 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
         Future.successful(appropriateResponse.XmlResult.withConversationId)
 
       case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
-        declarationStatusService.send(Left(searchType)) map {
+        declarationStatusService.send(searchType) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId

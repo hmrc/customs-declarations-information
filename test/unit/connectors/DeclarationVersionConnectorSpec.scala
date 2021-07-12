@@ -55,13 +55,13 @@ class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with Be
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   override protected def beforeEach() {
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-version")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockBackendPayloadCreator.create(conversationId, correlationId, date, Right(mrn), Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
+    when(mockBackendPayloadCreator.create(conversationId, correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
   private val successfulResponse = HttpResponse(200, "")
@@ -113,7 +113,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with Be
         when(mockServiceConfigProvider.getConfig("declaration-version")).thenReturn(null)
 
         val caught = intercept[IllegalArgumentException] {
-          await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), Right(mrn)))
+          await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
         }
         caught.getMessage shouldBe "config not found"
       }
@@ -121,7 +121,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with Be
   }
 
   private def awaitRequest = {
-    await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), Right(mrn)))
+    await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {

@@ -22,9 +22,9 @@ import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, NotFoundCode, errorInternalServerError}
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationConnector, DeclarationStatusConnector, DeclarationVersionConnector, Non2xxResponseException}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationConnector, DeclarationSearchConnector, DeclarationStatusConnector, DeclarationVersionConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{Mrn, SearchType}
+import uk.gov.hmrc.customs.declarations.information.model.{Mrn, SearchType, StatusSearchType}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
@@ -97,7 +97,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
 class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResponseFilterService,
                                           override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                           override val logger: InformationLogger,
-                                          connector: DeclarationVersionConnector,
+                                          connector: DeclarationSearchConnector,
                                           dateTimeProvider: DateTimeService,
                                           uniqueIdsService: UniqueIdsService)
                                          (implicit override val ec: ExecutionContext)
@@ -154,14 +154,14 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
   protected val backendCDS60003InternalServerErrorResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", ErrorInternalServerError.message)
   protected val backendCDS60011SubmissionChannelInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter")
 
-  def send[A](eitherMrnOrSearchType: Either[SearchType, Mrn])(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
+  def send[A](searchType: SearchType)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
 
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
-        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, eitherMrnOrSearchType)
+        connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map(response => {
             val startTime = LocalDateTime.now
             val filteredResponse = filterResponse(response, XML.loadString(response.body))

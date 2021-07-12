@@ -70,32 +70,32 @@ class AuthActionSpec extends UnitSpec
       "authorise as CSP when authorised by auth API and both badge identifier and eori are supplied" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None)))
-        actual shouldBe Right(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None).toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier))))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
+        actual shouldBe Right(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None).toSearchParametersRequest(None).toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier))))
         verifyNonCspAuthorisationNotCalled
       }
 
       "authorise as CSP when authorised by auth API and badge identifier is supplied but eori is not" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidBadgeIdAndNoEori.toInternalClientIdsRequest(None)))
-        actual shouldBe Right(TestValidatedHeadersRequestWithValidBadgeIdAndNoEori.toInternalClientIdsRequest(None).toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier))))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidBadgeIdAndNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
+        actual shouldBe Right(TestValidatedHeadersRequestWithValidBadgeIdAndNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None).toCspAuthorisedRequest(Csp(None, Some(badgeIdentifier))))
         verifyNonCspAuthorisationNotCalled
       }
 
       "authorise as CSP when authorised by auth API and eori is supplied but badge identifier is not" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidEoriAndNoBadgeId.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidEoriAndNoBadgeId.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
 
-        actual shouldBe Right(TestValidatedHeadersRequestWithValidEoriAndNoBadgeId.toInternalClientIdsRequest(None).toCspAuthorisedRequest(Csp(Some(declarantEori), None)))
+        actual shouldBe Right(TestValidatedHeadersRequestWithValidEoriAndNoBadgeId.toInternalClientIdsRequest(None).toSearchParametersRequest(None).toCspAuthorisedRequest(Csp(Some(declarantEori), None)))
         verifyCspAuthorisationCalled(1)
       }
 
       "Return 400 response when authorised by auth API and neither badge identifier nor eori is supplied" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseMissingIdentifiers.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyNonCspAuthorisationNotCalled
       }
@@ -103,7 +103,7 @@ class AuthActionSpec extends UnitSpec
       "Return 400 response when authorised by auth API and badge identifier is too long" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdTooLongAndEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdTooLongAndEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseBadgeIdentifierHeaderMissingOrInvalid.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyNonCspAuthorisationNotCalled
       }
@@ -111,7 +111,7 @@ class AuthActionSpec extends UnitSpec
       "Return 400 response when authorised by auth API and badge identifier is too short" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdTooShortAndEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdTooShortAndEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseBadgeIdentifierHeaderMissingOrInvalid.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyNonCspAuthorisationNotCalled
       }
@@ -119,7 +119,7 @@ class AuthActionSpec extends UnitSpec
       "Return 400 response when authorised by auth API and badge identifier has invalid characters" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdInvalidCharsAndEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdInvalidCharsAndEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseBadgeIdentifierHeaderMissingOrInvalid.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyNonCspAuthorisationNotCalled
       }
@@ -127,7 +127,7 @@ class AuthActionSpec extends UnitSpec
       "Return 400 response when authorised by auth API and badge identifier is lowercase" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdLowercaseAndEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidBadgeIdLowercaseAndEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseBadgeIdentifierHeaderMissingOrInvalid.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyNonCspAuthorisationNotCalled
       }
@@ -135,7 +135,7 @@ class AuthActionSpec extends UnitSpec
       "Return 400 response when authorised by auth API and eori is too long" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidEoriTooLongAndBadgeId.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithInvalidEoriTooLongAndBadgeId.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseEoriIdentifierHeaderInvalid.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyNonCspAuthorisationNotCalled
       }
@@ -143,7 +143,7 @@ class AuthActionSpec extends UnitSpec
       "return InternalError with conversationId when auth call fails" in new SetUp {
         authoriseCspError()
 
-        private val actual = await(authAction.refine(validatedHeadersRequest.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(validatedHeadersRequest.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(ErrorInternalServerError.XmlResult.withHeaders(XConversationIdHeaderName -> conversationIdValue))
         verifyCspAuthorisationCalled(1)
       }
@@ -153,15 +153,15 @@ class AuthActionSpec extends UnitSpec
       "Authorise as non-CSP when authorised by auth API" in new SetUp {
         authoriseNonCsp(Some(declarantEori))
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None)))
-        actual shouldBe Right(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None).toNonCspAuthorisedRequest(declarantEori))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
+        actual shouldBe Right(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None).toNonCspAuthorisedRequest(declarantEori))
         verifyCspAuthorisationCalled(1)
       }
 
       "Return 401 response when authorised by auth API but eori does not exist" in new SetUp {
         authoriseNonCsp(maybeEori = None)
 
-        private val actual = await(authAction.refine(validatedHeadersRequest.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(validatedHeadersRequest.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
         actual shouldBe Left(errorResponseEoriNotFoundInCustomsEnrolment.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyCspAuthorisationCalled(1)
       }
@@ -170,7 +170,7 @@ class AuthActionSpec extends UnitSpec
         unauthoriseCsp()
         unauthoriseNonCspOnly()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
 
         actual shouldBe Left(errorResponseUnauthorisedGeneral.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyCspAuthorisationCalled(1)
@@ -180,7 +180,7 @@ class AuthActionSpec extends UnitSpec
         unauthoriseCsp()
         authoriseNonCspOnlyError()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None)))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestNoBadgeIdNoEori.toInternalClientIdsRequest(None).toSearchParametersRequest(None)))
 
         actual shouldBe Left(ErrorInternalServerError.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyCspAuthorisationCalled(1)

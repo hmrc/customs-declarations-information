@@ -76,8 +76,8 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     dateFrom <- validateDate(maybeDateFrom).right
     dateTo <- validateDate(maybeDateTo).right
     pageNumber <- validatePageNumber(maybePageNumber).right
-  } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel, icr.request,
-    Some(SearchParameters(partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)))
+  } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel,
+    Some(SearchParameters(partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
 
     if(searchParameters.isLeft) {
       Left(searchParameters.left.get.XmlResult.withConversationId)

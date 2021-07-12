@@ -52,6 +52,7 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
     val path = vhr.request.path
     logger.debug(s"path is $path and declarationSubmissionChannel is $declarationSubmissionChannel")
 
+    // TODO this should no longer be required as it's not part of status controller
     if (path.endsWith("status") && declarationSubmissionChannel.isDefined) {
 
       logger.warn("rejected attempt to call status endpoint with declarationSubmissionChannel parameter") //maybe this check not needed

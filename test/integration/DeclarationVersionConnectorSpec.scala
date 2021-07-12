@@ -44,7 +44,7 @@ class DeclarationVersionConnectorSpec extends IntegrationTestSpec
 
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
-    ApiSubscriptionFieldsTestData.clientId, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+    ApiSubscriptionFieldsTestData.clientId, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   override protected def beforeAll() {
     startMockServer()
@@ -108,6 +108,6 @@ class DeclarationVersionConnectorSpec extends IntegrationTestSpec
   }
 
   private def sendValidXml() = {
-    connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), Right(mrn))
+    connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)
   }
 }

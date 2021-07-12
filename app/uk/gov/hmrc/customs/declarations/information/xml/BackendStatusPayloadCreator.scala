@@ -31,11 +31,13 @@ class BackendStatusPayloadCreator() extends BackendPayloadCreator {
   def create[A](conversationId: ConversationId,
                 correlationId: CorrelationId,
                 date: DateTime,
-                eitherMrnOrSearchType: Either[SearchType, Mrn],
+                searchType: SearchType,
                 maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                (implicit asr: AuthorisedRequest[A]): NodeSeq = {
 
-    val searchElement = <n1:labelToRename>{eitherMrnOrSearchType.left.get.toString}</n1:labelToRename>.copy(label = eitherMrnOrSearchType.left.get.label)
+    val searchTypeAsType: StatusSearchType = searchType.asInstanceOf[StatusSearchType]
+
+    val searchElement = <n1:labelToRename>{searchTypeAsType.toString}</n1:labelToRename>.copy(label = searchTypeAsType.label)
 
     <n1:queryDeclarationStatusRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
