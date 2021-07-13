@@ -45,7 +45,7 @@ class StatusAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                  headerValidator: HeaderValidator,
                                  logger: InformationLogger)
                                 (implicit ec: ExecutionContext)
-  extends SuperAuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[ValidatedHeadersRequest, AuthorisedRequest] {
+  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[ValidatedHeadersRequest, AuthorisedRequest] {
 
   override protected[this] def executionContext: ExecutionContext = ec
 

@@ -45,7 +45,7 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                  headerValidator: HeaderValidator,
                                  logger: InformationLogger)
                                 (implicit ec: ExecutionContext)
-  extends SuperAuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[SearchParametersRequest, AuthorisedRequest] {
+  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[SearchParametersRequest, AuthorisedRequest] {
 
   override protected[this] def executionContext: ExecutionContext = ec
 

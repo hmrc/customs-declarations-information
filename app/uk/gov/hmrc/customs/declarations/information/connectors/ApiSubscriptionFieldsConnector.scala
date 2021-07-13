@@ -43,8 +43,7 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
     http.GET[ApiSubscriptionFieldsResponse](url)
       .recoverWith {
         case upstreamErrorResponse: UpstreamErrorResponse =>
-          val errorMsg = s"Subscriptions fields lookup call failed. url=$url HttpStatus=${upstreamErrorResponse.statusCode} error=${upstreamErrorResponse.getMessage}"
-          logger.error(errorMsg)
+          logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${upstreamErrorResponse.statusCode} error=${upstreamErrorResponse.getMessage}")
           Future.failed(upstreamErrorResponse)
         case httpError: HttpException =>
           logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
