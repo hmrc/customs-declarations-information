@@ -26,11 +26,22 @@ import util.TestData.{cspBearerToken, nonCspBearerToken}
 object FakeRequests {
 
   lazy val ValidCspDeclarationRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromCsp
+
   lazy val ValidCspDeclarationVersionRequestWithDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/version?declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromCsp
   lazy val ValidCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/version?declarationSubmissionChannel=AuthenticatedPartyOnly1").withHeaders(ValidHeaders.toSeq: _*).fromCsp
+
+
+
+  lazy val ValidCspDeclarationSearchRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM").withHeaders(ValidHeaders.toSeq: _*).fromCsp
+  lazy val ValidCspDeclarationSearchRequestWithInvalidDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&declarationSubmissionChannel=AuthenticatedPartyOnly1").withHeaders(ValidHeaders.toSeq: _*).fromCsp
+
   lazy val ValidNonCspDeclarationRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
+
   lazy val ValidNonCspDeclarationVersionRequestWithDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/version?declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
   lazy val ValidNonCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/mrn/:mrn/version?declarationSubmissionChannel=AuthenticatedPartyOnly1").withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
+
+  lazy val ValidNonCspDeclarationSearchRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM").withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
+  lazy val ValidNonCspDeclarationSearchWithSubChannelRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromNonCsp
 
   implicit class FakeRequestOps[R](val fakeRequest: FakeRequest[R]) extends AnyVal {
     def fromCsp: FakeRequest[R] = fakeRequest.withHeaders(AUTHORIZATION -> s"Bearer $cspBearerToken")

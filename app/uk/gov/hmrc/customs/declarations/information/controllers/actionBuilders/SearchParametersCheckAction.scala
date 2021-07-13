@@ -56,9 +56,9 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
     implicit val id: InternalClientIdsRequest[A] = icr
 
-    val maybePartyRole = icr.request.getQueryString("declarationSubmissionChannel")
-    val maybeDeclarationCategory = icr.request.getQueryString("declarationSubmissionChannel")
-    val maybeGoodsLocationCode = icr.request.getQueryString("maybeDoodsLocationCode")
+    val maybePartyRole = icr.request.getQueryString("partyRole")
+    val maybeDeclarationCategory = icr.request.getQueryString("declarationCategory")
+    val maybeGoodsLocationCode = icr.request.getQueryString("goodsLocationCode")
     val maybeDeclarationStatus = icr.request.getQueryString("declarationStatus")
     val maybeDateFrom = icr.request.getQueryString("dateFrom")
     val maybeDateTo = icr.request.getQueryString("dateTo")
@@ -71,6 +71,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     declarationStatus <- validateDeclarationStatus(maybeDeclarationStatus).right
     dateFrom <- validateDate(maybeDateFrom).right
     dateTo <- validateDate(maybeDateTo).right
+    dateChronology <- validateDateChronology(dateFrom, dateTo)
     pageNumber <- validatePageNumber(maybePageNumber).right
   } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel,
     Some(SearchParameters(partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
@@ -120,13 +121,24 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       case None => Right(None)
     }
   }
-
+  def validateDateChronology(dateFrom: Option[Date], dateTo: Option[Date])(implicit request: HasConversationId): Either[ErrorResponse, Unit] = {
+    if (dateFrom.isDefined && dateTo.isDefined && dateTo.get.before(dateFrom.get)) {
+        Left(errorBadRequest("Invalid date parameters", "CDS60009"))
+    } else {
+      Right()
+    }
+  }
   def validateDate(date: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Date]] = {
 
     date match {
       case Some(d) => try {
         val dateAsDateType = dateFormat.parse(d)
-        Right(Some(dateAsDateType))
+        if(dateAsDateType.compareTo(new Date()) <= 0) {
+          Right(Some(dateAsDateType))
+        } else {
+          logger.info(s"Date waa in the future: $d")
+          Left(errorBadRequest("Invalid date parameters", "CDS60009"))
+        }
       } catch {
         case pe: ParseException =>
           logger.info(s"Date format incorrect: $d ParseException: $pe")
