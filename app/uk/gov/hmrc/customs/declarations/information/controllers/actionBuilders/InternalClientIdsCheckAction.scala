@@ -52,12 +52,7 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
     val path = vhr.request.path
     logger.debug(s"path is $path and declarationSubmissionChannel is $declarationSubmissionChannel")
 
-    if (path.endsWith("status") && declarationSubmissionChannel.isDefined) {
-
-      logger.warn("rejected attempt to call status endpoint with declarationSubmissionChannel parameter") //maybe this check not needed
-      Left(errorBadRequest("declarationSubmissionChannel parameter not permitted in status request").XmlResult.withConversationId)
-
-    } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0) {
+    if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") != 0) {
 
       logger.info(s"declarationSubmissionChannel parameter passed is invalid: $declarationSubmissionChannel")
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", declarationSubmissionChannelErrorCode).XmlResult.withConversationId)
@@ -72,5 +67,4 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
       Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, declarationSubmissionChannel, vhr.request))
     }
   }
-
 }

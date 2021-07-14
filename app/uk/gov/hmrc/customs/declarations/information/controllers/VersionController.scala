@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                   val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
-                                  val authAction: AuthAction,
+                                  val authAction: VersionAuthAction,
                                   val conversationIdAction: ConversationIdAction,
                                   val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                   val declarationVersionService: DeclarationVersionService,
@@ -52,7 +52,7 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
 
     validateMrn(mrn) match {
       case Right(()) =>
-        declarationVersionService.send(Right(mrn)) map {
+        declarationVersionService.send(mrn) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId

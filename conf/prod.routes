@@ -16,4 +16,6 @@ GET         /inventory-reference/:inventoryReference/status   @uk.gov.hmrc.custo
 GET         /mrn//version                                     @uk.gov.hmrc.customs.declarations.information.controllers.VersionController.list(mrn = "", declarationSubmissionChannel: Option[String])
 GET         /mrn/:mrn/version                                 @uk.gov.hmrc.customs.declarations.information.controllers.VersionController.list(mrn, declarationSubmissionChannel: Option[String])
 
+GET         /search                                           @uk.gov.hmrc.customs.declarations.information.controllers.SearchController.list(partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String], declarationStatus: Option[String], dateFrom: Option[String], dateTo: Option[String], pageNumber: Option[String], declarationSubmissionChannel: Option[String])
+
 GET         /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics

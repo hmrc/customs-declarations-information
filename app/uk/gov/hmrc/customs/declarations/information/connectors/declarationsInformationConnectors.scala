@@ -29,7 +29,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.{BackendPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
+import uk.gov.hmrc.customs.declarations.information.xml.{BackendPayloadCreator, BackendSearchPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
@@ -74,6 +74,24 @@ class DeclarationVersionConnector @Inject()(http: HttpClient,
   override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 }
 
+@Singleton
+class DeclarationSearchConnector @Inject()(http: HttpClient,
+                                            logger: InformationLogger,
+                                            backendPayloadCreator: BackendSearchPayloadCreator,
+                                            serviceConfigProvider: ServiceConfigProvider,
+                                            config: InformationConfigService,
+                                            override val cdsLogger: CdsLogger,
+                                            override val actorSystem: ActorSystem)
+                                           (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+
+  override val configKey = "declaration-search"
+
+  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+}
+
 abstract class DeclarationConnector @Inject()(http: HttpClient,
                                               logger: InformationLogger,
                                               backendPayloadCreator: BackendPayloadCreator,
@@ -90,13 +108,13 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
-              eitherMrnOrSearchType: Either[SearchType, Mrn])(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
+              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
 
-    val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, eitherMrnOrSearchType, maybeApiSubscriptionFieldsResponse)
+    val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationPayload, config.url, headers))
   }
 

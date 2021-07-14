@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.customs.declarations.information.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{AuthAction, ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -30,13 +29,14 @@ import uk.gov.hmrc.customs.declarations.information.services.DeclarationStatusSe
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
                                  val internalClientIdsCheckAction: InternalClientIdsCheckAction,
-                                 val authAction: AuthAction,
+                                 val authAction: StatusAuthAction,
                                  val conversationIdAction: ConversationIdAction,
                                  val declarationStatusService: DeclarationStatusService,
                                  val cc: ControllerComponents,
@@ -63,11 +63,11 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
     implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
   }
 
-  private def search(searchType: SearchType)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
+  private def search(searchType: StatusSearchType)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
     searchType match {
-      case s: SearchType if !s.validValue =>
+      case s: StatusSearchType if !s.validValue =>
         logger.warn(s"Invalid search for ${searchType.label}: ${searchType.value}")
 
         val appropriateResponse = if (s.valueTooLong) {
@@ -81,7 +81,7 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
         Future.successful(appropriateResponse.XmlResult.withConversationId)
 
       case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
-        declarationStatusService.send(Left(searchType)) map {
+        declarationStatusService.send(searchType) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId
@@ -100,6 +100,5 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
       conversationIdAction andThen
       shutterCheckAction andThen
       validateAndExtractHeadersAction andThen
-      internalClientIdsCheckAction andThen
       authAction
 }

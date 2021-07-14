@@ -20,6 +20,8 @@ import play.api.mvc.{Request, Result, WrappedRequest}
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.model._
 
+import java.util.Date
+
 object ActionBuilderModelHelper {
 
   implicit class AddConversationId(val result: Result) extends AnyVal {
@@ -39,6 +41,10 @@ object ActionBuilderModelHelper {
 
   implicit class ValidatedHeadersRequestOps[A](val vhr: ValidatedHeadersRequest[A]) {
 
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+
     def toInternalClientIdsRequest(declarationSubmissionChannel: Option[String]): InternalClientIdsRequest[A] = InternalClientIdsRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
@@ -46,20 +52,55 @@ object ActionBuilderModelHelper {
       declarationSubmissionChannel,
       vhr.request
     )
-  }
-
-  implicit class InternalClientIdsRequestOps[A](val vhr: InternalClientIdsRequest[A]) {
-    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
-
-    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
 
     private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
-      vhr.declarationSubmissionChannel,
+      None,
+      None,
       authorisedAs,
       vhr.request
+    )
+  }
+
+  implicit class InternalClientIdsRequestOps[A](val icir: InternalClientIdsRequest[A]) {
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+
+    def toSearchParametersRequest(searchParameters: Option[SearchParameters]): SearchParametersRequest[A] = SearchParametersRequest(
+      icir.conversationId,
+      icir.requestedApiVersion,
+      icir.clientId,
+      icir.declarationSubmissionChannel,
+      searchParameters,
+      icir.request
+    )
+
+    private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
+      icir.conversationId,
+      icir.requestedApiVersion,
+      icir.clientId,
+      icir.declarationSubmissionChannel,
+      None,
+      authorisedAs,
+      icir.request
+    )
+  }
+  implicit class SearchParametersRequestOps[A](val spr: SearchParametersRequest[A]) {
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+
+    private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
+      spr.conversationId,
+      spr.requestedApiVersion,
+      spr.clientId,
+      spr.declarationSubmissionChannel,
+      spr.searchParameters,
+      authorisedAs,
+      spr.request
     )
   }
 }
@@ -86,6 +127,10 @@ trait HasAuthorisedAs {
 
 trait HasBadgeIdentifier {
   val badgeIdentifier: BadgeIdentifier
+}
+
+trait HasSearchParameters {
+  val searchParameters: Option[SearchParameters]
 }
 
 case class ExtractedHeadersImpl(clientId: ClientId) extends ExtractedHeaders
@@ -123,11 +168,31 @@ case class InternalClientIdsRequest[A](conversationId: ConversationId,
                                        request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders
 
+// Available after SearchParametersCheckAction
+case class SearchParametersRequest[A](conversationId: ConversationId,
+                                      requestedApiVersion: ApiVersion,
+                                      clientId: ClientId,
+                                      declarationSubmissionChannel: Option[String], //could or should be type or enum
+                                      searchParameters: Option[SearchParameters],
+                                      request: Request[A]
+                                      ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasSearchParameters {
+
+}
+
+case class SearchParameters(partyRole: PartyRole,
+                            declarationCategory: DeclarationCategory,
+                            goodsLocationCode: Option[GoodsLocationCode],
+                            declarationStatus: Option[DeclarationStatus],
+                            dateFrom: Option[Date],
+                            dateTo: Option[Date],
+                            pageNumber: Option[Int])
+
 // Available after AuthAction builder
 case class AuthorisedRequest[A](conversationId: ConversationId,
                                 requestedApiVersion: ApiVersion,
                                 clientId: ClientId,
                                 declarationSubmissionChannel: Option[String],
+                                searchParameters: Option[SearchParameters],
                                 authorisedAs: AuthorisedAs,
                                 request: Request[A]
-) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion
+) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion with HasSearchParameters

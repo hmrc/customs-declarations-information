@@ -63,7 +63,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
     when(mockDeclarationVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
-      meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]]))
+      meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(mockHttpResponse))
     when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
     when(mockHttpResponse.headers).thenReturn(any[Map[String, Seq[String]]])
@@ -74,7 +74,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
       mockLogger, mockDeclarationVersionConnector, mockDateTimeProvider, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
-      await(service.send(Right(mrn)) (vpr, hc))
+      await(service.send(mrn) (vpr, hc))
     }
   }
 
@@ -87,14 +87,14 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), Right(mrn))(TestCspAuthorisedRequest)
+      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
       implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
       result.right.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, Right(mrn))(nonCspRequest)
+      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
     }
 
     "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
@@ -122,7 +122,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
@@ -141,7 +141,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid").XmlResult.withConversationId)
@@ -160,7 +160,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
@@ -179,7 +179,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
@@ -198,7 +198,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error").XmlResult.withConversationId)
@@ -209,7 +209,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
@@ -220,7 +220,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, NotFoundCode, "Declaration not found").XmlResult.withConversationId)
@@ -231,7 +231,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with MockitoSugar with Befo
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Either[SearchType, Mrn]](Right(mrn)))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)

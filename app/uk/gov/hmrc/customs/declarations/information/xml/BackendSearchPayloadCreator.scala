@@ -20,14 +20,23 @@ import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
+import javax.inject.Singleton
 import scala.xml.NodeSeq
 
-trait BackendPayloadCreator {
+@Singleton
+class BackendSearchPayloadCreator() extends BackendPayloadCreator {
 
-  def create[A](conversationId: ConversationId,
-                correlationId: CorrelationId,
-                date: DateTime,
-                searchType: SearchType,
-                maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-               (implicit asr: AuthorisedRequest[A]): NodeSeq
+  private val newLineAndIndentation = "\n        "
+
+  override def create[A](conversationId: ConversationId,
+                         correlationId: CorrelationId,
+                         date: DateTime,
+                         searchType: SearchType,
+                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
+  (implicit asr: AuthorisedRequest[A]): NodeSeq = {
+
+    val searchTypeAsType = searchType.asInstanceOf[ParameterSearch]
+
+    <xml>placeholder for the next ticket</xml>
+  }
 }

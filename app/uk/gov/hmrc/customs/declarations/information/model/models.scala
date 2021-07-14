@@ -46,6 +46,26 @@ case class BadgeIdentifier(value: String) extends AnyVal {
   override def toString: String = value
 }
 
+case class PartyRole(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class DeclarationCategory(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class GoodsLocationCode(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class DeclarationStatus(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
+case class DeclarationSubmissionChannel(value: String) extends AnyVal {
+  override def toString: String = value
+}
+
 sealed trait ApiVersion {
   val value: String
   val configPrefix: String
@@ -72,7 +92,11 @@ object Csp {
 }
 case class NonCsp(eori: Eori) extends AuthorisedAs
 
-sealed trait SearchType {
+sealed trait SearchType {}
+
+case class ParameterSearch() extends SearchType {}
+
+sealed trait StatusSearchType extends SearchType {
   protected val mrnAndUcrMaxLength = 35
   protected val ducrAndInventoryReferenceMaxLength = 70
   val value: String
@@ -83,25 +107,25 @@ sealed trait SearchType {
   lazy val validValue: Boolean = value.nonEmpty && !valueTooLong && !value.contains(" ")
 }
 
-case class Mrn(value: String) extends SearchType {
+case class Mrn(value: String) extends StatusSearchType {
   override def toString: String = value
   val label = "MRN"
   val maxLength: Int = mrnAndUcrMaxLength
 }
 
-case class Ducr(value: String) extends SearchType {
+case class Ducr(value: String) extends StatusSearchType {
   override def toString: String = value
   val label = "DUCR"
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
 }
 
-case class Ucr(value: String) extends SearchType {
+case class Ucr(value: String) extends StatusSearchType {
   override def toString: String = value
   val label = "UCR"
   val maxLength: Int = mrnAndUcrMaxLength
 }
 
-case class InventoryReference(value: String) extends SearchType {
+case class InventoryReference(value: String) extends StatusSearchType {
   override def toString: String = value
   val label = "InventoryReference"
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
