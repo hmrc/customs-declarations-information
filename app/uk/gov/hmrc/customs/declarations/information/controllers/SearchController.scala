@@ -49,15 +49,15 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
   }
 
   private def search()(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
-    logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
+    logger.debug(s"Declaration information search request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
     declarationSearchService.send(ParameterSearch()) map {
       case Right(res: HttpResponse) =>
         new HasConversationId {
           override val conversationId = asr.conversationId
         }
-        logger.info(s"Declaration information versions processed successfully.")
-        logger.debug(s"Returning declaration information versions response with status code ${res.status} and body\n ${res.body}")
+        logger.info(s"Declaration information search processed successfully.")
+        logger.debug(s"Returning declaration information search response with status code ${res.status} and body\n ${res.body}")
         Ok(res.body).withConversationId.as(ContentTypes.XML)
       case Left(errorResult) =>
         errorResult

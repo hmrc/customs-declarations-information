@@ -136,7 +136,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
         if(dateAsDateType.compareTo(new Date()) <= 0) {
           Right(Some(dateAsDateType))
         } else {
-          logger.info(s"Date waa in the future: $d")
+          logger.info(s"Date was in the future: $d")
           Left(errorBadRequest("Invalid date parameters", "CDS60009"))
         }
       } catch {
@@ -151,7 +151,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   def validatePageNumber(pageNumber: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Int]] = {
     pageNumber match {
       case Some(pn) => try {
-        val validInteger = Integer.parseInt(pn.trim) //TODO can we trim?
+        val validInteger = Integer.parseInt(pn.trim)
         if (validInteger > 0) {
           Right(Some(validInteger))
         } else {

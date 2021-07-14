@@ -81,15 +81,6 @@ class InternalClientIdsCheckActionSpec extends UnitSpec with MockitoSugar {
       result.conversationId shouldBe conversationId
     }
 
-    "reject status payload with declarationSubmissionChannel set" in new SetUp {
-
-      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/status?declarationSubmissionChannel=AuthenticatedPartyOnly"))
-
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).left.get
-      status(result) shouldBe BAD_REQUEST
-      stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSubmissionChannelNotValidForStatus)
-    }
-
     "reject version payload with invalid declarationSubmissionChannel" in new SetUp {
 
       val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=INVALID"))
