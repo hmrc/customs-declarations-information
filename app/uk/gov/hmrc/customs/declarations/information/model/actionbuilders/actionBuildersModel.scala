@@ -179,7 +179,8 @@ case class SearchParametersRequest[A](conversationId: ConversationId,
 
 }
 
-case class SearchParameters(partyRole: PartyRole,
+case class SearchParameters(eori: Option[Eori],
+                            partyRole: PartyRole,
                             declarationCategory: DeclarationCategory,
                             goodsLocationCode: Option[GoodsLocationCode],
                             declarationStatus: Option[DeclarationStatus],

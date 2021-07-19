@@ -18,11 +18,11 @@ package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBadRequest, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{DeclarationCategory, DeclarationStatus, GoodsLocationCode, PartyRole}
+import uk.gov.hmrc.customs.declarations.information.model.{DeclarationCategory, DeclarationStatus, Eori, GoodsLocationCode, PartyRole}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import java.text.{ParseException, SimpleDateFormat}
@@ -50,12 +50,15 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
 
   private val validDeclarationCategories = Seq("IM", "EX", "CO", "ALL")
   private val goodsLocationCodeRegex: Regex = "^[a-zA-Z0-9]{1,12}$".r
+  private val looseEoriRegex: Regex = "^[a-zA-Z0-9]{1,50}$".r
   private val validDeclarationStatuses = Seq("CLEARED", "UNCLEARED", "REJECTED", "ALL")
+  private val validPartyRoles = Seq("SUBMITTER", "CONSIGNEE", "CONSIGNOR", "DECLARANT")
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
     implicit val id: InternalClientIdsRequest[A] = icr
 
+    val maybeEori = icr.request.getQueryString("eori")
     val maybePartyRole = icr.request.getQueryString("partyRole")
     val maybeDeclarationCategory = icr.request.getQueryString("declarationCategory")
     val maybeGoodsLocationCode = icr.request.getQueryString("goodsLocationCode")
@@ -65,6 +68,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     val maybePageNumber = icr.request.getQueryString("pageNumber")
 
   val searchParameters: Either[ErrorResponse, SearchParametersRequest[A]] = for {
+    eori <- validateEori(maybeEori).right
     partyRole <- validatePartyRole(maybePartyRole).right
     declarationCategory <- validateDeclarationCategory(maybeDeclarationCategory).right
     goodsLocationCode <- validateGoodsLocationCode(maybeGoodsLocationCode).right
@@ -74,7 +78,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     dateChronology <- validateDateChronology(dateFrom, dateTo)
     pageNumber <- validatePageNumber(maybePageNumber).right
   } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel,
-    Some(SearchParameters(partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
+    Some(SearchParameters(eori, partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
 
     if(searchParameters.isLeft) {
       Left(searchParameters.left.get.XmlResult.withConversationId)
@@ -83,9 +87,22 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     }
   }
 
+  def validateEori(maybeEori: Option[String])(implicit request: HasConversationId):  Either[ErrorResponse, Option[Eori]] = {
+    maybeEori match {
+      case Some(eori) =>
+        if (looseEoriRegex.findFirstIn(eori).nonEmpty) {
+          Right(Some(Eori(eori)))
+        } else {
+          logger.info(s"eori query parameter was invalid: $eori")
+          Left(ErrorGenericBadRequest)
+        }
+      case None => Right(None)
+    }
+  }
+
   def validatePartyRole(partyRole: Option[String]):  Either[ErrorResponse, PartyRole] = {
 
-    partyRole.filter(pr => "submitter".compareToIgnoreCase(pr) == 0).map( pr => PartyRole(pr))
+    partyRole.filter(pr => validPartyRoles.contains(pr.toUpperCase)).map( pr => PartyRole(pr))
       .toRight(errorBadRequest("Invalid partyRole parameter", "CDS60006"))
   }
 
@@ -107,7 +124,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       case None => Right(None)
     }
   }
-
+  
   def validateDeclarationStatus(declarationStatus: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[DeclarationStatus]] = {
 
     declarationStatus match {

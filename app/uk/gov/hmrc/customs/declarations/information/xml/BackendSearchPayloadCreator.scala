@@ -44,6 +44,7 @@ class BackendSearchPayloadCreator() extends BackendPayloadCreator {
     xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
        {requestCommon(conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)}
       <n1:requestDetail>
+        {searchParameters.eori.fold(NodeSeq.Empty)(e => <n1:eori>{e}</n1:eori>)}
         <n1:partyRole>{searchParameters.partyRole.toString}</n1:partyRole>
         <n1:declarationCategory>{searchParameters.declarationCategory.toString}</n1:declarationCategory>
         {searchParameters.declarationStatus.fold(NodeSeq.Empty)(ds => <n1:declarationStatus>{ds}</n1:declarationStatus>)}
