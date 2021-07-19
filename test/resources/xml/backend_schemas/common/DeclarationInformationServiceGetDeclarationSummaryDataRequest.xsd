@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="1.0"
+	targetNamespace="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
+	elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:pref="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+	xmlns:pref1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+	xmlns:pref2="urn:wco:datamodel:WCO:DEC-DMS:2"
+	xmlns:pref3="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" xmlns:dsreq="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1">
+
+	<xs:import schemaLocation="WCO_DEC_2_DMS.xsd"
+		namespace="urn:wco:datamodel:WCO:DEC-DMS:2">
+	</xs:import>
+	<xs:import schemaLocation="WCO_DS/WCO_DEC_DS_2_DMS.xsd"
+		namespace="urn:wco:datamodel:WCO:Declaration_DS:DMS:2">
+	</xs:import>
+	<xs:import schemaLocation="WCO_DS/WCO_RES_DS_2_DMS.xsd"
+		namespace="urn:wco:datamodel:WCO:Response_DS:DMS:2">
+	</xs:import>
+	<xs:import schemaLocation="cmm_20170222/cmmValueTypes.xsd" namespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/"></xs:import>
+	
+	<!-- ==================================================================================================== -->
+	<!-- Author: Tosin Coker							                                                      -->
+	<!-- Version History		                                                                              -->
+	<!-- v0.1 Initial version		Tosin Coker	16/11/2020		                                              -->
+	<!-- ==================================================================================================== -->
+	
+	<!-- ==================================================================================================== -->
+	<!-- Declaration Information Retrieval Get Declaration Summary Request							          -->
+	<!-- Request the summary status data for a page of declarations associated to a specific entity		      -->
+	<!-- ==================================================================================================== -->
+	
+	<!-- Complex Type Definitions -->
+	
+	<!-- GetDeclarationSummaryDataRequestType -->
+	<xs:complexType name="getDeclarationSummaryDataRequestType">
+		<xs:annotation>
+			<xs:documentation>Request for Summary Declaration Data </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="eori" minOccurs="0" maxOccurs="1"
+				type="dsreq:EORIType">
+			</xs:element>
+			<xs:element name="partyRole" minOccurs="1" maxOccurs="1"
+				type="dsreq:PartyRoleType">
+			</xs:element>
+			<xs:element name="declarationCategory" minOccurs="1"
+				maxOccurs="1" type="dsreq:DeclarationCategoryType">
+			</xs:element>
+			<xs:element name="declarationStatus" minOccurs="0"
+				maxOccurs="1" type="dsreq:DeclarationStatusType">
+			</xs:element>
+			<xs:element name="goodsLocationCode" minOccurs="0"
+				maxOccurs="1" type="dsreq:GoodsLocationCodeType">
+			</xs:element>
+			<xs:element name="dateRange" minOccurs="0" maxOccurs="1"
+				type="dsreq:DateRangeType">
+			</xs:element>
+			<xs:element name="pageNumber" minOccurs="0" maxOccurs="1"
+				type="dsreq:PageNumberType">
+			</xs:element>
+			<xs:element name="declarationSubmissionChannel" minOccurs="0" maxOccurs="1" type="dsreq:DeclarationSubmissionChannelType"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- Simple Type Definitions -->
+	
+	<!-- EORIType -->
+    <xs:simpleType name="EORIType">
+    	<xs:annotation>
+			<xs:documentation>EORI Value to be provided. Valid for search bt Declarant, Consignee and Consignor.</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:string">
+    		<xs:minLength value="1" />
+			<xs:maxLength value="50" />
+    	</xs:restriction>
+    </xs:simpleType>
+
+	<!-- PartyRoleType -->
+    <xs:simpleType name="PartyRoleType">
+    	<xs:annotation>
+			<xs:documentation>Type of entity to perform declaration search</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:string"></xs:restriction>
+    </xs:simpleType>
+	
+	<!-- DeclarationTypeElement -->
+    <xs:simpleType name="DeclarationCategoryType">
+    	<xs:annotation>
+			<xs:documentation>Highlighting if search should be performed for Import declarations, Export declarations, or all declarations.</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="([a-zA-Z])*"/>
+    	</xs:restriction>
+    </xs:simpleType>
+	
+	<!-- DeclarationStatusType -->
+    <xs:simpleType name="DeclarationStatusType">
+    	<xs:annotation>
+			<xs:documentation>This indicates if the search should be performed for cleared or uncleared declarations.</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="([a-zA-Z])*"/>
+    	</xs:restriction>
+    </xs:simpleType>
+	
+	<!-- GoodsLocationCodeType -->
+    <xs:simpleType name="GoodsLocationCodeType">
+    	<xs:annotation>
+			<xs:documentation>Goods Location Code to refine declaration search to.</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="([a-zA-Z0-9])*"/>
+    	</xs:restriction>
+    </xs:simpleType>
+	
+	<!-- DateRangeType -->
+    <xs:complexType name="DateRangeType">
+    	<xs:annotation>
+			<xs:documentation>Date Range to refine declaration search to.</xs:documentation>
+		</xs:annotation>
+    	<xs:sequence>
+    		<xs:element name="dateFrom" minOccurs="0" maxOccurs="1" type="xs:date"></xs:element>
+    		<xs:element name="dateTo"  minOccurs="0" maxOccurs="1" type="xs:date"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <!-- PageNumberType -->
+    <xs:simpleType name="PageNumberType">
+    	<xs:annotation>
+			<xs:documentation>Page Number to perform search.</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:int"></xs:restriction>
+    </xs:simpleType>
+    
+    <!-- DeclarationSubmissionChannelType -->
+    <xs:simpleType name="DeclarationSubmissionChannelType">
+    	<xs:annotation>
+			<xs:documentation>Goods Location Code to refine declaration search to.</xs:documentation>
+		</xs:annotation>
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="([a-zA-Z0-9])*"/>
+			<xs:maxLength value="24" />
+    	</xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

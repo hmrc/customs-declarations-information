@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1" targetNamespace="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../common/DeclarationInformationServiceGetDeclarationSummaryDataResponse.xsd"/>
+	<xs:element name="retrieveDeclarationSummaryDataResponse">
+		<xs:annotation>
+			<xs:documentation>Response containing full declaration summary information</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="responseCommon">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="processingDate" type="xs:dateTime"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="responseDetail">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="declarationSummary" type="n1:getDeclarationSummaryDataResponseType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

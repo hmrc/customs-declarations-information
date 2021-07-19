@@ -21,12 +21,10 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
 import javax.inject.Singleton
-import scala.xml.{NodeSeq, Text}
+import scala.xml.NodeSeq
 
 @Singleton
 class BackendVersionPayloadCreator() extends BackendPayloadCreator {
-
-  private val newLineAndIndentation = "\n        "
 
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
@@ -37,41 +35,19 @@ class BackendVersionPayloadCreator() extends BackendPayloadCreator {
 
     val searchTypeAsType = searchType.asInstanceOf[Mrn]
 
-    <ns1:retrieveDeclarationVersionRequest
+    <n1:retrieveDeclarationVersionRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ns1="http://gov.uk/customs/retrieveDeclarationVersion"
-    xsi:schemaLocation=" http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd">
-      <ns1:requestCommon>
-        {Seq[NodeSeq](
-        <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>, Text(newLineAndIndentation),
-        <ns1:conversationID>{conversationId.toString}</ns1:conversationID>, Text(newLineAndIndentation),
-        <ns1:correlationID>{correlationId.toString}</ns1:correlationID>)}
-        {val as = asr.authorisedAs
-        as match {
-          case NonCsp(eori) => Seq[NodeSeq](
-            <ns1:dateTimeStamp>{date.toString()}</ns1:dateTimeStamp>, Text(newLineAndIndentation),
-            <ns1:authenticatedPartyID>{eori.toString}</ns1:authenticatedPartyID>)
-
-          case Csp(_, badgeId) =>
-            val badgeIdentifierElement: NodeSeq = {badgeId.fold(NodeSeq.Empty)(badge => <ns1:badgeIdentifier>{badge.toString}</ns1:badgeIdentifier>)}
-            Seq[NodeSeq](badgeIdentifierElement, Text(newLineAndIndentation),
-              <ns1:dateTimeStamp>{date.toString}</ns1:dateTimeStamp>, Text(newLineAndIndentation),
-              <ns1:authenticatedPartyID>{maybeApiSubscriptionFieldsResponse.get.fields.authenticatedEori.get}</ns1:authenticatedPartyID>, Text(newLineAndIndentation),
-              <ns1:originatingPartyID>{Csp.originatingPartyId(as.asInstanceOf[Csp])}</ns1:originatingPartyID>)
-        }
-
-        }
-      </ns1:requestCommon>
-      <ns1:requestDetail>
-        <ns1:RetrieveDeclarationVersionRequest>
-          <ns1:ServiceRequestParameters>
-            <ns1:MRN>{searchTypeAsType}</ns1:MRN>
-            {asr.declarationSubmissionChannel.fold(NodeSeq.Empty)(apo => <ns1:DeclarationSubmissionChannel>{apo}</ns1:DeclarationSubmissionChannel>)}
-          </ns1:ServiceRequestParameters>
-        </ns1:RetrieveDeclarationVersionRequest>
-      </ns1:requestDetail>
-    </ns1:retrieveDeclarationVersionRequest>
+    xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion"
+    xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd">
+      {requestCommon(conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)}
+      <n1:requestDetail>
+        <n1:RetrieveDeclarationVersionRequest>
+          <n1:ServiceRequestParameters>
+            <n1:MRN>{searchTypeAsType}</n1:MRN>
+            {asr.declarationSubmissionChannel.fold(NodeSeq.Empty)(apo => <n1:DeclarationSubmissionChannel>{apo}</n1:DeclarationSubmissionChannel>)}
+          </n1:ServiceRequestParameters>
+        </n1:RetrieveDeclarationVersionRequest>
+      </n1:requestDetail>
+    </n1:retrieveDeclarationVersionRequest>
   }
-
-
 }
