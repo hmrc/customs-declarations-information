@@ -55,6 +55,7 @@ object SearchTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |            <n1:requestDetail>
+      |              <n1:eori>GB123456789000</n1:eori>
       |              <n1:partyRole>submitter</n1:partyRole>
       |              <n1:declarationCategory>IM</n1:declarationCategory>
       |              <n1:declarationStatus>all</n1:declarationStatus>
@@ -81,6 +82,7 @@ object SearchTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |            <n1:requestDetail>
+      |              <n1:eori>GB123456789000</n1:eori>
       |              <n1:partyRole>submitter</n1:partyRole>
       |              <n1:declarationCategory>IM</n1:declarationCategory>
       |              <n1:declarationStatus>all</n1:declarationStatus>
@@ -152,6 +154,7 @@ object SearchTestXMLData {
         |              <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
         |            </n1:requestCommon>
         |            <n1:requestDetail>
+        |              <n1:eori>GB123456789000</n1:eori>
         |              <n1:partyRole>submitter</n1:partyRole>
         |              <n1:declarationCategory>IM</n1:declarationCategory>
         |              <n1:declarationStatus>all</n1:declarationStatus>
@@ -169,8 +172,8 @@ object SearchTestXMLData {
   val validCspSearchRequestPayloadWithoutBadge =
     """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
-      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd"
+      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest">
       |            <n1:requestCommon>
       |              <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
       |              <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
@@ -180,6 +183,7 @@ object SearchTestXMLData {
       |              <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |            </n1:requestCommon>
       |            <n1:requestDetail>
+      |              <n1:eori>GB123456789000</n1:eori>
       |              <n1:partyRole>submitter</n1:partyRole>
       |              <n1:declarationCategory>IM</n1:declarationCategory>
       |              <n1:declarationStatus>all</n1:declarationStatus>

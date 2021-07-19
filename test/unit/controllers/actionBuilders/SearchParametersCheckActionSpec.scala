@@ -66,7 +66,7 @@ class SearchParametersCheckActionSpec extends UnitSpec with MockitoSugar {
     "accept all valid parameters parameters" in new SetUp {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET",
-        "/search?partyRole=submitter&declarationCategory=IM&goodsLocationCode=BELBELOB4&declarationStatus=all&dateFrom=2021-04-01&dateTo=2021-04-04&pageNumber=2"))
+        "/search?eori=GB123456789000&partyRole=submitter&declarationCategory=IM&goodsLocationCode=BELBELOB4&declarationStatus=all&dateFrom=2021-04-01&dateTo=2021-04-04&pageNumber=2"))
 
       private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
       result.conversationId shouldBe conversationId
@@ -82,7 +82,7 @@ class SearchParametersCheckActionSpec extends UnitSpec with MockitoSugar {
 
     "accept a valid declarationCategory IM" in new SetUp {
 
-      private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=iM"))
+      private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=consignee&declarationCategory=iM"))
 
       private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
       result.conversationId shouldBe conversationId
@@ -161,6 +161,15 @@ class SearchParametersCheckActionSpec extends UnitSpec with MockitoSugar {
       private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60006", "partyRole"))
+    }
+
+    "reject payload with invalid eori" in new SetUp {
+
+      private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?eori=invalid-eori-slightly-longer-than-fifty-characters-invalid&partyRole=declarant&declarationCategory=iM"))
+
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      status(result) shouldBe BAD_REQUEST
+      stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Bad Request</message></errorResponse>")
     }
 
     "reject payload without declarationCategory" in new SetUp {

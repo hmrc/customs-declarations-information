@@ -42,7 +42,7 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val logger: InformationLogger)
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
-  def list(partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String],
+  def list(eori: Option[String], partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String],
            declarationStatus: Option[String], dateFrom: Option[String], dateTo: Option[String],
            pageNumber: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search()

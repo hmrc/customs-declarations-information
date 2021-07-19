@@ -85,9 +85,9 @@ object TestData {
   val declarationSubmissionChannel = Some("AuthenticatedPartyOnly")
 
   private val sdf = new SimpleDateFormat("yyyy-MM-dd")
-  val searchParameters = SearchParameters(PartyRole("submitter"), DeclarationCategory("IM"), Some(GoodsLocationCode("BELBELOB4")), Some(DeclarationStatus("all")), Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), Some(2))
-  val searchParametersMandatoryOnly = SearchParameters(PartyRole("submitter"), DeclarationCategory("IM"), None, None, None, None, None)
-  val searchParametersWithDate = SearchParameters(PartyRole("submitter"), DeclarationCategory("IM"), None, None, Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), None)
+  val searchParameters = SearchParameters(Some(Eori("GB123456789000")), PartyRole("submitter"), DeclarationCategory("IM"), Some(GoodsLocationCode("BELBELOB4")), Some(DeclarationStatus("all")), Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), Some(2))
+  val searchParametersMandatoryOnly = SearchParameters(None, PartyRole("submitter"), DeclarationCategory("IM"), None, None, None, None, None)
+  val searchParametersWithDate = SearchParameters(None, PartyRole("submitter"), DeclarationCategory("IM"), None, None, Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), None)
 
   type EmulatedServiceFailure = UnsupportedOperationException
   val emulatedServiceFailure = new EmulatedServiceFailure("Emulated service failure.")

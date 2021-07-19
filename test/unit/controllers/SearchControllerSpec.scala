@@ -94,11 +94,11 @@ class SearchControllerSpec extends UnitSpec
       mockInformationLogger) {}
 
     protected def awaitSubmitSearch(request: Request[AnyContent]): Result = {
-      controller.list(None, None, None, None, None, None, None, None).apply(request)
+      controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
     protected def submitSearch(request: Request[AnyContent]): Future[Result] = {
-      controller.list(None, None, None, None, None, None, None, None).apply(request)
+      controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
     when(mockSearchConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
