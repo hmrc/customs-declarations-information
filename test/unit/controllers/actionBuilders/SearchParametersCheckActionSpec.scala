@@ -18,20 +18,18 @@ package unit.controllers.actionBuilders
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers.{contentAsString, _}
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{InternalClientIdsCheckAction, SearchParametersCheckAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.SearchParametersCheckAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, InternalClientIdsRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.InternalClientIdsRequest
 import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, InformationConfig, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import util.UnitSpec
 import util.XmlOps.stringToXml
 
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.{Date, UUID}
+import java.util.UUID
 
 class SearchParametersCheckActionSpec extends UnitSpec with MockitoSugar {
 

@@ -43,90 +43,184 @@ object SearchTestXMLData {
     .toFormatter
 
   val validNonCspSearchRequestPayload =
-    """<ns1:retrieveDeclarationSummaryDataRequest
+    """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      |          xmlns:ns1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
       |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
-      |          <ns1:requestCommon>
-      |            <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
-      |            <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
-      |            <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
-      |            <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
-      |            <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
-      |          </ns1:requestCommon>
-      |           </ns1:requestCommon>
-      |            <ns1:requestDetail>
-      |              <ns1:partyRole>submitter</ns1:partyRole>
-      |              <ns1:declarationCategory>IM</ns1:declarationCategory>
-      |              <ns1:declarationStatus>all</ns1:declarationStatus>
-      |              <ns1:goodsLocationCode>BELBELOB4</ns1:goodsLocationCode>
-      |              <ns1:dateRange>
-      |                <ns1:dateFrom>2021-04-01</ns1:dateFrom>
-      |                <ns1:dateTo>2021-04-04</ns1:dateTo>
-      |              </ns1:dateRange>
-      |              <ns1:pageNumber>2</ns1:pageNumber>
-      |              <ns1:declarationSubmissionChannel>AuthenticatedPartyOnly</ns1:declarationSubmissionChannel>
-      |            </ns1:requestDetail>
-      |          </ns1:retrieveDeclarationSummaryDataRequest>
+      |          <n1:requestCommon>
+      |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+      |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+      |            <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+      |            <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+      |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+      |          </n1:requestCommon>
+      |            <n1:requestDetail>
+      |              <n1:partyRole>submitter</n1:partyRole>
+      |              <n1:declarationCategory>IM</n1:declarationCategory>
+      |              <n1:declarationStatus>all</n1:declarationStatus>
+      |              <n1:goodsLocationCode>BELBELOB4</n1:goodsLocationCode>
+      |              <n1:dateRange>
+      |                <n1:dateFrom>2021-04-01</n1:dateFrom>
+      |                <n1:dateTo>2021-04-04</n1:dateTo>
+      |              </n1:dateRange>
+      |              <n1:pageNumber>2</n1:pageNumber>
+      |            </n1:requestDetail>
+      |          </n1:retrieveDeclarationSummaryDataRequest>
       |""".stripMargin
 
+  val validNonCspSearchRequestPayloadWithSubChannel =
+    """<n1:retrieveDeclarationSummaryDataRequest
+      |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+      |          <n1:requestCommon>
+      |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+      |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+      |            <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+      |            <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+      |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+      |          </n1:requestCommon>
+      |            <n1:requestDetail>
+      |              <n1:partyRole>submitter</n1:partyRole>
+      |              <n1:declarationCategory>IM</n1:declarationCategory>
+      |              <n1:declarationStatus>all</n1:declarationStatus>
+      |              <n1:goodsLocationCode>BELBELOB4</n1:goodsLocationCode>
+      |              <n1:dateRange>
+      |                <n1:dateFrom>2021-04-01</n1:dateFrom>
+      |                <n1:dateTo>2021-04-04</n1:dateTo>
+      |              </n1:dateRange>
+      |              <n1:pageNumber>2</n1:pageNumber>
+      |              <n1:declarationSubmissionChannel>AuthenticatedPartyOnly</n1:declarationSubmissionChannel>
+      |            </n1:requestDetail>
+      |          </n1:retrieveDeclarationSummaryDataRequest>
+      |""".stripMargin
+
+  val validNonCspSearchRequestPayloadWithMandatoryParametersOnly =
+    """<n1:retrieveDeclarationSummaryDataRequest
+      |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+      |          <n1:requestCommon>
+      |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+      |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+      |            <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+      |            <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+      |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+      |          </n1:requestCommon>
+      |            <n1:requestDetail>
+      |              <n1:partyRole>submitter</n1:partyRole>
+      |              <n1:declarationCategory>IM</n1:declarationCategory>
+      |            </n1:requestDetail>
+      |          </n1:retrieveDeclarationSummaryDataRequest>
+      |""".stripMargin
+
+  val validNonCspSearchRequestPayloadWithMandatoryParametersOnlyAndDate =
+    """<n1:retrieveDeclarationSummaryDataRequest
+      |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+      |          <n1:requestCommon>
+      |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+      |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+      |            <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+      |            <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+      |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+      |          </n1:requestCommon>
+      |            <n1:requestDetail>
+      |              <n1:partyRole>submitter</n1:partyRole>
+      |              <n1:declarationCategory>IM</n1:declarationCategory>
+      |              <n1:dateRange>
+      |                <n1:dateFrom>2021-04-01</n1:dateFrom>
+      |                <n1:dateTo>2021-04-04</n1:dateTo>
+      |              </n1:dateRange>
+      |            </n1:requestDetail>
+      |          </n1:retrieveDeclarationSummaryDataRequest>
+      |""".stripMargin
 
   val validCspSearchRequestPayload =
-      """<ns1:retrieveDeclarationSummaryDataRequest
+      """<n1:retrieveDeclarationSummaryDataRequest
         |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        |          xmlns:ns1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
-        |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest DeclarationInformationRetrievalSearchResponse.xsd">
-        |            <ns1:requestCommon>
-        |              <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
-        |              <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
-        |              <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
-        |              <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
-        |              <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
-        |              <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
-        |              <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
-        |            </ns1:requestCommon>
-        |            <ns1:requestDetail>
-        |              <ns1:partyRole>submitter</ns1:partyRole>
-        |              <ns1:declarationCategory>IM</ns1:declarationCategory>
-        |              <ns1:declarationStatus>all</ns1:declarationStatus>
-        |              <ns1:goodsLocationCode>BELBELOB4</ns1:goodsLocationCode>
-        |              <ns1:dateRange>
-        |                <ns1:dateFrom>2021-04-01</ns1:dateFrom>
-        |                <ns1:dateTo>2021-04-04</ns1:dateTo>
-        |              </ns1:dateRange>
-        |              <ns1:pageNumber>2</ns1:pageNumber>
-        |              <ns1:declarationSubmissionChannel>AuthenticatedPartyOnly</ns1:declarationSubmissionChannel>
-        |            </ns1:requestDetail>
-        |          </ns1:retrieveDeclarationSummaryDataRequest>
+        |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+        |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+        |            <n1:requestCommon>
+        |              <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+        |              <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+        |              <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+        |              <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>
+        |              <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+        |              <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+        |              <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
+        |            </n1:requestCommon>
+        |            <n1:requestDetail>
+        |              <n1:partyRole>submitter</n1:partyRole>
+        |              <n1:declarationCategory>IM</n1:declarationCategory>
+        |              <n1:declarationStatus>all</n1:declarationStatus>
+        |              <n1:goodsLocationCode>BELBELOB4</n1:goodsLocationCode>
+        |              <n1:dateRange>
+        |                <n1:dateFrom>2021-04-01</n1:dateFrom>
+        |                <n1:dateTo>2021-04-04</n1:dateTo>
+        |              </n1:dateRange>
+        |              <n1:pageNumber>2</n1:pageNumber>
+        |              <n1:declarationSubmissionChannel>AuthenticatedPartyOnly</n1:declarationSubmissionChannel>
+        |            </n1:requestDetail>
+        |          </n1:retrieveDeclarationSummaryDataRequest>
         |""".stripMargin
+
+  val validCspSearchRequestPayloadWithoutBadge =
+    """<n1:retrieveDeclarationSummaryDataRequest
+      |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+      |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
+      |            <n1:requestCommon>
+      |              <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+      |              <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+      |              <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+      |              <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+      |              <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+      |              <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
+      |            </n1:requestCommon>
+      |            <n1:requestDetail>
+      |              <n1:partyRole>submitter</n1:partyRole>
+      |              <n1:declarationCategory>IM</n1:declarationCategory>
+      |              <n1:declarationStatus>all</n1:declarationStatus>
+      |              <n1:goodsLocationCode>BELBELOB4</n1:goodsLocationCode>
+      |              <n1:dateRange>
+      |                <n1:dateFrom>2021-04-01</n1:dateFrom>
+      |                <n1:dateTo>2021-04-04</n1:dateTo>
+      |              </n1:dateRange>
+      |              <n1:pageNumber>2</n1:pageNumber>
+      |              <n1:declarationSubmissionChannel>AuthenticatedPartyOnly</n1:declarationSubmissionChannel>
+      |            </n1:requestDetail>
+      |          </n1:retrieveDeclarationSummaryDataRequest>
+      |""".stripMargin
   
   val expectedSearchPayloadRequest = {
-    <ns1:retrieveDeclarationSummaryDataRequest
+    <n1:retrieveDeclarationSummaryDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ns1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
+    xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
     xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest DeclarationInformationRetrievalSearchResponse.xsd">
-      <ns1:requestCommon>
-        <ns1:clientID>99999999-9999-9999-9999-999999999999</ns1:clientID>
-        <ns1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</ns1:conversationID>
-        <ns1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</ns1:correlationID>
-        <ns1:badgeIdentifier>BADGEID123</ns1:badgeIdentifier>
-        <ns1:dateTimeStamp>2017-06-08T13:55:00.000Z</ns1:dateTimeStamp>
-        <ns1:authenticatedPartyID>ZZ123456789000</ns1:authenticatedPartyID>
-        <ns1:originatingPartyID>ZZ123456789000</ns1:originatingPartyID>
-      </ns1:requestCommon>
-      <ns1:requestDetail>
-        <ns1:partyRole>submitter</ns1:partyRole>
-        <ns1:declarationCategory>IM</ns1:declarationCategory>
-        <ns1:declarationStatus>all</ns1:declarationStatus>
-        <ns1:goodsLocationCode>BELBELOB4</ns1:goodsLocationCode>
-        <ns1:dateRange>
-          <ns1:dateFrom>2021-04-01</ns1:dateFrom>
-          <ns1:dateTo>2021-04-04</ns1:dateTo>
-        </ns1:dateRange>
-        <ns1:pageNumber>2</ns1:pageNumber>
-        <ns1:declarationSubmissionChannel>AuthenticatedPartyOnly</ns1:declarationSubmissionChannel>
-      </ns1:requestDetail>
-    </ns1:retrieveDeclarationSummaryDataRequest>
+      <n1:requestCommon>
+        <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
+        <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
+        <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
+        <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>
+        <n1:dateTimeStamp>2017-06-08T13:55:00.000Z</n1:dateTimeStamp>
+        <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+        <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
+      </n1:requestCommon>
+      <n1:requestDetail>
+        <n1:partyRole>submitter</n1:partyRole>
+        <n1:declarationCategory>IM</n1:declarationCategory>
+        <n1:declarationStatus>all</n1:declarationStatus>
+        <n1:goodsLocationCode>BELBELOB4</n1:goodsLocationCode>
+        <n1:dateRange>
+          <n1:dateFrom>2021-04-01</n1:dateFrom>
+          <n1:dateTo>2021-04-04</n1:dateTo>
+        </n1:dateRange>
+        <n1:pageNumber>2</n1:pageNumber>
+        <n1:declarationSubmissionChannel>AuthenticatedPartyOnly</n1:declarationSubmissionChannel>
+      </n1:requestDetail>
+    </n1:retrieveDeclarationSummaryDataRequest>
   }
 
   val validBackendSearchResponse = {

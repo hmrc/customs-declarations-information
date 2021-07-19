@@ -30,7 +30,7 @@ class DeclarationSearchResponseSpec extends UnitSpec with MockitoSugar with Befo
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
   import ValidateXmlAgainstSchema._
-  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationSummaryDataResponse.xsd")
+  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalSearchResponse.xsd")
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   def getFirstValidationException(xml: Elem): SAXException = {
@@ -60,7 +60,7 @@ class DeclarationSearchResponseSpec extends UnitSpec with MockitoSugar with Befo
     "fail validation if is not filtered" in {
       val caught = getFirstValidationException(expectedSearchPayloadRequest)
 
-      caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'ns1:retrieveDeclarationSummaryDataRequest'."
+      caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'n1:retrieveDeclarationSummaryDataRequest'."
 
       Option(caught.getException) shouldBe None
     }

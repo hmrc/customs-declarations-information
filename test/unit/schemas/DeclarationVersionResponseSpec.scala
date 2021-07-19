@@ -60,7 +60,7 @@ class DeclarationVersionResponseSpec extends UnitSpec with MockitoSugar with Bef
     "fail validation if is not filtered" in {
       val caught = getFirstValidationException(expectedVersionPayloadRequest)
 
-      caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'ns1:retrieveDeclarationVersionRequest'."
+      caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'n1:retrieveDeclarationVersionRequest'."
 
       Option(caught.getException) shouldBe None
     }

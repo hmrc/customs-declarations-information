@@ -26,12 +26,13 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest, ExtractedHeadersImpl}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest, ExtractedHeadersImpl, SearchParameters}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
 import util.TestData.declarantEori
 
+import java.text.SimpleDateFormat
 import java.util.UUID
 import java.util.UUID.fromString
 
@@ -81,6 +82,12 @@ object TestData {
   val cspBearerToken = "CSP-Bearer-Token"
   val nonCspBearerToken = "Software-House-Bearer-Token"
   val invalidBearerToken = "InvalidBearerToken"
+  val declarationSubmissionChannel = Some("AuthenticatedPartyOnly")
+
+  private val sdf = new SimpleDateFormat("yyyy-MM-dd")
+  val searchParameters = SearchParameters(PartyRole("submitter"), DeclarationCategory("IM"), Some(GoodsLocationCode("BELBELOB4")), Some(DeclarationStatus("all")), Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), Some(2))
+  val searchParametersMandatoryOnly = SearchParameters(PartyRole("submitter"), DeclarationCategory("IM"), None, None, None, None, None)
+  val searchParametersWithDate = SearchParameters(PartyRole("submitter"), DeclarationCategory("IM"), None, None, Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), None)
 
   type EmulatedServiceFailure = UnsupportedOperationException
   val emulatedServiceFailure = new EmulatedServiceFailure("Emulated service failure.")
@@ -123,12 +130,7 @@ object TestData {
   val TestExtractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
   val TestValidatedHeadersRequest = TestApiVersionRequestV1.toValidatedHeadersRequest(TestExtractedHeaders)
   val TestInternalClientIdsRequest = TestValidatedHeadersRequest.toInternalClientIdsRequest(None)
-  val TestInternalClientIdsRequestWithDeclarationSubmissionChannel = TestValidatedHeadersRequest.toInternalClientIdsRequest(Some("AuthenticatedPartyOnly"))
-  val TestCspWithoutBadgeAuthorisedRequest = TestInternalClientIdsRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), None))
   val TestCspAuthorisedRequest = TestInternalClientIdsRequest.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
-  val TestCspAuthorisedRequestWithDeclarationSubmissionChannel = TestInternalClientIdsRequestWithDeclarationSubmissionChannel.toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
-  val TestNonCspAuthorisedRequest = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
-  val TestNonCspAuthorisedRequestWithDeclarationSubmissionChannel = TestInternalClientIdsRequestWithDeclarationSubmissionChannel.toNonCspAuthorisedRequest(declarantEori)
   val TestValidatedHeadersRequestNoBadgeIdNoEori = TestApiVersionRequestV1.toValidatedHeadersRequest(TestExtractedHeaders)
 
   lazy val TestValidatedHeadersRequestWithValidBadgeIdEoriPair =
