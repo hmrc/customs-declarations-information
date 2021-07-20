@@ -66,6 +66,9 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   protected val xsdErrorLocationV1: String = "/api/conf/1.0/schemas/customs/error.xsd"
   private val schemaErrorV1: Schema = ValidateXmlAgainstSchema.getSchema(xsdErrorLocationV1).get
 
+  protected val xsdResponseLocation: String = "/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd"
+  private val schemaResponse: Schema = ValidateXmlAgainstSchema.getSchema(xsdResponseLocation).get
+
   private def validResponse() =
     """<p:DeclarationStatusResponse xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6" xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2" xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2" xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
       |      <p:DeclarationStatusDetails>
@@ -196,6 +199,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCsp())
@@ -210,7 +214,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       Given("A non-CSP wants the status of a declaration")
       startBackendStatusServiceV1()
 
-      And("the non-CSP is authorised with its privileged application")
+      And("the non-CSP is authorised with its standard application")
       authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
       authServiceAuthorizesNonCspWithEori()
 
@@ -222,6 +226,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForNonCsp())
@@ -236,7 +241,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       Given("A non-CSP wants the status of a declaration")
       startBackendStatusServiceV2()
 
-      And("the non-CSP is authorised with its privileged application")
+      And("the non-CSP is authorised with its standard application")
       authServiceUnauthorisesScopeForCSPWithoutRetrievals(nonCspBearerToken)
       authServiceAuthorizesNonCspWithEori()
 
@@ -248,6 +253,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForNonCsp())
@@ -274,6 +280,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse()
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCsp())
@@ -319,6 +326,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse()
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCsp())
@@ -364,6 +372,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse()
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCsp())
@@ -409,6 +418,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse()
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
       eventually(verifyAuthServiceCalledForCsp())
@@ -452,6 +462,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
 
       And("the response body is a valid status xml")
       contentAsString(result) shouldBe validResponse()
+      schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
     }
   }
 }
