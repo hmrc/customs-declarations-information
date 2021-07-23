@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
+import play.api.http.HttpEntity
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBadRequest, errorBadRequest}
@@ -81,7 +82,9 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     Some(SearchParameters(eori, partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
 
     if(searchParameters.isLeft) {
-      Left(searchParameters.left.get.XmlResult.withConversationId)
+      val error = searchParameters.left.get
+      logger.warn(s"Rejected declaration information search request with status code ${error.httpStatusCode} and body\n ${error.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
+      Left(error.XmlResult.withConversationId)
     }  else {
       Right(searchParameters.right.get)
     }

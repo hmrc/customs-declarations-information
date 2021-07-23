@@ -104,12 +104,12 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
   extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
 
   protected val endpointName: String = "search"
-  protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60005", "pageNumber parameter out of bounds")
-  protected val backendCDS60006PartyRoleInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60006", "Invalid partyRole parameter")
-  protected val backendCDS60007DeclarationStatusInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60007", "Invalid declarationStatus parameter")
-  protected val backendCDS60008DeclarationCategoryInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60008", "Invalid declarationCategory parameter")
-  protected val backendCDS60009DateInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60009", "Invalid date parameters")
-  protected val backendCDS60010GoodsLocationCodeInvalidResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60010", "Invalid goodsLocationCode parameter")
+  protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60005", "pageNumber parameter out of bounds")
+  protected val backendCDS60006PartyRoleInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60006", "Invalid partyRole parameter")
+  protected val backendCDS60007DeclarationStatusInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60007", "Invalid declarationStatus parameter")
+  protected val backendCDS60008DeclarationCategoryInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60008", "Invalid declarationCategory parameter")
+  protected val backendCDS60009DateInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60009", "Invalid date parameters")
+  protected val backendCDS60010GoodsLocationCodeInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60010", "Invalid goodsLocationCode parameter")
   protected val backendCDS60012PageNumberInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60012", "Invalid pageNumber parameter")
 
   protected def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {

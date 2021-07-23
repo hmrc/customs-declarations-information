@@ -182,7 +182,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60005", "pageNumber parameter out of bounds").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60005", "pageNumber parameter out of bounds").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60006" in new SetUp() {
@@ -201,7 +201,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60006", "Invalid partyRole parameter").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60006", "Invalid partyRole parameter").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60007" in new SetUp() {
@@ -220,7 +220,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60007", "Invalid declarationStatus parameter").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60007", "Invalid declarationStatus parameter").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60008" in new SetUp() {
@@ -239,7 +239,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60008", "Invalid declarationCategory parameter").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60008", "Invalid declarationCategory parameter").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60009" in new SetUp() {
@@ -258,7 +258,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60009", "Invalid date parameters").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60009", "Invalid date parameters").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60010" in new SetUp() {
@@ -277,7 +277,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
-      result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60010", "Invalid goodsLocationCode parameter").XmlResult.withConversationId)
+      result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60010", "Invalid goodsLocationCode parameter").XmlResult.withConversationId)
     }
 
     "return 400 error response when backend call fails with 500 and errorCode CDS60011" in new SetUp() {
