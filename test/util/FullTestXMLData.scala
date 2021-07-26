@@ -19,7 +19,7 @@ package util
 import org.joda.time.format.DateTimeFormatterBuilder
 import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
 
-import scala.xml.{Elem, Node, NodeSeq, XML}
+import scala.xml.Elem
 
 object FullTestXMLData {
 
@@ -43,8 +43,8 @@ object FullTestXMLData {
     .toFormatter
 
   val validNonCspFullRequestPayload =
-    """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
-      |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+      |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
       |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
@@ -53,18 +53,19 @@ object FullTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:RetrieveDeclarationVersionRequest>
+      |            <n1:FullDeclarationDataRetrievalRequest>
       |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
+      |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |              </n1:ServiceRequestParameters>
-      |            </n1:RetrieveDeclarationVersionRequest>
+      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:retrieveDeclarationVersionRequest>
+      |        </n1:getFullDeclarationDataRequest>
       |""".stripMargin
 
   val validNonCspFullRequestPayloadWithDeclarationSubmissionChannel =
-    """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
-      |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+      |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
       |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
@@ -73,19 +74,20 @@ object FullTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:RetrieveDeclarationVersionRequest>
+      |            <n1:FullDeclarationDataRetrievalRequest>
       |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
+      |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |                <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
       |              </n1:ServiceRequestParameters>
-      |            </n1:RetrieveDeclarationVersionRequest>
+      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:retrieveDeclarationVersionRequest>
+      |        </n1:getFullDeclarationDataRequest>
       |""".stripMargin
 
   val validCspFullRequestPayload =
-    """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
-      |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+      |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
       |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
@@ -96,18 +98,19 @@ object FullTestXMLData {
       |            <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:RetrieveDeclarationVersionRequest>
+      |            <n1:FullDeclarationDataRetrievalRequest>
       |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
+      |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |              </n1:ServiceRequestParameters>
-      |            </n1:RetrieveDeclarationVersionRequest>
+      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:retrieveDeclarationVersionRequest>
+      |        </n1:getFullDeclarationDataRequest>
       |""".stripMargin
 
   val validCspFullRequestPayloadWithDeclarationSubmissionChannel =
-    """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
-      |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+      |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
       |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
@@ -118,19 +121,20 @@ object FullTestXMLData {
       |            <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:RetrieveDeclarationVersionRequest>
+      |            <n1:FullDeclarationDataRetrievalRequest>
       |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
+      |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |                <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
       |              </n1:ServiceRequestParameters>
-      |            </n1:RetrieveDeclarationVersionRequest>
+      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:retrieveDeclarationVersionRequest>
+      |        </n1:getFullDeclarationDataRequest>
       |""".stripMargin
 
   val validCspFullRequestWithoutBadgePayload =
-    """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
-      |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+      |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
       |            <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
@@ -140,20 +144,21 @@ object FullTestXMLData {
       |            <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:RetrieveDeclarationVersionRequest>
+      |            <n1:FullDeclarationDataRetrievalRequest>
       |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
+      |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |              </n1:ServiceRequestParameters>
-      |            </n1:RetrieveDeclarationVersionRequest>
+      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:retrieveDeclarationVersionRequest>
+      |        </n1:getFullDeclarationDataRequest>
       |""".stripMargin
 
   val expectedFullPayloadRequest = {
-    <n1:retrieveDeclarationVersionRequest
+    <n1:getFullDeclarationDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion"
-    xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd">
+    xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService"
+    xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd">
       <n1:requestCommon>
         <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
         <n1:conversationID>5d2ab59f-da76-446d-b645-38e6fdfa2e98</n1:conversationID>
@@ -164,14 +169,15 @@ object FullTestXMLData {
         <n1:originatingPartyID>BADGEID123</n1:originatingPartyID>
       </n1:requestCommon>
       <n1:requestDetail>
-        <n1:RetrieveDeclarationVersionRequest>
+        <n1:FullDeclarationDataRetrievalRequest>
           <n1:ServiceRequestParameters>
             <n1:MRN>someMrn</n1:MRN>
+            <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
             <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
           </n1:ServiceRequestParameters>
-        </n1:RetrieveDeclarationVersionRequest>
+        </n1:FullDeclarationDataRetrievalRequest>
       </n1:requestDetail>
-    </n1:retrieveDeclarationVersionRequest>
+    </n1:getFullDeclarationDataRequest>
   }
 
   val validBackendFullResponse = {
@@ -252,47 +258,6 @@ object FullTestXMLData {
     </n1:retrieveDeclarationVersionResponse>
   }.filter(_ => true)
 
-  val validFilteredFullResponseXML: Elem = {
-    <p:DeclarationVersionResponse xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion"
-                                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                  xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
-                                  xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-                                  xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
-                                  xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-                                  xmlns:p="http://gov.uk/customs/retrieveDeclarationVersion">
-      <p:DeclarationVersionDetails>
-        <p:Declaration>
-          <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
-          <p:VersionID>1</p:VersionID>
-          <p:CreatedDateTime>
-            <p:DateTimeString formatCode="304">20200715123000Z</p:DateTimeString>
-          </p:CreatedDateTime>
-          <p:LRN>20GBAKZ81EQJ2WXYZ</p:LRN>
-        </p:Declaration>
-        <p2:Declaration>
-          <p2:FunctionCode>9</p2:FunctionCode>
-          <p2:TypeCode>IMZ</p2:TypeCode>
-          <p2:GoodsShipment>
-            <p2:Consignment>
-              <p2:GoodsLocation>
-                <p2:ID>LIVLIVLIVR</p2:ID>
-                <p2:TypeCode>14</p2:TypeCode>
-              </p2:GoodsLocation>
-            </p2:Consignment>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVR</p2:ID>
-              <p2:TypeCode>DCR</p2:TypeCode>
-            </p2:PreviousDocument>
-            <p2:PreviousDocument>
-              <p2:ID>18GBAKZ81EQJ2FGVA</p2:ID>
-              <p2:TypeCode>DCS</p2:TypeCode>
-            </p2:PreviousDocument>
-          </p2:GoodsShipment>
-        </p2:Declaration>
-      </p:DeclarationVersionDetails>
-    </p:DeclarationVersionResponse>
-  }
-  
   val backendDeclarationFullResponse: Elem =
     <n1:fullDeclarationDataResponse
     xmlns:Q1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
@@ -307,7 +272,11 @@ object FullTestXMLData {
         <n1:FullDeclarationDataRetrievalResponse>
           <n1:FullDeclarationDataDetails>
             <n1:HighLevelSummaryDetails>
+              <n1:MRN>18GB9JLC3CU1LFGVR2</n1:MRN>
               <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
+              <n1:DUCRandPartID>0GB123456789123-12345-1</n1:DUCRandPartID>
+              <n1:VersionID>4</n1:VersionID>
+              <n1:GoodsLocationCode>GBBUEDIEDIEDI</n1:GoodsLocationCode>
               <n1:CreatedDateTime>
                 <n1:DateTimeString formatCode="304">20190702110757Z</n1:DateTimeString>
               </n1:CreatedDateTime>
@@ -351,46 +320,61 @@ object FullTestXMLData {
       </n1:responseDetail>
     </n1:fullDeclarationDataResponse>
 
-  private def generateDeclarationFullDetailsElement(hmrcDeclaration: Node, wcoDeclaration: Node): NodeSeq =
-    <n1:RetrieveDeclarationVersionDetails>
-      {hmrcDeclaration}
-      {wcoDeclaration}
-    </n1:RetrieveDeclarationVersionDetails>
 
-
-  private def generateHMRCDeclaration(creationDate: DateTime, versionId: Int) =
-    <n1:Declaration>
-      <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
-      <n1:VersionID>{versionId}</n1:VersionID>
-      <n1:CreatedDateTime>
-        <n1:DateTimeString formatCode="304">{creationDate.toString(dateTimeFormat)}</n1:DateTimeString>
-      </n1:CreatedDateTime>
-      <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
-    </n1:Declaration>
-
-  private def generateStandardResponseWCODeclaration(): Elem =
-    <od:Declaration>
-      <od:FunctionCode>9</od:FunctionCode>
-      <od:TypeCode>IMZ</od:TypeCode>
-      <od:GoodsShipment>
-        <od:Consignment>
-          <od:GoodsLocation>
-            <od:ID>LIVLIVLIVR</od:ID>
-            <od:TypeCode>14</od:TypeCode>
-          </od:GoodsLocation>
-        </od:Consignment>
-        <od:PreviousDocument>
-          <od:ID>18GBAKZ81EQJ2FGVR</od:ID>
-          <od:TypeCode>DCR</od:TypeCode>
-        </od:PreviousDocument>
-        <od:PreviousDocument>
-          <od:ID>18GBAKZ81EQJ2FGVA</od:ID>
-          <od:TypeCode>DCS</od:TypeCode>
-        </od:PreviousDocument>
-      </od:GoodsShipment>
-    </od:Declaration>
-
-  private def getWcoDeclarationWithAllElementsPopulated: Node = {
-    XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml").head
+  val validFilteredFullResponseXML: Elem = {
+    <p:DeclarationFullResponse xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService"
+                               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                               xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+                               xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                               xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+                               xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+                               xmlns:p="http://gov.uk/customs/FullDeclarationDataRetrievalService">
+      <p:FullDeclarationDataDetails>
+        <p:HighLevelSummaryDetails>
+          <p:MRN>18GB9JLC3CU1LFGVR2</p:MRN>
+          <p:LRN>20GBAKZ81EQJ2WXYZ</p:LRN>
+          <p:DUCRandPartID>0GB123456789123-12345-1</p:DUCRandPartID>
+          <p:VersionID>4</p:VersionID>
+          <p:GoodsLocationCode>GBBUEDIEDIEDI</p:GoodsLocationCode>
+          <p:CreatedDateTime>
+            <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+          </p:CreatedDateTime>
+          <p:AcceptanceDateTime>
+            <p1:DateTimeString formatCode="304">20190702110757Z</p1:DateTimeString>
+          </p:AcceptanceDateTime>
+          <p:FinalisedDateTime>
+            <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+          </p:FinalisedDateTime>
+        </p:HighLevelSummaryDetails>
+        <p:GeneratedConsigmentDetails>
+          <p:ROE>6</p:ROE>
+          <p:InventoryReference>02223305</p:InventoryReference>
+          <p:StatusOfEntry-ICS>3</p:StatusOfEntry-ICS>
+          <p:GoodsArrivalDateTime>
+            <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+          </p:GoodsArrivalDateTime>
+          <p:DeclaredCustomsExitOffice>GB000072</p:DeclaredCustomsExitOffice>
+          <p:ActualCustomsExitOffice>GB000290</p:ActualCustomsExitOffice>
+          <p:SubmitterID>GB025165101000</p:SubmitterID>
+          <p:StatisticalValue currencyID="GBP">1000.00</p:StatisticalValue>
+          <p:ExitResult>A1</p:ExitResult>
+          <p:DateOfExit>
+            <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
+          </p:DateOfExit>
+        </p:GeneratedConsigmentDetails>
+        <p:FullDeclarationObject>
+          <p:Declaration>
+            <p:AcceptanceDateTime>
+              <p3:DateTimeString formatCode="304">20000000</p3:DateTimeString>
+            </p:AcceptanceDateTime>
+            <p:FunctionCode>9</p:FunctionCode>
+            <p:FunctionalReferenceID>eamonn2217</p:FunctionalReferenceID>
+            <p:TypeCode>EX</p:TypeCode>
+            <p:ProcedureCategory>H1</p:ProcedureCategory>
+            <p:GoodsItemQuantity>1</p:GoodsItemQuantity>
+          </p:Declaration>
+        </p:FullDeclarationObject>
+      </p:FullDeclarationDataDetails>
+    </p:DeclarationFullResponse>
   }
 }

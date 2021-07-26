@@ -20,7 +20,7 @@ import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils.{createPr
 
 import javax.inject.{Inject, Singleton}
 import scala.xml.transform.RuleTransformer
-import scala.xml.{Node, NodeSeq, Text, TopScope}
+import scala.xml.{NodeSeq, Text, TopScope}
 
 @Singleton
 class FullResponseFilterService @Inject()() extends ResponseFilterService {
@@ -53,18 +53,6 @@ class FullResponseFilterService @Inject()() extends ResponseFilterService {
         {prefixReWriter.transform((declarationDetailsPath \ "FullDeclarationDataDetails").filter(node => inputPrefixToUriMap(node.prefix) == NameSpaceP))}
     </p:DeclarationFullResponse>
   }
-
-//transform with no prefix transform!!
-  //  override def transform(xml: NodeSeq, declarationDetailsPath: NodeSeq): NodeSeq = {
-//    <n1:DeclarationFullResponse
-//    xmlns:Q1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-//    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-//    xmlns:ds="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
-//    xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService"
-//    xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService">
-//      {declarationDetailsPath \ "FullDeclarationDataDetails"}
-//    </n1:DeclarationFullResponse>
-//  }
 }
 
 @Singleton
@@ -156,6 +144,7 @@ abstract class ResponseFilterService() {
         val wcoDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
 
         <p:details>
+          {prefixReWriter.transform(mdgDeclaration)}
           {prefixReWriter.transform(wcoDeclaration)}
         </p:details>.copy(label = detailsElementLabel)
       }}{endNodes(xml, prefixReWriter)}

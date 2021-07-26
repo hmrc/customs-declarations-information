@@ -1,0 +1,1237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+            targetNamespace="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/" version="2.7"
+            xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmServiceTypes/trade/2017/02/22/"
+            xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/"
+            xmlns:tns_2="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/"
+            xmlns:tns_3="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/"
+            xmlns:tns_4="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/">
+  
+  <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmPartyTypes/trade/2017/02/22/" schemaLocation="cmmPartyTypes.xsd"/>
+  <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" schemaLocation="cmmEnhancementTypes.xsd"/>
+  <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" schemaLocation="cmmValueTypes.xsd"/>
+  <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/" schemaLocation="cmmCodeListTypes.xsd"/>
+  
+  <xsd:complexType name="CashDepositPayupResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the signal of a cash deposit payup for the declaration that has subscribed to the payup notification</xsd:documentation>
+      <xsd:documentation>Related objects: accountingEntry(AccountingEntry) [0..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse">
+        <xsd:sequence>
+          <xsd:element name="paymentReference" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Payment reference of the cash deposit for which a payup signal is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitResponse">
+    <xsd:annotation>
+      <xsd:documentation>Base of all response messages received from an office of exit</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse">
+        <xsd:sequence>
+          <xsd:element name="type" type="tns_1:ExitMessageType">
+            <xsd:annotation>
+              <xsd:documentation>The type of the exit message</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="declarationReference" type="tns_2:ReferenceNumber">
+            <xsd:annotation>
+              <xsd:documentation>Reference number of the declaration included in the exit message</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="customsOfficeId" type="tns_1:CustomsOfficeCode">
+            <xsd:annotation>
+              <xsd:documentation>ID of the exit customs office from/to which the exit message was received/sent NOTE:	see documentation of the office attribute for the reason to capture the id of the customs office separately</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="memberState" type="tns_1:CountryType">
+            <xsd:annotation>
+              <xsd:documentation>The involved member state</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidationInformation">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing additional information about a validation result.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="text" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>A possible text providing further explaination about the validation </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="type" type="tns_1:ValidationInformationType">
+        <xsd:annotation>
+          <xsd:documentation>The type (group) of validation information NOTE:	possible values defined and maintained by eCF: 1:  	General Validation Information 2:	Additional units 3:	Supplementary units 4:	Commodity codes 5:	Document types 6:	Tariff Action Code 7:	Tariff Condition Code 8:	Tariff Measure Id 9: 	Tariff Document occurrence type</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="code" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Code denoting the specific meaning of the involved validation information type </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ExitStatusResponse">
+    <xsd:annotation>
+      <xsd:documentation>Response message to capture the movement status at the office of exit</xsd:documentation>
+      <xsd:documentation>Related objects: exitStatus(GoodsExitStatus) [0..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ExitResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlMeans">
+    <xsd:annotation>
+      <xsd:documentation>The tool, equipment or other resource with which control is to be performed</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="type" type="tns_1:ControlMeansType">
+        <xsd:annotation>
+          <xsd:documentation>The type of tool or equipment with which control is to be performed</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ControlResponse">
+    <xsd:annotation>
+      <xsd:documentation>Response to a control request</xsd:documentation>
+      <xsd:documentation>Related objects: controlResults(ControlResult) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlInstruction">
+    <xsd:annotation>
+      <xsd:documentation>Authoritative directions furnished by the person (in case of additional control) or system (in case of a risk assessment result) with respect to the control to be performed.</xsd:documentation>
+      <xsd:documentation>Related objects: source(User) [1..1] additionalDocument(AdditionalDocument) [0..1] controlMeans(ControlMeans) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="extensions" type="tns_3:Extension">
+        <xsd:annotation>
+          <xsd:documentation>The extensions associated with this extendable object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="involvesNotifyingDeclarant" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the declarant needs to be informed about the control to be performed</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="text" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Text explaining the control instruction</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="unbounded" name="reportBackElements" type="tns_2:Pointer">
+        <xsd:annotation>
+          <xsd:documentation>The data element(s) in the declaration (goods item) subject to control and about which the observation must be reported back NOTE: a single control instruction will have one and only one 'object of control', which may be the declaration (header), a consignment/shipment or a goods item. Ther may be multiple report back elements (refered to with a pointer) per 'object of control'. NOTE 2: The pointer will have the object on which control will be requested as context, e.g. the pointer could look like "/declaration/..." if a "declaration" element will be input for control.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AutomaticallyRaisedControlInstruction">
+    <xsd:annotation>
+      <xsd:documentation>Control instruction raised by the Risk Assessment Service</xsd:documentation>
+      <xsd:documentation>Related objects: identifiedRisks(Risk) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ControlInstruction"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ServiceRequest">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the data about a request made from within the DMS to an external of internal service NOTE 1: 	abstract class serving as parent to concrete service requests. NOTE 2:	ServiceRequest (and its sub types) inherit from class Extendable to allow for the possibility to capture certain external service data elements 			(i.e. Prisma in NL) that do not merit a ligitimate place in the RA object structure that but need to be persisted in the DWH. </xsd:documentation>
+      <xsd:documentation>Related objects: responses(ServiceResponse) [0..*] declaration(Declaration) [1..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="status" type="tns_1:ServiceRequestStatusType">
+        <xsd:annotation>
+          <xsd:documentation>The status of the service request (if relevant for the involved service) NOTE: possible values: 22: Cancelled 24: Pending 25: Responded</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>ID by which this request is identified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="sequenceNumber" type="xsd:integer">
+        <xsd:annotation>
+          <xsd:documentation>Number indicating the sequence in which this request was issued in the order of requests of this particular type for this particular declaration/goods item. NOTE: the sequence number is unique per service request type / declaration</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="timeStamp" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The time at which the request was submitted.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="externalId" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>External ID by which this request is identified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DeclarationPublicationRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to publish or forward a declaration to an external party that has subscribed to being informed about a relevant event regarding a declaration</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest">
+        <xsd:sequence>
+          <xsd:element name="topic" type="tns_1:TopicType">
+            <xsd:annotation>
+              <xsd:documentation>The topic of the event that triggered publication/forwarding of the declaration</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Observation">
+    <xsd:annotation>
+      <xsd:documentation>The facts on which a control result iis based</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="actionType" type="tns_1:ObservationActionType">
+        <xsd:annotation>
+          <xsd:documentation>The type of action (indicated by the user in the UI of the human task to handle observations) to be performed with regards to the observation</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="text" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Free text, if any, describing or explaining the observation</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="value" type="xsd:anyType">
+        <xsd:annotation>
+          <xsd:documentation>The observed value. This can only be a simple type</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="reportBackElement" type="tns_2:Pointer">
+        <xsd:annotation>
+          <xsd:documentation>The data element in the declaration about which the observation was made and which is reported back NOTE: The pointer will have the object on which control has been requested as context, e.g. the pointer could look like "/declaration/..." if a "declaration" element was the object for control.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" name="Event">
+    <xsd:annotation>
+      <xsd:documentation>The occurence of something relevant happening in the business context NOTE: In the business context, an event needs processing by an event handler</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Identifier by which this event is identified</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="timeStamp" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The date/time at which the event occurred</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="FinalDutyDecision">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the event of a decision, taken by the competent authorities, about a provisional duty becoming final (cancelled, confirmed or changed)</xsd:documentation>
+      <xsd:documentation>Related objects: dutyTaxFeeMeasures(DutyTaxFeeMeasure) [1..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:Event">
+        <xsd:sequence>
+          <xsd:element name="type" type="tns_1:DutyDecisionType">
+            <xsd:annotation>
+              <xsd:documentation>Type of the decision </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="effectiveDate" type="tns_2:DateTime">
+            <xsd:annotation>
+              <xsd:documentation>Date at which the final duty decision becomes effective.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SurveillanceRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to the Surveillance Reporting Service (Surveillance / Antidumping) to create, change or delete statistics for a set of declaration goods items.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitMessage">
+    <xsd:annotation>
+      <xsd:documentation>Base of all (request) messages exchanged with an office of exit</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="declarationReference" type="tns_2:ReferenceNumber">
+            <xsd:annotation>
+              <xsd:documentation>Reference number of the declaration included in the exit message</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="type" type="tns_1:ExitMessageType">
+            <xsd:annotation>
+              <xsd:documentation>The type of the exit message</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="customsOfficeId" type="tns_1:CustomsOfficeCode">
+            <xsd:annotation>
+              <xsd:documentation>ID of the exit customs office from/to which the exit message was received/sent </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="memberState" type="tns_1:CountryType">
+            <xsd:annotation>
+              <xsd:documentation>The involved member state</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitResultMessage">
+    <xsd:annotation>
+      <xsd:documentation>Message including the result of control, performed at the office(s) of exit, of goods intended to be exported. NOTE: the ExitControlMessage is used to capture the EU defined IE518 message</xsd:documentation>
+      <xsd:documentation>Related objects: results(ExitControlResult) [0..*] exitStatus(GoodsExitStatus) [0..1] goodsItemDetails(ExitGoodsItemDetails) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ExitMessage">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="overallControlResult" type="tns_1:OverallControlResultType">
+            <xsd:annotation>
+              <xsd:documentation>The overall exit control result (pertaining to all the items of the declaration) - if any</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="stateOfSeals" type="tns_1:ExitSealsStateType">
+            <xsd:annotation>
+              <xsd:documentation>Code, denoting the state of the container seals as observed during exit control.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="goodsExitedForTransit" type="xsd:boolean">
+            <xsd:annotation>
+              <xsd:documentation>Indicating whether the goods have been exited for transit</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to a Control Service to forward control tasks to the appropriate control agents.</xsd:documentation>
+      <xsd:documentation>Related objects: controlTask(ControlTask) [1..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SurveillanceResponse">
+    <xsd:annotation>
+      <xsd:documentation>Response from the Surveillance Reporting Service (Surveillance / Antidumping) on a request to create, change or delete statistics for a set of declaration goods items.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" name="Notification">
+    <xsd:annotation>
+      <xsd:documentation>A notification sent to an involved party about declaration</xsd:documentation>
+      <xsd:documentation>Related objects: additionalMessage(AdditionalMessage) [0..1] declaration(Declaration) [0..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="date" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The date at which the notification was sent (i.e.: the date at which the notification request was submitted). NOTE: the contents of this attribute can be derived from the contents of the timeStamp attribute of the notification (service) request.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Functional reference number of the response message WCO ID:       D026 WCO NAME:    Functional reference number WCO DESC:    Reference number identifying a specific information exchange.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DeclarationValidationRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to a generic eCustoms Framework Declaration Validation Service (DVS). DVS  is a composite service which internally levarages the Tariff Validation Service to perform Tariff related validations</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CashDepositPayupSubscription">
+    <xsd:annotation>
+      <xsd:documentation>Request to be informed about payup of a cash deposit</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest">
+        <xsd:sequence>
+          <xsd:element name="declarationReference" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Id of the declaration for which he cash deposit payup signal is requested.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="primaryFinancialResponsiblePartyId" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Id of the party that is the primary responsible party for paying the customs debt NOTE:	the primary responsible party is the importer</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="secondaryFinancialResponsiblePartyId" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Id of the party that is the secondary responsible party (if any) for paying the customs debt NOTE:	the secondary responsible party is the indirect representative if included in the declaration</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AccountsReceivableNotification">
+    <xsd:annotation>
+      <xsd:documentation>Notification by which Accounts Receivable is infomed about an incurred customs debt that must be booked.</xsd:documentation>
+      <xsd:documentation>Related objects: accountingEntries(AccountingEntry) [1..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TariffMeasureCompletion">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the event of completing an inomplete Tariff measure or commodity code</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:Event">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="reference" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Reference to the measure or commodity code that has been completed</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Signal">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a piece of information other than, or in addition to a service result. NOTE:	a signal may be an error or some additional information</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="qualifier" type="tns_1:SignalQualifier">
+        <xsd:annotation>
+          <xsd:documentation>Qualifier by which the signal is further categorized</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="type" type="tns_1:SignalType">
+        <xsd:annotation>
+          <xsd:documentation>Type of signal WCO REF: 377 WCO NAME: Error, coded WCO DESC: Code specifying a data validation error</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="pointer" type="tns_2:Pointer">
+        <xsd:annotation>
+          <xsd:documentation>The data element in the declaration to which the signal pertains</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="explanation" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Information providing background information about the signal in text NOTE:	An example of an signal with explanation is when the Duty Calculatation Service has encountered multiple calculations without being able to choose the right one. In this case the 2 calculations are included in the explanation, allowing a user to resolve the error (choose among the calculations) in a human task. </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Error">
+    <xsd:annotation>
+      <xsd:documentation>Object representing an error encountered while performing a service WCO ID:   - WCO NAME: Error WCO DESC: Details to identify data validation errors </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:Signal"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidationResult">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the result of a validation request (included in the response to a call on the Declaration Validation Service (DCS) </xsd:documentation>
+      <xsd:documentation>Related objects: rule(ValidationRule) [0..1] information(ValidationInformation) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="type" type="tns_1:ValidationResultType">
+        <xsd:annotation>
+          <xsd:documentation>The type of the validation result</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="qualifier" type="tns_1:ValidationResultQualifier">
+        <xsd:annotation>
+          <xsd:documentation>Indicator of the kind of validation result. NOTE:   Validation result qualifiers are, in particular, returned by the Tariff system to convey additional information allowing other clients of that component than DMS, that may not have knowledge of the categories to which validation results belong, to obtain additional information about the way the results shall be processed.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="unbounded" name="pointers" type="tns_2:Pointer">
+        <xsd:annotation>
+          <xsd:documentation>The data element(s) in the declaration to which the validation result pertains. NOTE: in case of a relationship validation the result may involve multiple data elements</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ExitControlResult">
+    <xsd:annotation>
+      <xsd:documentation>Outcome of goods control performed in the context of export/exit.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="sequenceNumber" type="xsd:integer">
+        <xsd:annotation>
+          <xsd:documentation>Number uniquely identifying the exit control result object at either exit result message or goods item level</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="indicator" type="tns_1:ControlResultIndicatorType">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the control result includes a new entry (goods item not included in the export declaration) or a difference compared to the export declaration</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="description" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Description of the exit control result in free text</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="correctedValue" type="xsd:anyType">
+        <xsd:annotation>
+          <xsd:documentation>Observed value, differing from the declared value, which might be any primitive type. NOTE: the nature of the value is known through the pointer that refers to the corrected data element in the declaration/goodsItem</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="pointer" type="tns_2:Pointer">
+        <xsd:annotation>
+          <xsd:documentation>Reference to the corrected data element in the declaration/goodsItem</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Risk">
+    <xsd:annotation>
+      <xsd:documentation>A risk identified by a Risk Assessment Service</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="extensions" type="tns_3:Extension">
+        <xsd:annotation>
+          <xsd:documentation>The extensions associated with this extendable object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="isConfirmed" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling that the identified risk has actually materialized (confirmed to be real) NOTE:	false by default -&gt; if true it is indicated by the customs official when taking the customs position</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="internationalRiskCode" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Code by which the risk is identified by an international or supranational organization such as WCO or EU.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="directive" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Directive telling how the involved risk shall be mitigated</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="area" type="tns_1:RiskAreaType">
+        <xsd:annotation>
+          <xsd:documentation>The area of risk</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="description" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Text describing the risk in terms of the hit risk profile</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="score" type="xsd:integer">
+        <xsd:annotation>
+          <xsd:documentation>The level of risk associated with the risk profile for this particular risk assessment result NOTE: the scale at which the score is measured is assumed to be known to the user (i.e. the score is an absolute, not a relative value)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="profileId" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Id of the associated risk profile </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RiskAssessmentRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to the Risk Assessment Service to determine the risk related to a declaration and its goods items.</xsd:documentation>
+      <xsd:documentation>Related objects: validationResults(ValidationResult) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TraderNotification">
+    <xsd:annotation>
+      <xsd:documentation>A notification sent to traders about a declaration or additional message WCO ID:      - WCO NAME:   Response WCO DESC:   Details of the response message. NOTE:         The class is called 'Notification' rather than 'Response' to underline the generic nature of the message and the fact that it is    not necessarily addressed to traders/submitter, but can also be sent to external parties or internal Customs departments.</xsd:documentation>
+      <xsd:documentation>Related objects: status(NotificationStatus) [0..1] payments(Payment) [0..*] additionalInformation(AdditionalInformation) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:Notification">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="bankAccount" type="tns_2:BankAccountNumber">
+            <xsd:annotation>
+              <xsd:documentation>Bank account number and details, in particular for payment of duty/tax/fees WCO ID:      WCO NAME:   BankAccount WCO DESC:   Details required for payment to a financial institution </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="roundNumber" type="xsd:integer">
+            <xsd:annotation>
+              <xsd:documentation>Sequence number of the customs debt calculation to which a notification of type DMSTAX belongs NOTE:    To reconstruct a DMSTAX notification that is stored in the data warehouse it is necessary to retrieve the involved DutyTaxFee and CustomsDebt objects. ECDC implemented that via the round number attribute.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="type" type="tns_1:TraderNotificationType">
+            <xsd:annotation>
+              <xsd:documentation>The type of notification (message)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AuthorizationReservationResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the response to a request to reserve a monetary amount and/or quantity on an authorization for a license certificate specified for one goods item</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="reservedAmount" type="tns_2:MonetaryAmount">
+            <xsd:annotation>
+              <xsd:documentation>The monetary amount reserved on an authorization (i.e. in total for a license certificate declared for one goods item)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="reservedQuantity" type="tns_2:Quantity">
+            <xsd:annotation>
+              <xsd:documentation>The quantity reserved on an authorization (i.e. in total for a license certificate declared for one goods item)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="availableAmount" type="tns_2:MonetaryAmount">
+            <xsd:annotation>
+              <xsd:documentation>The monetary amount that is still available for write-offs on this authorization</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="availableQuantity" type="tns_2:Quantity">
+            <xsd:annotation>
+              <xsd:documentation>The quantity that is still available for write-offs on this authorization</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ManuallyRaisedControlInstruction">
+    <xsd:annotation>
+      <xsd:documentation>Control instruction raised by a customs official</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ControlInstruction"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to the to tell whether the customs debt for the involved declaration is covered. NOTE 1:   if the request includes one or more GRNs (Guarantee Reference number), the Handle Coverage process is assumed to check the coverage against the guarantee identified by those GRNs such that the involved obligation guarantees are assumed to cover the coverage amount for which they are dedicated. If no GRN is included, GMS will check the coverage against the other coverage means which the financial responsible party may possess with the involved Customs Agency </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DutyCalculationRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to the Tariff Calculation Service (TMS/C) to calculate the taxes, duties and fees (potentially) payable for the declaration goods items</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidationRule">
+    <xsd:annotation>
+      <xsd:documentation>Object representing a rule applied during validation.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Reference by which the rule is identified</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ControlResult">
+    <xsd:annotation>
+      <xsd:documentation>Outcome of an inspection performed in the context of a control task as dictated by a control instruction, including the conclusion drawn by Customs from these observations NOTE: The conclusion usually follows a classification system based on the severity of the findings e.g. (A1,A2,B1) etc. </xsd:documentation>
+      <xsd:documentation>Related objects:
+controlTask(ControlTask) [1..1]
+actor(User) [1..1]
+observations(Observation) [0..*]
+manuallyRaisedControlInstructions(ManuallyRaisedControlInstruction) [0..*]</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="type" type="tns_1:ControlResultType">
+        <xsd:annotation>
+          <xsd:documentation>The type of control result, i.e. whether control was actually performed or not (in case documents were not presented in time or goods were not available)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="indicatesManualCustomsPosition" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling that the control result requires a manual customs position to be taken. NOTE: the indicator may be set in case of: -	a situation in which the goods may be released based on a provisional control resutl but additional security is needed to cover a situation that the final control yields 			a non comformant result -	control establishing a non-conformant situation that won't lead to a correction (e.g. cadmimum found) </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="indicatesManualCorrection" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether this control result entails the need to manually correct the declaration.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="externalExplanation" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Free text explanation of the control result for external  use (e.g. the involved trader) entered by the controlling officer.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="wasObtainedInDeclarantsPresence" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the declarant was present during the (physical) control.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="identificationMeans" type="tns_1:IdentificationMeansType">
+        <xsd:annotation>
+          <xsd:documentation>Means of identification used during control (Article 247 lid 3 CCIP) NOTE: 	the involved article reads: 3. The findings of the customs authorities shall indicate, where appropriate, the means of identification adopted. They shall be dated and bear the particulars needed to identify the official issuing them. TC : This is interpreted as being the means of identifying the customs official within the customs authority. However where it is appropriate to include the ID is a moot point. Within transit the OoDep merely needs to know the OoDes returning the control results, but for an internal declaration control at OoDep in transit, or for an import it might very well be deemed appropriate to be able to identify the officer</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="isProcessed" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether a Customs Position was determined for the control result Note: Initialized to false, updated to true when a customs position is taken </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="isFinal" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the control result is final</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="assessmentType" type="tns_1:ControlResultAssessmentType">
+        <xsd:annotation>
+          <xsd:documentation>The extent of discrepancy (if any) of the control result with the declared value NOTE: 	possible values: NULL is the result has not yet been assessed 1: No discrepancy 2: Minor discrepancy 3: Possible discrepancy 4: major discrepancy 5: Unable to determine</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="opposition" type="tns_1:OppositionType">
+        <xsd:annotation>
+          <xsd:documentation>Information about the declarant's reaction (opposition) to the control result. NOTE: possible values: agreed, opposed, not registered, no advise (see documentation of related code list element class)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="isBlockingRelease" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator, set by DMS or the customs official registering the result, telling whether the control result is blocking for the release of the declared goods.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="determinationDate" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The official date the control has taken place and the result has been determined (CCIP article 247 paragraph 3)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="internalExplanation" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Free text explanation of the control result for internal use, entered by the controlling officer.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="GuaranteePayupResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the signal of a guarantee payup for the declaration that has subscribed to the payup notification</xsd:documentation>
+      <xsd:documentation>Related objects: accountingEntry(AccountingEntry) [1..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitGoodsItemDetails">
+    <xsd:annotation>
+      <xsd:documentation>Object holding exit control result details on goods item level</xsd:documentation>
+      <xsd:documentation>Related objects: results(ExitControlResult) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="sequenceNumber" type="xsd:integer">
+        <xsd:annotation>
+          <xsd:documentation>Number uniquely identifying the exit goods item details object at exit result message level</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="GuaranteeReservation">
+    <xsd:annotation>
+      <xsd:documentation>Object holding reservation details for one guarantee</xsd:documentation>
+      <xsd:documentation>Related objects:
+coverages(Coverage) [0..*]</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="amount" type="tns_2:MonetaryAmount">
+        <xsd:annotation>
+          <xsd:documentation>The monetary amount to reserve from the transactional guarantee</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="grn" type="tns_2:GRN">
+        <xsd:annotation>
+          <xsd:documentation>The reference number of the guarantee on which the reservation should be made</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="partyIdentification" type="tns_4:PartyIdentification">
+        <xsd:annotation>
+          <xsd:documentation>The identification of the economic operator for whose guarantee the reservation should be done</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ControlTask">
+    <xsd:annotation>
+      <xsd:documentation>Unit of work, assigned to a control agent involving the inspection of a declaration document(s) and/or the involved goods, generated as the result of risk assessment or created manually by a customs officer. NOTE: 	a Controltask is created for each Risk Assessment Result unless risk assessment is performed again and no difference (in the involved control instructions) was established between this result and the former (if any)</xsd:documentation>
+      <xsd:documentation>Related objects: controlResult(ControlResult) [0..*] riskAssessmentResult(RiskAssessmentResult) [1..1] manuallyRaisedControlInstructions(ManuallyRaisedControlInstruction) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns_3:Task">
+        <xsd:sequence>
+          <xsd:element name="controlType" type="tns_1:ControlType">
+            <xsd:annotation>
+              <xsd:documentation>The type of control being performed in this task NOTE: possible values 'document control', 'physical control' or 'undetermined'</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="finalResultLimitDate" type="tns_2:DateTime">
+            <xsd:annotation>
+              <xsd:documentation>Date and time by when the final control result has to be received WCO REF: 264 WCO NAME: Limit date WCO DESC: Date and time by when the inspection has to be completed</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="firstResultLimitDate" type="tns_2:DateTime">
+            <xsd:annotation>
+              <xsd:documentation>Date and time by when the first control result has to be received WCO REF: 264 WCO NAME: Limit date WCO DESC: Date and time by when the inspection has to be completed</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="status" type="tns_1:ControlTaskStatusType">
+            <xsd:annotation>
+              <xsd:documentation>The processing status of the control task (e.g.: initiated, requested, finished)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="isBlockingRelease" type="xsd:boolean">
+            <xsd:annotation>
+              <xsd:documentation>Indicator telling whether the control task is blocking for the release of the declared goods.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TariffStatisticsNotification"/>
+  <xsd:complexType name="DeclarationValidationResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the response to a request made to the Declaration Validation Service, a composite service including the validations performed by DMS and thos performed by the Tariff Validations Service. </xsd:documentation>
+      <xsd:documentation>Related objects: validationResults(ValidationResult) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GuaranteeReservationResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the response to reserve a monetary amount on one or more transactional guarantee</xsd:documentation>
+      <xsd:documentation>Related objects:
+accountingEntries(AccountingEntry) [0..*]</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="NotificationInstruction">
+    <xsd:annotation>
+      <xsd:documentation>Instruction to a Notification Service to send a notification related to a declaration to an involved party.</xsd:documentation>
+      <xsd:documentation>Related objects: notification(Notification) [1..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GoodsExitStatus">
+    <xsd:annotation>
+      <xsd:documentation>The exit status of the involved goods items, determined by the office of exit</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="type" type="tns_1:GoodsExitStatusType">
+        <xsd:annotation>
+          <xsd:documentation>The goods exit status type</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="timeStamp" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The official Date/time at which the status has become effective. </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TariffQuotaRequest">
+    <xsd:annotation>
+      <xsd:documentation>Request to the Quota Handling Service (QHS) to draw, change or return a tariff quota for a specific declaration goods item. NOTE:	the QHS can handle quota drawing, update and return with the same call (the difference being identified through the request sequence number and the amendments attached to the declaration that is being passed as the service target</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CoverageResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the result of a request to verify whether coverage exists and (in case of a transaction based coverage means) is sufficient to cover the customs debt for the whole declaration. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse">
+        <xsd:sequence>
+          <xsd:element name="status" type="tns_1:CoverageStatusType">
+            <xsd:annotation>
+              <xsd:documentation>Indicator telling whether the coverage for the customs debt of the involved declaration exists and is sufficient. NOTE: 	possible values: 1: 	OK (coverage for the declaration exists and is sufficient) 2:	Not OK (declarant is unable to provide coverage for the declaration) </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Dossier">
+    <xsd:annotation>
+      <xsd:documentation>A complete declaration, its various versions and all the transactional data gathered during processing of the declaration, including the service requests and service response data issued for it.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:complexType>
+  <xsd:complexType name="AuthorizationReservationRequest">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the request to reserve a monetary amount and/or quantity on an authorization for a license certificate declared for one goods item</xsd:documentation>
+      <xsd:documentation>Related objects: goodsClassifications(AuthorizationGoodsClassification) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest">
+        <xsd:sequence>
+          <xsd:element name="authorizationId" type="tns_2:ReferenceNumber">
+            <xsd:annotation>
+              <xsd:documentation>The identification of the authorization to reserve on</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="declarationReference" type="tns_2:ReferenceNumber">
+            <xsd:annotation>
+              <xsd:documentation>Id of the declaration for which the authorization reservation is requested.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="consignmentShipmentNumber" type="xsd:integer">
+            <xsd:annotation>
+              <xsd:documentation>The sequence number of the consignment/shipment for which the reservation is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="goodsItemNumber" type="xsd:integer">
+            <xsd:annotation>
+              <xsd:documentation>The sequence number of the goods item for which the reservation is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="requestedAmount" type="tns_2:MonetaryAmount">
+            <xsd:annotation>
+              <xsd:documentation>The monetary amount requested to reserve on an authorization (i.e. in total for a license certificate declared for one goods item)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="requestedQuantity" type="tns_2:Quantity">
+            <xsd:annotation>
+              <xsd:documentation>The quantity requested to reserve on an authorization (i.e. in total for a license certificate declared for one goods item)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="reservedAmount" type="tns_2:MonetaryAmount">
+            <xsd:annotation>
+              <xsd:documentation>The monetary amount reserved on an authorization (i.e. in total for a license certificate declared for one goods item)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="reservedQuantity" type="tns_2:Quantity">
+            <xsd:annotation>
+              <xsd:documentation>The quantity reserved on an authorization (i.e. in total for a license certificate declared for one goods item)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="isExported" type="xsd:boolean">
+            <xsd:annotation>
+              <xsd:documentation>Indicator telling whether the goods item is exported from or imported into the customs area.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="countryOfOrigin" type="tns_1:CountryType">
+            <xsd:annotation>
+              <xsd:documentation>The country of origin of the goods for which the reservation is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="countryOfExportation" type="tns_1:CountryType">
+            <xsd:annotation>
+              <xsd:documentation>The country of exportation (or dispatch) of the goods for which the reservation is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="countryOfFinalDestination" type="tns_1:CountryType">
+            <xsd:annotation>
+              <xsd:documentation>The country of final destination of the goods for which the reservation is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ArchivingInstruction">
+    <xsd:annotation>
+      <xsd:documentation>Instruction to an archiving service to file the declaration dossier, consisting of the 'Basic Declaration' as received from the declarant including additional data produced during declaration processing NOTE:	The BOM data elements that make up the Basic Declaration and the full Declaration dossier are captured in the BomDataElement class. </xsd:documentation>
+      <xsd:documentation>Related objects: dossier(Dossier) [1..1] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GuaranteePayupSubscription">
+    <xsd:annotation>
+      <xsd:documentation>Request to be informed about payup of a transaction based guarantee.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest">
+        <xsd:sequence>
+          <xsd:element name="declarationReference" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Id of the declaration for which the guarantee payup signal is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="grn" type="tns_2:GRN">
+            <xsd:annotation>
+              <xsd:documentation>ID of the guarantee for which a payup signal is requested</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="amount" type="tns_2:MonetaryAmount">
+            <xsd:annotation>
+              <xsd:documentation>The amount expected to be paid up to clear the deficit NOTE: derived from the deficit attribute of the involved guarantee.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Payment">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing data about the payment of a customs debt</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="reference" type="tns_2:ReferenceNumber">
+        <xsd:annotation>
+          <xsd:documentation>Reference number by which the payment is identified (being either a cash payment reference number in case of cas deposits or a GRN in case of a guarantee payup) WCO REF: 	014 WCO NAME: 	Payment reference number WCO DESC:	Reference number specifying a payment of a duty or tax.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="isCashPayment" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the payment is a cash payment NOTE: 	Derived from the declaration customs debt coverage mode: True if 'Immediate/cash' else the reference is a GRN</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="dueDate" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>Date before which the payment is supposed to be made. WCO REF: 	376 WCO NAME: 	Payment due date WCO DESC: 	Date when an amount due should be made available to the creditor under the terms of payment.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="amount" type="tns_2:MonetaryAmount">
+        <xsd:annotation>
+          <xsd:documentation>The amount to be paid. WCO REF: 	378 WCO NAME: 	Payment amount WCO DESC: 	The actual amount paid, or to be paid. NOTE:	the amount may differ from the tax amount because: - a waiver may apply - (part of) the customs debt may have been paid before (i.e. in case a final customs debt is preceded by a provisions customs debt)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="taxAmount" type="tns_2:MonetaryAmount">
+        <xsd:annotation>
+          <xsd:documentation>The declaration customs debt WCO REF: 	120 WCO NAME: 	Duty/tax/fee assessed WCO DESC: 	Assessed amount of duty/tax/fee (includes all types of charges and duties) due and amount of reduction (if applicable). Assessed per duty/tax/fee type 						by item and/or declaration. </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RiskAssessmentResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the response of a request to a Risk Assessment Service to determine the risk related to a declaration and its goods items.</xsd:documentation>
+      <xsd:documentation>Related objects: riskAssessmentResults(RiskAssessmentResult) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitErrorResponse">
+    <xsd:annotation>
+      <xsd:documentation>Response message to capture any errors found during functional validation of messages exchanged with an office of exit</xsd:documentation>
+      <xsd:documentation>Related objects: validationResults(ValidationResult) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ExitResponse">
+        <xsd:sequence>
+          <xsd:element name="isProcessed" type="xsd:boolean">
+            <xsd:annotation>
+              <xsd:documentation>Indicates whether this functional error has been processed</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RiskAssessmentResult">
+    <xsd:annotation>
+      <xsd:documentation>A risk related to one particular aspect (goods item) of the object of risk assessement (declaration/request) NOTE: a risk assessment resut will always yield one (and only one) control instruction but may be based on zero or more risk profiles</xsd:documentation>
+      <xsd:documentation>Related objects: controlInstructions(AutomaticallyRaisedControlInstruction) [1..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="extensions" type="tns_3:Extension">
+        <xsd:annotation>
+          <xsd:documentation>The extensions associated with this extendable object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="controlType" type="tns_1:ControlType">
+        <xsd:annotation>
+          <xsd:documentation>The (encoded) type of control to be performed to mitigate the assessed risk NOTE: possible values: 01: document control 02: physical control 03: undetermined </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="conclusion" type="tns_1:RiskAssessmentResultType">
+        <xsd:annotation>
+          <xsd:documentation>Indicator of the overall risk assessment conclusion (usually expressed in alert colors Red, Orange, Green)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="overallRisk" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Explanation of the risk pertaining to the whole of the risk assessment result (i.e. going beyong the individual risk profiles)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="totalScore" type="xsd:integer">
+        <xsd:annotation>
+          <xsd:documentation>The level of risk associated with the involved aspect (data element) of the object of risk assessment, being the sum of the scores for the involved risk profiles identified for the involved aspect. NOTE: 	the scale against which the score is measured is assumed to be known by the user (i.e. the score will not be an absolute, not a relative value)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="overallInstruction" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Instruction pertaining to the whole of the risk assessment result (i.e. going beyond the individual control instructions)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="controlAgent" type="tns_1:ControlAgentType">
+        <xsd:annotation>
+          <xsd:documentation>The (encoded) organization or organizational unit (if specified) for whom the risk assessment result is meant and for whom a control task is created later (if needed).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="isBlockingRelease" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the risk assessment result is considered to be blocking for the release of the declared goods.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ExternalPartyNotification">
+    <xsd:annotation>
+      <xsd:documentation>Notification to an external party (other than traders)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:Notification">
+        <xsd:sequence>
+          <xsd:element name="type" type="tns_1:ExternalPartyNotificationType">
+            <xsd:annotation>
+              <xsd:documentation>The type of external party notification</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" name="addresseeId" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>An identification of the addressee</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DocumentPresentationData">
+    <xsd:annotation>
+      <xsd:documentation>Information about the presentation of a document (if so required in the context of document control)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="comment" type="tns_2:Text">
+        <xsd:annotation>
+          <xsd:documentation>Comment made by the customs official upon receipt of the document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="isIncompletePreferential" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the involved document is incomplete and a preferential document NOTE: this indicator is based on a Tariff validation result provided in case of incomplete documents</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="dueDate" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>Date at of before which the document must be presented</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="receiptDate" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>Date at which the document, requested to be presented, was received WCO ID:		- WCO NAME:	- WCO DESC:	- NOTE: 			if not received the field is empty</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="requestDate" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>Date at which the document was requested to be presented WCO ID:		- WCO NAME:	- WCO DESC:	-</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DutyCalculationResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the response of a request to the Tariff Management Calculation Service to calculate the taxes, duties and or fees (potentially) payable for the declaration goods items.	 NOTE: the result is on goods item level</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GuaranteeReservationRequest">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the request to reserve a monetary amount on one or more transactional guarantee</xsd:documentation>
+      <xsd:documentation>Related objects:
+guaranteeReservations(GuaranteeReservation) [1..*]</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceRequest"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" name="ServiceResponse">
+    <xsd:annotation>
+      <xsd:documentation>The response of a service request.</xsd:documentation>
+      <xsd:documentation>Related objects: signals(Signal) [0..*] </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="extensions" type="tns_3:Extension">
+        <xsd:annotation>
+          <xsd:documentation>The extensions associated with this extendable object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="sequenceNumber" type="xsd:integer">
+        <xsd:annotation>
+          <xsd:documentation>Number indicating the sequence in the set of responses to the associated request. NOTE: a sequence number is relevant in case there are more than one response to the same request.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="request" type="tns:ServiceRequest">
+        <xsd:annotation>
+          <xsd:documentation>The service request to which this service response is a reaction.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Identifier by which this response is identified</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="timeStamp" type="tns_2:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The time at which the response was received</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="isFinal" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling whether the response is a final response. NOTE: this flag is relevant in case there are more than one response to the same request.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="externalId" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>External ID by which this response is identified.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TariffQuotaResponse">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing the response of a request to the Quota Management Service to be informed about the status and the allocation of a quota for the goods items in a declaration involving a quota preference</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="tns:ServiceResponse"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

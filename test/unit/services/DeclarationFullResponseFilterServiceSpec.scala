@@ -21,7 +21,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.FullResponseFilterService
-import util.FullTestXMLData.{backendDeclarationFullResponse, validBackendFullResponse}
+import util.FullTestXMLData.backendDeclarationFullResponse
 import util.UnitSpec
 
 import scala.xml._
@@ -67,37 +67,20 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec with MockitoSuga
       node.text shouldBe "20GBAKZ81EQJ2WXYZ"
     }
 
-//    "ensure element ID is present" in new SetUp {
-//      val node = commonPath(fullResponseWithAllValues) \ "ID"
-//
-//      node.text shouldBe "18GB9JLC3CU1LFGVR2"
-//    }
-//
-//    "ensure element VersionID is present" in new SetUp {
-//      val node = commonPath(fullResponseWithAllValues) \ "VersionID"
-//
-//      node.text shouldBe "1"
-//    }
-//
-//    "handle missing VersionID element in backend response" in new SetUp {
-//      testForMissingElement("VersionID")
-//    }
-//
-//    "handle missing ID element in backend response" in new SetUp {
-//      testForMissingElement("ID")
-//    }
-//
-//    "handle future extension where all optional fields are returned" in new SetUp {
-//      val responsesWithAllValues: NodeSeq = service.transform(backendDeclarationFullResponse)
-//
-//      xmlValidationService.validate(responsesWithAllValues) should be(true)
-//    }
-//
-//    "no declarations found" in new SetUp {
-//      val zeroDeclarations = service.transform(backendDeclarationFullResponse)
-//      
-//      xmlValidationService.validate(zeroDeclarations) should be(true)
-//    }
+    "ensure element VersionID is present" in new SetUp {
+      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "VersionID"
+
+      node.text shouldBe "4"
+    }
+
+    "handle missing VersionID element in backend response" in new SetUp {
+      testForMissingElement("VersionID")
+    }
+
+    "handle missing ID element in backend response" in new SetUp {
+      testForMissingElement("ID")
+    }
+
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: FullResponseFilterService): Assertion = {
@@ -111,5 +94,5 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec with MockitoSuga
     node.size shouldBe 0
   }
 
-  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "FullDeclarationDataDetails" \ "Declaration"
+  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails"
 }
