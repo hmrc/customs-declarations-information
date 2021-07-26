@@ -23,6 +23,39 @@ import scala.xml.transform.RuleTransformer
 import scala.xml.{NodeSeq, Text, TopScope}
 
 @Singleton
+class FullResponseFilterService @Inject()() extends ResponseFilterService {
+
+  override protected val NameSpaceP="http://gov.uk/customs/FullDeclarationDataRetrievalService"
+  override protected val rootElementLabel: String = ""
+  override protected val detailsElementLabel: String = ""
+
+  def transform(xml: NodeSeq): NodeSeq = {
+    val declarationDetailsPath: NodeSeq = xml \ "responseDetail" \ "FullDeclarationDataRetrievalResponse"
+    transform(xml, declarationDetailsPath)
+  }
+
+  override def transform(xml: NodeSeq, declarationDetailsPath: NodeSeq): NodeSeq = {
+
+    val inputPrefixToUriMap: Map[String, String] = extractNamespacesFromAllElements(xml.head)
+      .map( nsb => nsb.prefix -> nsb.uri)
+      .toMap
+
+    val prefixReWriter = createTransformer(inputPrefixToUriMap)
+
+    <p:DeclarationFullResponse
+    xmlns:p={NameSpaceP}
+    xmlns:p1={NameSpaceP1}
+    xmlns:p2={NameSpaceP2}
+    xmlns:p3={NameSpaceP3}
+    xmlns:p4={NameSpaceP4}
+    xmlns:xsi={NameSpaceXsi}
+    xsi:schemaLocation={NameSpaceP}>
+        {prefixReWriter.transform((declarationDetailsPath \ "FullDeclarationDataDetails").filter(node => inputPrefixToUriMap(node.prefix) == NameSpaceP))}
+    </p:DeclarationFullResponse>
+  }
+}
+
+@Singleton
 class SearchResponseFilterService @Inject()() extends ResponseFilterService {
 
   override protected val NameSpaceP="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
@@ -91,21 +124,11 @@ abstract class ResponseFilterService() {
 
   def transform(xml: NodeSeq, declarationDetailsPath: NodeSeq): NodeSeq = {
 
-    val outputUriToPrefixMap = Map(
-      NameSpaceXsi -> "xsi",
-      NameSpaceP -> "p",
-      NameSpaceP1 -> "p1",
-      NameSpaceP2 -> "p2",
-      NameSpaceP3 -> "p3",
-      NameSpaceP4 -> "p4"
-    )
-
     val inputPrefixToUriMap = extractNamespacesFromAllElements(xml.head)
       .map( nsb => nsb.prefix -> nsb.uri)
       .toMap
 
-    val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
-    val prefixReWriter = createPrefixTransformer(inputPrefixToOutputPrefixMap, TopScope)
+    val prefixReWriter = createTransformer(inputPrefixToUriMap)
 
     <p:root
     xmlns:p={NameSpaceP}
@@ -128,7 +151,7 @@ abstract class ResponseFilterService() {
     </p:root>.copy(label = rootElementLabel)
   }
 
-  private def constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap: Map[String, String], outputUriToPrefixMap: Map[String, String]): Map[String, String] = {
+  protected def constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap: Map[String, String], outputUriToPrefixMap: Map[String, String]): Map[String, String] = {
     inputPrefixToUriMap.keySet.foldLeft(Seq.empty[(String, String)]){ (inputPrefixToOutputPrefix, inputPrefix) =>
       val inputUri = inputPrefixToUriMap(inputPrefix)
       val outputPrefix = outputUriToPrefixMap.getOrElse(inputUri, inputPrefix)
@@ -136,6 +159,19 @@ abstract class ResponseFilterService() {
 
       inputPrefixToOutputPrefix :+ inputToOutputPrefix
     }.toMap
+  }
+
+  protected def createTransformer(inputPrefixToUriMap: Map[String, String]): RuleTransformer = {
+    val outputUriToPrefixMap = Map(
+      NameSpaceXsi -> "xsi",
+      NameSpaceP -> "p",
+      NameSpaceP1 -> "p1",
+      NameSpaceP2 -> "p2",
+      NameSpaceP3 -> "p3",
+      NameSpaceP4 -> "p4"
+    )
+    val inputPrefixToOutputPrefixMap = constructInputPrefixToOutputPrefixMap(inputPrefixToUriMap, outputUriToPrefixMap)
+    createPrefixTransformer(inputPrefixToOutputPrefixMap, TopScope)
   }
 
 }
