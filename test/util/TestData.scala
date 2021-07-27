@@ -82,7 +82,7 @@ object TestData {
   val cspBearerToken = "CSP-Bearer-Token"
   val nonCspBearerToken = "Software-House-Bearer-Token"
   val invalidBearerToken = "InvalidBearerToken"
-  val declarationSubmissionChannel = Some("AuthenticatedPartyOnly")
+  val declarationSubmissionChannel = Some(DeclarationSubmissionChannel("AuthenticatedPartyOnly"))
 
   private val sdf = new SimpleDateFormat("yyyy-MM-dd")
   val searchParameters = SearchParameters(Some(Eori("GB123456789000")), PartyRole("submitter"), DeclarationCategory("IM"), Some(GoodsLocationCode("BELBELOB4")), Some(DeclarationStatus("all")), Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), Some(2))

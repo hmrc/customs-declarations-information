@@ -45,7 +45,7 @@ object ActionBuilderModelHelper {
 
     def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
 
-    def toInternalClientIdsRequest(declarationSubmissionChannel: Option[String]): InternalClientIdsRequest[A] = InternalClientIdsRequest(
+    def toInternalClientIdsRequest(declarationSubmissionChannel: Option[DeclarationSubmissionChannel]): InternalClientIdsRequest[A] = InternalClientIdsRequest(
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
@@ -57,6 +57,7 @@ object ActionBuilderModelHelper {
       vhr.conversationId,
       vhr.requestedApiVersion,
       vhr.clientId,
+      None,
       None,
       None,
       authorisedAs,
@@ -78,16 +79,44 @@ object ActionBuilderModelHelper {
       icir.request
     )
 
+    def toFullDeclarationRequest(declarationVersion: Option[Int]): FullDeclarationRequest[A] = FullDeclarationRequest(
+      icir.conversationId,
+      icir.requestedApiVersion,
+      icir.clientId,
+      icir.declarationSubmissionChannel,
+      declarationVersion,
+      icir.request
+    )
+
     private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
       icir.conversationId,
       icir.requestedApiVersion,
       icir.clientId,
       icir.declarationSubmissionChannel,
       None,
+      None,
       authorisedAs,
       icir.request
     )
   }
+
+  implicit class FullDeclarationRequestOps[A](val fdvr: FullDeclarationRequest[A]) {
+    def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
+
+    def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
+
+    private def toAuthorisedRequest(authorisedAs: AuthorisedAs): AuthorisedRequest[A] = AuthorisedRequest(
+      fdvr.conversationId,
+      fdvr.requestedApiVersion,
+      fdvr.clientId,
+      fdvr.declarationSubmissionChannel,
+      None,
+      fdvr.declarationVersion,
+      authorisedAs,
+      fdvr.request
+    )
+  }
+
   implicit class SearchParametersRequestOps[A](val spr: SearchParametersRequest[A]) {
     def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
 
@@ -99,6 +128,7 @@ object ActionBuilderModelHelper {
       spr.clientId,
       spr.declarationSubmissionChannel,
       spr.searchParameters,
+      None,
       authorisedAs,
       spr.request
     )
@@ -129,8 +159,16 @@ trait HasBadgeIdentifier {
   val badgeIdentifier: BadgeIdentifier
 }
 
+trait HasDeclarationSubmissionChannel {
+  val declarationSubmissionChannel: Option[DeclarationSubmissionChannel]
+}
+
 trait HasSearchParameters {
   val searchParameters: Option[SearchParameters]
+}
+
+trait HasDeclarationVersion {
+  val declarationVersion: Option[Int]
 }
 
 case class ExtractedHeadersImpl(clientId: ClientId) extends ExtractedHeaders
@@ -164,18 +202,27 @@ case class ValidatedHeadersRequest[A](conversationId: ConversationId,
 case class InternalClientIdsRequest[A](conversationId: ConversationId,
                                        requestedApiVersion: ApiVersion,
                                        clientId: ClientId,
-                                       declarationSubmissionChannel: Option[String], //could or should be type or enum
+                                       declarationSubmissionChannel: Option[DeclarationSubmissionChannel], //could or should be type or enum
                                        request: Request[A]
-) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders
+) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasDeclarationSubmissionChannel
+
+// Available after FullDeclarationCheckAction
+case class FullDeclarationRequest[A](conversationId: ConversationId,
+                                     requestedApiVersion: ApiVersion,
+                                     clientId: ClientId,
+                                     declarationSubmissionChannel: Option[DeclarationSubmissionChannel],
+                                     declarationVersion: Option[Int],
+                                     request: Request[A]
+                                      ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasDeclarationSubmissionChannel with HasDeclarationVersion
 
 // Available after SearchParametersCheckAction
 case class SearchParametersRequest[A](conversationId: ConversationId,
                                       requestedApiVersion: ApiVersion,
                                       clientId: ClientId,
-                                      declarationSubmissionChannel: Option[String], //could or should be type or enum
+                                      declarationSubmissionChannel: Option[DeclarationSubmissionChannel],
                                       searchParameters: Option[SearchParameters],
                                       request: Request[A]
-                                      ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasSearchParameters {
+                                      ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasDeclarationSubmissionChannel with HasSearchParameters {
 
 }
 
@@ -192,8 +239,9 @@ case class SearchParameters(eori: Option[Eori],
 case class AuthorisedRequest[A](conversationId: ConversationId,
                                 requestedApiVersion: ApiVersion,
                                 clientId: ClientId,
-                                declarationSubmissionChannel: Option[String],
+                                declarationSubmissionChannel: Option[DeclarationSubmissionChannel],
                                 searchParameters: Option[SearchParameters],
+                                declarationVersion: Option[Int],
                                 authorisedAs: AuthorisedAs,
                                 request: Request[A]
-) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion with HasSearchParameters
+) extends WrappedRequest[A](request) with HasConversationId with ExtractedHeaders with HasAuthorisedAs with HasApiVersion with HasSearchParameters with HasDeclarationSubmissionChannel with HasDeclarationVersion

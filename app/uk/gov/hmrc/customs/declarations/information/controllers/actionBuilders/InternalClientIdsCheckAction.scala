@@ -19,6 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.DeclarationSubmissionChannel
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{InternalClientIdsRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
@@ -64,7 +65,13 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", declarationSubmissionChannelErrorCode).XmlResult.withConversationId)
 
     } else {
-      Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, declarationSubmissionChannel, vhr.request))
+
+      val decChannel: Option[DeclarationSubmissionChannel] = declarationSubmissionChannel match {
+        case Some(dsc) => Some(DeclarationSubmissionChannel(dsc))
+        case None => None
+      }
+
+      Right(InternalClientIdsRequest(vhr.conversationId, vhr.requestedApiVersion, vhr.clientId, decChannel, vhr.request))
     }
   }
 }
