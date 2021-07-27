@@ -21,7 +21,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{FullDeclarationAuthAction, HeaderValidator, VersionAuthAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{FullDeclarationAuthAction, HeaderValidator}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._

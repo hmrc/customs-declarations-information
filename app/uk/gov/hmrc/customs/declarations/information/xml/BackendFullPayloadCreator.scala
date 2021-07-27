@@ -44,8 +44,7 @@ class BackendFullPayloadCreator() extends BackendPayloadCreator {
         <n1:FullDeclarationDataRetrievalRequest>
           <n1:ServiceRequestParameters>
             <n1:MRN>{searchTypeAsType}</n1:MRN>
-            <!-- TODO correct when classes available -->
-            {asr.searchParameters.fold(NodeSeq.Empty)(apo => <n1:DeclarationVersionNumber>{apo}</n1:DeclarationVersionNumber>)}
+            {asr.declarationVersion.fold(NodeSeq.Empty)(dv => <n1:DeclarationVersionNumber>{dv}</n1:DeclarationVersionNumber>)}
             {asr.declarationSubmissionChannel.fold(NodeSeq.Empty)(apo => <n1:DeclarationSubmissionChannel>{apo}</n1:DeclarationSubmissionChannel>)}
           </n1:ServiceRequestParameters>
         </n1:FullDeclarationDataRetrievalRequest>

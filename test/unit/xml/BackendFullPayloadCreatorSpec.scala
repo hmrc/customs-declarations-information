@@ -22,7 +22,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, ValidatedHeadersRequestOps}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper.{ApiVersionRequestOps, FullDeclarationRequestOps, InternalClientIdsRequestOps, ValidatedHeadersRequestOps}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
@@ -35,7 +35,6 @@ import util.XmlOps.stringToXml
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-//TODO tests currently fail due to incomplete BackendFullPayloadCreator
 class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
@@ -57,6 +56,7 @@ class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(None)
+        .toFullDeclarationRequest(Some(1))
         .toNonCspAuthorisedRequest(declarantEori)
 
       val actual = createFullPayload(request)
@@ -68,6 +68,7 @@ class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(declarationSubmissionChannel)
+        .toFullDeclarationRequest(Some(1))
         .toNonCspAuthorisedRequest(declarantEori)
 
       val actual = createFullPayload(request)
@@ -75,10 +76,23 @@ class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
       stringToXml(actual) shouldBe stringToXml(validNonCspFullRequestPayloadWithDeclarationSubmissionChannel)
     }
 
+    "non csp full request is without declarationVersionNumber is created correctly" in {
+      val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
+        .toValidatedHeadersRequest(TestExtractedHeaders)
+        .toInternalClientIdsRequest(declarationSubmissionChannel)
+        .toFullDeclarationRequest(None)
+        .toNonCspAuthorisedRequest(declarantEori)
+
+      val actual = createFullPayload(request)
+      xmlFullValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspFullRequestPayloadWithoutDeclarationVersion)
+    }
+
     "csp full request with badge identifier is created correctly" in {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(None)
+        .toFullDeclarationRequest(Some(1))
         .toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
 
       val actual = createFullPayload(request)
@@ -90,6 +104,7 @@ class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(None)
+        .toFullDeclarationRequest(Some(1))
         .toCspAuthorisedRequest(Csp(Some(declarantEori), None))
 
       val actual = createFullPayload(request)
@@ -101,6 +116,7 @@ class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(declarationSubmissionChannel)
+        .toFullDeclarationRequest(Some(1))
         .toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
 
       val actual = createFullPayload(request)

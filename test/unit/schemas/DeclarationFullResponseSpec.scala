@@ -20,7 +20,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
-import util.FullTestXMLData.{expectedFullPayloadRequest, validBackendFullResponse, validFilteredFullResponseXML}
+import util.FullTestXMLData.{expectedFullPayloadRequest, validFilteredFullResponseXML}
 import util.UnitSpec
 
 import scala.xml.{Elem, SAXException}
