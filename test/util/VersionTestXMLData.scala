@@ -62,7 +62,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel =
+  val validNonCspVersionRequestPayloadWithDeclarationSubmissionChannel =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -83,7 +83,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validCspVerionRequestPayload =
+  val validCspVersionRequestPayload =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -105,7 +105,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validCspVerionRequestPayloadWithDeclarationSubmissionChannel =
+  val validCspVersionRequestPayloadWithDeclarationSubmissionChannel =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -128,7 +128,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validCspVerionRequestWithoutBadgePayload =
+  val validCspVersionRequestWithoutBadgePayload =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>

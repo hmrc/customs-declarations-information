@@ -22,89 +22,90 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, ValidatedHeadersRequestOps}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest}
-import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
+import util.FullTestXMLData._
 import util.TestData._
 import util.UnitSpec
-import util.VersionTestXMLData._
 import util.XmlOps.stringToXml
 
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class BackendVersionPayloadCreatorSpec extends UnitSpec with MockitoSugar {
+//TODO tests currently fail due to incomplete BackendFullPayloadCreator
+class BackendFullPayloadCreatorSpec extends UnitSpec with MockitoSugar {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
   private val dateTime = new DateTime(instant, DateTimeZone.UTC)
-  private val payloadCreator = new BackendVersionPayloadCreator()
+  private val payloadCreator = new BackendFullPayloadCreator()
 
-  def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveDeclarationVersionRequest.xsd").get)
+  def xmlFullValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveFullDeclarationDataRequest.xsd").get)
   
-  "BackendVersionPayloadCreator" should {
+  "BackendFullPayloadCreator" should {
 
-    def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq =  payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
+    def createFullPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq =  payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
 
-    "sample Version request passes schema validation" in {
-      xmlVersionValidationService.validate(createVersionPayload(TestCspAuthorisedRequest)) should be(true)
+    "sample full request passes schema validation" in {
+      xmlFullValidationService.validate(createFullPayload(TestCspAuthorisedRequest)) should be(true)
     }
 
-    "non csp version request is created correctly" in {
+    "non csp full request is created correctly" in {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(None)
         .toNonCspAuthorisedRequest(declarantEori)
 
-      val actual = createVersionPayload(request)
-      xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validNonCspVersionRequestPayload)
+      val actual = createFullPayload(request)
+      xmlFullValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspFullRequestPayload)
     }
 
-    "non csp version request is with declarationSubmissionChannel created correctly" in {
+    "non csp full request is with declarationSubmissionChannel created correctly" in {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(declarationSubmissionChannel)
         .toNonCspAuthorisedRequest(declarantEori)
 
-      val actual = createVersionPayload(request)
-      xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validNonCspVersionRequestPayloadWithDeclarationSubmissionChannel)
+      val actual = createFullPayload(request)
+      xmlFullValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validNonCspFullRequestPayloadWithDeclarationSubmissionChannel)
     }
 
-    "csp version request with badge identifier is created correctly" in {
+    "csp full request with badge identifier is created correctly" in {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(None)
         .toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
 
-      val actual = createVersionPayload(request)
-      xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validCspVersionRequestPayload)
+      val actual = createFullPayload(request)
+      xmlFullValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspFullRequestPayload)
     }
 
-    "csp version request without badge identifier is created correctly" in {
+    "csp full request without badge identifier is created correctly" in {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(None)
         .toCspAuthorisedRequest(Csp(Some(declarantEori), None))
 
-      val actual = createVersionPayload(request)
-      xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validCspVersionRequestWithoutBadgePayload)
+      val actual = createFullPayload(request)
+      xmlFullValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspFullRequestWithoutBadgePayload)
     }
 
-    "csp version request with badge identifier and DeclarationSubmissionChannel is created correctly" in {
+    "csp full request with badge identifier and DeclarationSubmissionChannel is created correctly" in {
       val request = ApiVersionRequest(conversationId, VersionOne, TestFakeRequestV1)
         .toValidatedHeadersRequest(TestExtractedHeaders)
         .toInternalClientIdsRequest(declarationSubmissionChannel)
         .toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier)))
 
-      val actual = createVersionPayload(request)
-      xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validCspVersionRequestPayloadWithDeclarationSubmissionChannel)
+      val actual = createFullPayload(request)
+      xmlFullValidationService.validate(actual) should be(true)
+      stringToXml(actual) shouldBe stringToXml(validCspFullRequestPayloadWithDeclarationSubmissionChannel)
     }
   }
 }
