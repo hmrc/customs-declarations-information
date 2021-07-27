@@ -23,6 +23,8 @@ object CustomsDeclarationsExternalServicesConfig {
   val BackendVersionDeclarationServiceContextV2 = "/backendVersionDecServiceV2/submit"
   val BackendSearchDeclarationServiceContextV1 = "/backendSearchDecServiceV1/submit"
   val BackendSearchDeclarationServiceContextV2 = "/backendSearchDecServiceV2/submit"
+  val BackendFullDeclarationServiceContextV1 = "/backendFullDecServiceV1/submit"
+  val BackendFullDeclarationServiceContextV2 = "/backendFullDecServiceV2/submit"
   val ApiSubscriptionFieldsContext = "/api-subscription-fields/field"
   val AuditContext = "/write/audit.*"
 }

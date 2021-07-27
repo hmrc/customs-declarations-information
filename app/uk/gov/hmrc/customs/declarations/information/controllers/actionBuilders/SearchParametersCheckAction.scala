@@ -127,7 +127,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       case None => Right(None)
     }
   }
-  
+
   def validateDeclarationStatus(declarationStatus: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[DeclarationStatus]] = {
 
     declarationStatus match {

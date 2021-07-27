@@ -71,7 +71,7 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
       val actual = createVersionPayload(request)
       xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validNonCspVerionRequestPayloadWithDeclarationSubmissionChannel)
+      stringToXml(actual) shouldBe stringToXml(validNonCspVersionRequestPayloadWithDeclarationSubmissionChannel)
     }
 
     "csp version request with badge identifier is created correctly" in {
@@ -82,7 +82,7 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
       val actual = createVersionPayload(request)
       xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestPayload)
+      stringToXml(actual) shouldBe stringToXml(validCspVersionRequestPayload)
     }
 
     "csp version request without badge identifier is created correctly" in {
@@ -93,7 +93,7 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
       val actual = createVersionPayload(request)
       xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestWithoutBadgePayload)
+      stringToXml(actual) shouldBe stringToXml(validCspVersionRequestWithoutBadgePayload)
     }
 
     "csp version request with badge identifier and DeclarationSubmissionChannel is created correctly" in {
@@ -104,7 +104,7 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec with MockitoSugar {
 
       val actual = createVersionPayload(request)
       xmlVersionValidationService.validate(actual) should be(true)
-      stringToXml(actual) shouldBe stringToXml(validCspVerionRequestPayloadWithDeclarationSubmissionChannel)
+      stringToXml(actual) shouldBe stringToXml(validCspVersionRequestPayloadWithDeclarationSubmissionChannel)
     }
   }
 }

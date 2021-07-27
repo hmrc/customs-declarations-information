@@ -29,7 +29,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.{BackendPayloadCreator, BackendSearchPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
+import uk.gov.hmrc.customs.declarations.information.xml.{BackendFullPayloadCreator, BackendPayloadCreator, BackendSearchPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
 
@@ -86,6 +86,24 @@ class DeclarationSearchConnector @Inject()(http: HttpClient,
   extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
 
   override val configKey = "declaration-search"
+
+  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+}
+
+@Singleton
+class DeclarationFullConnector @Inject()(http: HttpClient,
+                                         logger: InformationLogger,
+                                         backendPayloadCreator: BackendFullPayloadCreator,
+                                         serviceConfigProvider: ServiceConfigProvider,
+                                         config: InformationConfigService,
+                                         override val cdsLogger: CdsLogger,
+                                         override val actorSystem: ActorSystem)
+                                         (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+
+  override val configKey = "declaration-full"
 
   override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis

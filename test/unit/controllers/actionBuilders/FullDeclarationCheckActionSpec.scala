@@ -20,10 +20,10 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers.{contentAsString, _}
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{FullDeclarationCheckAction, InternalClientIdsCheckAction}
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.FullDeclarationCheckAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, InternalClientIdsRequest, ValidatedHeadersRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, DeclarationSubmissionChannel, InformationConfig, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, InternalClientIdsRequest}
+import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, InformationConfig, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import util.TestData.declarationSubmissionChannel
 import util.UnitSpec

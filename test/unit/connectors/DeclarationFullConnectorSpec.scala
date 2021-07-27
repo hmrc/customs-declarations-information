@@ -26,47 +26,47 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
+import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
+import util.FullTestXMLData.expectedFullPayloadRequest
 import util.TestData._
-import util.VersionTestXMLData.expectedVersionPayloadRequest
 import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with Eventually {
+class DeclarationFullConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with Eventually {
 
   private val mockWsPost = mock[HttpClient]
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock[ServiceConfigProvider]
   private val mockInformationConfigService = mock[InformationConfigService]
-  private val mockBackendPayloadCreator = mock[BackendVersionPayloadCreator]
+  private val mockBackendPayloadCreator = mock[BackendFullPayloadCreator]
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
   private val actorSystem = ActorSystem("mockActorSystem")
 
-  private val connector = new DeclarationVersionConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock[CdsLogger], actorSystem)
+  private val connector = new DeclarationFullConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock[CdsLogger], actorSystem)
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, Some(1), Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
 
   override protected def beforeEach() {
     reset(mockWsPost, mockServiceConfigProvider)
-    when(mockServiceConfigProvider.getConfig("declaration-version")).thenReturn(v1Config)
+    when(mockServiceConfigProvider.getConfig("declaration-full")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
-    when(mockBackendPayloadCreator.create(conversationId, correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedVersionPayloadRequest)
+    when(mockBackendPayloadCreator.create(conversationId, correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedFullPayloadRequest)
   }
 
   private val successfulResponse = HttpResponse(200, "")
 
-  "DeclarationVersionConnector" can {
+  "DeclarationFullConnector" can {
 
     "when making a successful request" should {
 
@@ -84,7 +84,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with Be
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[SeqOfHeader])(
+        verify(mockWsPost).POSTString(anyString, ameq(expectedFullPayloadRequest.toString()), any[SeqOfHeader])(
           any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
@@ -93,7 +93,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with Be
 
         awaitRequest
 
-        verify(mockServiceConfigProvider).getConfig("declaration-version")
+        verify(mockServiceConfigProvider).getConfig("declaration-full")
       }
     }
 
@@ -110,7 +110,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with MockitoSugar with Be
 
     "when configuration is absent" should {
       "throw an exception when no config is found for given api and version combination" in {
-        when(mockServiceConfigProvider.getConfig("declaration-version")).thenReturn(null)
+        when(mockServiceConfigProvider.getConfig("declaration-full")).thenReturn(null)
 
         val caught = intercept[IllegalArgumentException] {
           await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))

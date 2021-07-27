@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.UrlPattern
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.test.Helpers._
+import util.FullTestXMLData.validBackendFullResponse
 import util.SearchTestXMLData.validBackendSearchResponse
 import util.StatusTestXMLData.validBackendStatusResponse
 import util.VersionTestXMLData.validBackendVersionResponse
@@ -34,6 +35,8 @@ trait BackendDeclarationService extends WireMockRunner {
   private val versionUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendVersionDeclarationServiceContextV2)
   private val searchUrlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV1)
   private val searchUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV2)
+  private val fullUrlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV1)
+  private val fullUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV2)
 
   val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
 
@@ -59,6 +62,14 @@ trait BackendDeclarationService extends WireMockRunner {
 
   def startBackendSearchServiceV2(status: Int = OK, body: NodeSeq = validBackendSearchResponse): Unit = {
     startBackendService(searchUrlV2, status, body)
+  }
+
+  def startBackendFullServiceV1(status: Int = OK, body: NodeSeq = validBackendFullResponse): Unit = {
+    startBackendService(fullUrlV1, status, body)
+  }
+
+  def startBackendFullServiceV2(status: Int = OK, body: NodeSeq = validBackendFullResponse): Unit = {
+    startBackendService(fullUrlV2, status, body)
   }
 
   private def startBackendService(url: UrlPattern, status: Int, body: NodeSeq): Unit = {

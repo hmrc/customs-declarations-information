@@ -44,7 +44,7 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
   extends ActionRefiner[ValidatedHeadersRequest, InternalClientIdsRequest] {
 
   override def executionContext: ExecutionContext = ec
-  
+
   val declarationSubmissionChannelErrorCode = "CDS60011"
 
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
