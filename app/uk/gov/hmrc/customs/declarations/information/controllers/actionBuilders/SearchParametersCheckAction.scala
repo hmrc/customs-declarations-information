@@ -148,6 +148,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       Right()
     }
   }
+
   def validateDate(date: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Date]] = {
 
     date match {
