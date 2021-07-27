@@ -22,7 +22,7 @@
   <xs:element name="DeclarationVersionResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="DeclarationVersionDetails" minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="DeclarationVersionDetails" minOccurs="1" maxOccurs="unbounded">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="Declaration" minOccurs="1" maxOccurs="1">

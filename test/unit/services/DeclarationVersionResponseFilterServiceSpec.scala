@@ -113,7 +113,7 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec with MockitoS
     "no declarations found" in new SetUp {
       val zeroDeclarations = service.transform(generateDeclarationVersionResponse(0, defaultDateTime))
       
-      xmlValidationService.validate(zeroDeclarations) should be(true)
+      xmlValidationService.validate(zeroDeclarations) should be(false)
     }
   }
 

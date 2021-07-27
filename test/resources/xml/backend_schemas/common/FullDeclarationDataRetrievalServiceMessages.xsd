@@ -80,7 +80,7 @@
 	<xs:complexType name="FullDeclarationDataRetrievalResponse">
 		<xs:sequence>
 			<xs:element name="FullDeclarationDataDetails"
-				minOccurs="0" maxOccurs="1" type="FullDeclarationDataDetails">
+				minOccurs="1" maxOccurs="1" type="FullDeclarationDataDetails">
 			</xs:element>
 		</xs:sequence>		
 	</xs:complexType>
