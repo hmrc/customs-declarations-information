@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
+import play.api.http.HttpEntity
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{BadRequestCode, errorBadRequest}
@@ -55,7 +56,9 @@ class FullDeclarationCheckAction @Inject()(val logger: InformationLogger,
 
     validateDeclarationVersion(declarationVersion) match {
       case Right(dv) => Right(FullDeclarationRequest(icir.conversationId, icir.requestedApiVersion, icir.clientId, icir.declarationSubmissionChannel, dv, icir.request))
-      case Left(error) => Left(error.XmlResult.withConversationId)
+      case Left(error) =>
+        logger.warn(s"Rejected full declaration information request with status code ${error.httpStatusCode} and body\n ${error.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
+        Left(error.XmlResult.withConversationId)
     }
   }
 

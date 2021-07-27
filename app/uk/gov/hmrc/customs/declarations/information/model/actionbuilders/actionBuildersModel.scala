@@ -202,7 +202,7 @@ case class ValidatedHeadersRequest[A](conversationId: ConversationId,
 case class InternalClientIdsRequest[A](conversationId: ConversationId,
                                        requestedApiVersion: ApiVersion,
                                        clientId: ClientId,
-                                       declarationSubmissionChannel: Option[DeclarationSubmissionChannel], //could or should be type or enum
+                                       declarationSubmissionChannel: Option[DeclarationSubmissionChannel],
                                        request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasDeclarationSubmissionChannel
 

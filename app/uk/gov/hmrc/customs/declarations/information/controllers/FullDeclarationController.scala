@@ -83,7 +83,9 @@ class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAc
         logger.info(s"MRN parameter is invalid: $mrn")
         ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
       }
-      Left(appropriateResponse.XmlResult.withConversationId)
+      val response = appropriateResponse.XmlResult.withConversationId
+      logger.debug(s"Full declaration MRN parameter validation failed sending response: $response")
+      Left(response)
     }
   }
 
