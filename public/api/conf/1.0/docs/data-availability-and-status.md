@@ -1,6 +1,6 @@
 Only declarations received by CDS in the last 180 days will be returned by this API.
 
-**Status Endpoints**
+**Declaration Status Endpoints**
 
 The status endpoints return a response that can contain the following fields:
 
@@ -79,7 +79,7 @@ The status endpoints return a response that can contain the following fields:
 
 Please note that not all of these fields are guaranteed to be present for every declaration returned.
 
-**Version Endpoint**
+**Declaration Version Endpoint**
 
 The version endpoint returns a response that can contain the following fields:
 
@@ -127,7 +127,11 @@ The version endpoint returns a response that can contain the following fields:
   </tr>
 </table>
 
-**Search Endpoint**
+**Full Declaration Endpoint**
+
+This endpoint returns a full declaration that can contain many elements. See the schema file, DeclarationInformationRetrievalFullResponse.xsd, in the download zip for documentation.
+
+**Search Declarations Endpoint**
 
 The search endpoint returns a response that can contain the following fields:
 

@@ -1,6 +1,6 @@
 We use standard HTTP status codes to show whether an API request succeeded or not. 
 
-**Status error scenarios**
+**Status endpoint error scenarios**
 
 <table>
   <tbody>
@@ -62,7 +62,7 @@ We use standard HTTP status codes to show whether an API request succeeded or no
 </table>
 <br>
 
-**Version error scenarios**
+**Version endpoint error scenarios**
 
 <table>
   <tbody>
@@ -124,7 +124,75 @@ We use standard HTTP status codes to show whether an API request succeeded or no
 </table>
 <br>
 
-**Search error scenarios**
+**Full endpoint error scenarios**
+
+<table>
+  <tbody>
+    <tr>
+      <td><b>Scenario</b></td>
+      <td><b>HTTP Status</b></td>
+      <td><b>Code</b></td>
+      <td><b>Message</b></td>
+    </tr>
+    <tr>
+      <td>Declaration not found for given MRN</td>
+      <td>404 (Not Found)</td>
+      <td>CDS60001</td>
+      <td>Declaration not found</td>
+    </tr>
+    <tr>
+      <td>Invalid MRN</td>
+      <td>400 (Bad Request)</td>
+      <td>CDS60002</td>
+      <td>MRN parameter invalid</td>
+    </tr>
+    <tr>
+      <td>Missing MRN</td>
+      <td>400 (Bad Request)</td>
+      <td>BAD_REQUEST</td>
+      <td>Missing MRN parameter</td>
+    </tr>
+    <tr>
+      <td>MRN too long</td>
+      <td>400 (Bad Request)</td>
+      <td>BAD_REQUEST</td>
+      <td>MRN parameter too long</td>
+    </tr>
+    <tr>
+      <td>Invalid declarationVersion parameter</td>
+      <td>400</td>
+      <td>BAD_REQUEST</td>
+      <td>Invalid declarationVersion parameter</td>
+    </tr>
+    <tr>
+      <td>For CSPs only, X-Submitter-Identifier and X-Badge-Identifier http headers are missing</td>
+      <td>400 (Bad Request)</td>
+      <td>BAD_REQUEST</td>
+      <td>Both X-Submitter-Identifier and X-Badge-Identifier headers are missing</td>
+    </tr>
+    <tr>
+      <td>For CSPs only, X-Submitter-Identifier is invalid</td>
+      <td>400 (Bad Request)</td>
+      <td>BAD_REQUEST</td>
+      <td>X-Submitter-Identifier header is invalid</td>
+    </tr>
+    <tr>
+      <td>For CSPs only, X-Submitter-Identifier header is invalid</td>
+      <td>400 (Bad Request)</td>
+      <td>BAD_REQUEST</td>
+      <td>X-Badge-Identifier header is invalid</td>
+    </tr>
+    <tr>
+      <td>Internal server error</td>
+      <td>500</td>
+      <td>CDS60003 or INTERNAL_SERVER_ERROR</td>
+      <td>Internal server error</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+
+**Search endpoint error scenarios**
 
 <table>
   <tbody>
