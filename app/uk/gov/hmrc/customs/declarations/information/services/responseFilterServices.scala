@@ -26,8 +26,8 @@ import scala.xml.{NodeSeq, Text, TopScope}
 class FullResponseFilterService @Inject()() extends ResponseFilterService {
 
   override protected val NameSpaceP="http://gov.uk/customs/FullDeclarationDataRetrievalService"
-  override protected val rootElementLabel: String = ""
-  override protected val detailsElementLabel: String = ""
+  override protected val rootElementLabel: String = "" // deliberately empty
+  override protected val detailsElementLabel: String = "" // deliberately empty
 
   def transform(xml: NodeSeq): NodeSeq = {
     val declarationDetailsPath: NodeSeq = xml \ "responseDetail" \ "FullDeclarationDataRetrievalResponse"
