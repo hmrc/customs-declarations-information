@@ -92,6 +92,8 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   parallelExecution in Test := false
 )
 
+PlayKeys.devSettings := Seq("play.server.http.port" -> "9834")
+
 def integrationComponentTestFilter(name: String): Boolean = (name startsWith "integration") || (name startsWith "component")
 def unitTestFilter(name: String): Boolean = name startsWith "unit"
 
