@@ -32,7 +32,7 @@
 					</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="MRN" type="tns_1:MRN" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MRN" type="tns_1:MRN" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="DeclarationSubmissionChannel" type="DeclarationSubmissionChannelType" minOccurs="0" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
