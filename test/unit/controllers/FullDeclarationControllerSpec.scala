@@ -94,11 +94,11 @@ class FullDeclarationControllerSpec extends UnitSpec
       Helpers.stubControllerComponents(),
       mockInformationLogger) {}
 
-    protected def awaitSubmitMrn(request: Request[AnyContent], declarationVersion: Option[Int] = None, declarationSubmissionChannel: Option[String] = None): Result = {
+    protected def awaitSubmitMrn(request: Request[AnyContent], declarationVersion: Option[String] = None, declarationSubmissionChannel: Option[String] = None): Result = {
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    protected def submitMrn(request: Request[AnyContent], declarationVersion: Option[Int] = None, declarationSubmissionChannel: Option[String] = None): Future[Result] = {
+    protected def submitMrn(request: Request[AnyContent], declarationVersion: Option[String] = None, declarationSubmissionChannel: Option[String] = None): Future[Result] = {
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 

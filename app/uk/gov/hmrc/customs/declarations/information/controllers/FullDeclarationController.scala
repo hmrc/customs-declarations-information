@@ -44,7 +44,7 @@ class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAc
                                           val logger: InformationLogger)
                                          (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
-  def list(mrn: String, declarationVersion: Option[Int], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
+  def list(mrn: String, declarationVersion: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
   }
 
