@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.FullDeclarationController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -68,7 +68,7 @@ class FullDeclarationControllerSpec extends UnitSpec
 
     protected val stubHttpResponse = HttpResponse(Status.OK, VersionTestXMLData.validBackendVersionResponse.toString)
 
-    protected val mockVersionConnector: DeclarationVersionConnector = mock[DeclarationVersionConnector]
+    protected val mockDeclarationFullConnector: DeclarationFullConnector = mock[DeclarationFullConnector]
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
     protected val mockDateTimeService: DateTimeService = mock[DateTimeService]
     protected val dateTime = new DateTime()
@@ -79,8 +79,8 @@ class FullDeclarationControllerSpec extends UnitSpec
     protected val stubFullDeclarationCheckAction: FullDeclarationCheckAction = new FullDeclarationCheckAction(mockInformationLogger, mockInformationConfigService)
 
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
-    protected val stubVersionResponseFilterService: VersionResponseFilterService = new VersionResponseFilterService()
-    protected val stubDeclarationVersionService = new DeclarationVersionService(stubVersionResponseFilterService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockVersionConnector, mockDateTimeService, stubUniqueIdsService)
+    protected val stubFullResponseFilterService: FullResponseFilterService = new FullResponseFilterService()
+    protected val stubDeclarationFullService = new DeclarationFullService(stubFullResponseFilterService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: FullDeclarationController = new FullDeclarationController (
@@ -90,7 +90,7 @@ class FullDeclarationControllerSpec extends UnitSpec
       stubConversationIdAction,
       stubInternalClientIdsCheckAction,
       stubFullDeclarationCheckAction,
-      stubDeclarationVersionService,
+      stubDeclarationFullService,
       Helpers.stubControllerComponents(),
       mockInformationLogger) {}
 
@@ -102,7 +102,7 @@ class FullDeclarationControllerSpec extends UnitSpec
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
+    when(mockDeclarationFullConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
   }
@@ -174,7 +174,7 @@ class FullDeclarationControllerSpec extends UnitSpec
 
       val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders(ValidCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       result shouldBe errorResultMissingIdentifiers
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "respond with status 500 for a CSP request with a missing X-Client-ID" in new SetUp() {
@@ -182,7 +182,7 @@ class FullDeclarationControllerSpec extends UnitSpec
 
       val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders(ValidCspDeclarationRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "respond with status 400 for a CSP request with an invalid X-Badge-Identifier" in new SetUp() {
@@ -191,7 +191,7 @@ class FullDeclarationControllerSpec extends UnitSpec
       val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders((ValidHeaders + X_BADGE_IDENTIFIER_HEADER_INVALID_CHARS).toSeq: _*))
 
       result shouldBe errorResultBadgeIdentifier
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "respond with status 400 for a request with an MRN value that is too long" in new SetUp() {
@@ -199,7 +199,7 @@ class FullDeclarationControllerSpec extends UnitSpec
 
       val result: Result = controller.list(invalidMrnTooLong, None, None).apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
       result shouldBe errorResultMrnTooLong
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "respond with status 400 for a request with an MRN value that is too short" in new SetUp() {
@@ -208,7 +208,7 @@ class FullDeclarationControllerSpec extends UnitSpec
       val result: Result = controller.list("", None, None).apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
 
       result shouldBe errorResultMissingMrn
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "respond with status 400 for a request with an MRN value that contains a space" in new SetUp() {
@@ -217,7 +217,7 @@ class FullDeclarationControllerSpec extends UnitSpec
       val result: Result = controller.list("mrn withASpace", None, None).apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
 
       result shouldBe errorResultCDS60002
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "process non-CSP request when call is authorised for non-CSP" in new SetUp() {
@@ -275,11 +275,11 @@ class FullDeclarationControllerSpec extends UnitSpec
 
       val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
-      verifyNoMoreInteractions(mockVersionConnector)
+      verifyNoMoreInteractions(mockDeclarationFullConnector)
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
-      when(mockVersionConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

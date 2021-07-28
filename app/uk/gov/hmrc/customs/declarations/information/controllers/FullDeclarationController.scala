@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.services.DeclarationVersionService
+import uk.gov.hmrc.customs.declarations.information.services.{DeclarationFullService, DeclarationVersionService}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -39,7 +39,7 @@ class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAc
                                           val conversationIdAction: ConversationIdAction,
                                           val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                           val fullDeclarationCheckAction: FullDeclarationCheckAction,
-                                          val declarationVersionService: DeclarationVersionService,
+                                          val declarationFullService: DeclarationFullService,
                                           val cc: ControllerComponents,
                                           val logger: InformationLogger)
                                          (implicit val ec: ExecutionContext) extends BackendController(cc) {
@@ -53,7 +53,7 @@ class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAc
 
     validateMrn(mrn) match {
       case Right(()) =>
-        declarationVersionService.send(mrn) map {
+        declarationFullService.send(mrn) map {
           case Right(res: HttpResponse) =>
             new HasConversationId {
               override val conversationId = asr.conversationId

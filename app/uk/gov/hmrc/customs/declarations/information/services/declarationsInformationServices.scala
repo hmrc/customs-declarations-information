@@ -135,6 +135,34 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
   }
 }
 
+@Singleton
+class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFilterService,
+                                       override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
+                                       override val logger: InformationLogger,
+                                       connector: DeclarationFullConnector,
+                                       dateTimeProvider: DateTimeService,
+                                       uniqueIdsService: UniqueIdsService)
+                                         (implicit override val ec: ExecutionContext)
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
+
+  protected val endpointName: String = "declaration-full"
+
+  protected def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse] = {
+    errorCodeText.toLowerCase() match {
+      case "cds60001" => processError(backendCDS60001NotFoundResponse)
+      case "cds60002" => processError(backendCDS60002MrnInvalidResponse)
+      case "cds60003" => processError(backendCDS60003InternalServerErrorResponse)
+      case "cds60011" => processError(backendCDS60011SubmissionChannelInvalidResponse)
+      case _ => processError(ErrorInternalServerError)
+    }
+  }
+
+  protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
+    val responseXml = fullResponseFilterService.transform(xmlResponseBody).head
+    HttpResponse(response.status, responseXml.toString(), response.headers)
+  }
+}
+
 abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                             override val logger: InformationLogger,
                                             connector: DeclarationConnector,
