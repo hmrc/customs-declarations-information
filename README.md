@@ -43,6 +43,42 @@ The user must supply an MRN as a parameter in the request URL. The endpoint retu
 
  ```
 ---
+## GET Full Request
+
+The user must supply an MRN as a parameter in the request URL. An optional declarationVersion query parameter can also be supplied. The full declaration is returned.
+
+### `GET /mrn/{mrn}/full`
+
+### curl command
+ ```
+  curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/full" \
+   -H 'Accept: application/vnd.hmrc.1.0+xml' \
+   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
+   -H 'X-Badge-Identifier: {Badge Id}' \
+   -H 'X-Submitter-Identifier: {Submitter Id}' \
+   -H 'X-Client-ID: {Valid Client Id}' \
+   -H 'cache-control: no-cache' 
+
+ ```
+---
+## GET Search Request
+
+The user must supply a partyRole and a declarationCategory. All other parameters are optional. All matching declarations that the consumer is permissioned to view are returned in summary form.
+
+### `GET /search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4`
+
+### curl command
+ ```
+  curl -v -X GET "http://localhost:9000/search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4" \
+   -H 'Accept: application/vnd.hmrc.1.0+xml' \
+   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
+   -H 'X-Badge-Identifier: {Badge Id}' \
+   -H 'X-Submitter-Identifier: {Submitter Id}' \
+   -H 'X-Client-ID: {Valid Client Id}' \
+   -H 'cache-control: no-cache' 
+
+ ```
+---
 
 ### Lookup of `authenticatedEori` from `api-subscription-fields` service for CSPs only
 
