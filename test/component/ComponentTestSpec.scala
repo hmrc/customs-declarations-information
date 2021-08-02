@@ -19,7 +19,10 @@ package component
 import java.time.{Instant, ZoneId, ZonedDateTime}
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mockito.Mockito.{mock, when}
-import org.scalatest._
+import org.scalatest.GivenWhenThen
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.concurrent.Eventually
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -29,7 +32,7 @@ import uk.gov.hmrc.customs.declarations.information.services.{DateTimeService, U
 import util.{CustomsDeclarationsExternalServicesConfig, ExternalServicesConfig}
 import util.TestData.stubUniqueIdsService
 
-trait ComponentTestSpec extends FeatureSpec
+trait ComponentTestSpec extends AnyFeatureSpec
     with GivenWhenThen
     with GuiceOneAppPerSuite
     with BeforeAndAfterAll

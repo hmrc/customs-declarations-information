@@ -17,7 +17,8 @@
 package component
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
-import org.scalatest._
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should.Matchers
 import play.api.Application
 import play.api.mvc._
 import play.api.test.FakeRequest
@@ -158,8 +159,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     stopMockServer()
   }
 
-  feature("Declaration Information API returns unavailable when a version is shuttered") {
-    scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
+  Feature("Declaration Information API returns unavailable when a version is shuttered") {
+    Scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
       Given("A CSP wants to submit a customs declaration information request to a shuttered version")
 
       implicit lazy val app: Application = super.app(configMap + ("shutter.v1" -> "true"))
@@ -182,8 +183,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       }
     }
 
-  feature("Declaration Information API authorises status requests from CSPs with v1.0 accept header") {
-    scenario("An authorised CSP successfully requests a status") {
+  Feature("Declaration Information API authorises status requests from CSPs with v1.0 accept header") {
+    Scenario("An authorised CSP successfully requests a status") {
       Given("A CSP wants the status of a declaration")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -209,8 +210,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
-    scenario("An authorised non-CSP successfully requests a status") {
+  Feature("Declaration Information API authorises status requests from non-CSPs with v1.0 accept header") {
+    Scenario("An authorised non-CSP successfully requests a status") {
       Given("A non-CSP wants the status of a declaration")
       startBackendStatusServiceV1()
 
@@ -236,8 +237,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
   
-  feature("Declaration Information API authorises status requests from non-CSPs with v2.0 accept header") {
-    scenario("An authorised non-CSP successfully requests a status") {
+  Feature("Declaration Information API authorises status requests from non-CSPs with v2.0 accept header") {
+    Scenario("An authorised non-CSP successfully requests a status") {
       Given("A non-CSP wants the status of a declaration")
       startBackendStatusServiceV2()
 
@@ -263,8 +264,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API query declaration statuses by MRN") {
-    scenario("An authorised CSP successfully queries declaration status by an MRN value") {
+  Feature("Declaration Information API query declaration statuses by MRN") {
+    Scenario("An authorised CSP successfully queries declaration status by an MRN value") {
       Given("A CSP wants the status of a declaration with a given MRN")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -289,7 +290,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
     
-    scenario("An authorised CSP queries declaration status with missing MRN value") {
+    Scenario("An authorised CSP queries declaration status with missing MRN value") {
       Given("A CSP omits the MRN")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -309,8 +310,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API query declaration statuses by DUCR") {
-    scenario("An authorised CSP successfully queries declaration status by an DUCR value") {
+  Feature("Declaration Information API query declaration statuses by DUCR") {
+    Scenario("An authorised CSP successfully queries declaration status by an DUCR value") {
       Given("A CSP wants the status of a declaration associated with a given DUCR")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -335,7 +336,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
 
-    scenario("An authorised CSP queries declaration status with missing DUCR value") {
+    Scenario("An authorised CSP queries declaration status with missing DUCR value") {
       Given("A CSP omits the DUCR")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -355,8 +356,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API query declaration statuses by UCR") {
-    scenario("An authorised CSP unsuccessfully queries declaration status by an UCR value") {
+  Feature("Declaration Information API query declaration statuses by UCR") {
+    Scenario("An authorised CSP unsuccessfully queries declaration status by an UCR value") {
       Given("A CSP wants the status of a declaration associated with a given UCR")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -381,7 +382,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
 
-    scenario("An authorised CSP queries declaration status with missing UCR value") {
+    Scenario("An authorised CSP queries declaration status with missing UCR value") {
       Given("A CSP omits the UCR")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -401,8 +402,8 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API query declaration statuses by Inventory Reference") {
-    scenario("An authorised CSP unsuccessfully queries declaration status by an Inventory Reference value") {
+  Feature("Declaration Information API query declaration statuses by Inventory Reference") {
+    Scenario("An authorised CSP unsuccessfully queries declaration status by an Inventory Reference value") {
       Given("A CSP wants the status of a declaration associated with a given Inventory Reference")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -427,7 +428,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1))))
     }
 
-    scenario("An authorised CSP queries declaration status with missing Inventory Reference value") {
+    Scenario("An authorised CSP queries declaration status with missing Inventory Reference value") {
       Given("A CSP omits the Inventory Reference")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -446,7 +447,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(missingSearchResponse)))
     }
 
-    scenario("An authorised CSP queries declaration status with Inventory Reference value containing spaces") {
+    Scenario("An authorised CSP queries declaration status with Inventory Reference value containing spaces") {
       Given("A CSP omits the Inventory Reference")
       startBackendStatusServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
