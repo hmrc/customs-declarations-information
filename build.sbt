@@ -7,11 +7,9 @@ import sbt.Tests.{Group, SubProcess}
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
 import uk.gov.hmrc.PublishingSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import uk.gov.hmrc.versioning.SbtGitVersioning
 
 import scala.language.postfixOps
 
@@ -101,7 +99,7 @@ scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 val compileDependencies = Seq(customsApiCommon)
 
-val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests)
+val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests, flexmark, jacksonModule)
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
 unmanagedResourceDirectories in Test += baseDirectory.value / "test" / "resources"

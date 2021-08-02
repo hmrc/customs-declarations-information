@@ -16,8 +16,7 @@
 
 package unit.controllers.actionBuilders
 
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{mock, when}
 import play.api.test.Helpers.{contentAsString, _}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.FullDeclarationCheckAction
@@ -31,12 +30,12 @@ import util.XmlOps.stringToXml
 
 import java.util.UUID
 
-class FullDeclarationCheckActionSpec extends UnitSpec with MockitoSugar {
+class FullDeclarationCheckActionSpec extends UnitSpec  {
 
   trait SetUp {
     protected implicit val ec = Helpers.stubControllerComponents().executionContext
-    private val mockInformationLogger = mock[InformationLogger]
-    private val mockInformationConfigService = mock[InformationConfigService]
+    private val mockInformationLogger = mock(classOf[InformationLogger])
+    private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123")))
 

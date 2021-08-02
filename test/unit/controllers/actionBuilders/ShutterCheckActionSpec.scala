@@ -16,8 +16,7 @@
 
 package unit.controllers.actionbuilders
 
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.mvc.Result
 import play.api.test.{FakeRequest, Helpers}
@@ -34,12 +33,12 @@ import util.UnitSpec
 
 import scala.concurrent.ExecutionContext
 
-class ShutterCheckActionSpec extends UnitSpec with MockitoSugar {
+class ShutterCheckActionSpec extends UnitSpec  {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-    val mockConfigService = mock[InformationConfigService]
-    val mockLogger = mock[InformationLogger]
+    val mockConfigService = mock(classOf[InformationConfigService])
+    val mockLogger = mock(classOf[InformationLogger])
     val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "Service unavailable").XmlResult
 
     val allVersionsUnshuttered = InformationShutterConfig(Some(false), Some(false))

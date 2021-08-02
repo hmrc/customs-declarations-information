@@ -17,16 +17,14 @@
 package unit.services
 
 import java.util.UUID
-
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{mock, reset, times, verify, when}
 import org.scalatest._
-import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 
-class UniqueIdsServiceTest extends WordSpec with MockitoSugar with Matchers with BeforeAndAfterEach {
+class UniqueIdsServiceTest extends WordSpec  with Matchers with BeforeAndAfterEach {
 
-  private val mockUuidService: UuidService = mock[UuidService]
+  private val mockUuidService: UuidService = mock(classOf[UuidService])
   private val uniqueIdsService = new UniqueIdsService(mockUuidService)
 
   override protected def beforeEach(): Unit = {

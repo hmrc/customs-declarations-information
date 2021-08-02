@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
-import org.scalatestplus.mockito.MockitoSugar
+
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
@@ -39,23 +39,23 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationFullConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with Eventually {
+class DeclarationFullConnectorSpec extends UnitSpec  with BeforeAndAfterEach with Eventually {
 
-  private val mockWsPost = mock[HttpClient]
+  private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
-  private val mockServiceConfigProvider = mock[ServiceConfigProvider]
-  private val mockInformationConfigService = mock[InformationConfigService]
-  private val mockBackendPayloadCreator = mock[BackendFullPayloadCreator]
+  private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
+  private val mockInformationConfigService = mock(classOf[InformationConfigService])
+  private val mockBackendPayloadCreator = mock(classOf[BackendFullPayloadCreator])
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
   private val actorSystem = ActorSystem("mockActorSystem")
 
-  private val connector = new DeclarationFullConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock[CdsLogger], actorSystem)
+  private val connector = new DeclarationFullConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock(classOf[CdsLogger]), actorSystem)
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, Some(1), Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, Some(1), Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
   override protected def beforeEach() {
     reset(mockWsPost, mockServiceConfigProvider)

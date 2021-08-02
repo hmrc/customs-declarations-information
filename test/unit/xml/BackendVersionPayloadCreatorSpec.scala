@@ -17,7 +17,7 @@
 package unit.xml
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.scalatestplus.mockito.MockitoSugar
+
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
@@ -35,7 +35,7 @@ import util.XmlOps.stringToXml
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class BackendVersionPayloadCreatorSpec extends UnitSpec with MockitoSugar {
+class BackendVersionPayloadCreatorSpec extends UnitSpec  {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z

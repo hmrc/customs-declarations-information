@@ -16,9 +16,9 @@
 
 package unit.controllers.actionBuilders
 
+import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{HeaderValidator, StatusAuthAction}
@@ -30,15 +30,15 @@ import util.TestData._
 import util.{AuthConnectorStubbing, UnitSpec}
 
 class StatusAuthActionSpec extends UnitSpec
-  with MockitoSugar
+
   with TableDrivenPropertyChecks
   with BeforeAndAfterEach {
 
   private implicit val ec = Helpers.stubControllerComponents().executionContext
 
   trait SetUp extends AuthConnectorStubbing {
-    private val mockLogger= mock[InformationLogger]
-    override val mockAuthConnector: AuthConnector = mock[AuthConnector]
+    private val mockLogger= mock(classOf[InformationLogger])
+    override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockLogger)
     protected val headerValidator = new HeaderValidator(mockLogger)
     val authAction = new StatusAuthAction(customsAuthService, headerValidator, mockLogger)

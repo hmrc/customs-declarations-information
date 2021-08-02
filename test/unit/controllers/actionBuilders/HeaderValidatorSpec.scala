@@ -17,8 +17,8 @@
 package unit.controllers.actionBuilders
 
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.mock
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
@@ -31,12 +31,12 @@ import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
 import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
-class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks with MockitoSugar {
+class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks  {
 
   private val extractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
 
   trait SetUp {
-    val loggerMock: InformationLogger = mock[InformationLogger]
+    val loggerMock: InformationLogger = mock(classOf[InformationLogger])
     val validator = new HeaderValidator(loggerMock)
 
     def validate(avr: ApiVersionRequest[_]): Either[ErrorResponse, ExtractedHeaders] = {

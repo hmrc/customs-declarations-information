@@ -20,7 +20,7 @@ import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
-import org.scalatestplus.mockito.MockitoSugar
+
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -34,15 +34,15 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
-  with MockitoSugar
+
   with BeforeAndAfterEach
   with Eventually
   with ApiSubscriptionFieldsTestData {
 
-  private val mockWSGetImpl = mock[HttpClient]
-  private val mockLogger = mock[InformationLogger]
-  private val mockInformationConfigService = mock[InformationConfigService]
-  private val mockInformationConfig = mock[InformationConfig]
+  private val mockWSGetImpl = mock(classOf[HttpClient])
+  private val mockLogger = mock(classOf[InformationLogger])
+  private val mockInformationConfigService = mock(classOf[InformationConfigService])
+  private val mockInformationConfig = mock(classOf[InformationConfig])
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr = TestData.TestCspAuthorisedRequest
   private implicit val ec = Helpers.stubControllerComponents().executionContext

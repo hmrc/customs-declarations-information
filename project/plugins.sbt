@@ -3,7 +3,7 @@ resolvers += Resolver.url("HMRC-open-artefacts-ivy", url("https://open.artefacts
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-auto-build" % "3.0.0")
 
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.12")
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.0.15")
 
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.9")
 

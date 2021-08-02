@@ -18,7 +18,7 @@ package util
 
 import com.google.inject.AbstractModule
 import org.joda.time.DateTime
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.mockito.Mockito.mock
 import play.api.http.HeaderNames._
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.{AnyContentAsEmpty, Headers}
@@ -92,9 +92,9 @@ object TestData {
   type EmulatedServiceFailure = UnsupportedOperationException
   val emulatedServiceFailure = new EmulatedServiceFailure("Emulated service failure.")
 
-  lazy val mockUuidService: UuidService = mock[UuidService]
+  lazy val mockUuidService: UuidService = mock(classOf[UuidService])
 
-  lazy val stubInformationLogger = new StubInformationLogger(mock[CdsLogger])
+  lazy val stubInformationLogger = new StubInformationLogger(mock(classOf[CdsLogger]))
 
   object TestModule extends AbstractModule {
     override def configure(): Unit = {

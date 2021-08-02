@@ -17,7 +17,7 @@
 package unit.schemas
 
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import util.UnitSpec
@@ -25,7 +25,7 @@ import util.VersionTestXMLData.{expectedVersionPayloadRequest, validFilteredVers
 
 import scala.xml.{Elem, SAXException}
 
-class DeclarationVersionResponseSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+class DeclarationVersionResponseSpec extends UnitSpec  with BeforeAndAfterEach {
 
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
 

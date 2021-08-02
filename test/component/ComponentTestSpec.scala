@@ -17,12 +17,10 @@
 package component
 
 import java.time.{Instant, ZoneId, ZonedDateTime}
-
 import org.joda.time.{DateTime, DateTimeZone}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import org.scalatest._
 import org.scalatest.concurrent.Eventually
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
@@ -36,10 +34,9 @@ trait ComponentTestSpec extends FeatureSpec
     with GuiceOneAppPerSuite
     with BeforeAndAfterAll
     with BeforeAndAfterEach
-    with Eventually
-    with MockitoSugar {
+    with Eventually {
 
-  private val mockDateTimeService =  mock[DateTimeService]
+  private val mockDateTimeService =  mock(classOf[DateTimeService])
 
   val dateTime = 1546344000000L // 01/01/2019 12:00:00
 

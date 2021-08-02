@@ -17,9 +17,8 @@
 package unit.controllers
 
 import controllers.Assets
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.{mock, reset}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play._
 import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
@@ -29,17 +28,17 @@ import play.api.test._
 import uk.gov.hmrc.customs.declarations.information.controllers.InformationDocumentationController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
-class InformationDocumentationControllerSpec extends PlaySpec with MockitoSugar with Results with BeforeAndAfterEach {
+class InformationDocumentationControllerSpec extends PlaySpec  with Results with BeforeAndAfterEach {
 
-  private val mockService = mock[HttpErrorHandler]
-  private val mockLogger = mock[InformationLogger]
+  private val mockService = mock(classOf[HttpErrorHandler])
+  private val mockLogger = mock(classOf[InformationLogger])
 
   private val v1AndV2Disabled = Map(
     "api.access.version-1.0.enabled" -> "false",
     "api.access.version-2.0.enabled" -> "false")
 
   private def getApiDefinitionWith(configMap: Map[String, Any]) =
-    new InformationDocumentationController(mock[Assets], Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
+    new InformationDocumentationController(mock(classOf[Assets]), Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
       .definition()
 
   override def beforeEach() {

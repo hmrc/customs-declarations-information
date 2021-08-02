@@ -16,7 +16,8 @@
 
 package unit.logging
 
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.Mockito.mock
 import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
@@ -28,10 +29,10 @@ import util.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.TestData._
 
-class InformationLoggerSpec extends UnitSpec with MockitoSugar {
+class InformationLoggerSpec extends UnitSpec  {
 
   trait SetUp {
-    val mockCdsLogger: CdsLogger = mock[CdsLogger]
+    val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])
     val logger = new InformationLogger(mockCdsLogger)
     implicit val implicitVpr: AuthorisedRequest[AnyContentAsEmpty.type] = ApiVersionRequest(conversationId, VersionOne, FakeRequest()
       .withHeaders("Content-Type" -> "Some-Content-Type"))

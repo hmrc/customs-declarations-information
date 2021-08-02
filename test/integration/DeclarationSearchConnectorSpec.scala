@@ -17,7 +17,7 @@
 package integration
 
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,14 +37,14 @@ import util.externalservices.BackendDeclarationService
 
 class DeclarationSearchConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
-  with MockitoSugar
+
   with BackendDeclarationService {
 
   private lazy val connector = app.injector.instanceOf[DeclarationSearchConnector]
 
   private val incomingAuthToken = s"Bearer ${ExternalServicesConfig.AuthToken}"
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne,
-    ApiSubscriptionFieldsTestData.clientId, None, Some(searchParameters), None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock[Request[AnyContent]])
+    ApiSubscriptionFieldsTestData.clientId, None, Some(searchParameters), None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
   override protected def beforeAll() {
     startMockServer()

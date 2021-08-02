@@ -20,7 +20,7 @@ import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Matchers}
-import org.scalatestplus.mockito.MockitoSugar
+
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
@@ -49,29 +49,29 @@ import scala.concurrent.Future
 import scala.xml.NodeSeq
 
 class StatusControllerSpec extends UnitSpec
-  with Matchers with MockitoSugar with BeforeAndAfterEach {
+  with Matchers  with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
 
-    protected val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
+    protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
 
-    protected val mockInformationLogger: InformationLogger = mock[InformationLogger]
-    override val mockAuthConnector: AuthConnector = mock[AuthConnector]
+    protected val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])
+    override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
 
-    protected val mockStatusResponseFilterService: StatusResponseFilterService = mock[StatusResponseFilterService]
-    protected val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
+    protected val mockStatusResponseFilterService: StatusResponseFilterService = mock(classOf[StatusResponseFilterService])
+    protected val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock(classOf[ApiSubscriptionFieldsConnector])
     protected val headerValidator = new HeaderValidator(mockInformationLogger)
-    protected val mockCdsLogger: CdsLogger = mock[CdsLogger]
-    protected val mockErrorResponse: ErrorResponse = mock[ErrorResponse]
-    protected val mockResult: Result = mock[Result]
+    protected val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])
+    protected val mockErrorResponse: ErrorResponse = mock(classOf[ErrorResponse])
+    protected val mockResult: Result = mock(classOf[Result])
     protected implicit val ec = Helpers.stubControllerComponents().executionContext
 
     protected val stubHttpResponse = HttpResponse(Status.OK, StatusTestXMLData.validBackendStatusResponse.toString)
 
-    protected val mockStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
+    protected val mockStatusConnector: DeclarationStatusConnector = mock(classOf[DeclarationStatusConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
-    protected val mockDateTimeService: DateTimeService = mock[DateTimeService]
+    protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
     protected val dateTime = new DateTime()
 
     protected val stubAuthStatusAction: StatusAuthAction = new StatusAuthAction(customsAuthService, headerValidator, mockInformationLogger)
