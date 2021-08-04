@@ -17,7 +17,7 @@
 package unit.services
 
 import com.typesafe.config.{Config, ConfigFactory}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.Configuration
 import uk.gov.hmrc.customs.api.common.config.ConfigValidatedNelAdaptor
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.UnitSpec
 
-class InformationConfigServiceSpec extends UnitSpec with MockitoSugar {
+class InformationConfigServiceSpec extends UnitSpec  {
   private val validAppConfig: Config = ConfigFactory.parseString(
     """
       |microservice.services.api-subscription-fields.host=some-host
@@ -43,7 +43,7 @@ class InformationConfigServiceSpec extends UnitSpec with MockitoSugar {
   private val validServicesConfiguration = Configuration(validAppConfig)
   private val emptyServicesConfiguration = Configuration(emptyAppConfig)
 
-  private val mockLogger = mock[InformationLogger]
+  private val mockLogger = mock(classOf[InformationLogger])
 
   private def customsConfigService(conf: Configuration) =
     new InformationConfigService(new ConfigValidatedNelAdaptor(testServicesConfig(conf), conf), mockLogger)

@@ -16,7 +16,7 @@
 
 package component
 
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -31,9 +31,9 @@ class DefinitionSpec extends ComponentTestSpec
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder().build()
 
-  feature("Ensure definition file") {
+  Feature("Ensure definition file") {
 
-    scenario("is correct") {
+    Scenario("is correct") {
 
       Given("the API is available")
       val request = FakeRequest("GET", "/api/definition")

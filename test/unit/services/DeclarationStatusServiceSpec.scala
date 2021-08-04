@@ -19,9 +19,8 @@ package unit.services
 import java.util.UUID
 import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers
 import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
@@ -42,19 +41,19 @@ import util.TestData.{correlationId, _}
 import scala.concurrent.Future
 import scala.util.Left
 
-class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach{
+class DeclarationStatusServiceSpec extends UnitSpec  with BeforeAndAfterEach{
   private val dateTime = new DateTime()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
-  protected lazy val mockStatusResponseFilterService: StatusResponseFilterService = mock[StatusResponseFilterService]
-  protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock[ApiSubscriptionFieldsConnector]
-  protected lazy val mockLogger: InformationLogger = mock[InformationLogger]
-  protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock[DeclarationStatusConnector]
-  protected lazy val mockPayloadDecorator: BackendStatusPayloadCreator = mock[BackendStatusPayloadCreator]
-  protected lazy val mockDateTimeProvider: DateTimeService = mock[DateTimeService]
-  protected lazy val mockHttpResponse: HttpResponse = mock[HttpResponse]
-  protected lazy val mockInformationConfigService: InformationConfigService = mock[InformationConfigService]
+  protected lazy val mockStatusResponseFilterService: StatusResponseFilterService = mock(classOf[StatusResponseFilterService])
+  protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock(classOf[ApiSubscriptionFieldsConnector])
+  protected lazy val mockLogger: InformationLogger = mock(classOf[InformationLogger])
+  protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock(classOf[DeclarationStatusConnector])
+  protected lazy val mockPayloadDecorator: BackendStatusPayloadCreator = mock(classOf[BackendStatusPayloadCreator])
+  protected lazy val mockDateTimeProvider: DateTimeService = mock(classOf[DateTimeService])
+  protected lazy val mockHttpResponse: HttpResponse = mock(classOf[HttpResponse])
+  protected lazy val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
   protected val searchType = Mrn("theMrn")
   protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
@@ -201,7 +200,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with MockitoSugar with Befor
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock[HttpResponse], 404)))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock(classOf[HttpResponse]), 404)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, NotFoundCode, "Declaration not found").XmlResult.withConversationId)

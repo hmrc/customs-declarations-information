@@ -17,7 +17,7 @@
 package integration
 
 import org.mockito.Mockito._
-import org.scalatestplus.mockito.MockitoSugar
+
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
-  with MockitoSugar
+
   with ApiSubscriptionFieldsService
   with ApiSubscriptionFieldsTestData {
 
@@ -46,7 +46,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestCspAuthorisedRequest
-  private implicit val mockInformationLogger: InformationLogger = mock[InformationLogger]
+  private implicit val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])
 
   override protected def beforeAll() {
     startMockServer()

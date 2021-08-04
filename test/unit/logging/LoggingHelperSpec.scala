@@ -16,7 +16,8 @@
 
 package unit.logging
 
-import org.scalatestplus.mockito.MockitoSugar
+
+import org.mockito.Mockito.mock
 import play.api.http.HeaderNames._
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -28,12 +29,12 @@ import uk.gov.hmrc.customs.declarations.information.model.{ClientId, Csp, Versio
 import util.UnitSpec
 import util.TestData._
 
-class LoggingHelperSpec extends UnitSpec with MockitoSugar {
+class LoggingHelperSpec extends UnitSpec  {
 
   private def expectedMessage(message: String, maybeAuthorised: String = "") = s"[conversationId=${conversationId.toString}]" +
     "[clientId=some-client-id]" +
     s"[requestedApiVersion=1.0]$maybeAuthorised $message"
-  private val requestMock = mock[Request[_]]
+  private val requestMock = mock(classOf[Request[_]])
   private val conversationIdRequest =
     ConversationIdRequest(
       conversationId,

@@ -17,7 +17,9 @@
 package component
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
-import org.scalatest._
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should.Matchers
+
 import play.api.Application
 import play.api.mvc._
 import play.api.test.FakeRequest
@@ -134,8 +136,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
     stopMockServer()
   }
 
-  feature("Declaration Information API returns unavailable when a version is shuttered") {
-    scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
+  Feature("Declaration Information API returns unavailable when a version is shuttered") {
+    Scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
       Given("A CSP wants to submit a customs declaration information request to a shuttered version")
 
       implicit lazy val app: Application = super.app(configMap + ("shutter.v1" -> "true"))
@@ -158,8 +160,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       }
     }
 
-  feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
-    scenario("An authorised CSP successfully requests a search") {
+  Feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
+    Scenario("An authorised CSP successfully requests a search") {
       Given("A CSP wants to search for a declaration")
       startBackendSearchServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -185,8 +187,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API authorises version requests from non-CSPs with v1.0 accept header") {
-    scenario("An authorised non-CSP successfully requests search") {
+  Feature("Declaration Information API authorises version requests from non-CSPs with v1.0 accept header") {
+    Scenario("An authorised non-CSP successfully requests search") {
       Given("A non-CSP wants to search for a declaration")
       startBackendSearchServiceV1()
 
@@ -212,8 +214,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
     }
   }
   
-  feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
-    scenario("An authorised non-CSP successfully requests search") {
+  Feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
+    Scenario("An authorised non-CSP successfully requests search") {
       Given("A non-CSP wants the versions of a declaration")
       startBackendSearchServiceV2()
 
@@ -239,8 +241,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API query declaration search") {
-    scenario("An authorised CSP queries declaration version with an invalid partyRole parameter") {
+  Feature("Declaration Information API query declaration search") {
+    Scenario("An authorised CSP queries declaration version with an invalid partyRole parameter") {
       Given("A CSP submits an invalid partyRole")
       startBackendSearchServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)

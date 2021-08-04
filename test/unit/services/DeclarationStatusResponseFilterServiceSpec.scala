@@ -17,7 +17,7 @@
 package unit.services
 
 import org.scalatest.Assertion
-import org.scalatestplus.mockito.MockitoSugar
+
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.StatusResponseFilterService
@@ -27,7 +27,7 @@ import util.UnitSpec
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-class DeclarationStatusResponseFilterServiceSpec extends UnitSpec with MockitoSugar {
+class DeclarationStatusResponseFilterServiceSpec extends UnitSpec  {
   implicit val ec = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {

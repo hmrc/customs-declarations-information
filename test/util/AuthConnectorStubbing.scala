@@ -17,8 +17,7 @@
 package util
 
 import org.mockito.ArgumentMatchers.{any, eq => ameq}
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{mock, times, verify, when}
 import uk.gov.hmrc.auth.core.AuthProvider.{GovernmentGateway, PrivilegedApplication}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve._
@@ -28,8 +27,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait AuthConnectorStubbing extends UnitSpec with MockitoSugar {
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+trait AuthConnectorStubbing extends UnitSpec  {
+  val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
   private val customsEnrolmentName = "HMRC-CUS-ORG"
   private val apiScope = "write:customs-declarations-information"
   private val eoriIdentifier = "EORINumber"

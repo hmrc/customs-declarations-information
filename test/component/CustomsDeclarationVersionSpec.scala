@@ -17,7 +17,8 @@
 package component
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
-import org.scalatest._
+import org.scalatest.OptionValues
+import org.scalatest.matchers.should.Matchers
 import play.api.Application
 import play.api.mvc._
 import play.api.test.FakeRequest
@@ -152,8 +153,8 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
     stopMockServer()
   }
 
-  feature("Declaration Information API returns unavailable when a version is shuttered") {
-    scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
+  Feature("Declaration Information API returns unavailable when a version is shuttered") {
+    Scenario("An authorised CSP fails to submit a customs declaration information request to a shuttered version") {
       Given("A CSP wants to submit a customs declaration information request to a shuttered version")
 
       implicit lazy val app: Application = super.app(configMap + ("shutter.v1" -> "true"))
@@ -176,8 +177,8 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       }
     }
 
-  feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
-    scenario("An authorised CSP successfully requests version") {
+  Feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
+    Scenario("An authorised CSP successfully requests version") {
       Given("A CSP wants the version of a declaration")
       startBackendVersionServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
@@ -203,8 +204,8 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API authorises version requests from non-CSPs with v1.0 accept header") {
-    scenario("An authorised non-CSP successfully requests version") {
+  Feature("Declaration Information API authorises version requests from non-CSPs with v1.0 accept header") {
+    Scenario("An authorised non-CSP successfully requests version") {
       Given("A non-CSP wants the version of a declaration")
       startBackendVersionServiceV1()
 
@@ -230,8 +231,8 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
     }
   }
   
-  feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
-    scenario("An authorised non-CSP successfully requests version") {
+  Feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
+    Scenario("An authorised non-CSP successfully requests version") {
       Given("A non-CSP wants the version of a declaration")
       startBackendVersionServiceV2()
 
@@ -257,8 +258,8 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
     }
   }
 
-  feature("Declaration Information API query declaration version by MRN") {
-    scenario("An authorised CSP queries declaration version with missing MRN value") {
+  Feature("Declaration Information API query declaration version by MRN") {
+    Scenario("An authorised CSP queries declaration version with missing MRN value") {
       Given("A CSP omits the MRN")
       startBackendVersionServiceV1()
       startApiSubscriptionFieldsService(apiSubscriptionKeyForXClientId)
