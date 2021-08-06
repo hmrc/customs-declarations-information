@@ -18,8 +18,6 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -41,7 +39,7 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                   val declarationVersionService: DeclarationVersionService,
                                   val cc: ControllerComponents,
                                   val logger: InformationLogger)
-                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
+                                 (implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
 
   def list(mrn: String, declarationSubmissionChannel: Option[String] = None): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
@@ -50,7 +48,7 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
   private def search(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-    validateMrn(mrn) match {
+    validateMrn(mrn, logger) match {
       case Right(()) =>
         declarationVersionService.send(mrn) map {
           case Right(res: HttpResponse) =>
@@ -65,24 +63,6 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
         }
       case Left(result) =>
         Future.successful(result)
-    }
-  }
-
-  private def validateMrn(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
-    if(mrn.validValue) {
-      Right()
-    } else {
-      val appropriateResponse = if (mrn.valueTooLong) {
-        logger.info(s"MRN parameter is too long: $mrn")
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN parameter too long")
-      } else if (mrn.valueTooShort) {
-        logger.info(s"MRN parameter is missing: $mrn")
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing MRN parameter")
-      } else {
-        logger.info(s"MRN parameter is invalid: $mrn")
-        ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
-      }
-      Left(appropriateResponse.XmlResult.withConversationId)
     }
   }
 

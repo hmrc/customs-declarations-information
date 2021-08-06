@@ -31,7 +31,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
-import uk.gov.hmrc.customs.declarations.information.controllers.FullDeclarationController
+import uk.gov.hmrc.customs.declarations.information.controllers.DeclarationFullController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -48,7 +48,7 @@ import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 import java.util.UUID
 import scala.concurrent.Future
 
-class FullDeclarationControllerSpec extends UnitSpec
+class DeclarationFullControllerSpec extends UnitSpec
   with Matchers  with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
@@ -74,23 +74,23 @@ class FullDeclarationControllerSpec extends UnitSpec
     protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
     protected val dateTime = new DateTime()
 
-    protected val stubAuthStatusAction: FullDeclarationAuthAction = new FullDeclarationAuthAction(customsAuthService, headerValidator, mockInformationLogger)
+    protected val stubAuthStatusAction: DeclarationFullAuthAction = new DeclarationFullAuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
     protected val stubInternalClientIdsCheckAction: InternalClientIdsCheckAction = new InternalClientIdsCheckAction(mockInformationLogger, mockInformationConfigService)
-    protected val stubFullDeclarationCheckAction: FullDeclarationCheckAction = new FullDeclarationCheckAction(mockInformationLogger, mockInformationConfigService)
+    protected val stubDeclarationFullCheckAction: DeclarationFullCheckAction = new DeclarationFullCheckAction(mockInformationLogger, mockInformationConfigService)
 
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubFullResponseFilterService: FullResponseFilterService = new FullResponseFilterService()
     protected val stubDeclarationFullService = new DeclarationFullService(stubFullResponseFilterService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
-    protected val controller: FullDeclarationController = new FullDeclarationController (
+    protected val controller: DeclarationFullController = new DeclarationFullController (
       stubShutterCheckAction,
       stubValidateAndExtractHeadersAction,
       stubAuthStatusAction,
       stubConversationIdAction,
       stubInternalClientIdsCheckAction,
-      stubFullDeclarationCheckAction,
+      stubDeclarationFullCheckAction,
       stubDeclarationFullService,
       Helpers.stubControllerComponents(),
       mockInformationLogger) {}

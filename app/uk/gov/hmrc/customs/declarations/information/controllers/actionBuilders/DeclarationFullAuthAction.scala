@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 import play.api.mvc._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, FullDeclarationRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, DeclarationFullRequest}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -30,7 +30,7 @@ import scala.util.Left
 
 /** Action builder that attempts to authorise request as a CSP or else NON CSP
  * <ul>
- * <li/>INPUT - `FullDeclarationRequest`
+ * <li/>INPUT - `DeclarationFullRequest`
  * <li/>OUTPUT - `AuthorisedRequest` - authorised will be `AuthorisedAs.Csp` or `AuthorisedAs.NonCsp`
  * <li/>ERROR -
  * <ul>
@@ -41,16 +41,16 @@ import scala.util.Left
  * </ul>
  */
 @Singleton
-class FullDeclarationAuthAction @Inject()(customsAuthService: CustomsAuthService,
+class DeclarationFullAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                           headerValidator: HeaderValidator,
                                           logger: InformationLogger)
                                          (implicit ec: ExecutionContext)
-  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[FullDeclarationRequest, AuthorisedRequest] {
+  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[DeclarationFullRequest, AuthorisedRequest] {
 
   override protected[this] def executionContext: ExecutionContext = ec
 
-  override def refine[A](fdvr: FullDeclarationRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitVhr: FullDeclarationRequest[A] = fdvr
+  override def refine[A](fdvr: DeclarationFullRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitVhr: DeclarationFullRequest[A] = fdvr
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap{
