@@ -18,8 +18,6 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
@@ -33,16 +31,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAction,
+class DeclarationFullController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                           val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,
-                                          val authAction: FullDeclarationAuthAction,
+                                          val authAction: DeclarationFullAuthAction,
                                           val conversationIdAction: ConversationIdAction,
                                           val internalClientIdsCheckAction: InternalClientIdsCheckAction,
-                                          val fullDeclarationCheckAction: FullDeclarationCheckAction,
+                                          val declarationFullCheckAction: DeclarationFullCheckAction,
                                           val declarationFullService: DeclarationFullService,
                                           val cc: ControllerComponents,
                                           val logger: InformationLogger)
-                                         (implicit val ec: ExecutionContext) extends BackendController(cc) {
+                                         (implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
 
   def list(mrn: String, declarationVersion: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
@@ -51,7 +49,7 @@ class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAc
   private def search(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Full declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-    validateMrn(mrn) match {
+    validateMrn(mrn, logger) match {
       case Right(()) =>
         declarationFullService.send(mrn) map {
           case Right(res: HttpResponse) =>
@@ -69,32 +67,12 @@ class FullDeclarationController @Inject()(val shutterCheckAction: ShutterCheckAc
     }
   }
 
-  private def validateMrn(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
-    if(mrn.validValue) {
-      Right()
-    } else {
-      val appropriateResponse = if (mrn.valueTooLong) {
-        logger.info(s"MRN parameter is too long: $mrn")
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN parameter too long")
-      } else if (mrn.valueTooShort) {
-        logger.info(s"MRN parameter is missing: $mrn")
-        ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing MRN parameter")
-      } else {
-        logger.info(s"MRN parameter is invalid: $mrn")
-        ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
-      }
-      val response = appropriateResponse.XmlResult.withConversationId
-      logger.debug(s"Full declaration MRN parameter validation failed sending response: $response")
-      Left(response)
-    }
-  }
-
   private val actionPipeline: ActionBuilder[AuthorisedRequest, AnyContent] =
     Action andThen
       conversationIdAction andThen
       shutterCheckAction andThen
       validateAndExtractHeadersAction andThen
       internalClientIdsCheckAction andThen
-      fullDeclarationCheckAction andThen
+      declarationFullCheckAction andThen
       authAction
 }

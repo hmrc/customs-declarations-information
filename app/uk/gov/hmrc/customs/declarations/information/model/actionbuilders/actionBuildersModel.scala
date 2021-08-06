@@ -79,7 +79,7 @@ object ActionBuilderModelHelper {
       icir.request
     )
 
-    def toFullDeclarationRequest(declarationVersion: Option[Int]): FullDeclarationRequest[A] = FullDeclarationRequest(
+    def toDeclarationFullRequest(declarationVersion: Option[Int]): DeclarationFullRequest[A] = DeclarationFullRequest(
       icir.conversationId,
       icir.requestedApiVersion,
       icir.clientId,
@@ -100,7 +100,7 @@ object ActionBuilderModelHelper {
     )
   }
 
-  implicit class FullDeclarationRequestOps[A](val fdvr: FullDeclarationRequest[A]) {
+  implicit class DeclarationFullRequestOps[A](val fdvr: DeclarationFullRequest[A]) {
     def toCspAuthorisedRequest(a: AuthorisedAsCsp): AuthorisedRequest[A] = toAuthorisedRequest(a)
 
     def toNonCspAuthorisedRequest(eori: Eori): AuthorisedRequest[A] = toAuthorisedRequest(NonCsp(eori))
@@ -206,8 +206,8 @@ case class InternalClientIdsRequest[A](conversationId: ConversationId,
                                        request: Request[A]
 ) extends WrappedRequest[A](request) with HasRequest[A] with HasConversationId with HasApiVersion with ExtractedHeaders with HasDeclarationSubmissionChannel
 
-// Available after FullDeclarationCheckAction
-case class FullDeclarationRequest[A](conversationId: ConversationId,
+// Available after DeclarationFullCheckAction
+case class DeclarationFullRequest[A](conversationId: ConversationId,
                                      requestedApiVersion: ApiVersion,
                                      clientId: ClientId,
                                      declarationSubmissionChannel: Option[DeclarationSubmissionChannel],

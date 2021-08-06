@@ -19,7 +19,7 @@ package unit.controllers.actionBuilders
 import org.mockito.Mockito.{mock, when}
 import play.api.test.Helpers.{contentAsString, _}
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.FullDeclarationCheckAction
+import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.DeclarationFullCheckAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, InternalClientIdsRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, InformationConfig, VersionOne}
@@ -30,7 +30,7 @@ import util.XmlOps.stringToXml
 
 import java.util.UUID
 
-class FullDeclarationCheckActionSpec extends UnitSpec  {
+class DeclarationFullCheckActionSpec extends UnitSpec  {
 
   trait SetUp {
     protected implicit val ec = Helpers.stubControllerComponents().executionContext
@@ -40,7 +40,7 @@ class FullDeclarationCheckActionSpec extends UnitSpec  {
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123")))
 
     val request = FakeRequest()
-    val fullDeclarationCheckAction = new FullDeclarationCheckAction(mockInformationLogger, mockInformationConfigService)
+    val fullDeclarationCheckAction = new DeclarationFullCheckAction(mockInformationLogger, mockInformationConfigService)
 
     val expected = ConversationIdRequest(conversationId, request)
 
@@ -52,7 +52,7 @@ class FullDeclarationCheckActionSpec extends UnitSpec  {
         |</errorResponse>
     """.stripMargin
 
-    protected val fullDeclarationInvalid: String =
+    protected val declarationFullInvalid: String =
       """<?xml version='1.0' encoding='UTF-8'?>
         |<errorResponse>
         |      <code>BAD_REQUEST</code>
@@ -95,7 +95,7 @@ class FullDeclarationCheckActionSpec extends UnitSpec  {
 
       val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).left.get
       status(result) shouldBe BAD_REQUEST
-      stringToXml(contentAsString(result)) shouldBe stringToXml(fullDeclarationInvalid)
+      stringToXml(contentAsString(result)) shouldBe stringToXml(declarationFullInvalid)
     }
 
     "reject declarationVersion set to AA" in new SetUp {
@@ -104,7 +104,7 @@ class FullDeclarationCheckActionSpec extends UnitSpec  {
 
       val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).left.get
       status(result) shouldBe BAD_REQUEST
-      stringToXml(contentAsString(result)) shouldBe stringToXml(fullDeclarationInvalid)
+      stringToXml(contentAsString(result)) shouldBe stringToXml(declarationFullInvalid)
     }
   }
 }

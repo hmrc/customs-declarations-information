@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{BadRequestCode, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{FullDeclarationRequest, HasConversationId, InternalClientIdsRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{DeclarationFullRequest, HasConversationId, InternalClientIdsRequest}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** Action builder that checks use of declarationVersion parameter
  * <ul>
  * <li/>INPUT - `InternalClientIdsRequest`
- * <li/>OUTPUT - `FullDeclarationRequest`
+ * <li/>OUTPUT - `DeclarationFullRequest`
  * <li/>ERROR -
  * <ul>
  * <li/>400 if used when calling the /status endpoint
@@ -39,14 +39,14 @@ import scala.concurrent.{ExecutionContext, Future}
  * </ul>
  */
 @Singleton
-class FullDeclarationCheckAction @Inject()(val logger: InformationLogger,
+class DeclarationFullCheckAction @Inject()(val logger: InformationLogger,
                                            val configService: InformationConfigService)
                                           (implicit ec: ExecutionContext)
-  extends ActionRefiner[InternalClientIdsRequest, FullDeclarationRequest] {
+  extends ActionRefiner[InternalClientIdsRequest, DeclarationFullRequest] {
 
   override def executionContext: ExecutionContext = ec
 
-  override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, FullDeclarationRequest[A]]] = Future.successful {
+  override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, DeclarationFullRequest[A]]] = Future.successful {
 
     implicit val id: InternalClientIdsRequest[A] = icir
 
@@ -55,7 +55,7 @@ class FullDeclarationCheckAction @Inject()(val logger: InformationLogger,
     logger.debug(s"path is ${icir.request.path} and declarationVersion is $declarationVersion")
 
     validateDeclarationVersion(declarationVersion) match {
-      case Right(dv) => Right(FullDeclarationRequest(icir.conversationId, icir.requestedApiVersion, icir.clientId, icir.declarationSubmissionChannel, dv, icir.request))
+      case Right(dv) => Right(DeclarationFullRequest(icir.conversationId, icir.requestedApiVersion, icir.clientId, icir.declarationSubmissionChannel, dv, icir.request))
       case Left(error) =>
         logger.warn(s"Rejected full declaration information request with status code ${error.httpStatusCode} and body\n ${error.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
         Left(error.XmlResult.withConversationId)
