@@ -110,12 +110,20 @@ The version endpoint returns a response that can contain the following fields:
     <td>Declaration type. UCC data elements 1/1 + 1/2.</td>
   </tr>
   <tr>
-    <td>GoodsShipment/Consignment/GoodsLocation/ID</td>
-    <td>Goods location code.</td>
+    <td>GoodsShipment/Consignment/GoodsLocation/Name</td>
+    <td>Name of the place where goods are located.</td>
   </tr>
   <tr>
     <td>GoodsShipment/Consignment/GoodsLocation/TypeCode</td>
     <td>Goods location type code.</td>
+  </tr>
+  <tr>
+    <td>GoodsShipment/Consignment/GoodsLocation/Address/TypeCode</td>
+    <td>Type of address.</td>
+  </tr>
+  <tr>
+    <td>GoodsShipment/Consignment/GoodsLocation/Address/CountryCode</td>
+    <td>Country code of address.</td>
   </tr>
   <tr>
     <td>GoodsShipment/PreviousDocument/ID</td>
