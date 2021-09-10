@@ -21,8 +21,12 @@
             <p2:GoodsShipment>
                 <p2:Consignment>
                     <p2:GoodsLocation>
-                        <p2:ID>LIVLIVLIVR</p2:ID>
-                        <p2:TypeCode>14</p2:TypeCode>
+                        <p2:Name>LIVLIVLIVR</p2:Name>
+                        <p2:TypeCode>A</p2:TypeCode>
+                        <p2:Address>
+                            <p2:TypeCode>U</p2:TypeCode>
+                            <p2:CountryCode>GB</p2:CountryCode>
+                        </p2:Address>
                     </p2:GoodsLocation>
                 </p2:Consignment>
                 <p2:PreviousDocument>
