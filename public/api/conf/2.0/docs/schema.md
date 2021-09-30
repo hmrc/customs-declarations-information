@@ -4,4 +4,4 @@ You can download XML schemas and examples for request and response payloads for 
 
 ZIP, 1.9MB
 
-The ZIP file contains XML files. Open in your preferred file viewer.
+The ZIP file contains XML files. Open in your preferred file viewer.  
