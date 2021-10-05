@@ -75,7 +75,7 @@ Schema agency: 	UN/CEFACT
 	</xsd:complexType>
 	<xsd:complexType name="IDType">
 		<xsd:simpleContent>
-			<xsd:extension base="xsd:token">
+			<xsd:extension base="xsd:string">
 				<xsd:attribute name="schemeID" type="xsd:token" use="optional"/>
 				<xsd:attribute name="schemeName" type="xsd:string" use="optional"/>
 				<xsd:attribute name="schemeAgencyID" type="clm63055:AgencyIdentificationCodeContentType" use="optional"/>

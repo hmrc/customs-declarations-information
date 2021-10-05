@@ -425,18 +425,6 @@
         <od:CurrentCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">tok</od:CurrentCode>
         <od:PreviousCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">tok</od:PreviousCode>
       </od:GovernmentProcedure>
-      <od:Manufacturer>
-        <od:Name languageID="EN">p:Name</od:Name>
-        <od:ID schemeAgencyID="1" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">tok</od:ID>
-        <od:Address>
-          <od:CityName languageID="EN">p:CityName</od:CityName>
-          <od:CountryCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">GB</od:CountryCode>
-          <od:CountrySubDivisionCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">tok</od:CountrySubDivisionCode>
-          <od:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</od:CountrySubDivisionName>
-          <od:Line languageID="EN">p:Line</od:Line>
-          <od:PostcodeID schemeAgencyID="1" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">tok</od:PostcodeID>
-        </od:Address>
-      </od:Manufacturer>
       <od:Origin>
         <od:CountryCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">GB</od:CountryCode>
         <od:RegionID schemeAgencyID="1" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">tok</od:RegionID>
@@ -459,18 +447,6 @@
         <od:TypeCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">tok</od:TypeCode>
         <od:LineNumeric>0.0</od:LineNumeric>
       </od:PreviousDocument>
-      <od:RefundRecipientParty>
-        <od:Name languageID="EN">p:Name</od:Name>
-        <od:ID schemeAgencyID="1" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">tok</od:ID>
-        <od:Address>
-          <od:CityName languageID="EN">p:CityName</od:CityName>
-          <od:CountryCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">GB</od:CountryCode>
-          <od:CountrySubDivisionCode languageID="EN" listAgencyID="2" listAgencyName="" listID="token" listName="" listSchemeURI="http://tempuri.org" listURI="http://tempuri.org" listVersionID="token" name="">tok</od:CountrySubDivisionCode>
-          <od:CountrySubDivisionName languageID="EN">p:CountrySubDivisionName</od:CountrySubDivisionName>
-          <od:Line languageID="EN">p:Line</od:Line>
-          <od:PostcodeID schemeAgencyID="1" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">tok</od:PostcodeID>
-        </od:Address>
-      </od:RefundRecipientParty>
       <od:Seller>
         <od:Name languageID="EN">p:Name</od:Name>
         <od:ID schemeAgencyID="1" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="token" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="token">tok</od:ID>
