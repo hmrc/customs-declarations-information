@@ -67,13 +67,6 @@ class InformationDocumentationControllerSpec extends PlaySpec  with Results with
     Json.parse(
       s"""
          |{
-         |   "scopes":[
-         |      {
-         |         "key":"write:customs-declarations-information",
-         |         "name":"Request details of a declaration",
-         |         "description":"Search for and request details of a declaration"
-         |      }
-         |   ],
          |   "api":{
          |      "name":"Customs Declarations Information",
          |      "description":"Retrieve declaration information",
