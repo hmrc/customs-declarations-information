@@ -17,13 +17,12 @@
 package integration
 
 import org.mockito.Mockito._
-
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector}
+import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionFieldsResponse
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
@@ -34,6 +33,7 @@ import util._
 import util.externalservices.ApiSubscriptionFieldsService
 
 import scala.concurrent.Future
+import scala.util.Try
 
 class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
@@ -116,7 +116,11 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
 
       intercept[RuntimeException](await(getApiSubscriptionFields)).getCause.getClass shouldBe classOf[BadGatewayException]
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/127.0.0.1:11111'")
+      // This is a quick hack to make sure this test are not failing on localhost
+      def assertOnJenkins = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/127.0.0.1:11111'")
+      def assertOnLocalhost = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/0:0:0:0:0:0:0:1:11111'")
+
+      Try(assertOnJenkins).getOrElse(assertOnLocalhost)
 
       startMockServer()
 
