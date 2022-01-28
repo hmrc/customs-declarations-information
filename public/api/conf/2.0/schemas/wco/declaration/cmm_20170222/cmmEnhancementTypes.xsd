@@ -1,57 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" version="2.0" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" xmlns:tns_2="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/">
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" version="2.10" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmEnhancementTypes/trade/2017/02/22/" xmlns:tns_1="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" xmlns:tns_2="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/">
   <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmCodeListTypes/trade/2017/02/22/" schemaLocation="cmmCodeListTypes.xsd"/>
   <xsd:import namespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" schemaLocation="cmmValueTypes.xsd"/>
-  <xsd:complexType name="Timer">
-    <xsd:annotation>
-      <xsd:documentation>Object that monitors whether a particular event occurs before a particular deadline</xsd:documentation>
-    </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element minOccurs="0" name="deadline" type="tns_1:DateTime">
-        <xsd:annotation>
-          <xsd:documentation>Date at which the timer is set to expire</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="isActive" type="xsd:boolean">
-        <xsd:annotation>
-          <xsd:documentation>indicator telling whether the time is active or not</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="TimeAware">
-    <xsd:annotation>
-      <xsd:documentation>Abstract class of objects with a validity period, whose start date (effective date) and end date (invalidation date) can be retroactively set in the past or proactively set in the future. NOTE The ability to set the effective date of an object in the past may be relevant for retroactive laws and regulations. It will also allow information about future changes (i.e. changes in master data such as party addresses) to be recorded now. Object that are both TimeAware and Auditable support 'time travelling', allowing to observe the state of the object as it was at any point in time.</xsd:documentation>
-    </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element minOccurs="0" name="invalidDate" type="tns_1:DateTime">
-        <xsd:annotation>
-          <xsd:documentation>The date at which the object will or has become invalid NOTE: the validity period of a time aware object includes the invalid date, i.e.: it runs from 00:00:00 (hhmmss) of the effective date to 23:59:59 of the invalid date </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element minOccurs="0" name="effectiveDate" type="tns_1:DateTime">
-        <xsd:annotation>
-          <xsd:documentation>The date at which the object will or has become valid NOTE: the validity period of a time aware object includes the effective date, i.e.: it runs from 00:00:00 (hhmmss) of the effective date to 23:59:59 of the invalid date </xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="Extension">
-    <xsd:annotation>
-      <xsd:documentation>Object capturing information supplementing an extendable object. NOTE: the type of the additional data may be described in free text (using the attribute 'description') or may be codified (using the attribute 'code''. The contents of the additional data is captured in the attribute 'value'.</xsd:documentation>
-    </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="value" type="xsd:string">
-        <xsd:annotation>
-          <xsd:documentation>The contents of the data element extending the extendable object.</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="type" type="tns_2:ExtensionType">
-        <xsd:annotation>
-          <xsd:documentation>Type of the data captured in the extension.</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
   <xsd:complexType name="Auditable">
     <xsd:annotation>
       <xsd:documentation>Abstract class of objects of which versions, including auditing data such as the user who created it, are kept.</xsd:documentation>
@@ -80,26 +29,61 @@
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="Status">
+  <xsd:complexType name="User">
     <xsd:annotation>
-      <xsd:documentation>Object capturing the state of a DMS entity. WCO: Details identifying and specifying declaration processing status</xsd:documentation>
+      <xsd:documentation>User of the DMS NOTE: the user may be a machine (component, (sub) system, program) or a person</xsd:documentation>
     </xsd:annotation>
-    <xsd:complexContent>
-      <xsd:extension base="tns:Auditable">
-        <xsd:sequence>
-          <xsd:element minOccurs="0" name="invalidDate" type="tns_1:DateTime">
-            <xsd:annotation>
-              <xsd:documentation>Date/time the status  has become invalid. </xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
-          <xsd:element name="timeStamp" type="tns_1:DateTime">
-            <xsd:annotation>
-              <xsd:documentation>The official Date/time at which the status has become effective. NOTE: the effectiveDate is not identical to the creationDate (the creation date will change with any new version, while the effective date will change only when the status changes). WCO REF: 380 WCO NAME: Status date and time WCO DESC: Date and time on which a specified event (i.e. the involved status) becomes effective.</xsd:documentation>
-            </xsd:annotation>
-          </xsd:element>
-        </xsd:sequence>
-      </xsd:extension>
-    </xsd:complexContent>
+    <xsd:sequence>
+      <xsd:element name="isMachine" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>Indicator telling that the user is not a human but a machine (program, process, subsystem, component)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="name" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Name of the user (person or machine/program/system), if any.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="id" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>The id by which the user (person or machine/program/system) is identified</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Timer">
+    <xsd:annotation>
+      <xsd:documentation>Object that monitors whether a particular event occurs before a particular deadline</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="deadline" type="tns_1:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>Date at which the timer is set to expire</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="isActive" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>indicator telling whether the time is active or not</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Extension">
+    <xsd:annotation>
+      <xsd:documentation>Object capturing information supplementing an extendable object. NOTE: the type of the additional data may be described in free text (using the attribute 'description') or may be codified (using the attribute 'code''. The contents of the additional data is captured in the attribute 'value'.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="value" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>The contents of the data element extending the extendable object.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="type" type="tns_2:ExtensionType">
+        <xsd:annotation>
+          <xsd:documentation>Type of the data captured in the extension.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
   </xsd:complexType>
   <xsd:complexType name="NotificationStatus">
     <xsd:annotation>
@@ -122,39 +106,43 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
-  <xsd:complexType abstract="true" name="Extendable">
+  <xsd:complexType name="TimeAware">
     <xsd:annotation>
-      <xsd:documentation>Abstract class of objects that can be flexibly extended through an associated extension object capturing free text or codified data. </xsd:documentation>
+      <xsd:documentation>Abstract class of objects with a validity period, whose start date (effective date) and end date (invalidation date) can be retroactively set in the past or proactively set in the future. NOTE The ability to set the effective date of an object in the past may be relevant for retroactive laws and regulations. It will also allow information about future changes (i.e. changes in master data such as party addresses) to be recorded now. Object that are both TimeAware and Auditable support 'time travelling', allowing to observe the state of the object as it was at any point in time.</xsd:documentation>
     </xsd:annotation>
     <xsd:sequence>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="extensions" type="tns:Extension">
+      <xsd:element minOccurs="0" name="invalidDate" type="tns_1:DateTime">
         <xsd:annotation>
-          <xsd:documentation>The extension(s) associated with this extendable object.</xsd:documentation>
+          <xsd:documentation>The date at which the object will or has become invalid NOTE: the validity period of a time aware object includes the invalid date, i.e.: it runs from 00:00:00 (hhmmss) of the effective date to 23:59:59 of the invalid date </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="effectiveDate" type="tns_1:DateTime">
+        <xsd:annotation>
+          <xsd:documentation>The date at which the object will or has become valid NOTE: the validity period of a time aware object includes the effective date, i.e.: it runs from 00:00:00 (hhmmss) of the effective date to 23:59:59 of the invalid date </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="User">
+  <xsd:complexType name="Status">
     <xsd:annotation>
-      <xsd:documentation>User of the DMS NOTE: the user may be a machine (component, (sub) system, program) or a person</xsd:documentation>
+      <xsd:documentation>Object capturing the state of a DMS entity. WCO: Details identifying and specifying declaration processing status</xsd:documentation>
     </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="isMachine" type="xsd:boolean">
-        <xsd:annotation>
-          <xsd:documentation>Indicator telling that the user is not a human but a machine (program, process, subsystem, component)</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element minOccurs="0" name="name" type="xsd:string">
-        <xsd:annotation>
-          <xsd:documentation>Name of the user (person or machine/program/system), if any.</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-      <xsd:element name="id" type="xsd:string">
-        <xsd:annotation>
-          <xsd:documentation>The id by which the user (person or machine/program/system) is identified</xsd:documentation>
-        </xsd:annotation>
-      </xsd:element>
-    </xsd:sequence>
+    <xsd:complexContent>
+      <xsd:extension base="tns:Auditable">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="invalidDate" type="tns_1:DateTime">
+            <xsd:annotation>
+              <xsd:documentation>Date/time the status  has become invalid. </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="timeStamp" type="tns_1:DateTime">
+            <xsd:annotation>
+              <xsd:documentation>The official Date/time at which the status has become effective. NOTE: the effectiveDate is not identical to the creationDate (the creation date will change with any new version, while the effective date will change only when the status changes). WCO REF: 380 WCO NAME: Status date and time WCO DESC: Date and time on which a specified event (i.e. the involved status) becomes effective.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
   <xsd:complexType name="Task">
     <xsd:annotation>
@@ -205,6 +193,18 @@
       <xsd:element minOccurs="0" name="user" type="tns:User">
         <xsd:annotation>
           <xsd:documentation>Person to which the task is assigned</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" name="Extendable">
+    <xsd:annotation>
+      <xsd:documentation>Abstract class of objects that can be flexibly extended through an associated extension object capturing free text or codified data. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="extensions" type="tns:Extension">
+        <xsd:annotation>
+          <xsd:documentation>The extension(s) associated with this extendable object.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
