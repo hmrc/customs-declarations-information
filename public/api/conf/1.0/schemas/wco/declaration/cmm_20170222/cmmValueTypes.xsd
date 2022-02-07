@@ -1,38 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-            targetNamespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" version="2.0"
-            xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/">
-  
-  <xsd:simpleType name="ReferenceNumber">
-    <xsd:annotation>
-      <xsd:documentation>A number by which an object can uniquely be referred to. </xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string"/>
-  </xsd:simpleType>
-  <xsd:simpleType name="MRN">
-    <xsd:annotation>
-      <xsd:documentation>Movement Reference Number. A special format number assigned by customs to identifiy (import/export) movements. NOTE: the structure of the MRN is as follows: Field Content                												Field type 	Examples 1  	Last two digits of year													n2  		97 2 	ISO Country Identifier         											a2  		IT 3 	Customs Office Reference Number									an6  		9876AB 4 	Unique Numeric identifier	(1) NCTS masking+OracleSeqID {1}+		an6 		1890123 (2)	ECS masking+ OracleSeqID {2}+		an6 		2890123 5 	Check digit applying 		ALGORITHM (USING ISO 6346)			n1  5 		 Where Field 1: 			The year shall be determined from the current system date; Field 2: 			The Country code shall be determined from the ECN configuration; Field 3: 			The Customs Office Reference Number shall be passed as parameter in the service request. This reference is 8 characters long but the first two 				the country code that ECN shall remove; Field 4 (Part I): 	The MRN masking shall be generated from the MRN generator based on the requesting domain id; Field 4 (Part II):	The unique numeric identifier shall be generated from an Oracle sequence according to the rules described below; Field 5: 			The check digit shall be determined as specified in the [DGXXI/0879/99 Rev.1] document. </xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="tns:ReferenceNumber"/>
-  </xsd:simpleType>
-  <xsd:simpleType name="UCR">
-    <xsd:annotation>
-      <xsd:documentation>Unique Consignment Reference WCO: Unique Trader Reference assigned to the consignment, both for import and export The WCO UCR specification is based on the ISO 15459-1 standard (e.g. UN+DUNS+year nr+sequence nr). An ‘enhanced vision’ (UCR II) requires the UCR to be composed of the GLNs of the seller and the buyer plus a time stamp for the transaction)</xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="tns:ReferenceNumber"/>
-  </xsd:simpleType>
-  <xsd:simpleType name="GRN">
-    <xsd:annotation>
-      <xsd:documentation>Guarantee reference number NOTE 1: ALGORITHM (USING ISO 6346): NOTE 2: GRN is structured 2N for year, 2A for country, 12AN for national use, 1AN check digit. Plus, in certain circumstances, an additional 7AN to identify a voucher.</xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="tns:ReferenceNumber"/>
-  </xsd:simpleType>
-  <xsd:simpleType name="Real">
-    <xsd:annotation>
-      <xsd:documentation>a real number</xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:decimal"/>
-  </xsd:simpleType>
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/" version="2.0" xmlns:tns="http://cmm.core.ecf/BaseTypes/cmmValueTypes/trade/2017/02/22/">
   <xsd:complexType name="Measure">
     <xsd:annotation>
       <xsd:documentation>A value expressed in a particular unit type. </xsd:documentation>
@@ -52,39 +18,15 @@
       </xsd:extension>
     </xsd:simpleContent>
   </xsd:complexType>
-  <xsd:complexType name="Text">
+  <xsd:simpleType name="EoriNumber">
     <xsd:annotation>
-      <xsd:documentation>A string of words conveying some information in a particular language.</xsd:documentation>
-    </xsd:annotation>
-    <xsd:simpleContent>
-      <xsd:extension base="xsd:string">
-        <xsd:attribute name="language" type="xsd:string"/>
-      </xsd:extension>
-    </xsd:simpleContent>
-  </xsd:complexType>
-  <xsd:simpleType name="AeoCertificateNumber">
-    <xsd:annotation>
-      <xsd:documentation>Number of the certificate that authorizes an Authorized Economic Operators. NOTE: 		the AEO certifucate number has a specific structure consisting of: -	countryCode 	(a2) -	certificateType 	(a4) -	nationalId 		(an..29) EXAMPLE:	(vbNLAEOC1234567890) </xsd:documentation>
+      <xsd:documentation>Economic Operator Registration and Identification number by which economic operators are uniquely identified throughout the EU WCO:	 NOTE: 		an EORI number consists of a 2 digit country code and a maximum 15 digit identifier (usually the VAT number) assigned by the EU 					member state. GB 123 4567 89 000. I</xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="tns:ReferenceNumber"/>
   </xsd:simpleType>
   <xsd:complexType name="Measurement">
     <xsd:annotation>
       <xsd:documentation>Object representing the result of a physical measurement expressed as a value in a particular unit type (including dimension tolerances, weights, quantities/counts) </xsd:documentation>
-    </xsd:annotation>
-    <xsd:simpleContent>
-      <xsd:extension base="tns:Measure"/>
-    </xsd:simpleContent>
-  </xsd:complexType>
-  <xsd:simpleType name="Pointer">
-    <xsd:annotation>
-      <xsd:documentation>Object indicating an element in a message which is being referred to. The referenced element is identified by an xpath-like expression pointing to that data element in the message, within a specified context (i.e. starting point). Syntax: - Unless specified differently, the top-level CMM domain message (e.g. TariffRequest) will be used as context: e.g. to refer to the declaration element within the TariffRequest, use  /declaration - Namespaces will not be used in pointers, only element names (corresponding to attribute names in BOM/CMM). - Use of implicit indexes is allowed, e.g. ...additionalDocuments[3]. However, this should only be used when a sequenceNumber is not available. - Use of conditions based on child elements is allowed, e.g. ...parties[type='TB']/identification or ...goodsItems[sequenceNumber=2] - Elements of type CodeListElement will be regarded as elementary (simple content) types - For elements representing a complex-type value object (simple content with attributes, like Measure), a pointer to the actual value of a value object should end in "/value()" and a pointer to e.g. a unitType attribute should end in "/@unitType". Examples: "/declaration/consignmentShipments[sequenceNumber=1]/goodsItems[sequenceNumber=2]" to refer to a specific goods item in the declaration which is included as element within a certain message "/declaration/parties[type='TB']/partyIdentification/number" to refer to the identification number of the submitter (party with type "TB") of a declaration "/declaration/totalGrossMass" to refer to the total gross mass measure as a whole "/declaration/totalGrossMass/value()" to refer to the actual value of the total gross mass measure "/declaration/totalGrossMass/@unitType" to refer to the unitType attribute of the total gross mass measure </xsd:documentation>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string"/>
-  </xsd:simpleType>
-  <xsd:complexType name="Quantity">
-    <xsd:annotation>
-      <xsd:documentation>Object representing the result of a count of a discrete number of items expressed as a value in unit type 'piece'</xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
       <xsd:extension base="tns:Measure"/>
@@ -98,17 +40,17 @@
       <xsd:extension base="tns:Measure"/>
     </xsd:simpleContent>
   </xsd:complexType>
-  <xsd:simpleType name="LRN">
+  <xsd:simpleType name="Real">
     <xsd:annotation>
-      <xsd:documentation>Local Reference Number: a unique number assigned to a consignment by the declarant. NOTE: The LRN serves as the key to retrieving a declaration if an MRN has not yet been assigned.</xsd:documentation>
+      <xsd:documentation>a real number</xsd:documentation>
     </xsd:annotation>
-    <xsd:restriction base="tns:ReferenceNumber"/>
+    <xsd:restriction base="xsd:decimal"/>
   </xsd:simpleType>
-  <xsd:simpleType name="BankAccountNumber">
+  <xsd:simpleType name="Pointer">
     <xsd:annotation>
-      <xsd:documentation>Bank account number NOTE: structure (including control digit, IBAN number) still to be defined</xsd:documentation>
+      <xsd:documentation>Object indicating an element in a message which is being referred to. The referenced element is identified by an xpath-like expression pointing to that data element in the message, within a specified context (i.e. starting point). Syntax: - Unless specified differently, the top-level CMM domain message (e.g. TariffRequest) will be used as context: e.g. to refer to the declaration element within the TariffRequest, use  /declaration - Namespaces will not be used in pointers, only element names (corresponding to attribute names in BOM/CMM). - Use of implicit indexes is allowed, e.g. ...additionalDocuments[3]. However, this should only be used when a sequenceNumber is not available. - Use of conditions based on child elements is allowed, e.g. ...parties[type='TB']/identification or ...goodsItems[sequenceNumber=2] - Elements of type CodeListElement will be regarded as elementary (simple content) types - For elements representing a complex-type value object (simple content with attributes, like Measure), a pointer to the actual value of a value object should end in "/value()" and a pointer to e.g. a unitType attribute should end in "/@unitType". Examples: "/declaration/consignmentShipments[sequenceNumber=1]/goodsItems[sequenceNumber=2]" to refer to a specific goods item in the declaration which is included as element within a certain message "/declaration/parties[type='TB']/partyIdentification/number" to refer to the identification number of the submitter (party with type "TB") of a declaration "/declaration/totalGrossMass" to refer to the total gross mass measure as a whole "/declaration/totalGrossMass/value()" to refer to the actual value of the total gross mass measure "/declaration/totalGrossMass/@unitType" to refer to the unitType attribute of the total gross mass measure </xsd:documentation>
     </xsd:annotation>
-    <xsd:restriction base="tns:ReferenceNumber"/>
+    <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
   <xsd:simpleType name="CommodityCode">
     <xsd:annotation>
@@ -133,12 +75,76 @@ NOTE 4: Multiple Tariff additional codes can be specified using a separate class
     </xsd:annotation>
     <xsd:restriction base="xsd:string"/>
   </xsd:simpleType>
-  <xsd:simpleType name="EoriNumber">
+  <xsd:simpleType name="MRN">
     <xsd:annotation>
-      <xsd:documentation>Economic Operator Registration and Identification number by which economic operators are uniquely identified throughout the EU WCO:	 NOTE: 		an EORI number consists of a 2 digit country code and a maximum 15 digit identifier (usually the VAT number) assigned by the EU 					member state. GB 123 4567 89 000. I</xsd:documentation>
+      <xsd:documentation>Movement Reference Number. A special format number assigned by customs to identifiy (import/export) movements. NOTE: the structure of the MRN is as follows: Field Content                												Field type 	Examples 1  	Last two digits of year													n2  		97 2 	ISO Country Identifier         											a2  		IT 3 	Customs Office Reference Number									an6  		9876AB 4 	Unique Numeric identifier	(1) NCTS masking+OracleSeqID {1}+		an6 		1890123 (2)	ECS masking+ OracleSeqID {2}+		an6 		2890123 5 	Check digit applying 		ALGORITHM (USING ISO 6346)			n1  5 		 Where Field 1: 			The year shall be determined from the current system date; Field 2: 			The Country code shall be determined from the ECN configuration; Field 3: 			The Customs Office Reference Number shall be passed as parameter in the service request. This reference is 8 characters long but the first two 				the country code that ECN shall remove; Field 4 (Part I): 	The MRN masking shall be generated from the MRN generator based on the requesting domain id; Field 4 (Part II):	The unique numeric identifier shall be generated from an Oracle sequence according to the rules described below; Field 5: 			The check digit shall be determined as specified in the [DGXXI/0879/99 Rev.1] document. </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="tns:ReferenceNumber"/>
   </xsd:simpleType>
+  <xsd:simpleType name="AeoCertificateNumber">
+    <xsd:annotation>
+      <xsd:documentation>Number of the certificate that authorizes an Authorized Economic Operators. NOTE: 		the AEO certifucate number has a specific structure consisting of: -	countryCode 	(a2) -	certificateType 	(a4) -	nationalId 		(an..29) EXAMPLE:	(vbNLAEOC1234567890) </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="tns:ReferenceNumber"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="BankAccountNumber">
+    <xsd:annotation>
+      <xsd:documentation>Bank account number NOTE: structure (including control digit, IBAN number) still to be defined</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="tns:ReferenceNumber"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="Blob">
+    <xsd:annotation>
+      <xsd:documentation>Binary object NOTE: may be used to capture a signature bitmap</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:base64Binary"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="ReferenceNumber">
+    <xsd:annotation>
+      <xsd:documentation>A number by which an object can uniquely be referred to. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="UCR">
+    <xsd:annotation>
+      <xsd:documentation>Unique Consignment Reference WCO: Unique Trader Reference assigned to the consignment, both for import and export The WCO UCR specification is based on the ISO 15459-1 standard (e.g. UN+DUNS+year nr+sequence nr). An ‘enhanced vision’ (UCR II) requires the UCR to be composed of the GLNs of the seller and the buyer plus a time stamp for the transaction)</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="tns:ReferenceNumber"/>
+  </xsd:simpleType>
+  <xsd:complexType name="Text">
+    <xsd:annotation>
+      <xsd:documentation>A string of words conveying some information in a particular language.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="language" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DateTime">
+    <xsd:annotation>
+      <xsd:documentation>Class of objects capturing a date and a time WCO ID:	 WCO DESC:	DateTime WCO NOTE: 	A particular point in the progression of time together with relevant supplementary information. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:dateTime">
+        <xsd:attribute name="formatCode" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="LRN">
+    <xsd:annotation>
+      <xsd:documentation>Local Reference Number: a unique number assigned to a consignment by the declarant. NOTE: The LRN serves as the key to retrieving a declaration if an MRN has not yet been assigned.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="tns:ReferenceNumber"/>
+  </xsd:simpleType>
+  <xsd:complexType name="Quantity">
+    <xsd:annotation>
+      <xsd:documentation>Object representing the result of a count of a discrete number of items expressed as a value in unit type 'piece'</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="tns:Measure"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
   <xsd:simpleType name="Symbol">
     <xsd:annotation>
       <xsd:documentation>A character, sign or icon representing an object (e.g. code list element)</xsd:documentation>
@@ -151,22 +157,12 @@ NOTE 4: Multiple Tariff additional codes can be specified using a separate class
     </xsd:annotation>
     <xsd:restriction base="tns:ReferenceNumber"/>
   </xsd:simpleType>
-  <xsd:simpleType name="Blob">
+  <xsd:simpleType name="GRN">
     <xsd:annotation>
-      <xsd:documentation>Binary object NOTE: may be used to capture a signature bitmap</xsd:documentation>
+      <xsd:documentation>Guarantee reference number NOTE 1: ALGORITHM (USING ISO 6346): NOTE 2: GRN is structured 2N for year, 2A for country, 12AN for national use, 1AN check digit. Plus, in certain circumstances, an additional 7AN to identify a voucher.</xsd:documentation>
     </xsd:annotation>
-    <xsd:restriction base="xsd:base64Binary"/>
+    <xsd:restriction base="tns:ReferenceNumber"/>
   </xsd:simpleType>
-  <xsd:complexType name="DateTime">
-    <xsd:annotation>
-      <xsd:documentation>Class of objects capturing a date and a time WCO ID:	 WCO DESC:	DateTime WCO NOTE: 	A particular point in the progression of time together with relevant supplementary information. </xsd:documentation>
-    </xsd:annotation>
-    <xsd:simpleContent>
-      <xsd:extension base="xsd:dateTime">
-        <xsd:attribute name="formatCode" type="xsd:string"/>
-      </xsd:extension>
-    </xsd:simpleContent>
-  </xsd:complexType>
   <xsd:complexType name="Percentage">
     <xsd:annotation>
       <xsd:documentation>Fraction or ratio with 100 understood as the denominator; result obtained by multiplying a quantity by a percent. NOTE: the 'value' attribute inherited from Measure shall contain the actual percentage. So when calculating with the percentages the unit type % must be taken into account by dividing the Percentage.value by 100.</xsd:documentation>
