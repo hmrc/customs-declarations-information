@@ -117,15 +117,19 @@ zipWcoXsds := { mappings: Seq[PathMapping] =>
       .listFiles
       .filter(_.isDirectory)
       .map { dir =>
-        val wcoXsdPaths = Path.allSubpaths(dir / "schemas")
+        val xsdPaths = Path.allSubpaths(dir / "schemas")
         val exampleMessagesFilter = new SimpleFileFilter(_.getPath.contains("/annotated_XML_samples/"))
         val exampleMessagesPaths = Path.selectSubpaths(dir / "examples", exampleMessagesFilter)
         val zipFile = targetDir / "api" / "conf" / dir.getName / "wco-status-schemas.zip"
-        IO.zip(wcoXsdPaths ++ exampleMessagesPaths, zipFile, None)
+        IO.zip(xsdPaths ++ exampleMessagesPaths, zipFile, None)
+        val sizeInMb = (BigDecimal(zipFile.length) / BigDecimal(1024 * 1024)).setScale(1, BigDecimal.RoundingMode.UP)
         println(s"Created zip $zipFile")
+        println(s"Update the file size in ${dir.getParent}/${dir.getName}/docs/schema.md to be ${sizeInMb}MB")
+        println(s"Check the raml renders correctly file://${dir.getParent}/${dir.getName}/application.raml")
+        println("")
         zipFile
       }
-  zipFiles.pair(relativeTo(targetDir)) ++ mappings
+  zipFiles.pair(Path.relativeTo(targetDir)) ++ mappings
 }
 
 pipelineStages := Seq(zipWcoXsds)
