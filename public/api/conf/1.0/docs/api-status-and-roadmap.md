@@ -1,5 +1,7 @@
 This API is currently in beta - expect some breaking changes.
 
+This API does not support spaces.
+
 Endpoints provided by this service are:
 
 - search for a declaration based on role, category, date, goods location code and status.
