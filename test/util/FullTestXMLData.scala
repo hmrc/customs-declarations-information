@@ -43,7 +43,7 @@ object FullTestXMLData {
     .toFormatter
 
   val validNonCspFullRequestPayload =
-    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+    """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
@@ -53,18 +53,14 @@ object FullTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:FullDeclarationDataRetrievalRequest>
-      |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
       |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
-      |              </n1:ServiceRequestParameters>
-      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:getFullDeclarationDataRequest>
+      |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
   val validNonCspFullRequestPayloadWithoutDeclarationVersion =
-    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+    """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
@@ -74,18 +70,14 @@ object FullTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:FullDeclarationDataRetrievalRequest>
-      |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
       |                <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
-      |              </n1:ServiceRequestParameters>
-      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:getFullDeclarationDataRequest>
+      |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
   val validNonCspFullRequestPayloadWithDeclarationSubmissionChannel =
-    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+    """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
@@ -95,19 +87,15 @@ object FullTestXMLData {
       |            <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:FullDeclarationDataRetrievalRequest>
-      |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
       |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |                <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
-      |              </n1:ServiceRequestParameters>
-      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:getFullDeclarationDataRequest>
+      |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
   val validCspFullRequestPayload =
-    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+    """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
@@ -119,18 +107,14 @@ object FullTestXMLData {
       |            <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:FullDeclarationDataRetrievalRequest>
-      |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
       |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
-      |              </n1:ServiceRequestParameters>
-      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:getFullDeclarationDataRequest>
+      |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
   val validCspFullRequestPayloadWithDeclarationSubmissionChannel =
-    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+    """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
@@ -142,19 +126,15 @@ object FullTestXMLData {
       |            <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:FullDeclarationDataRetrievalRequest>
-      |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
       |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
       |                <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
-      |              </n1:ServiceRequestParameters>
-      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:getFullDeclarationDataRequest>
+      |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
   val validCspFullRequestWithoutBadgePayload =
-    """<n1:getFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
+    """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
       |            <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
@@ -165,18 +145,14 @@ object FullTestXMLData {
       |            <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       |          </n1:requestCommon>
       |          <n1:requestDetail>
-      |            <n1:FullDeclarationDataRetrievalRequest>
-      |              <n1:ServiceRequestParameters>
       |                <n1:MRN>theMrn</n1:MRN>
       |                <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
-      |              </n1:ServiceRequestParameters>
-      |            </n1:FullDeclarationDataRetrievalRequest>
       |          </n1:requestDetail>
-      |        </n1:getFullDeclarationDataRequest>
+      |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
   val expectedFullPayloadRequest = {
-    <n1:getFullDeclarationDataRequest
+    <n1:retrieveFullDeclarationDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService"
     xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd">
@@ -190,15 +166,11 @@ object FullTestXMLData {
         <n1:originatingPartyID>BADGEID123</n1:originatingPartyID>
       </n1:requestCommon>
       <n1:requestDetail>
-        <n1:FullDeclarationDataRetrievalRequest>
-          <n1:ServiceRequestParameters>
             <n1:MRN>someMrn</n1:MRN>
             <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>
             <n1:DeclarationSubmissionChannel>AuthenticatedPartyOnly</n1:DeclarationSubmissionChannel>
-          </n1:ServiceRequestParameters>
-        </n1:FullDeclarationDataRetrievalRequest>
       </n1:requestDetail>
-    </n1:getFullDeclarationDataRequest>
+    </n1:retrieveFullDeclarationDataRequest>
   }
 
   val validBackendFullResponse = {
