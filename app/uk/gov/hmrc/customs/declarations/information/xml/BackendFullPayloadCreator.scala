@@ -35,20 +35,16 @@ class BackendFullPayloadCreator() extends BackendPayloadCreator {
 
     val searchTypeAsType = searchType.asInstanceOf[Mrn]
 
-    <n1:getFullDeclarationDataRequest
+    <n1:retrieveFullDeclarationDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService"
+    xmlns:n1="http://gov.uk/customs/retrieveFullDeclarationDataRequest"
     xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd">
       {requestCommon(conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)}
       <n1:requestDetail>
-        <n1:FullDeclarationDataRetrievalRequest>
-          <n1:ServiceRequestParameters>
             <n1:MRN>{searchTypeAsType}</n1:MRN>
             {asr.declarationVersion.fold(NodeSeq.Empty)(dv => <n1:DeclarationVersionNumber>{dv}</n1:DeclarationVersionNumber>)}
             {asr.declarationSubmissionChannel.fold(NodeSeq.Empty)(apo => <n1:DeclarationSubmissionChannel>{apo}</n1:DeclarationSubmissionChannel>)}
-          </n1:ServiceRequestParameters>
-        </n1:FullDeclarationDataRetrievalRequest>
       </n1:requestDetail>
-    </n1:getFullDeclarationDataRequest>
+    </n1:retrieveFullDeclarationDataRequest>
   }
 }

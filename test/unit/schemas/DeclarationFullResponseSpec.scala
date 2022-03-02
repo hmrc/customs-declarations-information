@@ -60,7 +60,7 @@ class DeclarationFullResponseSpec extends UnitSpec  with BeforeAndAfterEach {
     "fail validation if is not filtered" in {
       val caught = getFirstValidationException(expectedFullPayloadRequest)
 
-      caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'n1:getFullDeclarationDataRequest'."
+      caught.getMessage shouldBe "cvc-elt.1.a: Cannot find the declaration of element 'n1:retrieveFullDeclarationDataRequest'."
 
       Option(caught.getException) shouldBe None
     }
