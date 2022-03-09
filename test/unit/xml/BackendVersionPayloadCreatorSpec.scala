@@ -42,7 +42,7 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec  {
   private val dateTime = new DateTime(instant, DateTimeZone.UTC)
   private val payloadCreator = new BackendVersionPayloadCreator()
 
-  def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveDeclarationVersionRequest.xsd").get)
+  def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationVersionRequest.xsd").get)
   
   "BackendVersionPayloadCreator" should {
 

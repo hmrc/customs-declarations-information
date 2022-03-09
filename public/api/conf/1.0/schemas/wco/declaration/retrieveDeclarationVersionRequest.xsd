@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" targetNamespace="http://gov.uk/customs/retrieveDeclarationVersion" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xs:include schemaLocation="../common/DeclarationVersionServiceMessages.xsd"/>
+	<xs:include schemaLocation="./DeclarationVersionServiceMessages.xsd"/>
 	<xs:element name="retrieveDeclarationVersionRequest">
 		<xs:annotation>
 			<xs:documentation>Request to retrieve declaration version</xs:documentation>

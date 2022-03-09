@@ -44,7 +44,7 @@ class BackendSearchPayloadCreatorSpec extends UnitSpec  {
 
 
 
-  def xmlSearchValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/xml/backend_schemas/request/retrieveDeclarationSummaryDataRequest.xsd").get)
+  def xmlSearchValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationSummaryDataRequest.xsd").get)
 
   "BackendSearchPayloadCreator" should {
 
