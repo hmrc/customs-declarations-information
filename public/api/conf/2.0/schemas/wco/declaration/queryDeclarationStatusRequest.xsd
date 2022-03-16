@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema 
-		xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-		xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" 
-		targetNamespace="http://gov.uk/customs/FullDeclarationDataRetrievalService" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xs:include schemaLocation="../common/FullDeclarationDataRetrievalServiceMessages.xsd"/>
-	<xs:element name="getFullDeclarationDataRequest">
+<!-- edited with XMLSpy v2017 rel. 3 sp1 (x64) (http://www.altova.com) by Errol Knight -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2" targetNamespace="http://gov.uk/customs/declarationInformationRetrieval/status/v2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="./DeclarationInformationServiceMessages.xsd"/>
+	<xs:element name="queryDeclarationStatusRequest">
 		<xs:annotation>
-			<xs:documentation>Request to retrieve declaration version</xs:documentation>
+			<xs:documentation>Request to retrieve declaration status</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
@@ -40,7 +38,7 @@
 				<xs:element name="requestDetail">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="FullDeclarationDataRetrievalRequest" type="n1:FullDeclarationDataRetrievalRequest"/>
+							<xs:element name="retrieveDeclarationStatusRequest" type="n1:retrieveDeclarationStatusRequest"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
