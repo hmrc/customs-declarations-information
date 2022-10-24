@@ -17,7 +17,6 @@
 package integration
 
 import org.mockito.Mockito._
-
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -68,7 +67,8 @@ class DeclarationSearchConnectorSpec extends IntegrationTestSpec
       "microservice.services.declaration-search.port" -> Port,
       "microservice.services.declaration-search.context" -> BackendSearchDeclarationServiceContextV1,
       "microservice.services.declaration-search.bearer-token" -> AuthToken,
-      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$")
+      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$"),
+      "metrics.enabled" -> false
     )).build()
 
   "DeclarationSearchConnector" should {

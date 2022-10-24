@@ -29,7 +29,7 @@ import scala.concurrent.Future
 class DefinitionSpec extends ComponentTestSpec
   with Matchers {
 
-  override implicit lazy val app: Application = new GuiceApplicationBuilder().build()
+  override implicit lazy val app: Application = new GuiceApplicationBuilder().configure(Map("metrics.enabled" -> false)).build()
 
   Feature("Ensure definition file") {
 

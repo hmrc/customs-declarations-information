@@ -17,7 +17,6 @@
 package integration
 
 import org.mockito.Mockito._
-
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -68,7 +67,8 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
       "microservice.services.declaration-full.port" -> Port,
       "microservice.services.declaration-full.context" -> BackendFullDeclarationServiceContextV1,
       "microservice.services.declaration-full.bearer-token" -> AuthToken,
-      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$")
+      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$"),
+      "metrics.enabled" -> false
     )).build()
 
   "DeclarationFullConnector" should {

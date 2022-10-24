@@ -65,7 +65,8 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
     GuiceApplicationBuilder(overrides = Seq(IntegrationTestModule(mockInformationLogger))).configure(Map(
       "microservice.services.api-subscription-fields.host" -> Host,
       "microservice.services.api-subscription-fields.port" -> Port,
-      "microservice.services.api-subscription-fields.context" -> CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
+      "microservice.services.api-subscription-fields.context" -> CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext,
+      "metrics.enabled" -> false
     )).build()
 
   "ApiSubscriptionFieldsConnector" should {
