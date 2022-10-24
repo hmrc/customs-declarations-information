@@ -1,12 +1,10 @@
 import AppDependencies._
-import com.typesafe.sbt.packager.MappingsHelper._
 import com.typesafe.sbt.web.PathMapping
 import com.typesafe.sbt.web.pipeline.Pipeline
 import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
-import uk.gov.hmrc.PublishingSettings._
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
@@ -44,7 +42,6 @@ lazy val microservice = (project in file("."))
     commonSettings,
     unitTestSettings,
     integrationComponentTestSettings,
-    playPublishingSettings,
     allTest,
     scoverageSettings,
     // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
@@ -74,9 +71,6 @@ lazy val integrationComponentTestSettings =
     )
 
 lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
-
-lazy val playPublishingSettings: Seq[sbt.Setting[_]] = Seq(credentials += SbtCredentials) ++
-  publishAllArtefacts
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(

@@ -29,7 +29,7 @@ trait DeclarationController {
 
   def validateMrn(mrn: Mrn, logger: InformationLogger)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
     if(mrn.validValue) {
-      Right()
+      Right((): Unit)
     } else {
       val appropriateResponse = if (mrn.valueTooLong) {
         logger.info(s"MRN parameter is too long: $mrn")

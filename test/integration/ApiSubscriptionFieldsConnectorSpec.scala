@@ -117,8 +117,8 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
       intercept[RuntimeException](await(getApiSubscriptionFields)).getCause.getClass shouldBe classOf[BadGatewayException]
 
       // This is a quick hack to make sure this test are not failing on localhost
-      def assertOnJenkins = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/127.0.0.1:11111'")
-      def assertOnLocalhost = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/0:0:0:0:0:0:0:1:11111'")
+      def assertOnJenkins(): Unit = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/127.0.0.1:11111'")
+      def assertOnLocalhost(): Unit = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/0:0:0:0:0:0:0:1:11111'")
 
       Try(assertOnJenkins).getOrElse(assertOnLocalhost)
 

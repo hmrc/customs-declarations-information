@@ -141,11 +141,11 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       case None => Right(None)
     }
   }
-  def validateDateChronology(dateFrom: Option[Date], dateTo: Option[Date])(implicit request: HasConversationId): Either[ErrorResponse, Unit] = {
+  def validateDateChronology(dateFrom: Option[Date], dateTo: Option[Date]): Either[ErrorResponse, Unit] = {
     if (dateFrom.isDefined && dateTo.isDefined && dateTo.get.before(dateFrom.get)) {
         Left(errorBadRequest("Invalid date parameters", "CDS60009"))
     } else {
-      Right()
+      Right((): Unit)
     }
   }
 
