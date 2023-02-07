@@ -16,21 +16,20 @@
 
 package component
 
-import java.time.{Instant, ZoneId, ZonedDateTime}
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mockito.Mockito.{mock, when}
-import org.scalatest.GivenWhenThen
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, GivenWhenThen}
 import org.scalatest.concurrent.Eventually
+import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.customs.declarations.information.services.{DateTimeService, UniqueIdsService}
-import util.{CustomsDeclarationsExternalServicesConfig, ExternalServicesConfig}
 import util.TestData.stubUniqueIdsService
+import util.{CustomsDeclarationsExternalServicesConfig, ExternalServicesConfig}
+
+import java.time.{Instant, ZoneId, ZonedDateTime}
 
 trait ComponentTestSpec extends AnyFeatureSpec
     with GivenWhenThen
@@ -48,7 +47,7 @@ trait ComponentTestSpec extends AnyFeatureSpec
 
   protected val configMap: Map[String, Any] = Map(
     "xml.max-errors" -> 2,
-    "metrics.jvm" -> false,
+    "metrics.enabled" -> false,
     "microservice.services.auth.host" -> ExternalServicesConfig.Host,
     "microservice.services.auth.port" -> ExternalServicesConfig.Port,
     "microservice.services.declaration-status.host" -> ExternalServicesConfig.Host,

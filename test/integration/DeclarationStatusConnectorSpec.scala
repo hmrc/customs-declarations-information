@@ -17,7 +17,6 @@
 package integration
 
 import org.mockito.Mockito._
-
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -68,7 +67,8 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       "microservice.services.declaration-status.port" -> Port,
       "microservice.services.declaration-status.context" -> BackendStatusDeclarationServiceContextV1,
       "microservice.services.declaration-status.bearer-token" -> AuthToken,
-      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$")
+      "internalServiceHostPatterns" -> List("^.*\\.service$", "^.*\\.mdtp$"),
+      "metrics.enabled" -> false
     )).build()
 
   "DeclarationStatusConnector" should {

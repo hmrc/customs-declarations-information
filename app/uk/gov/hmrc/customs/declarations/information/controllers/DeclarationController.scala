@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ trait DeclarationController {
 
   def validateMrn(mrn: Mrn, logger: InformationLogger)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
     if(mrn.validValue) {
-      Right()
+      Right((): Unit)
     } else {
       val appropriateResponse = if (mrn.valueTooLong) {
         logger.info(s"MRN parameter is too long: $mrn")
