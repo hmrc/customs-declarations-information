@@ -11,5 +11,4 @@ object AppDependencies {
   val customsApiCommonTests = "uk.gov.hmrc"                  %% "customs-api-common"     % "1.57.0"  % testScope classifier "tests"
   val flexmark              = "com.vladsch.flexmark"         %  "flexmark-all"           % "0.35.10" % testScope
   val jacksonModule         = "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.13.4"
-  val bootstrapTestPlay     = "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % "7.13.0"  % testScope
 }
