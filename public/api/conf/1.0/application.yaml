@@ -472,6 +472,8 @@ info:
       <p class=\"govuk-body-s\" style=\"font-size: 16px;margin-bottom: 15px;\">ZIP, 2.4MB last updated 16/03/2023</p>
       <p class=\"govuk-body-s\" style=\"font-size: 16px;margin-bottom: 15px;\">The ZIP file contains XML files. Open in your preferred file viewer.</p>
     </div>
+    
+    #*Endpoints*
   contact: {}
   version: '1.0'
 servers:
@@ -576,26 +578,36 @@ paths:
 
           CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
 
-
+          CHANCGEDSDFGGDFDGF
           Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
         style: simple
         schema:
           type: string
           example: GB123456789000
       responses:
+#        '200':
+#          description: ''
+#          headers: {}
+#          content:
+#            application/xml:
+#              schema:
+#                allOf:
+#                - $ref: '#/components/schemas/CustomsDeclarationsInformationSearchresponse'
+#                - description: Successful response payload
+#                  xml:
+#                    name: CustomsDeclarationsInformationSearchresponse
+#                    attribute: false
+#                    wrapped: false
         '200':
           description: ''
-          headers: {}
+          headers: { }
           content:
             application/xml:
               schema:
-                allOf:
-                - $ref: '#/components/schemas/CustomsDeclarationsInformationSearchresponse'
-                - description: Successful response payload
-                  xml:
-                    name: CustomsDeclarationsInformationSearchresponse
-                    attribute: false
-                    wrapped: false
+                $ref: '#/components/schemas/cdisResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/cdisResponseExample'
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/status:
     get:
@@ -987,8 +999,20 @@ paths:
                     attribute: false
                     wrapped: false
       deprecated: false
+# TODO: COMPONENTS
 components:
+  examples:
+    cdisResponseExample:
+      summary: CDIS Response
+      value:
+        '<FIX>
+        <this/>
+        </FIX>'
   schemas:
+    cdisResponse:
+      <FIX>
+        <this/>
+      </FIX>
     errorResponse:
       title: errorResponse
       required:
