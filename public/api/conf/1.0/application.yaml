@@ -578,7 +578,7 @@ paths:
 
           CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
 
-          CHANCGEDSDFGGDFDGF
+
           Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
         style: simple
         schema:
