@@ -847,19 +847,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationDucrStatusResponseExample'
-#        '200':
-#          description: ''
-#          headers: {}
-#          content:
-#            application/xml:
-#              schema:
-#                allOf:
-#                - $ref: '#/components/schemas/CustomsDeclarationsInformationDucrStatusResponse'
-#                - description: Successful response payload
-#                  xml:
-#                    name: CustomsDeclarationsInformationDucrStatusResponse
-#                    attribute: false
-#                    wrapped: false
       deprecated: false
   /customs/declarations-information/ucr/{ucr}/status:
     get:
@@ -912,17 +899,14 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
+          headers: { }
           content:
             application/xml:
               schema:
-                allOf:
-                - $ref: '#/components/schemas/CustomsDeclarationsInformationUcrStatusresponse'
-                - description: Successful response payload
-                  xml:
-                    name: CustomsDeclarationsInformationUcrStatusresponse
-                    attribute: false
-                    wrapped: false
+                $ref: '#/components/schemas/CustomsDeclarationsInformationUcrStatusResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/CustomsDeclarationsInformationUcrStatusResponseExample'
       deprecated: false
   /customs/declarations-information/inventory-reference/{inventoryReference}/status:
     get:
@@ -1229,6 +1213,55 @@ components:
                             <p2:ID>8GB796458895018-G8536C</p2:ID>
                             <p2:TypeCode>DCR</p2:TypeCode>
                         </p2:PreviousDocument>
+                    </p2:GoodsShipment>
+                </p2:Declaration>
+            </p:DeclarationStatusDetails>
+        </p:DeclarationStatusResponse>
+        '
+    CustomsDeclarationsInformationUcrStatusResponseExample:
+      summary: CustomsDeclarationsInformationUcrStatusResponse
+      value:
+        '
+        <?xml version="1.0" encoding="UTF-8"?>
+        <p:DeclarationStatusResponse
+                xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+                xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+                xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+                xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+            <p:DeclarationStatusDetails>
+                <p:Declaration>
+                    <p:AcceptanceDateTime>
+                        <p1:DateTimeString formatCode="304">20200507060000Z</p1:DateTimeString>
+                    </p:AcceptanceDateTime>
+                    <p:ID>20GB52P2RHNIEFGVR5</p:ID>
+                    <p:VersionID>1</p:VersionID>
+                    <p:ReceivedDateTime>
+                        <p:DateTimeString formatCode="304">20200507203602Z</p:DateTimeString>
+                    </p:ReceivedDateTime>
+                    <p:GoodsReleasedDateTime>
+                        <p:DateTimeString formatCode="304">20200507203608Z</p:DateTimeString>
+                    </p:GoodsReleasedDateTime>
+                    <p:ICS>22</p:ICS>
+                </p:Declaration>
+                <p2:Declaration>
+                    <p2:FunctionCode>9</p2:FunctionCode>
+                    <p2:TypeCode>IMZ</p2:TypeCode>
+                    <p2:GoodsItemQuantity>1</p2:GoodsItemQuantity>
+                    <p2:TotalPackageQuantity>1.0</p2:TotalPackageQuantity>
+                    <p2:Submitter>
+                        <p2:ID>GB025115166433</p2:ID>
+                    </p2:Submitter>
+                    <p2:GoodsShipment>
+                        <p2:PreviousDocument>
+                            <p2:ID>8GB796458895018-G27F2A</p2:ID>
+                            <p2:TypeCode>DCR</p2:TypeCode>
+                        </p2:PreviousDocument>
+                        <p2:UCR>
+                            <p2:TraderAssignedReferenceID>9GB010969918000-5A8BD3F</p2:TraderAssignedReferenceID>
+                        </p2:UCR>
                     </p2:GoodsShipment>
                 </p2:Declaration>
             </p:DeclarationStatusDetails>
@@ -3429,20 +3462,22 @@ components:
 #              namespace: http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1
 #              attribute: false
 #              wrapped: false
-    CustomsDeclarationsInformationUcrStatusresponse:
-      title: CustomsDeclarationsInformationUcrStatusresponse
-      required:
-      - DeclarationStatusResponse
-      type: object
-      properties:
-        DeclarationStatusResponse:
-          allOf:
-          - $ref: '#/components/schemas/DeclarationStatusResponse'
-          - xml:
-              name: DeclarationStatusResponse
-              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
-              attribute: false
-              wrapped: false
+    CustomsDeclarationsInformationUcrStatusResponse:
+      <DeclarationInformationUcrStatusResponse></DeclarationInformationUcrStatusResponse>
+#    TODO TECHDOC: Uncomment and build up correct response schema
+#      title: CustomsDeclarationsInformationUcrStatusResponse
+#      required:
+#      - DeclarationStatusResponse
+#      type: object
+#      properties:
+#        DeclarationStatusResponse:
+#          allOf:
+#          - $ref: '#/components/schemas/DeclarationStatusResponse'
+#          - xml:
+#              name: DeclarationStatusResponse
+#              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
+#              attribute: false
+#              wrapped: false
     CustomsValuation:
       title: CustomsValuation
       type: object
