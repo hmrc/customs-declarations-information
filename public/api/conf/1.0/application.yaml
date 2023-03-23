@@ -959,19 +959,15 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
+          headers: { }
           content:
             application/xml:
               schema:
-                allOf:
-                - $ref: '#/components/schemas/CustomsDeclarationsInformationInventoryReferenceStatusresponse'
-                - description: Successful response payload
-                  xml:
-                    name: CustomsDeclarationsInformationInventoryReferenceStatusresponse
-                    attribute: false
-                    wrapped: false
+                $ref: '#/components/schemas/CustomsDeclarationsInformationInventoryReferenceStatusResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/CustomsDeclarationsInformationInventoryReferenceStatusResponseExample'
       deprecated: false
-# TODO: COMPONENTS
 components:
   examples:
     CustomsDeclarationsInformationSearchResponseExample:
@@ -1262,6 +1258,47 @@ components:
                         <p2:UCR>
                             <p2:TraderAssignedReferenceID>9GB010969918000-5A8BD3F</p2:TraderAssignedReferenceID>
                         </p2:UCR>
+                    </p2:GoodsShipment>
+                </p2:Declaration>
+            </p:DeclarationStatusDetails>
+        </p:DeclarationStatusResponse>
+        '
+    CustomsDeclarationsInformationInventoryReferenceStatusResponseExample:
+      summary: CustomsDeclarationsInformationInventoryReferenceStatusResponse
+      value:
+        '
+        <?xml version="1.0" encoding="UTF-8"?>
+        <p:DeclarationStatusResponse
+                xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+                xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+                xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+                xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+            <p:DeclarationStatusDetails>
+                <p:Declaration>
+                    <p:ID>20GB57SVU6YLWFGVR2</p:ID>
+                    <p:VersionID>1</p:VersionID>
+                    <p:ReceivedDateTime>
+                        <p:DateTimeString formatCode="304">20200511102129Z</p:DateTimeString>
+                    </p:ReceivedDateTime>
+                    <p:ROE>H</p:ROE>
+                    <p:ICS>18</p:ICS>
+                </p:Declaration>
+                <p2:Declaration>
+                    <p2:FunctionCode>9</p2:FunctionCode>
+                    <p2:TypeCode>IMF</p2:TypeCode>
+                    <p2:GoodsItemQuantity>1</p2:GoodsItemQuantity>
+                    <p2:TotalPackageQuantity>1.0</p2:TotalPackageQuantity>
+                    <p2:Submitter>
+                        <p2:ID>GB025115166433</p2:ID>
+                    </p2:Submitter>
+                    <p2:GoodsShipment>
+                        <p2:PreviousDocument>
+                            <p2:ID>GB/1234-:3333HZ</p2:ID>
+                            <p2:TypeCode>MCR</p2:TypeCode>
+                        </p2:PreviousDocument>
                     </p2:GoodsShipment>
                 </p2:Declaration>
             </p:DeclarationStatusDetails>
@@ -3384,20 +3421,22 @@ components:
 #              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
 #              attribute: false
 #              wrapped: false
-    CustomsDeclarationsInformationInventoryReferenceStatusresponse:
-      title: CustomsDeclarationsInformationInventoryReferenceStatusresponse
-      required:
-      - DeclarationStatusResponse
-      type: object
-      properties:
-        DeclarationStatusResponse:
-          allOf:
-          - $ref: '#/components/schemas/DeclarationStatusResponse'
-          - xml:
-              name: DeclarationStatusResponse
-              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
-              attribute: false
-              wrapped: false
+    CustomsDeclarationsInformationInventoryReferenceStatusResponse:
+      <DeclarationInformationInventoryReferenceStatusResponse></DeclarationInformationInventoryReferenceStatusResponse>
+#    TODO TECHDOC: Uncomment and build up correct response schema
+#      title: CustomsDeclarationsInformationInventoryReferenceStatusResponse
+#      required:
+#      - DeclarationStatusResponse
+#      type: object
+#      properties:
+#        DeclarationStatusResponse:
+#          allOf:
+#          - $ref: '#/components/schemas/DeclarationStatusResponse'
+#          - xml:
+#              name: DeclarationStatusResponse
+#              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
+#              attribute: false
+#              wrapped: false
     CustomsDeclarationsInformationMrnFullResponse:
       <DeclarationInformationMrnFullResponse></DeclarationInformationMrnFullResponse>
 #    TODO TECHDOC: Uncomment and build up correct response schema
