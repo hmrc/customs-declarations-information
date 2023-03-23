@@ -839,17 +839,27 @@ paths:
       responses:
         '200':
           description: ''
-          headers: {}
+          headers: { }
           content:
             application/xml:
               schema:
-                allOf:
-                - $ref: '#/components/schemas/CustomsDeclarationsInformationDucrStatusresponse'
-                - description: Successful response payload
-                  xml:
-                    name: CustomsDeclarationsInformationDucrStatusresponse
-                    attribute: false
-                    wrapped: false
+                $ref: '#/components/schemas/CustomsDeclarationsInformationDucrStatusResponse'
+              examples:
+                objectExample:
+                  $ref: '#/components/examples/CustomsDeclarationsInformationDucrStatusResponseExample'
+#        '200':
+#          description: ''
+#          headers: {}
+#          content:
+#            application/xml:
+#              schema:
+#                allOf:
+#                - $ref: '#/components/schemas/CustomsDeclarationsInformationDucrStatusResponse'
+#                - description: Successful response payload
+#                  xml:
+#                    name: CustomsDeclarationsInformationDucrStatusResponse
+#                    attribute: false
+#                    wrapped: false
       deprecated: false
   /customs/declarations-information/ucr/{ucr}/status:
     get:
@@ -1179,6 +1189,50 @@ components:
                 </p:FullDeclarationObject>
             </p:FullDeclarationDataDetails>
         </p:DeclarationFullResponse>
+        '
+    CustomsDeclarationsInformationDucrStatusResponseExample:
+      summary: CustomsDeclarationsInformationDucrStatusResponse
+      value:
+        '
+        <?xml version="1.0" encoding="UTF-8"?>
+        <p:DeclarationStatusResponse
+                xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+                xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+                xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
+                xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
+                xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/status/v2">
+            <p:DeclarationStatusDetails>
+                <p:Declaration>
+                    <p:AcceptanceDateTime>
+                        <p1:DateTimeString formatCode="304">20200510113028Z</p1:DateTimeString>
+                    </p:AcceptanceDateTime>
+                    <p:ID>20GB56FWPJ8JPFGVA1</p:ID>
+                    <p:VersionID>1</p:VersionID>
+                    <p:ReceivedDateTime>
+                        <p:DateTimeString formatCode="304">20200510113028Z</p:DateTimeString>
+                    </p:ReceivedDateTime>
+                    <p:ROE>H</p:ROE>
+                    <p:ICS>14</p:ICS>
+                </p:Declaration>
+                <p2:Declaration>
+                    <p2:FunctionCode>9</p2:FunctionCode>
+                    <p2:TypeCode>EXD</p2:TypeCode>
+                    <p2:GoodsItemQuantity>1</p2:GoodsItemQuantity>
+                    <p2:TotalPackageQuantity>1.0</p2:TotalPackageQuantity>
+                    <p2:Submitter>
+                        <p2:ID>GB025115166433</p2:ID>
+                    </p2:Submitter>
+                    <p2:GoodsShipment>
+                        <p2:PreviousDocument>
+                            <p2:ID>8GB796458895018-G8536C</p2:ID>
+                            <p2:TypeCode>DCR</p2:TypeCode>
+                        </p2:PreviousDocument>
+                    </p2:GoodsShipment>
+                </p2:Declaration>
+            </p:DeclarationStatusDetails>
+        </p:DeclarationStatusResponse>
         '
   schemas:
     errorResponse:
@@ -3281,20 +3335,22 @@ components:
         prefix: default
         attribute: false
         wrapped: false
-    CustomsDeclarationsInformationDucrStatusresponse:
-      title: CustomsDeclarationsInformationDucrStatusresponse
-      required:
-      - DeclarationStatusResponse
-      type: object
-      properties:
-        DeclarationStatusResponse:
-          allOf:
-          - $ref: '#/components/schemas/DeclarationStatusResponse'
-          - xml:
-              name: DeclarationStatusResponse
-              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
-              attribute: false
-              wrapped: false
+    CustomsDeclarationsInformationDucrStatusResponse:
+      <DeclarationInformationDucrStatusResponse></DeclarationInformationDucrStatusResponse>
+#    TODO TECHDOC: Uncomment and build up correct response schema
+#      title: CustomsDeclarationsInformationDucrStatusResponse
+#      required:
+#      - DeclarationStatusResponse
+#      type: object
+#      properties:
+#        DeclarationStatusResponse:
+#          allOf:
+#          - $ref: '#/components/schemas/DeclarationStatusResponse'
+#          - xml:
+#              name: DeclarationStatusResponse
+#              namespace: http://gov.uk/customs/declarationInformationRetrieval/status/v2
+#              attribute: false
+#              wrapped: false
     CustomsDeclarationsInformationInventoryReferenceStatusresponse:
       title: CustomsDeclarationsInformationInventoryReferenceStatusresponse
       required:
