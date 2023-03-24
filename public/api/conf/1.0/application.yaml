@@ -472,8 +472,6 @@ info:
       <p class=\"govuk-body-s\" style=\"font-size: 16px;margin-bottom: 15px;\">ZIP, 2.4MB last updated 16/03/2023</p>
       <p class=\"govuk-body-s\" style=\"font-size: 16px;margin-bottom: 15px;\">The ZIP file contains XML files. Open in your preferred file viewer.</p>
     </div>
-    
-    #*Endpoints*
   contact: {}
   version: '1.0'
 servers:
@@ -483,9 +481,14 @@ paths:
   /customs/declarations-information/search:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Search for declarations
-      description: Get a list of declarations matching the query parameters
+      description: |
+        Get a list of declarations matching the query parameters
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: Searchfordeclarations
       parameters:
       - name: partyRole
@@ -599,9 +602,14 @@ paths:
   /customs/declarations-information/mrn/{mrn}/status:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Get the status of a declaration by MRN
-      description: Get the status of a declaration with the given MRN.
+      description: |
+        Get the status of a declaration with the given MRN.
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetthestatusofadeclarationbyMRN
       parameters:
       - name: mrn
@@ -659,9 +667,14 @@ paths:
   /customs/declarations-information/mrn/{mrn}/version:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Get a list of declaration versions by MRN
-      description: Get a list of declaration versions, latest first, with the given MRN.
+      description: |
+        Get a list of declaration versions, latest first, with the given MRN.
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetalistofdeclarationversionsbyMRN
       parameters:
       - name: mrn
@@ -719,13 +732,17 @@ paths:
   /customs/declarations-information/mrn/{mrn}/full:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Get the full declaration by MRN
-      description: >
+      description: |
         Get the full declaration with the given MRN and version.
 
 
         Please note that this endpoint is currently under development and is not available for testing. This section will be updated when the endpoint becomes available.
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetthefulldeclarationbyMRN
       parameters:
       - name: mrn
@@ -791,9 +808,14 @@ paths:
   /customs/declarations-information/ducr/{ducr}/status:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Get the status of a declaration by DUCR
-      description: Get the status of a declaration with the given DUCR.
+      description: |
+        Get the status of a declaration with the given DUCR.
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetthestatusofadeclarationbyDUCR
       parameters:
       - name: ducr
@@ -851,9 +873,14 @@ paths:
   /customs/declarations-information/ucr/{ucr}/status:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Get the status of a declaration by UCR
-      description: Get the status of a declaration with the given UCR.
+      description: |
+        Get the status of a declaration with the given UCR.
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetthestatusofadeclarationbyUCR
       parameters:
       - name: ucr
@@ -911,9 +938,14 @@ paths:
   /customs/declarations-information/inventory-reference/{inventoryReference}/status:
     get:
       tags:
-      - customs
+      - Customs Declarations Information
       summary: Get the status of a declaration by Inventory Reference
-      description: Get the status of a declaration with the given Inventory Reference.
+      description: |
+        Get the status of a declaration with the given Inventory Reference.
+        
+        #### Authorisation
+        
+        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetthestatusofadeclarationbyInventoryReference
       parameters:
       - name: inventoryReference
@@ -980,7 +1012,7 @@ components:
                                      xmlns:p3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
                                      xmlns:p2="urn:wco:datamodel:WCO:DEC-DMS:2"
                                      xmlns:p1="urn:wco:datamodel:WCO:Response_DS:DMS:2"
-                                     xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1">
+                                     xmlns:p="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1">                    
             <p:DeclarationSearchDetails>
                 <p:Declaration>
                     <p:ID>18GB9JLC3CU1LFGVR2</p:ID>
@@ -9132,5 +9164,5 @@ components:
         attribute: false
         wrapped: false
 tags:
-- name: customs
+- name: Customs Declarations Information
   description: ''
