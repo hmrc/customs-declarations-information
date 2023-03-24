@@ -29,7 +29,6 @@ info:
     The status endpoints return a response that can contain the following fields:
     
     <table>
-      <tr><td></td><td></td></tr>
       <tr>
         <td>AcceptanceDateTime/DateTimeString</td>
         <td>Date and time on which the declaration was legally accepted.     
@@ -108,7 +107,6 @@ info:
     The version endpoint returns a response that can contain the following fields:
     
     <table>
-      <tr><td></td><td></td></tr>
       <tr>
         <td>ID</td>
         <td>Movement Reference Number (MRN).</td>
