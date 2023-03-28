@@ -990,7 +990,7 @@ components:
   examples:
     CustomsDeclarationsInformationSearchResponseExample:
       summary: CustomsDeclarationsInformationSearchResponse
-      value:
+      value: |
         <p:DeclarationSearchResponse xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
                                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                      xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
@@ -1036,7 +1036,7 @@ components:
         </p:DeclarationSearchResponse>
     CustomsDeclarationsInformationMrnStatusResponseExample:
       summary: CustomsDeclarationsInformationMrnStatusResponse
-      value:
+      value: |
         <p:DeclarationStatusResponse xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
                                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                      xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
@@ -1079,7 +1079,7 @@ components:
         </p:DeclarationStatusResponse>
     CustomsDeclarationsInformationMrnVersionResponseExample:
       summary: CustomsDeclarationsInformationMrnVersionResponse
-      value:
+      value: |
         <p:DeclarationVersionResponse
                 xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -1125,7 +1125,7 @@ components:
         </p:DeclarationVersionResponse>
     CustomsDeclarationsInformationMrnFullResponseExample:
       summary: CustomsDeclarationsInformationMrnFullResponse
-      value:
+      value: |
         <p:DeclarationFullResponse xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService"
                                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                    xmlns:p4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
@@ -1182,7 +1182,7 @@ components:
         </p:DeclarationFullResponse>
     CustomsDeclarationsInformationDucrStatusResponseExample:
       summary: CustomsDeclarationsInformationDucrStatusResponse
-      value:
+      value: |
         <?xml version="1.0" encoding="UTF-8"?>
         <p:DeclarationStatusResponse
                 xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
@@ -1224,7 +1224,7 @@ components:
         </p:DeclarationStatusResponse>
     CustomsDeclarationsInformationUcrStatusResponseExample:
       summary: CustomsDeclarationsInformationUcrStatusResponse
-      value:
+      value: |
         <?xml version="1.0" encoding="UTF-8"?>
         <p:DeclarationStatusResponse
                 xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
@@ -1271,7 +1271,7 @@ components:
         </p:DeclarationStatusResponse>
     CustomsDeclarationsInformationInventoryReferenceStatusResponseExample:
       summary: CustomsDeclarationsInformationInventoryReferenceStatusResponse
-      value:
+      value: |
         <?xml version="1.0" encoding="UTF-8"?>
         <p:DeclarationStatusResponse
                 xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
