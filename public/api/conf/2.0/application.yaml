@@ -481,7 +481,7 @@ paths:
   /customs/declarations-information/search:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Search for declarations
       description: Get a list of declarations matching the query parameters
       operationId: Searchfordeclarations
@@ -600,7 +600,7 @@ paths:
   /customs/declarations-information/mrn/{mrn}/status:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Get the status of a declaration by MRN
       description: Get the status of a declaration with the given MRN.
       operationId: GetthestatusofadeclarationbyMRN
@@ -663,7 +663,7 @@ paths:
   /customs/declarations-information/mrn/{mrn}/version:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Get a list of declaration versions by MRN
       description: Get a list of declaration versions, latest first, with the given MRN.
       operationId: GetalistofdeclarationversionsbyMRN
@@ -726,7 +726,7 @@ paths:
   /customs/declarations-information/mrn/{mrn}/full:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Get the full declaration by MRN
       description: >
         Get the full declaration with the given MRN and version.
@@ -801,7 +801,7 @@ paths:
   /customs/declarations-information/ducr/{ducr}/status:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Get the status of a declaration by DUCR
       description: Get the status of a declaration with the given DUCR.
       operationId: GetthestatusofadeclarationbyDUCR
@@ -864,7 +864,7 @@ paths:
   /customs/declarations-information/ucr/{ucr}/status:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Get the status of a declaration by UCR
       description: Get the status of a declaration with the given UCR.
       operationId: GetthestatusofadeclarationbyUCR
@@ -927,7 +927,7 @@ paths:
   /customs/declarations-information/inventory-reference/{inventoryReference}/status:
     get:
       tags:
-      - customs
+      - Endpoints
       summary: Get the status of a declaration by Inventory Reference
       description: Get the status of a declaration with the given Inventory Reference.
       operationId: GetthestatusofadeclarationbyInventoryReference
@@ -8802,5 +8802,5 @@ components:
         attribute: false
         wrapped: false
 tags:
-- name: customs
+- name: Endpoints
   description: ''
