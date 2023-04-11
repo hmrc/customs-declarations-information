@@ -565,7 +565,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -644,7 +644,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -723,7 +723,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -813,7 +813,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -892,7 +892,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -971,7 +971,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -1050,7 +1050,7 @@ paths:
         style: simple
         schema:
           type: string
-          example: application/vnd.hmrc.2.0+xml
+          example: application/vnd.hmrc.1.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
