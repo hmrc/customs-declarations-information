@@ -558,6 +558,14 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -586,6 +594,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -621,6 +637,14 @@ paths:
         schema:
           type: string
           example: 20GB52P19SNIHX8PA6
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -649,6 +673,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -684,6 +716,14 @@ paths:
         schema:
           type: string
           example: 20GB52P19SNIHX8PA6
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -712,6 +752,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -758,6 +806,14 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -786,6 +842,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -821,6 +885,14 @@ paths:
         schema:
           type: string
           example: 8GB796458895018-G8536C
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -849,6 +921,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -884,6 +964,14 @@ paths:
         schema:
           type: string
           example: 9GB010969918000-5A8BD3F
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -912,6 +1000,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -947,6 +1043,14 @@ paths:
         schema:
           type: string
           example: GB%2F1234-%3A3333HZ
+      - name: Accept
+        in: header
+        description: Specifies the version of the API that you want to call. See [versioning](/api-documentation/docs/reference-guide#versioning).
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
       - name: X-Badge-Identifier
         in: header
         description: >-
@@ -975,6 +1079,14 @@ paths:
         schema:
           type: string
           example: GB123456789000
+      - name: Authorization
+        in: header
+        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
