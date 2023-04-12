@@ -571,9 +571,7 @@ paths:
         description: >-
           Represents the end-user who is interacting with the subscribed application.
 
-
           CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
-
 
           Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
         style: simple
