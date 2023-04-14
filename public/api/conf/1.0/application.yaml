@@ -482,12 +482,7 @@ paths:
       tags:
       - Endpoints
       summary: Search for declarations
-      description: |
-        Get a list of declarations matching the query parameters
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
+      description: Get a list of declarations matching the query parameters
       operationId: Searchfordeclarations
       parameters:
       - name: partyRole
@@ -609,18 +604,15 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationSearchResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/status:
     get:
       tags:
       - Endpoints
       summary: Get the status of a declaration by MRN
-      description: |
-        Get the status of a declaration with the given MRN.
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
+      description: Get the status of a declaration with the given MRN.
       operationId: GetthestatusofadeclarationbyMRN
       parameters:
       - name: mrn
@@ -688,18 +680,15 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationMrnStatusResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/version:
     get:
       tags:
       - Endpoints
       summary: Get a list of declaration versions by MRN
-      description: |
-        Get a list of declaration versions, latest first, with the given MRN.
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
+      description: Get a list of declaration versions, latest first, with the given MRN.
       operationId: GetalistofdeclarationversionsbyMRN
       parameters:
       - name: mrn
@@ -767,6 +756,8 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationMrnVersionResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/full:
     get:
@@ -776,12 +767,7 @@ paths:
       description: |
         Get the full declaration with the given MRN and version.
 
-
         Please note that this endpoint is currently under development and is not available for testing. This section will be updated when the endpoint becomes available.
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
       operationId: GetthefulldeclarationbyMRN
       parameters:
       - name: mrn
@@ -857,18 +843,15 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationMrnFullResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/ducr/{ducr}/status:
     get:
       tags:
       - Endpoints
       summary: Get the status of a declaration by DUCR
-      description: |
-        Get the status of a declaration with the given DUCR.
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
+      description: Get the status of a declaration with the given DUCR.
       operationId: GetthestatusofadeclarationbyDUCR
       parameters:
       - name: ducr
@@ -936,18 +919,15 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationDucrStatusResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/ucr/{ucr}/status:
     get:
       tags:
       - Endpoints
       summary: Get the status of a declaration by UCR
-      description: |
-        Get the status of a declaration with the given UCR.
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
+      description: Get the status of a declaration with the given UCR.
       operationId: GetthestatusofadeclarationbyUCR
       parameters:
       - name: ucr
@@ -1015,18 +995,15 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationUcrStatusResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/inventory-reference/{inventoryReference}/status:
     get:
       tags:
       - Endpoints
       summary: Get the status of a declaration by Inventory Reference
-      description: |
-        Get the status of a declaration with the given Inventory Reference.
-        
-        #### Authorisation
-        
-        This endpoint is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) and requires an `Authorization` header containing an OAuth 2.0 Bearer Token with the `write:customs-declarations-information` scope.
+      description: Get the status of a declaration with the given Inventory Reference.
       operationId: GetthestatusofadeclarationbyInventoryReference
       parameters:
       - name: inventoryReference
@@ -1094,8 +1071,23 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationInventoryReferenceStatusResponseExample'
+      security:
+        - userRestricted: [ ]
       deprecated: false
 components:
+  securitySchemes:
+    userRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            "write:customs-declarations-information": "write:customs-declarations-information"
   examples:
     CustomsDeclarationsInformationSearchResponseExample:
       summary: CustomsDeclarationsInformationSearchResponse
