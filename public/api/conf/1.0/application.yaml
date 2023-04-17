@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Customs Declarations Information
   description: |
@@ -470,6 +470,9 @@ info:
     The ZIP file contains XML files. Open in your preferred file viewer.
   contact: {}
   version: '1.0'
+security:
+  - userRestricted:
+    - "write:customs-declarations-information"
 servers:
   - url: https://test-api.service.hmrc.gov.uk/
     description: Sandbox
@@ -587,14 +590,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -604,8 +599,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationSearchResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/status:
     get:
@@ -663,14 +656,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -680,8 +665,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationMrnStatusResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/version:
     get:
@@ -739,14 +722,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -756,8 +731,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationMrnVersionResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/mrn/{mrn}/full:
     get:
@@ -826,14 +799,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -843,8 +808,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationMrnFullResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/ducr/{ducr}/status:
     get:
@@ -902,14 +865,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -919,8 +874,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationDucrStatusResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/ucr/{ucr}/status:
     get:
@@ -978,14 +931,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -995,8 +940,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationUcrStatusResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
   /customs/declarations-information/inventory-reference/{inventoryReference}/status:
     get:
@@ -1054,14 +997,6 @@ paths:
         schema:
           type: string
           example: GB123456789000
-      - name: Authorization
-        in: header
-        description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) with the `write:customs-declarations-information` scope.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       responses:
         '200':
           description: ''
@@ -1071,8 +1006,6 @@ paths:
               examples:
                 objectExample:
                   $ref: '#/components/examples/CustomsDeclarationsInformationInventoryReferenceStatusResponseExample'
-      security:
-        - userRestricted: [ ]
       deprecated: false
 components:
   securitySchemes:
