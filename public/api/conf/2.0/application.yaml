@@ -469,7 +469,7 @@ info:
 
     The ZIP file contains XML files. Open in your preferred file viewer.
   contact: {}
-  version: '1.0'
+  version: '2.0'
 servers:
   - url: https://test-api.service.hmrc.gov.uk/
     description: Sandbox
