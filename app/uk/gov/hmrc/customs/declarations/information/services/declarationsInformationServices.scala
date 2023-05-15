@@ -43,9 +43,10 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
                                          override val logger: InformationLogger,
                                          connector: DeclarationStatusConnector,
                                          dateTimeProvider: DateTimeService,
-                                         uniqueIdsService: UniqueIdsService)
+                                         uniqueIdsService: UniqueIdsService,
+                                         config: InformationConfigService)
                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "status"
 
@@ -71,9 +72,10 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
                                           override val logger: InformationLogger,
                                           connector: DeclarationVersionConnector,
                                           dateTimeProvider: DateTimeService,
-                                          uniqueIdsService: UniqueIdsService)
+                                          uniqueIdsService: UniqueIdsService,
+                                          config: InformationConfigService)
                                          (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "version"
 
@@ -99,9 +101,10 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
                                           override val logger: InformationLogger,
                                           connector: DeclarationSearchConnector,
                                           dateTimeProvider: DateTimeService,
-                                          uniqueIdsService: UniqueIdsService)
-                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
+                                          uniqueIdsService: UniqueIdsService,
+                                          config: InformationConfigService)
+                                          (implicit override val ec: ExecutionContext)
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "search"
   protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60005", "pageNumber parameter out of bounds")
@@ -141,9 +144,10 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
                                        override val logger: InformationLogger,
                                        connector: DeclarationFullConnector,
                                        dateTimeProvider: DateTimeService,
-                                       uniqueIdsService: UniqueIdsService)
-                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
+                                       uniqueIdsService: UniqueIdsService,
+                                       config: InformationConfigService)
+                                       (implicit override val ec: ExecutionContext)
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "declaration-full"
 
@@ -167,7 +171,8 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                                             override val logger: InformationLogger,
                                             connector: DeclarationConnector,
                                             dateTimeProvider: DateTimeService,
-                                            uniqueIdsService: UniqueIdsService)
+                                            uniqueIdsService: UniqueIdsService,
+                                            config: InformationConfigService)
                                            (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
 
   protected def matchErrorCode[A](errorCodeText: String)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Either[Result, HttpResponse]
@@ -195,12 +200,15 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
             val filteredResponse = filterResponse(response, XML.loadString(response.body))
             logFilteringDuration(startTime)
             Right(filteredResponse)
-          }).recover{
+          }).recover {
           case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
             val body = XML.loadString(e.response.body)
             val errorCode: NodeSeq = body \ "errorCode"
             val errorCodeText = errorCode.text
             matchErrorCode(errorCodeText)
+          case e: Non2xxResponseException if e.responseCode == FORBIDDEN && config.informationConfig.payloadForbiddenEnabled =>
+            logger.warn(s"declaration $endpointName call failed with backend http status code of 403: ${e.getMessage} so returning 403 to consumer")
+            Left(ErrorResponse.ErrorPayloadForbidden.XmlResult.withConversationId)
           case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
             logger.warn(s"declaration $endpointName call failed with backend http status code of 403: ${e.getMessage} so returning 500 to consumer")
             Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)

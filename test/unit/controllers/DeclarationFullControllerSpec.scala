@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class DeclarationFullControllerSpec extends UnitSpec
 
     protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
-    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq()))
+    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq(), false))
 
     protected val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
@@ -81,7 +81,8 @@ class DeclarationFullControllerSpec extends UnitSpec
 
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubFullResponseFilterService: FullResponseFilterService = new FullResponseFilterService()
-    protected val stubDeclarationFullService = new DeclarationFullService(stubFullResponseFilterService, mockApiSubscriptionFieldsConnector, mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService)
+    protected val stubDeclarationFullService = new DeclarationFullService(stubFullResponseFilterService, mockApiSubscriptionFieldsConnector,
+      mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: DeclarationFullController = new DeclarationFullController (
@@ -126,7 +127,7 @@ class DeclarationFullControllerSpec extends UnitSpec
 
     "process CSP request when call is authorised for CSP and declarationSubmissionChannel is set and is internal clientId" in new SetUp() {
       authoriseCsp()
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
       val result: Future[Result] = submitMrn(ValidCspDeclarationVersionRequestWithDeclarationSubmissionChannel, None, Some("AuthenticatedPartyOnly"))
       status(result) shouldBe OK
       verifyCspAuthorisationCalled(numberOfTimes = 1)
@@ -233,7 +234,7 @@ class DeclarationFullControllerSpec extends UnitSpec
     "process non-CSP request when call is authorised for non-CSP with declarationSubmissionChannel set" in new SetUp() {
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
       awaitSubmitMrn(ValidNonCspDeclarationVersionRequestWithDeclarationSubmissionChannel)
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)

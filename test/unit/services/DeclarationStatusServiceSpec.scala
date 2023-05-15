@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ class DeclarationStatusServiceSpec extends UnitSpec  with BeforeAndAfterEach{
   protected lazy val mockDateTimeProvider: DateTimeService = mock(classOf[DateTimeService])
   protected lazy val mockHttpResponse: HttpResponse = mock(classOf[HttpResponse])
   protected lazy val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
+  protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
   protected val searchType = Mrn("theMrn")
   protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId
   protected implicit val ec = Helpers.stubControllerComponents().executionContext
@@ -68,9 +69,10 @@ class DeclarationStatusServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     when(mockHttpResponse.headers).thenReturn(any[Map[String, Seq[String]]])
     when(mockStatusResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
+    when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
 
     protected lazy val service: DeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService)
+      mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService, mockInformationConfigService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
       await(service.send(searchType) (vpr, hc))
@@ -193,6 +195,18 @@ class DeclarationStatusServiceSpec extends UnitSpec  with BeforeAndAfterEach{
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+    }
+
+    "return 403 error response when backend call fails with 403 and payloadForbidden flag is on" in new SetUp() {
+      when(mockInformationConfig.payloadForbiddenEnabled).thenReturn(true)
+      when(mockDeclarationStatusConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse.ErrorPayloadForbidden.XmlResult.withConversationId)
     }
 
     "return 404 error response when backend call fails with 404" in new SetUp() {
