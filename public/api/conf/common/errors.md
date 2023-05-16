@@ -53,6 +53,12 @@ We use standard HTTP status codes to show whether an API request succeeded or no
       <td>X-Badge-Identifier header is invalid</td>
     </tr>
     <tr>
+        <td>A firewall rejected the request</td>
+        <td>403 (Payload Forbidden)</td>
+        <td>PAYLOAD_FORBIDDEN</td>
+        <td>A firewall rejected the request</td>
+    </tr>
+    <tr>
       <td>Internal server error</td>
       <td>500</td>
       <td>CDS60003 or INTERNAL_SERVER_ERROR</td>
@@ -113,6 +119,12 @@ We use standard HTTP status codes to show whether an API request succeeded or no
       <td>400 (Bad Request)</td>
       <td>BAD_REQUEST</td>
       <td>X-Badge-Identifier header is invalid</td>
+    </tr>
+    <tr>
+        <td>A firewall rejected the request</td>
+        <td>403 (Payload Forbidden)</td>
+        <td>PAYLOAD_FORBIDDEN</td>
+        <td>A firewall rejected the request</td>
     </tr>
     <tr>
       <td>Internal server error</td>
@@ -181,6 +193,12 @@ We use standard HTTP status codes to show whether an API request succeeded or no
       <td>400 (Bad Request)</td>
       <td>BAD_REQUEST</td>
       <td>X-Badge-Identifier header is invalid</td>
+    </tr>
+    <tr>
+        <td>A firewall rejected the request</td>
+        <td>403 (Payload Forbidden)</td>
+        <td>PAYLOAD_FORBIDDEN</td>
+        <td>A firewall rejected the request</td>
     </tr>
     <tr>
       <td>Internal server error</td>
@@ -267,6 +285,12 @@ We use standard HTTP status codes to show whether an API request succeeded or no
       <td>400 (Bad Request)</td>
       <td>CDS60012</td>
       <td>Invalid pageNumber parameter</td>
+    </tr>
+    <tr>
+        <td>A firewall rejected the request</td>
+        <td>403 (Payload Forbidden)</td>
+        <td>PAYLOAD_FORBIDDEN</td>
+        <td>A firewall rejected the request</td>
     </tr>
   </tbody>
 </table>
