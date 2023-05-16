@@ -200,34 +200,42 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
             val filteredResponse = filterResponse(response, XML.loadString(response.body))
             logFilteringDuration(startTime)
             Right(filteredResponse)
-          }).recover {
-          case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
-            val body = XML.loadString(e.response.body)
-            val errorCode: NodeSeq = body \ "errorCode"
-            val errorCodeText = errorCode.text
-            matchErrorCode(errorCodeText)
-          case e: Non2xxResponseException if e.responseCode == FORBIDDEN && config.informationConfig.payloadForbiddenEnabled =>
-            logger.warn(s"declaration [$endpointName] call failed with backend http status code of 403: [${e.getMessage}] so returning 403 to consumer")
-            Left(ErrorResponse.ErrorPayloadForbidden.XmlResult.withConversationId)
-          case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
-            logger.warn(s"declaration [$endpointName] call failed with backend http status code of 403: [${e.getMessage}] so returning 500 to consumer")
-            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-          case e: HttpException if e.responseCode == NOT_FOUND =>
-            logger.warn(s"declaration [$endpointName] call failed with backend http status code of 404: [${e.getMessage}] so returning 500 to consumer")
-            Left(customNotFoundResponse.XmlResult.withConversationId)
-          case e: HttpException =>
-            logger.warn(s"declaration [$endpointName] call failed with backend http status code of [${e.responseCode}]: [${e.getMessage}] so returning 500 to consumer")
-            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-          case _: CircuitBreakerOpenException =>
-            logger.error("unhealthy state entered so returning 500 to consumer with message service unavailble")
-            Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
-          case NonFatal(e) =>
-            logger.error(s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
-            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-        }
+          })
+          .recover(recoverException(asr, hc))
       case Left(result) =>
         Future.successful(Left(result))
     }
+  }
+
+  private def recoverException[A](implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
+    case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
+      val body = XML.loadString(e.response.body)
+      val errorCode: NodeSeq = body \ "errorCode"
+      val errorCodeText = errorCode.text
+      matchErrorCode(errorCodeText)
+    case e: Non2xxResponseException if e.responseCode == FORBIDDEN && config.informationConfig.payloadForbiddenEnabled =>
+      returnErrorResult(asr, e, 403, ErrorResponse.ErrorPayloadForbidden)
+    case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
+      return500ErrorResult(asr, e)
+    case e: HttpException if e.responseCode == NOT_FOUND =>
+      returnErrorResult(asr, e, 500, customNotFoundResponse)
+    case e: HttpException =>
+      return500ErrorResult(asr, e)
+    case _: CircuitBreakerOpenException =>
+      logger.error("unhealthy state entered so returning 500 to consumer with message service unavailble")
+      Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
+    case NonFatal(e) =>
+      logger.error(s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
+      Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+  }
+
+  private def return500ErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException): Left[Result, Nothing] = {
+    returnErrorResult(asr, e, 500, ErrorInternalServerError)
+  }
+
+  private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, returnCode: Int, errorResponse: ErrorResponse): Left[Result, Nothing] = {
+    logger.warn(s"declaration [$endpointName] call failed with backend http status code of [${e.responseCode}]: [${e.getMessage}] so returning [$returnCode] to consumer")
+    Left(errorResponse.XmlResult.withConversationId)
   }
 
   def processError(errorResponse: ErrorResponse)(implicit r: HasConversationId): Left[Result, Nothing] = {
