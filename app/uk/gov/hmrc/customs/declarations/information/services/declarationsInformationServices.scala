@@ -21,7 +21,7 @@ import play.api.http.HttpEntity
 import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, NotFoundCode, errorInternalServerError}
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorPayloadForbidden, NotFoundCode, errorInternalServerError}
 import uk.gov.hmrc.customs.declarations.information.connectors._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
@@ -209,29 +209,22 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
 
   private def recoverException[A](implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
     case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
-      val body = XML.loadString(e.response.body)
-      val errorCode: NodeSeq = body \ "errorCode"
-      val errorCodeText = errorCode.text
-      matchErrorCode(errorCodeText)
+      val errorCode: NodeSeq = XML.loadString(e.response.body) \ "errorCode"
+      matchErrorCode(errorCode.text)
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN && config.informationConfig.payloadForbiddenEnabled =>
-      returnErrorResult(asr, e, FORBIDDEN, ErrorResponse.ErrorPayloadForbidden)
+      returnErrorResult(asr, e, FORBIDDEN, ErrorPayloadForbidden)
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
-      return500ErrorResult(asr, e)
+      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
     case e: HttpException if e.responseCode == NOT_FOUND =>
-      return500ErrorResult(asr, e, customNotFoundResponse)
+      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, customNotFoundResponse)
     case e: HttpException =>
-      return500ErrorResult(asr, e)
+      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
     case _: CircuitBreakerOpenException =>
       logger.error("unhealthy state entered so returning 500 to consumer with message service unavailable")
       Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
     case NonFatal(e) =>
       logger.error(s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
       Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-  }
-
-  private def return500ErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException,
-                                      errorResponse: ErrorResponse = ErrorInternalServerError): Left[Result, Nothing] = {
-    returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, errorResponse)
   }
 
   private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, returnCode: Int, errorResponse: ErrorResponse): Left[Result, Nothing] = {
