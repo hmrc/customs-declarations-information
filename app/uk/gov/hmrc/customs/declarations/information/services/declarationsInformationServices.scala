@@ -218,7 +218,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
       return500ErrorResult(asr, e)
     case e: HttpException if e.responseCode == NOT_FOUND =>
-      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, customNotFoundResponse)
+      return500ErrorResult(asr, e, customNotFoundResponse)
     case e: HttpException =>
       return500ErrorResult(asr, e)
     case _: CircuitBreakerOpenException =>
@@ -229,8 +229,9 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
       Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
   }
 
-  private def return500ErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException): Left[Result, Nothing] = {
-    returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
+  private def return500ErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException,
+                                      errorResponse: ErrorResponse = ErrorInternalServerError): Left[Result, Nothing] = {
+    returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, errorResponse)
   }
 
   private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, returnCode: Int, errorResponse: ErrorResponse): Left[Result, Nothing] = {
