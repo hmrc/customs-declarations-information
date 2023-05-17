@@ -214,15 +214,15 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
       val errorCodeText = errorCode.text
       matchErrorCode(errorCodeText)
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN && config.informationConfig.payloadForbiddenEnabled =>
-      returnErrorResult(asr, e, 403, ErrorResponse.ErrorPayloadForbidden)
+      returnErrorResult(asr, e, FORBIDDEN, ErrorResponse.ErrorPayloadForbidden)
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
       return500ErrorResult(asr, e)
     case e: HttpException if e.responseCode == NOT_FOUND =>
-      returnErrorResult(asr, e, 500, customNotFoundResponse)
+      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, customNotFoundResponse)
     case e: HttpException =>
       return500ErrorResult(asr, e)
     case _: CircuitBreakerOpenException =>
-      logger.error("unhealthy state entered so returning 500 to consumer with message service unavailble")
+      logger.error("unhealthy state entered so returning 500 to consumer with message service unavaliable")
       Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
     case NonFatal(e) =>
       logger.error(s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
@@ -230,7 +230,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
   }
 
   private def return500ErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException): Left[Result, Nothing] = {
-    returnErrorResult(asr, e, 500, ErrorInternalServerError)
+    returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
   }
 
   private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, returnCode: Int, errorResponse: ErrorResponse): Left[Result, Nothing] = {
