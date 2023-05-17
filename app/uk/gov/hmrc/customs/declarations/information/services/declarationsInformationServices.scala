@@ -222,7 +222,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     case e: HttpException =>
       return500ErrorResult(asr, e)
     case _: CircuitBreakerOpenException =>
-      logger.error("unhealthy state entered so returning 500 to consumer with message service unavaliable")
+      logger.error("unhealthy state entered so returning 500 to consumer with message service unavailable")
       Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
     case NonFatal(e) =>
       logger.error(s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
