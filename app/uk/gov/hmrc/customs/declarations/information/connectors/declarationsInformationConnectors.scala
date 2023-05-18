@@ -37,6 +37,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
+import scala.util.control.NonFatal
 
 @Singleton
 class DeclarationStatusConnector @Inject()(http: HttpClient,
@@ -166,7 +167,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
       case httpError: HttpException =>
         logger.error(s"Call to $configKey failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
         Future.failed(httpError)
-      case e: Throwable =>
+      case NonFatal(e) =>
         logger.error(s"Call to $configKey failed. url=$url")
         Future.failed(e)
     }
