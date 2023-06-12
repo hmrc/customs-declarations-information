@@ -90,3 +90,5 @@ server.pid
 .DS_Store
 .AppleDouble
 .LSOverride
+
+.gitkeep
