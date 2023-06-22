@@ -14,9 +14,8 @@ import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "2.12.11"
-targetJvm := "jvm-1.8"
-val silencerVersion = "1.7.0"
+scalaVersion := "2.13.11"
+targetJvm := "jvm-11"
 
 lazy val ComponentTest = config("component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
@@ -43,13 +42,7 @@ lazy val microservice = (project in file("."))
     unitTestSettings,
     integrationComponentTestSettings,
     allTest,
-    scoverageSettings,
-    // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
+    scoverageSettings
   )
   .settings(majorVersion := 0)
 
