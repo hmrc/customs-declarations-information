@@ -28,8 +28,8 @@ def forkedJvmPerTestConfig(tests: Seq[TestDefinition], packages: String*): Seq[G
   } toSeq
 
 lazy val testAll = TaskKey[Unit]("test-all")
-lazy val allTest = Seq(testAll := (test in ComponentTest)
-  .dependsOn((test in CdsIntegrationComponentTest).dependsOn(test in Test)).value)
+lazy val allTest = Seq(testAll := (ComponentTest / test)
+  .dependsOn((CdsIntegrationComponentTest / test).dependsOn(Test / test)).value)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala)
@@ -49,7 +49,7 @@ lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
     Seq(
       Test / testOptions := Seq(Tests.Filter(unitTestFilter)),
-      Test / unmanagedSourceDirectories := Seq((baseDirectory in Test).value / "test"),
+      Test / unmanagedSourceDirectories := Seq((Test / baseDirectory).value / "test"),
       addTestReportOption(Test, "test-reports")
     )
 
@@ -59,7 +59,7 @@ lazy val integrationComponentTestSettings =
       CdsIntegrationComponentTest / testOptions := Seq(Tests.Filter(integrationComponentTestFilter)),
       CdsIntegrationComponentTest / parallelExecution := false,
       addTestReportOption(CdsIntegrationComponentTest, "int-comp-test-reports"),
-      CdsIntegrationComponentTest / testGrouping := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
+      CdsIntegrationComponentTest / testGrouping := forkedJvmPerTestConfig((Test / definedTests).value, "integration", "component")
     )
 
 lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
