@@ -69,15 +69,15 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     val maybePageNumber = icr.request.getQueryString("pageNumber")
 
   val searchParameters: Either[ErrorResponse, SearchParametersRequest[A]] = for {
-    eori <- validateEori(maybeEori).right
-    partyRole <- validatePartyRole(maybePartyRole).right
-    declarationCategory <- validateDeclarationCategory(maybeDeclarationCategory).right
-    goodsLocationCode <- validateGoodsLocationCode(maybeGoodsLocationCode).right
-    declarationStatus <- validateDeclarationStatus(maybeDeclarationStatus).right
-    dateFrom <- validateDate(maybeDateFrom).right
-    dateTo <- validateDate(maybeDateTo).right
+    eori <- validateEori(maybeEori)
+    partyRole <- validatePartyRole(maybePartyRole)
+    declarationCategory <- validateDeclarationCategory(maybeDeclarationCategory)
+    goodsLocationCode <- validateGoodsLocationCode(maybeGoodsLocationCode)
+    declarationStatus <- validateDeclarationStatus(maybeDeclarationStatus)
+    dateFrom <- validateDate(maybeDateFrom)
+    dateTo <- validateDate(maybeDateTo)
     dateChronology <- validateDateChronology(dateFrom, dateTo)
-    pageNumber <- validatePageNumber(maybePageNumber).right
+    pageNumber <- validatePageNumber(maybePageNumber)
   } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel,
     Some(SearchParameters(eori, partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
 
@@ -86,7 +86,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       logger.warn(s"Rejected declaration information search request with status code ${error.httpStatusCode} and body\n ${error.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
       Left(error.XmlResult.withConversationId)
     }  else {
-      Right(searchParameters.right.get)
+      Right(searchParameters.toOption.get)
     }
   }
 

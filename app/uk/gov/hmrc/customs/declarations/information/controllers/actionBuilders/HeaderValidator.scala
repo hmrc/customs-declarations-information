@@ -41,7 +41,7 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
     def hasXClientId = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
 
     val theResult: Either[ErrorResponse, ExtractedHeaders] = for {
-      xClientIdValue <- hasXClientId.right
+      xClientIdValue <- hasXClientId
     } yield {
       logger.debug(
           s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")

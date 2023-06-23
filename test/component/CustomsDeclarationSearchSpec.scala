@@ -123,15 +123,15 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
   val validNonCspRequestV2: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpoint = endpointAllValid, headers = ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2).fromNonCsp
   val invalidPartyRoleRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointInvalidPartyRole).fromCsp
 
-  override protected def beforeAll() {
+  override def beforeAll(): Unit = {
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 
-  override protected def afterAll() {
+  override protected def afterAll(): Unit = {
     stopMockServer()
   }
 
@@ -175,7 +175,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid search xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -202,7 +202,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -229,7 +229,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")

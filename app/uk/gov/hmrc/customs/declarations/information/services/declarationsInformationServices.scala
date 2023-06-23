@@ -17,7 +17,6 @@
 package uk.gov.hmrc.customs.declarations.information.services
 
 import akka.pattern.CircuitBreakerOpenException
-import akka.pattern.StatusReply.ErrorMessage
 import play.api.http.HttpEntity
 import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
@@ -34,9 +33,8 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
 import scala.util.control.NonFatal
-import scala.xml.{Elem, NodeSeq, XML}
+import scala.xml.{Elem, XML}
 
 @Singleton
 class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResponseFilterService,
@@ -201,13 +199,13 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
             logFilteringDuration(LocalDateTime.now)
             Right(filteredResponse)
           })
-          .recover(recoverException(asr, hc))
+          .recover(recoverException(asr))
       case Left(result) =>
         Future.successful(Left(result))
     }
   }
 
-  private def recoverException[A](implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
+  private def recoverException[A](implicit asr: AuthorisedRequest[A]): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
     case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
       returnErrorResult(asr, (XML.loadString(e.response.body) \ "errorCode").text)
 

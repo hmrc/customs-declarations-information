@@ -147,15 +147,15 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
   val missingIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingIR).fromCsp
   val spacesIrRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointIRWithSpaces).fromCsp
 
-  override protected def beforeAll() {
+  override protected def beforeAll(): Unit = {
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 
-  override protected def afterAll() {
+  override protected def afterAll(): Unit = {
     stopMockServer()
   }
 
@@ -199,7 +199,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -226,7 +226,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -253,7 +253,7 @@ class CustomsDeclarationStatusSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid status xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
