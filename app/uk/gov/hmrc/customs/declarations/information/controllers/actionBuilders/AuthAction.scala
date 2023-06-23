@@ -41,7 +41,7 @@ abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
       customsAuthService.authAsCsp.map {
         case Right(isCsp) =>
           if (isCsp) {
-            eitherCspAuthData.right.map(authAsCsp => Some(authAsCsp))
+            eitherCspAuthData.map(authAsCsp => Some(authAsCsp))
           } else {
             Right(None)
           }
@@ -53,11 +53,11 @@ abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
 
   protected def eitherCspAuthData[A](implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, AuthorisedAsCsp] = {
     val cpsAuth: Either[ErrorResponse, Csp] = for {
-      maybeBadgeId <- eitherBadgeIdentifier(allowNone = true).right
-      maybeEori <- eitherEori.right
+      maybeBadgeId <- eitherBadgeIdentifier(allowNone = true)
+      maybeEori <- eitherEori
     } yield Csp(maybeEori, maybeBadgeId)
 
-    if (cpsAuth.isRight && cpsAuth.right.get.badgeIdentifier.isEmpty && cpsAuth.right.get.eori.isEmpty) {
+    if (cpsAuth.isRight && cpsAuth.toOption.get.badgeIdentifier.isEmpty && cpsAuth.toOption.get.eori.isEmpty) {
       logger.error(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName are missing")
       Left(errorResponseMissingIdentifiers)
     } else {
