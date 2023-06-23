@@ -7,7 +7,6 @@ import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -49,21 +48,21 @@ lazy val microservice = (project in file("."))
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
     Seq(
-      testOptions in Test := Seq(Tests.Filter(unitTestFilter)),
-      unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test"),
+      Test / testOptions := Seq(Tests.Filter(unitTestFilter)),
+      Test / unmanagedSourceDirectories := Seq((baseDirectory in Test).value / "test"),
       addTestReportOption(Test, "test-reports")
     )
 
 lazy val integrationComponentTestSettings =
   inConfig(CdsIntegrationComponentTest)(Defaults.testTasks) ++
     Seq(
-      testOptions in CdsIntegrationComponentTest := Seq(Tests.Filter(integrationComponentTestFilter)),
-      parallelExecution in CdsIntegrationComponentTest := false,
+      CdsIntegrationComponentTest / testOptions := Seq(Tests.Filter(integrationComponentTestFilter)),
+      CdsIntegrationComponentTest / parallelExecution := false,
       addTestReportOption(CdsIntegrationComponentTest, "int-comp-test-reports"),
-      testGrouping in CdsIntegrationComponentTest := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
+      CdsIntegrationComponentTest / testGrouping := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
     )
 
-lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
+lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(
@@ -76,7 +75,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
-  parallelExecution in Test := false
+  Test / parallelExecution := false
 )
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9834")
@@ -90,9 +89,9 @@ val compileDependencies = Seq(customsApiCommon)
 
 val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests, flexmark)
 
-unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
-unmanagedResourceDirectories in Test += baseDirectory.value / "test" / "resources"
-(managedClasspath in Runtime) += (packageBin in Assets).value
+Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
+Test / unmanagedResourceDirectories += baseDirectory.value / "test" / "resources"
+(Runtime / managedClasspath) += (Assets / packageBin).value
 
 libraryDependencies ++= compileDependencies ++ testDependencies
 
@@ -102,7 +101,7 @@ val zipWcoXsds = taskKey[Pipeline.Stage]("Zips up all WCO status XSDs and exampl
 zipWcoXsds := { mappings: Seq[PathMapping] =>
   val targetDir = WebKeys.webTarget.value / "zip"
   val zipFiles: Iterable[java.io.File] =
-    ((resourceDirectory in Assets).value / "api" / "conf")
+    ((Assets / resourceDirectory).value / "api" / "conf")
       .listFiles
       .filter(_.isDirectory)
       .map { dir =>
