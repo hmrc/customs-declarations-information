@@ -42,9 +42,13 @@ class BackendStatusPayloadCreatorSpec extends UnitSpec {
 
   "BackendStatusPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
+
     def createMrnPayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))
+
     def createDucrPayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, ducr, Some(apiSubscriptionFieldsResponse))
+
     def createUcrPayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, ucr, Some(apiSubscriptionFieldsResponse))
+
     def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
 
     "sample MRN request passes schema validation" in {
