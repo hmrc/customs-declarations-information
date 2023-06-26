@@ -156,8 +156,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       And("the response body is empty")
       stringToXml(contentAsString(result)) shouldBe stringToXml(ServiceUnavailableError)
       schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(ServiceUnavailableError)))
-      }
     }
+  }
 
   Feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
     Scenario("An authorised CSP successfully requests a search") {
@@ -212,7 +212,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV1))))
     }
   }
-  
+
   Feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
     Scenario("An authorised non-CSP successfully requests search") {
       Given("A non-CSP wants the versions of a declaration")
