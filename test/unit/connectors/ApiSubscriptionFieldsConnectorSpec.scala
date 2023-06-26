@@ -35,7 +35,6 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
-
   with BeforeAndAfterEach
   with Eventually
   with ApiSubscriptionFieldsTestData {

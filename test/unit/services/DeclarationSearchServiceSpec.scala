@@ -40,7 +40,7 @@ import util.UnitSpec
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
+class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
   private val dateTime = new DateTime()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
@@ -74,7 +74,7 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
       mockLogger, mockDeclarationSearchConnector, mockDateTimeProvider, stubUniqueIdsService, mockInformationConfigService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
-      await(service.send(mrn) (vpr, hc))
+      await(service.send(mrn)(vpr, hc))
     }
   }
 
@@ -110,14 +110,15 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 404 error response when backend call fails with 500 and errorCode CDS60001" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60001</cds:errorCode>
-                                               |        <cds:errorMessage>Declaration Not Found</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
-        )
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60001</cds:errorCode>
+          |        <cds:errorMessage>Declaration Not Found</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
+      )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
@@ -129,13 +130,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 400 error response when backend call fails with 500 and errorCode CDS60002" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60002</cds:errorCode>
-                                               |        <cds:errorMessage>Search parameter invalid</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60002</cds:errorCode>
+          |        <cds:errorMessage>Search parameter invalid</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -148,13 +150,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60003</cds:errorCode>
-                                               |        <cds:errorMessage>Internal server error</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60003</cds:errorCode>
+          |        <cds:errorMessage>Internal server error</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -167,13 +170,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60005" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60005</cds:errorCode>
-                                               |        <cds:errorMessage>Page Number is Out of Bound</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60005</cds:errorCode>
+          |        <cds:errorMessage>Page Number is Out of Bound</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -186,13 +190,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60006" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60006</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Party Role</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60006</cds:errorCode>
+          |        <cds:errorMessage>Invalid Party Role</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -205,13 +210,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60007" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60007</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Declaration Status</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60007</cds:errorCode>
+          |        <cds:errorMessage>Invalid Declaration Status</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -224,13 +230,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60008" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60008</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Declaration Category</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60008</cds:errorCode>
+          |        <cds:errorMessage>Invalid Declaration Category</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -243,13 +250,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60009" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60009</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Date Range</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60009</cds:errorCode>
+          |        <cds:errorMessage>Invalid Date Range</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -262,13 +270,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60010" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60010</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Goods Location Code</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60010</cds:errorCode>
+          |        <cds:errorMessage>Invalid Goods Location Code</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -281,13 +290,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 400 error response when backend call fails with 500 and errorCode CDS60011" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60011</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Declaration Submission Channel</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60011</cds:errorCode>
+          |        <cds:errorMessage>Invalid Declaration Submission Channel</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -300,13 +310,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 400 error response when backend call fails with 500 and errorCode CDS60012" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>CDS60012</cds:errorCode>
-                                               |        <cds:errorMessage>Invalid Page Number</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>CDS60012</cds:errorCode>
+          |        <cds:errorMessage>Invalid Page Number</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
@@ -319,13 +330,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
     }
 
     "return 500 error response when backend call fails with 500 and errorCode not CDS60003" in new SetUp() {
-      when(mockHttpResponse.body).thenReturn("""<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
-                                               |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
-                                               |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
-                                               |        <cds:errorCode>an-error-code</cds:errorCode>
-                                               |        <cds:errorMessage>Internal server error</cds:errorMessage>
-                                               |        <cds:source/>
-                                               |      </cds:errorDetail>""".stripMargin
+      when(mockHttpResponse.body).thenReturn(
+        """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
+          |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
+          |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
+          |        <cds:errorCode>an-error-code</cds:errorCode>
+          |        <cds:errorMessage>Internal server error</cds:errorMessage>
+          |        <cds:source/>
+          |      </cds:errorDetail>""".stripMargin
       )
       when(mockDeclarationSearchConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],

@@ -39,7 +39,7 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationVersionConnectorSpec extends UnitSpec  with BeforeAndAfterEach with Eventually {
+class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
 
   private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
