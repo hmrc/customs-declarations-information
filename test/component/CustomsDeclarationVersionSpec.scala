@@ -141,15 +141,15 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
   val validMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
   val missingMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingMRN).fromCsp
 
-  override protected def beforeAll() {
+  override protected def beforeAll(): Unit = {
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 
-  override protected def afterAll() {
+  override protected def afterAll(): Unit = {
     stopMockServer()
   }
 
@@ -193,7 +193,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -220,7 +220,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -247,7 +247,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")

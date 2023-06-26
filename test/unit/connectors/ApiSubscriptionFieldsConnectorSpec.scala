@@ -52,7 +52,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val badRequestException = new BadRequestException("Emulated 400 response from a web call")
   private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     reset(mockLogger, mockWSGetImpl, mockInformationConfigService)
 
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)

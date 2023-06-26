@@ -41,7 +41,7 @@ class InformationDocumentationControllerSpec extends PlaySpec  with Results with
     new InformationDocumentationController(mock(classOf[Assets]), Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
       .definition()
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     reset(mockService)
   }
 
