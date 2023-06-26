@@ -48,7 +48,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestCspAuthorisedRequest
   private implicit val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])
 
-  override protected def beforeAll() : Unit ={
+  override protected def beforeAll(): Unit = {
     startMockServer()
   }
 
@@ -57,7 +57,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
     resetMockServer()
   }
 
-  override protected def afterAll() : Unit ={
+  override protected def afterAll(): Unit = {
     stopMockServer()
   }
 
@@ -119,6 +119,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
 
       // This is a quick hack to make sure this test are not failing on localhost
       def assertOnJenkins(): Unit = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/127.0.0.1:11111'")
+
       def assertOnLocalhost(): Unit = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/0:0:0:0:0:0:0:1:11111'")
 
       Try(assertOnJenkins()).getOrElse(assertOnLocalhost())
