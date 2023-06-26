@@ -25,12 +25,14 @@ import util.UnitSpec
 import scala.concurrent.ExecutionContext
 import scala.xml.{Elem, SAXException}
 
-class DeclarationFullResponseSpec extends UnitSpec  with BeforeAndAfterEach {
+class DeclarationFullResponseSpec extends UnitSpec with BeforeAndAfterEach {
 
   protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   import ValidateXmlAgainstSchema._
+
   val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
+
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   def getFirstValidationException(xml: Elem): SAXException = {

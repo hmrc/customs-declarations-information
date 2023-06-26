@@ -33,7 +33,7 @@ import util.UnitSpec
 
 import scala.concurrent.ExecutionContext
 
-class ShutterCheckActionSpec extends UnitSpec  {
+class ShutterCheckActionSpec extends UnitSpec {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext

@@ -31,7 +31,7 @@ import util.UnitSpec
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class BackendStatusPayloadCreatorSpec extends UnitSpec  {
+class BackendStatusPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z

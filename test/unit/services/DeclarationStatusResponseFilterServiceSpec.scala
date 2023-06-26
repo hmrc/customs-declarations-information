@@ -27,11 +27,11 @@ import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-class DeclarationStatusResponseFilterServiceSpec extends UnitSpec  {
+class DeclarationStatusResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
+    new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
         case n => n
@@ -40,7 +40,9 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec  {
   }
 
   import ValidateXmlAgainstSchema._
+
   val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalStatusResponse.xsd")
+
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
@@ -158,7 +160,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec  {
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: StatusResponseFilterService): Assertion = {
-    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform( generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime) )
+    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime))
     val statusResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
 
     xmlValidationService.validate(statusResponseWithMissingValues) should be(true)

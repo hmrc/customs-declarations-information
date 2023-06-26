@@ -29,7 +29,7 @@ import util.UnitSpec
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.TestData._
 
-class InformationLoggerSpec extends UnitSpec  {
+class InformationLoggerSpec extends UnitSpec {
 
   trait SetUp {
     val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])

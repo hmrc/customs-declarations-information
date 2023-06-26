@@ -35,7 +35,7 @@ import util.XmlOps.stringToXml
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class BackendFullPayloadCreatorSpec extends UnitSpec  {
+class BackendFullPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
@@ -43,10 +43,10 @@ class BackendFullPayloadCreatorSpec extends UnitSpec  {
   private val payloadCreator = new BackendFullPayloadCreator()
 
   def xmlFullValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveFullDeclarationDataRequest.xsd").get)
-  
+
   "BackendFullPayloadCreator" should {
 
-    def createFullPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq =  payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
+    def createFullPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
 
     "sample full request passes schema validation" in {
       xmlFullValidationService.validate(createFullPayload(TestCspAuthorisedRequest)) should be(true)

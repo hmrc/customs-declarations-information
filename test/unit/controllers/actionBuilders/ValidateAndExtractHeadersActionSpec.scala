@@ -31,7 +31,7 @@ import util.TestData._
 
 import scala.concurrent.ExecutionContext
 
-class ValidateAndExtractHeadersActionSpec extends UnitSpec  with TableDrivenPropertyChecks {
+class ValidateAndExtractHeadersActionSpec extends UnitSpec with TableDrivenPropertyChecks {
 
   trait SetUp {
     implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext

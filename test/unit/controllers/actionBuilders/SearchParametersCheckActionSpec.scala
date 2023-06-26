@@ -31,7 +31,7 @@ import java.time.LocalDate
 import java.util.UUID
 import scala.concurrent.ExecutionContext
 
-class SearchParametersCheckActionSpec extends UnitSpec  {
+class SearchParametersCheckActionSpec extends UnitSpec {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
@@ -43,15 +43,15 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
     protected val searchParametersCheckAction = new SearchParametersCheckAction(mockInformationLogger, mockInformationConfigService)
     protected val conversationId: ConversationId = ConversationId(UUID.fromString("4e2f2ec0-d82c-46d3-85d6-bac4ef4fc623"))
 
-    protected  def declarationSearchError(code: String, parameterName: String): String =
+    protected def declarationSearchError(code: String, parameterName: String): String =
       s"""<?xml version='1.0' encoding='UTF-8'?>
-        |<errorResponse>
-        |      <code>${code}</code>
-        |      <message>Invalid ${parameterName} parameter</message>
-        |</errorResponse>
+         |<errorResponse>
+         |      <code>${code}</code>
+         |      <message>Invalid ${parameterName} parameter</message>
+         |</errorResponse>
     """.stripMargin
 
-    protected  def declarationSearchDateError(code: String, parameterName: String): String =
+    protected def declarationSearchDateError(code: String, parameterName: String): String =
       s"""<?xml version='1.0' encoding='UTF-8'?>
          |<errorResponse>
          |      <code>${code}</code>
@@ -62,7 +62,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
   }
 
   "SearchParametersCheckAction" should {
-    
+
     "accept all valid parameters parameters" in new SetUp {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET",
@@ -71,7 +71,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
       private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
-    
+
     "accept a valid partyRole and declarationCategory parameters case insensitive" in new SetUp {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=iM"))

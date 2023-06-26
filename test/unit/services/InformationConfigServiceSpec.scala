@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.UnitSpec
 
-class InformationConfigServiceSpec extends UnitSpec  {
+class InformationConfigServiceSpec extends UnitSpec {
   private val validAppConfig: Config = ConfigFactory.parseString(
     """
       |microservice.services.api-subscription-fields.host=some-host

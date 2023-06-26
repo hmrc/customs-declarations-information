@@ -58,9 +58,9 @@ class AuthActionSpec extends UnitSpec
     errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing")
   private val errorResponseEoriIdentifierHeaderInvalid =
     errorBadRequest(s"X-Submitter-Identifier header is invalid")
-  
+
   trait SetUp extends AuthConnectorStubbing {
-    private val mockLogger= mock(classOf[InformationLogger])
+    private val mockLogger = mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockLogger)
     protected val headerValidator = new HeaderValidator(mockLogger)
@@ -187,7 +187,7 @@ class AuthActionSpec extends UnitSpec
         actual shouldBe Left(ErrorInternalServerError.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyCspAuthorisationCalled(1)
       }
-      
+
     }
   }
 }

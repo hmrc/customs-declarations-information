@@ -25,12 +25,14 @@ import util.VersionTestXMLData.{expectedVersionPayloadRequest, validFilteredVers
 import scala.concurrent.ExecutionContext
 import scala.xml.{Elem, SAXException}
 
-class DeclarationVersionResponseSpec extends UnitSpec  with BeforeAndAfterEach {
+class DeclarationVersionResponseSpec extends UnitSpec with BeforeAndAfterEach {
 
   protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   import ValidateXmlAgainstSchema._
+
   val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalVersionResponse.xsd")
+
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   def getFirstValidationException(xml: Elem): SAXException = {

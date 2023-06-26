@@ -28,7 +28,7 @@ import util.TestData.{conversationId, stubUniqueIdsService}
 
 import scala.concurrent.ExecutionContext
 
-class ConversationIdActionSpec extends UnitSpec  {
+class ConversationIdActionSpec extends UnitSpec {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext

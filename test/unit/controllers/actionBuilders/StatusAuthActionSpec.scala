@@ -39,7 +39,7 @@ class StatusAuthActionSpec extends UnitSpec
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   trait SetUp extends AuthConnectorStubbing {
-    private val mockLogger= mock(classOf[InformationLogger])
+    private val mockLogger = mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockLogger)
     protected val headerValidator = new HeaderValidator(mockLogger)

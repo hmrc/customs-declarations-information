@@ -48,7 +48,7 @@ import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationFullControllerSpec extends UnitSpec
-  with Matchers  with BeforeAndAfterEach {
+  with Matchers with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
 
@@ -84,7 +84,7 @@ class DeclarationFullControllerSpec extends UnitSpec
       mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
-    protected val controller: DeclarationFullController = new DeclarationFullController (
+    protected val controller: DeclarationFullController = new DeclarationFullController(
       stubShutterCheckAction,
       stubValidateAndExtractHeadersAction,
       stubAuthStatusAction,

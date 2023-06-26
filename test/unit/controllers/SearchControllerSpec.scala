@@ -48,7 +48,7 @@ import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class SearchControllerSpec extends UnitSpec
-  with Matchers  with BeforeAndAfterEach {
+  with Matchers with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
 

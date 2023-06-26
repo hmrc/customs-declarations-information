@@ -31,7 +31,7 @@ import util.XmlOps.stringToXml
 import java.util.UUID
 import scala.concurrent.ExecutionContext
 
-class DeclarationFullCheckActionSpec extends UnitSpec  {
+class DeclarationFullCheckActionSpec extends UnitSpec {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
@@ -68,7 +68,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec  {
 
     "accept version payload without declarationSubmissionChannel from external client id" in new SetUp {
 
-      val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None ,FakeRequest("GET", "/mrn/ABC/version"))
+      val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/mrn/ABC/version"))
 
       val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId

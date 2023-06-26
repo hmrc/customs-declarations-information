@@ -27,11 +27,11 @@ import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-class DeclarationFullResponseFilterServiceSpec extends UnitSpec  {
+class DeclarationFullResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
+    new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
         case n => n
@@ -40,7 +40,9 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec  {
   }
 
   import ValidateXmlAgainstSchema._
+
   val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
+
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
@@ -55,14 +57,14 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec  {
     }
 
     "ensure element CreatedDateTime is present" in new SetUp {
-      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails"  \ "CreatedDateTime" \ "DateTimeString"
+      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "CreatedDateTime" \ "DateTimeString"
 
       node.text shouldBe "20190702110757Z"
       node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
     "ensure element LRN is present" in new SetUp {
-      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails"  \ "LRN"
+      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "LRN"
 
       node.text shouldBe "20GBAKZ81EQJ2WXYZ"
     }
