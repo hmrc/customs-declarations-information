@@ -38,6 +38,8 @@ import util.AuthConnectorStubbing
 import util.RequestHeaders.X_CONVERSATION_ID_NAME
 import util.TestData._
 
+import scala.concurrent.ExecutionContext
+
 class AuthActionSpec extends UnitSpec
 
   with TableDrivenPropertyChecks
@@ -45,7 +47,7 @@ class AuthActionSpec extends UnitSpec
 
   private lazy val validatedHeadersRequest: ValidatedHeadersRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest
 
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   private val errorResponseUnauthorisedGeneral =
     ErrorResponse(Status.UNAUTHORIZED, UnauthorizedCode, "Unauthorised request")
   private val errorResponseEoriNotFoundInCustomsEnrolment =

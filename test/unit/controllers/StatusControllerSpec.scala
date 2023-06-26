@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
-
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
@@ -46,7 +45,7 @@ import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, StatusTestXMLData, UnitSpec}
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 
 class StatusControllerSpec extends UnitSpec
@@ -66,7 +65,7 @@ class StatusControllerSpec extends UnitSpec
     protected val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])
     protected val mockErrorResponse: ErrorResponse = mock(classOf[ErrorResponse])
     protected val mockResult: Result = mock(classOf[Result])
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
     protected val stubHttpResponse = HttpResponse(Status.OK, StatusTestXMLData.validBackendStatusResponse.toString)
 

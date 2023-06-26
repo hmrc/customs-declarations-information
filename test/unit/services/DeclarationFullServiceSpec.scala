@@ -38,8 +38,7 @@ import util.TestData._
 import util.UnitSpec
 
 import java.util.UUID
-import scala.concurrent.Future
-import scala.util.Left
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationFullServiceSpec extends UnitSpec  with BeforeAndAfterEach{
   private val dateTime = new DateTime()
@@ -57,7 +56,7 @@ class DeclarationFullServiceSpec extends UnitSpec  with BeforeAndAfterEach{
   protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
   protected val mrn = Mrn("theMrn")
   protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId
-  protected implicit val ec = Helpers.stubControllerComponents().executionContext
+  protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)

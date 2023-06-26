@@ -17,18 +17,18 @@
 package unit.services
 
 import org.scalatest.Assertion
-
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.SearchResponseFilterService
 import util.UnitSpec
 import util.SearchTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationSearchResponse, validBackendSearchResponse}
 
+import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
 class DeclarationSearchResponseFilterServiceSpec extends UnitSpec  {
-  implicit val ec = Helpers.stubControllerComponents().executionContext
+  implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
     new RuleTransformer( new RewriteRule {
@@ -44,7 +44,7 @@ class DeclarationSearchResponseFilterServiceSpec extends UnitSpec  {
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
-    implicit val service = new SearchResponseFilterService()
+    implicit val service: SearchResponseFilterService = new SearchResponseFilterService()
     val searchResponseWithAllValues: NodeSeq = service.transform(generateDeclarationSearchResponse(receivedDate = defaultDateTime))
   }
 

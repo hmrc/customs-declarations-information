@@ -29,10 +29,12 @@ import util.UnitSpec
 import util.RequestHeaders
 import util.TestData._
 
+import scala.concurrent.ExecutionContext
+
 class ValidateAndExtractHeadersActionSpec extends UnitSpec  with TableDrivenPropertyChecks {
 
   trait SetUp {
-    implicit val ec = Helpers.stubControllerComponents().executionContext
+    implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     val mockLogger: InformationLogger = mock(classOf[InformationLogger])
     val mockHeaderStatusValidator: HeaderValidator = mock(classOf[HeaderValidator])
     val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(mockHeaderStatusValidator)

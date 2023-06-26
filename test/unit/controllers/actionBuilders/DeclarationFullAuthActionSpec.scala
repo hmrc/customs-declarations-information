@@ -29,12 +29,14 @@ import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import util.TestData._
 import util.{AuthConnectorStubbing, UnitSpec}
 
+import scala.concurrent.ExecutionContext
+
 class DeclarationFullAuthActionSpec extends UnitSpec
 
   with TableDrivenPropertyChecks
   with BeforeAndAfterEach {
 
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   trait SetUp extends AuthConnectorStubbing {
     private val mockLogger= mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])

@@ -29,11 +29,12 @@ import util.XmlOps.stringToXml
 
 import java.time.LocalDate
 import java.util.UUID
+import scala.concurrent.ExecutionContext
 
 class SearchParametersCheckActionSpec extends UnitSpec  {
 
   trait SetUp {
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
