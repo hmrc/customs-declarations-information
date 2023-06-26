@@ -82,7 +82,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     Some(SearchParameters(eori, partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
 
     if(searchParameters.isLeft) {
-      val error = searchParameters.left.get
+      val error = searchParameters.swap.toOption.get
       logger.warn(s"Rejected declaration information search request with status code ${error.httpStatusCode} and body\n ${error.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
       Left(error.XmlResult.withConversationId)
     }  else {

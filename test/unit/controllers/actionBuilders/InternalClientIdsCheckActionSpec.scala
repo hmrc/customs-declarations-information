@@ -68,7 +68,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec  {
 
       val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).right.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -76,7 +76,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec  {
 
       val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).right.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -84,7 +84,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec  {
 
       val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=INVALID"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).left.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSubmissionChannelInvalid)
     }
@@ -93,7 +93,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec  {
 
       val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("NOTMATCH"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).left.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSubmissionChannelInvalid)
     }

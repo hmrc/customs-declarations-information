@@ -36,7 +36,7 @@ class DeclarationStatusResponseSpec extends UnitSpec  with BeforeAndAfterEach {
     val result = xmlValidationService.validateWithErrors(xml)
     result.isLeft shouldBe true
 
-    result.left.get.head
+    result.swap.toOption.get.head
   }
 
   "A status query response" should {

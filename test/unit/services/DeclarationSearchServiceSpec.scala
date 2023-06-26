@@ -87,14 +87,14 @@ class DeclarationSearchServiceSpec extends UnitSpec  with BeforeAndAfterEach{
 
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
-      result.right.get.body shouldBe "<xml>transformed</xml>"
+      result.toOption.get.body shouldBe "<xml>transformed</xml>"
       verify(mockDeclarationSearchConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
       implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
-      result.right.get.body shouldBe "<xml>transformed</xml>"
+      result.toOption.get.body shouldBe "<xml>transformed</xml>"
       verify(mockDeclarationSearchConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
     }
 
