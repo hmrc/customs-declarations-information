@@ -44,27 +44,29 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
       xClientIdValue <- hasXClientId
     } yield {
       logger.debug(
-          s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
+        s"\n$XClientIdHeaderName header passed validation: $xClientIdValue")
       ExtractedHeadersImpl(ClientId(xClientIdValue))
     }
     theResult
   }
 
   private def validateHeader[A](headerName: String, rule: String => Boolean, errorResponse: ErrorResponse)
-                                 (implicit apiVersionRequest: ApiVersionRequest[A], h: Headers): Either[ErrorResponse, String] = {
+                               (implicit apiVersionRequest: ApiVersionRequest[A], h: Headers): Either[ErrorResponse, String] = {
     val left = Left(errorResponse)
+
     def leftWithLog(headerName: String) = {
       logger.error(s"Error - header '$headerName' not present")
       left
     }
+
     def leftWithLogContainingValue(headerName: String, value: String) = {
       logger.error(s"Error - header '$headerName' value '$value' is not valid")
       left
     }
 
-    h.get(headerName).fold[Either[ErrorResponse, String]]{
+    h.get(headerName).fold[Either[ErrorResponse, String]] {
       leftWithLog(headerName)
-    }{
+    } {
       v =>
         if (rule(v)) Right(v) else leftWithLogContainingValue(headerName, v)
     }

@@ -54,11 +54,11 @@ trait ApiSubscriptionFieldsService {
             logger.warn(msg)
             Left(errorInternalServerError(msg).XmlResult.withConversationId)
           }
-      }).recover {
-        case NonFatal(e) =>
-          logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)
-          Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-      }
+        }).recover {
+          case NonFatal(e) =>
+            logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)
+            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
+        }
       case NonCsp(_) => Future.successful(Right(None))
     }
 

@@ -22,6 +22,8 @@ import org.joda.time.{DateTime, DateTimeZone}
 
 class DateTimeService {
   val UtcZoneId: ZoneId = ZoneId.of("UTC")
+
   def nowUtc(): DateTime = new DateTime(Clock.systemUTC().instant().toEpochMilli, DateTimeZone.UTC)
+
   def zonedDateTimeUtc: ZonedDateTime = ZonedDateTime.now(UtcZoneId)
 }

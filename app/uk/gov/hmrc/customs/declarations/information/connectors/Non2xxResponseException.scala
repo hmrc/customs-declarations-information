@@ -19,11 +19,11 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 import uk.gov.hmrc.http.{HttpException, HttpResponse}
 
 /**
-  * Exception we raise for any HTTPResponse we receive that are not a 2xx statuses.
-  *
-  * Used only to maintain legacy code that previously relied upon http-verbs throwing
-  * UpstreamErrorResponse exceptions for non 2xx statuses
-  *
-  * @param status that we received
-  */
+ * Exception we raise for any HTTPResponse we receive that are not a 2xx statuses.
+ *
+ * Used only to maintain legacy code that previously relied upon http-verbs throwing
+ * UpstreamErrorResponse exceptions for non 2xx statuses
+ *
+ * @param status that we received
+ */
 class Non2xxResponseException(val response: HttpResponse, status: Int) extends HttpException("Received a non 2XX response", status)

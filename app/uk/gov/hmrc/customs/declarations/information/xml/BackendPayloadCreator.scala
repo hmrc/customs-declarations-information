@@ -35,11 +35,11 @@ trait BackendPayloadCreator {
 
 
   def requestCommon[A](conversationId: ConversationId,
-                    correlationId: CorrelationId,
-                    date: DateTime,
-                    searchType: SearchType,
-                    maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-                   (implicit asr: AuthorisedRequest[A]): NodeSeq =
+                       correlationId: CorrelationId,
+                       date: DateTime,
+                       searchType: SearchType,
+                       maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
+                      (implicit asr: AuthorisedRequest[A]): NodeSeq =
     <n1:requestCommon>
     {Seq[NodeSeq](
       <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>, Text(newLineAndIndentation),

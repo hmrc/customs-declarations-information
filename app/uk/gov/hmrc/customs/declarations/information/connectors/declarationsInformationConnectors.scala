@@ -48,7 +48,7 @@ class DeclarationStatusConnector @Inject()(http: HttpClient,
                                            override val cdsLogger: CdsLogger,
                                            override val actorSystem: ActorSystem)
                                           (implicit override val ec: ExecutionContext)
-  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
 
   override val configKey = "declaration-status"
 
@@ -65,8 +65,8 @@ class DeclarationVersionConnector @Inject()(http: HttpClient,
                                             config: InformationConfigService,
                                             override val cdsLogger: CdsLogger,
                                             override val actorSystem: ActorSystem)
-                                          (implicit override val ec: ExecutionContext)
-  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+                                           (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
 
   override val configKey = "declaration-version"
 
@@ -77,14 +77,14 @@ class DeclarationVersionConnector @Inject()(http: HttpClient,
 
 @Singleton
 class DeclarationSearchConnector @Inject()(http: HttpClient,
-                                            logger: InformationLogger,
-                                            backendPayloadCreator: BackendSearchPayloadCreator,
-                                            serviceConfigProvider: ServiceConfigProvider,
-                                            config: InformationConfigService,
-                                            override val cdsLogger: CdsLogger,
-                                            override val actorSystem: ActorSystem)
-                                           (implicit override val ec: ExecutionContext)
-  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+                                           logger: InformationLogger,
+                                           backendPayloadCreator: BackendSearchPayloadCreator,
+                                           serviceConfigProvider: ServiceConfigProvider,
+                                           config: InformationConfigService,
+                                           override val cdsLogger: CdsLogger,
+                                           override val actorSystem: ActorSystem)
+                                          (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
 
   override val configKey = "declaration-search"
 
@@ -101,8 +101,8 @@ class DeclarationFullConnector @Inject()(http: HttpClient,
                                          config: InformationConfigService,
                                          override val cdsLogger: CdsLogger,
                                          override val actorSystem: ActorSystem)
-                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config)  {
+                                        (implicit override val ec: ExecutionContext)
+  extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
 
   override val configKey = "declaration-full"
 
@@ -116,7 +116,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
                                               backendPayloadCreator: BackendPayloadCreator,
                                               serviceConfigProvider: ServiceConfigProvider,
                                               config: InformationConfigService)
-                                          (implicit val ec: ExecutionContext)
+                                             (implicit val ec: ExecutionContext)
   extends CircuitBreakerConnector with HttpErrorFunctions with Status {
 
   override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
@@ -182,7 +182,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
     case _ => true
   }
 
-  protected def logCallDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit ={
+  protected def logCallDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit = {
     val callDuration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
     logger.info(s"Outbound call duration was $callDuration ms")
   }

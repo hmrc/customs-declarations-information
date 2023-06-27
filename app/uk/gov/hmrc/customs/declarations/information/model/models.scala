@@ -33,6 +33,7 @@ case class ConversationId(uuid: UUID) extends AnyVal {
 case class Eori(value: String) extends AnyVal {
   override def toString: String = value
 }
+
 object Eori {
   implicit val writer: Writes[Eori] = Writes[Eori] { x => JsString(x.value) }
   implicit val reader: Reads[Eori] = Reads.of[String].map(new Eori(_))
@@ -69,27 +70,34 @@ case class DeclarationSubmissionChannel(value: String) extends AnyVal {
 sealed trait ApiVersion {
   val value: String
   val configPrefix: String
+
   override def toString: String = value
 }
-object VersionOne extends ApiVersion{
+
+object VersionOne extends ApiVersion {
   override val value: String = "1.0"
   override val configPrefix: String = ""
 }
-object VersionTwo extends ApiVersion{
+
+object VersionTwo extends ApiVersion {
   override val value: String = "2.0"
   override val configPrefix: String = "v2."
 }
 
 sealed trait AuthorisedAs {
 }
+
 sealed trait AuthorisedAsCsp extends AuthorisedAs {
   val eori: Option[Eori]
   val badgeIdentifier: Option[BadgeIdentifier]
 }
+
 case class Csp(eori: Option[Eori], badgeIdentifier: Option[BadgeIdentifier]) extends AuthorisedAsCsp
+
 object Csp {
   def originatingPartyId(csp: Csp): String = csp.eori.fold(csp.badgeIdentifier.get.toString)(e => e.toString)
 }
+
 case class NonCsp(eori: Eori) extends AuthorisedAs
 
 sealed trait SearchType {}
@@ -109,24 +117,28 @@ sealed trait StatusSearchType extends SearchType {
 
 case class Mrn(value: String) extends StatusSearchType {
   override def toString: String = value
+
   val label = "MRN"
   val maxLength: Int = mrnAndUcrMaxLength
 }
 
 case class Ducr(value: String) extends StatusSearchType {
   override def toString: String = value
+
   val label = "DUCR"
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
 }
 
 case class Ucr(value: String) extends StatusSearchType {
   override def toString: String = value
+
   val label = "UCR"
   val maxLength: Int = mrnAndUcrMaxLength
 }
 
 case class InventoryReference(value: String) extends StatusSearchType {
   override def toString: String = value
+
   val label = "InventoryReference"
   val maxLength: Int = ducrAndInventoryReferenceMaxLength
   override lazy val validValue: Boolean = value.nonEmpty && !valueTooLong

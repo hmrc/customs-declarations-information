@@ -68,29 +68,29 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     val maybeDateTo = icr.request.getQueryString("dateTo")
     val maybePageNumber = icr.request.getQueryString("pageNumber")
 
-  val searchParameters: Either[ErrorResponse, SearchParametersRequest[A]] = for {
-    eori <- validateEori(maybeEori)
-    partyRole <- validatePartyRole(maybePartyRole)
-    declarationCategory <- validateDeclarationCategory(maybeDeclarationCategory)
-    goodsLocationCode <- validateGoodsLocationCode(maybeGoodsLocationCode)
-    declarationStatus <- validateDeclarationStatus(maybeDeclarationStatus)
-    dateFrom <- validateDate(maybeDateFrom)
-    dateTo <- validateDate(maybeDateTo)
-    dateChronology <- validateDateChronology(dateFrom, dateTo)
-    pageNumber <- validatePageNumber(maybePageNumber)
-  } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel,
-    Some(SearchParameters(eori, partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
+    val searchParameters: Either[ErrorResponse, SearchParametersRequest[A]] = for {
+      eori <- validateEori(maybeEori)
+      partyRole <- validatePartyRole(maybePartyRole)
+      declarationCategory <- validateDeclarationCategory(maybeDeclarationCategory)
+      goodsLocationCode <- validateGoodsLocationCode(maybeGoodsLocationCode)
+      declarationStatus <- validateDeclarationStatus(maybeDeclarationStatus)
+      dateFrom <- validateDate(maybeDateFrom)
+      dateTo <- validateDate(maybeDateTo)
+      dateChronology <- validateDateChronology(dateFrom, dateTo)
+      pageNumber <- validatePageNumber(maybePageNumber)
+    } yield SearchParametersRequest(icr.conversationId, icr.requestedApiVersion, icr.clientId, icr.declarationSubmissionChannel,
+      Some(SearchParameters(eori, partyRole, declarationCategory, goodsLocationCode, declarationStatus, dateFrom, dateTo, pageNumber)), icr.request)
 
-    if(searchParameters.isLeft) {
+    if (searchParameters.isLeft) {
       val error = searchParameters.swap.toOption.get
       logger.warn(s"Rejected declaration information search request with status code ${error.httpStatusCode} and body\n ${error.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}")
       Left(error.XmlResult.withConversationId)
-    }  else {
+    } else {
       Right(searchParameters.toOption.get)
     }
   }
 
-  def validateEori(maybeEori: Option[String])(implicit request: HasConversationId):  Either[ErrorResponse, Option[Eori]] = {
+  def validateEori(maybeEori: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Eori]] = {
     maybeEori match {
       case Some(eori) =>
         if (looseEoriRegex.findFirstIn(eori).nonEmpty) {
@@ -103,19 +103,19 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     }
   }
 
-  def validatePartyRole(partyRole: Option[String]):  Either[ErrorResponse, PartyRole] = {
+  def validatePartyRole(partyRole: Option[String]): Either[ErrorResponse, PartyRole] = {
 
-    partyRole.filter(pr => validPartyRoles.contains(pr.toUpperCase)).map( pr => PartyRole(pr))
+    partyRole.filter(pr => validPartyRoles.contains(pr.toUpperCase)).map(pr => PartyRole(pr))
       .toRight(errorBadRequest("Invalid partyRole parameter", "CDS60006"))
   }
 
 
-  def validateDeclarationCategory(declarationCategory: Option[String]):  Either[ErrorResponse, DeclarationCategory] = {
+  def validateDeclarationCategory(declarationCategory: Option[String]): Either[ErrorResponse, DeclarationCategory] = {
     declarationCategory.filter(dc => validDeclarationCategories.contains(dc.toUpperCase)).map(dc => DeclarationCategory(dc))
       .toRight(errorBadRequest("Invalid declarationCategory parameter", "CDS60008"))
   }
 
-  def validateGoodsLocationCode(goodsLocationCode: Option[String])(implicit request: HasConversationId):  Either[ErrorResponse, Option[GoodsLocationCode]] = {
+  def validateGoodsLocationCode(goodsLocationCode: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[GoodsLocationCode]] = {
     goodsLocationCode match {
       case Some(glc) =>
         if (goodsLocationCodeRegex.findFirstIn(glc).nonEmpty) {
@@ -141,9 +141,10 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
       case None => Right(None)
     }
   }
+
   def validateDateChronology(dateFrom: Option[Date], dateTo: Option[Date]): Either[ErrorResponse, Unit] = {
     if (dateFrom.isDefined && dateTo.isDefined && dateTo.get.before(dateFrom.get)) {
-        Left(errorBadRequest("Invalid date parameters", "CDS60009"))
+      Left(errorBadRequest("Invalid date parameters", "CDS60009"))
     } else {
       Right((): Unit)
     }
@@ -154,7 +155,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
     date match {
       case Some(d) => try {
         val dateAsDateType = dateFormat.parse(d)
-        if(dateAsDateType.compareTo(new Date()) <= 0) {
+        if (dateAsDateType.compareTo(new Date()) <= 0) {
           Right(Some(dateAsDateType))
         } else {
           logger.info(s"Date was in the future: $d")

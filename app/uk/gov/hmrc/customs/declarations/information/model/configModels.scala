@@ -22,7 +22,7 @@ case class InformationConfig(apiSubscriptionFieldsBaseUrl: String,
                              payloadForbiddenEnabled: Boolean)
 
 case class InformationShutterConfig(v1Shuttered: Option[Boolean],
-                                     v2Shuttered: Option[Boolean])
+                                    v2Shuttered: Option[Boolean])
 
 case class InformationCircuitBreakerConfig(numberOfCallsToTriggerStateChange: Int,
                                            unavailablePeriodDurationInMillis: Int,

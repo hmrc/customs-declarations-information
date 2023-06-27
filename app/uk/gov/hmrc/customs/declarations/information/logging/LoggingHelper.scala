@@ -61,6 +61,7 @@ object LoggingHelper {
       case h: ExtractedHeaders => s"[clientId=${h.clientId}]"
       case _ => ""
     }
+
     def authorised = r match {
       case a: HasAuthorisedAs =>
         a.authorisedAs match {
@@ -69,6 +70,7 @@ object LoggingHelper {
         }
       case _ => ""
     }
+
     s"$conversationId$extractedHeaders$apiVersion$authorised"
   }
 

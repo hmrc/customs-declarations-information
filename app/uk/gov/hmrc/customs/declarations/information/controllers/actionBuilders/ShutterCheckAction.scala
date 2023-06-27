@@ -31,18 +31,18 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import scala.concurrent.{ExecutionContext, Future}
 
 /** Action builder that validates headers.
-  * <ol>
-  * <li/>Input - `ConversationIdRequest`
-  * <li/>Output - `ApiVersionRequest`
-  * <li/>Error - If Accept header is missing or invalid then return a 406. If requested version is shuttered then return a 503. This terminates the action builder pipeline.
-  * </ol>
-  */
+ * <ol>
+ * <li/>Input - `ConversationIdRequest`
+ * <li/>Output - `ApiVersionRequest`
+ * <li/>Error - If Accept header is missing or invalid then return a 406. If requested version is shuttered then return a 503. This terminates the action builder pipeline.
+ * </ol>
+ */
 @Singleton
 class ShutterCheckAction @Inject()(logger: InformationLogger,
                                    config: InformationConfigService)
                                   (implicit ec: ExecutionContext)
   extends ActionRefiner[ConversationIdRequest, ApiVersionRequest] {
-    actionName =>
+  actionName =>
 
   private val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "Service unavailable").XmlResult
 
@@ -57,6 +57,7 @@ class ShutterCheckAction @Inject()(logger: InformationLogger,
   )
 
   override def executionContext: ExecutionContext = ec
+
   override def refine[A](cir: ConversationIdRequest[A]): Future[Either[Result, ApiVersionRequest[A]]] = Future.successful {
     implicit val id: ConversationIdRequest[A] = cir
     versionShuttered()

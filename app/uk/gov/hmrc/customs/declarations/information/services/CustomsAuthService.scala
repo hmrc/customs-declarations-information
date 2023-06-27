@@ -53,14 +53,14 @@ class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
   */
   def authAsCsp(implicit vhr: HasConversationId, hc: HeaderCarrier): Future[Either[ErrorResponse, IsCsp]] = {
     val eventualAuth: Future[Either[ErrorResponse, IsCsp]] =
-        authorised(Enrolment(customsDeclarationEnrolment) and AuthProviders(PrivilegedApplication)) {
-          Future.successful[Either[ErrorResponse, IsCsp]] {
-            logger.debug(s"Successfully authorised CSP PrivilegedApplication with $customsDeclarationEnrolment enrolment")
-            Right(true)
-          }
+      authorised(Enrolment(customsDeclarationEnrolment) and AuthProviders(PrivilegedApplication)) {
+        Future.successful[Either[ErrorResponse, IsCsp]] {
+          logger.debug(s"Successfully authorised CSP PrivilegedApplication with $customsDeclarationEnrolment enrolment")
+          Right(true)
         }
+      }
 
-    eventualAuth.recover{
+    eventualAuth.recover {
       case NonFatal(ae: AuthorisationException) =>
         logger.debug(s"No authorisation for CSP PrivilegedApplication with $customsDeclarationEnrolment enrolment", ae)
         Right(false)
@@ -75,23 +75,23 @@ class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
     */
   def authAsNonCsp(implicit vhr: HasConversationId, hc: HeaderCarrier): Future[Either[ErrorResponse, NonCsp]] = {
     val eventualAuth: Future[Enrolments] =
-        authorised(Enrolment(hmrcCustomsEnrolment) and AuthProviders(GovernmentGateway)).retrieve(Retrievals.authorisedEnrolments) {
-          logger.debug(s"Successfully authorised non-CSP with $hmrcCustomsEnrolment enrolment and GovernmentGateway non-CSP authorisedEnrolment retrievals pending eori check")
-          enrolments =>
-            Future.successful(enrolments)
-        }
+      authorised(Enrolment(hmrcCustomsEnrolment) and AuthProviders(GovernmentGateway)).retrieve(Retrievals.authorisedEnrolments) {
+        logger.debug(s"Successfully authorised non-CSP with $hmrcCustomsEnrolment enrolment and GovernmentGateway non-CSP authorisedEnrolment retrievals pending eori check")
+        enrolments =>
+          Future.successful(enrolments)
+      }
 
-    eventualAuth.map{ enrolments =>
+    eventualAuth.map { enrolments =>
       val maybeEori: Option[Eori] = findEoriInCustomsEnrolment(enrolments, hc.authorization)
       logger.debug(s"eori from $hmrcCustomsEnrolment enrolment for non-CSP request: $maybeEori")
-      maybeEori.fold[Either[ErrorResponse, NonCsp]]{
+      maybeEori.fold[Either[ErrorResponse, NonCsp]] {
         logger.debug(s"No authorisation for non-CSP with $hmrcCustomsEnrolment enrolment due to no eori in $hmrcCustomsEnrolment enrolment")
         Left(errorResponseEoriNotFoundInCustomsEnrolment)
-      }{ eori =>
+      } { eori =>
         logger.debug(s"Successfully authorised non-CSP with $hmrcCustomsEnrolment and using eori: ${eori.toString}")
         Right(NonCsp(eori))
       }
-    }.recover{
+    }.recover {
       case NonFatal(ae: AuthorisationException) =>
         logger.debug(s"No authorisation for non-CSP with $hmrcCustomsEnrolment enrolment", ae)
         Left(errorResponseUnauthorisedGeneral)

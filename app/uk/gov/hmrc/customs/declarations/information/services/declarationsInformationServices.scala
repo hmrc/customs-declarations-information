@@ -96,13 +96,13 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
 
 @Singleton
 class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResponseFilterService,
-                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
-                                          override val logger: InformationLogger,
-                                          connector: DeclarationSearchConnector,
-                                          dateTimeProvider: DateTimeService,
-                                          uniqueIdsService: UniqueIdsService,
-                                          config: InformationConfigService)
-                                          (implicit override val ec: ExecutionContext)
+                                         override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
+                                         override val logger: InformationLogger,
+                                         connector: DeclarationSearchConnector,
+                                         dateTimeProvider: DateTimeService,
+                                         uniqueIdsService: UniqueIdsService,
+                                         config: InformationConfigService)
+                                        (implicit override val ec: ExecutionContext)
   extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "search"
@@ -145,7 +145,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
                                        dateTimeProvider: DateTimeService,
                                        uniqueIdsService: UniqueIdsService,
                                        config: InformationConfigService)
-                                       (implicit override val ec: ExecutionContext)
+                                      (implicit override val ec: ExecutionContext)
   extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "declaration-full"
@@ -175,7 +175,9 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                                            (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse
+
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse
+
   protected val endpointName: String
 
   protected val errorResponseServiceUnavailable: ErrorResponse = errorInternalServerError("This service is currently unavailable")
@@ -245,7 +247,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     Left(errorResponse.XmlResult.withConversationId)
   }
 
-  private def logFilteringDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit ={
+  private def logFilteringDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit = {
     val duration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
     logger.info(s"Xml declaration filtering was [$duration] ms")
   }

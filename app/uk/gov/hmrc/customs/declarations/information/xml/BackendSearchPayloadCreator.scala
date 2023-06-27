@@ -38,7 +38,7 @@ class BackendSearchPayloadCreator() extends BackendPayloadCreator {
 
     val searchParameters = asr.searchParameters.get
 
-  <n1:retrieveDeclarationSummaryDataRequest
+    <n1:retrieveDeclarationSummaryDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
     xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd">
