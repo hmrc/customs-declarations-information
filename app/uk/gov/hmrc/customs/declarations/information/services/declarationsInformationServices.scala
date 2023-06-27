@@ -17,7 +17,6 @@
 package uk.gov.hmrc.customs.declarations.information.services
 
 import akka.pattern.CircuitBreakerOpenException
-import akka.pattern.StatusReply.ErrorMessage
 import play.api.http.HttpEntity
 import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
@@ -34,9 +33,8 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
 import scala.util.control.NonFatal
-import scala.xml.{Elem, NodeSeq, XML}
+import scala.xml.{Elem, XML}
 
 @Singleton
 class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResponseFilterService,
@@ -98,13 +96,13 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
 
 @Singleton
 class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResponseFilterService,
-                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
-                                          override val logger: InformationLogger,
-                                          connector: DeclarationSearchConnector,
-                                          dateTimeProvider: DateTimeService,
-                                          uniqueIdsService: UniqueIdsService,
-                                          config: InformationConfigService)
-                                          (implicit override val ec: ExecutionContext)
+                                         override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
+                                         override val logger: InformationLogger,
+                                         connector: DeclarationSearchConnector,
+                                         dateTimeProvider: DateTimeService,
+                                         uniqueIdsService: UniqueIdsService,
+                                         config: InformationConfigService)
+                                        (implicit override val ec: ExecutionContext)
   extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "search"
@@ -147,7 +145,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
                                        dateTimeProvider: DateTimeService,
                                        uniqueIdsService: UniqueIdsService,
                                        config: InformationConfigService)
-                                       (implicit override val ec: ExecutionContext)
+                                      (implicit override val ec: ExecutionContext)
   extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
 
   protected val endpointName: String = "declaration-full"
@@ -177,7 +175,9 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                                            (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse
+
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse
+
   protected val endpointName: String
 
   protected val errorResponseServiceUnavailable: ErrorResponse = errorInternalServerError("This service is currently unavailable")
@@ -201,13 +201,13 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
             logFilteringDuration(LocalDateTime.now)
             Right(filteredResponse)
           })
-          .recover(recoverException(asr, hc))
+          .recover(recoverException(asr))
       case Left(result) =>
         Future.successful(Left(result))
     }
   }
 
-  private def recoverException[A](implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
+  private def recoverException[A](implicit asr: AuthorisedRequest[A]): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
     case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
       returnErrorResult(asr, (XML.loadString(e.response.body) \ "errorCode").text)
 
@@ -247,7 +247,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     Left(errorResponse.XmlResult.withConversationId)
   }
 
-  private def logFilteringDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit ={
+  private def logFilteringDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit = {
     val duration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
     logger.info(s"Xml declaration filtering was [$duration] ms")
   }

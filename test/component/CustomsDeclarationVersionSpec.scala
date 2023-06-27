@@ -125,11 +125,11 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
 
   val missingMrnResponse =
     """<?xml version='1.0' encoding='UTF-8'?>
-         |<errorResponse>
-         |      <code>BAD_REQUEST</code>
-         |      <message>Missing MRN parameter</message>
-         |
-         |    </errorResponse>""".stripMargin
+      |<errorResponse>
+      |      <code>BAD_REQUEST</code>
+      |      <message>Missing MRN parameter</message>
+      |
+      |    </errorResponse>""".stripMargin
 
 
   private def createFakeRequest(endpoint: String, headers: Map[String, String] = ValidHeaders): FakeRequest[AnyContentAsEmpty.type] =
@@ -141,15 +141,15 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
   val validMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMRN).fromCsp
   val missingMrnRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointMissingMRN).fromCsp
 
-  override protected def beforeAll() {
+  override protected def beforeAll(): Unit = {
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 
-  override protected def afterAll() {
+  override protected def afterAll(): Unit = {
     stopMockServer()
   }
 
@@ -174,8 +174,8 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       And("the response body is empty")
       stringToXml(contentAsString(result)) shouldBe stringToXml(ServiceUnavailableError)
       schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(ServiceUnavailableError)))
-      }
     }
+  }
 
   Feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
     Scenario("An authorised CSP successfully requests version") {
@@ -193,7 +193,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -220,7 +220,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -230,7 +230,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendVersionDeclarationServiceContextV1))))
     }
   }
-  
+
   Feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
     Scenario("An authorised non-CSP successfully requests version") {
       Given("A non-CSP wants the version of a declaration")
@@ -247,7 +247,7 @@ class CustomsDeclarationVersionSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")

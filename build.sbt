@@ -7,16 +7,14 @@ import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "2.12.11"
-targetJvm := "jvm-1.8"
-val silencerVersion = "1.7.0"
+scalaVersion := "2.13.11"
+targetJvm := "jvm-11"
 
 lazy val ComponentTest = config("component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
@@ -30,8 +28,8 @@ def forkedJvmPerTestConfig(tests: Seq[TestDefinition], packages: String*): Seq[G
   } toSeq
 
 lazy val testAll = TaskKey[Unit]("test-all")
-lazy val allTest = Seq(testAll := (test in ComponentTest)
-  .dependsOn((test in CdsIntegrationComponentTest).dependsOn(test in Test)).value)
+lazy val allTest = Seq(testAll := (ComponentTest / test)
+  .dependsOn((CdsIntegrationComponentTest / test).dependsOn(Test / test)).value)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala)
@@ -43,34 +41,28 @@ lazy val microservice = (project in file("."))
     unitTestSettings,
     integrationComponentTestSettings,
     allTest,
-    scoverageSettings,
-    // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
+    scoverageSettings
   )
   .settings(majorVersion := 0)
 
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
     Seq(
-      testOptions in Test := Seq(Tests.Filter(unitTestFilter)),
-      unmanagedSourceDirectories in Test := Seq((baseDirectory in Test).value / "test"),
+      Test / testOptions := Seq(Tests.Filter(unitTestFilter)),
+      Test / unmanagedSourceDirectories := Seq((Test / baseDirectory).value / "test"),
       addTestReportOption(Test, "test-reports")
     )
 
 lazy val integrationComponentTestSettings =
   inConfig(CdsIntegrationComponentTest)(Defaults.testTasks) ++
     Seq(
-      testOptions in CdsIntegrationComponentTest := Seq(Tests.Filter(integrationComponentTestFilter)),
-      parallelExecution in CdsIntegrationComponentTest := false,
+      CdsIntegrationComponentTest / testOptions := Seq(Tests.Filter(integrationComponentTestFilter)),
+      CdsIntegrationComponentTest / parallelExecution := false,
       addTestReportOption(CdsIntegrationComponentTest, "int-comp-test-reports"),
-      testGrouping in CdsIntegrationComponentTest := forkedJvmPerTestConfig((definedTests in Test).value, "integration", "component")
+      CdsIntegrationComponentTest / testGrouping := forkedJvmPerTestConfig((Test / definedTests).value, "integration", "component")
     )
 
-lazy val commonSettings: Seq[Setting[_]] = publishingSettings ++ gitStampSettings
+lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(
@@ -83,7 +75,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
-  parallelExecution in Test := false
+  Test / parallelExecution := false
 )
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9834")
@@ -95,11 +87,11 @@ scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 val compileDependencies = Seq(customsApiCommon)
 
-val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests, flexmark, jacksonModule)
+val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests, flexmark)
 
-unmanagedResourceDirectories in Compile += baseDirectory.value / "public"
-unmanagedResourceDirectories in Test += baseDirectory.value / "test" / "resources"
-(managedClasspath in Runtime) += (packageBin in Assets).value
+Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
+Test / unmanagedResourceDirectories += baseDirectory.value / "test" / "resources"
+(Runtime / managedClasspath) += (Assets / packageBin).value
 
 libraryDependencies ++= compileDependencies ++ testDependencies
 
@@ -109,7 +101,7 @@ val zipWcoXsds = taskKey[Pipeline.Stage]("Zips up all WCO status XSDs and exampl
 zipWcoXsds := { mappings: Seq[PathMapping] =>
   val targetDir = WebKeys.webTarget.value / "zip"
   val zipFiles: Iterable[java.io.File] =
-    ((resourceDirectory in Assets).value / "api" / "conf")
+    ((Assets / resourceDirectory).value / "api" / "conf")
       .listFiles
       .filter(_.isDirectory)
       .map { dir =>
@@ -132,3 +124,6 @@ zipWcoXsds := { mappings: Seq[PathMapping] =>
 }
 
 pipelineStages := Seq(zipWcoXsds)
+
+// To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
+libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

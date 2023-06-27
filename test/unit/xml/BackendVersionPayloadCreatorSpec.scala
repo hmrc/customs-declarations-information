@@ -35,7 +35,7 @@ import util.XmlOps.stringToXml
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class BackendVersionPayloadCreatorSpec extends UnitSpec  {
+class BackendVersionPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
@@ -43,10 +43,10 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec  {
   private val payloadCreator = new BackendVersionPayloadCreator()
 
   def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationVersionRequest.xsd").get)
-  
+
   "BackendVersionPayloadCreator" should {
 
-    def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq =  payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
+    def createVersionPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
 
     "sample Version request passes schema validation" in {
       xmlVersionValidationService.validate(createVersionPayload(TestCspAuthorisedRequest)) should be(true)

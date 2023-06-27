@@ -26,10 +26,12 @@ import uk.gov.hmrc.customs.declarations.information.services.DateTimeService
 import util.UnitSpec
 import util.TestData.{conversationId, stubUniqueIdsService}
 
-class ConversationIdActionSpec extends UnitSpec  {
+import scala.concurrent.ExecutionContext
+
+class ConversationIdActionSpec extends UnitSpec {
 
   trait SetUp {
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
     protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
 

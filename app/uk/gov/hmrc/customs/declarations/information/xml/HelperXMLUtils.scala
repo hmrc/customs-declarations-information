@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.customs.declarations.information.xml
+
 import scala.annotation.tailrec
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, NamespaceBinding, Node}
@@ -45,7 +46,7 @@ object HelperXMLUtils {
   @tailrec
   def walkNamespaceBindingHierarchy(ns: NamespaceBinding,
                                     childBindings: Seq[NamespaceBinding] =
-                                     Seq.empty): Seq[NamespaceBinding] = {
+                                    Seq.empty): Seq[NamespaceBinding] = {
     if (ns.uri == null) {
       childBindings
     } else {

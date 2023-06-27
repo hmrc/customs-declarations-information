@@ -28,11 +28,12 @@ import util.UnitSpec
 import util.XmlOps.stringToXml
 
 import java.util.UUID
+import scala.concurrent.ExecutionContext
 
-class InternalClientIdsCheckActionSpec extends UnitSpec  {
+class InternalClientIdsCheckActionSpec extends UnitSpec {
 
   trait SetUp {
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
@@ -66,34 +67,34 @@ class InternalClientIdsCheckActionSpec extends UnitSpec  {
 
     "accept version payload without declarationSubmissionChannel from external client id" in new SetUp {
 
-      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version"))
+      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"), FakeRequest("GET", "/mrn/ABC/version"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).right.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
     "accept valid declarationSubmissionChannel from internal client id" in new SetUp {
 
-      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
+      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"), FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).right.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
     "reject version payload with invalid declarationSubmissionChannel" in new SetUp {
 
-      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=INVALID"))
+      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("ABC123"), FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=INVALID"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).left.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSubmissionChannelInvalid)
     }
 
     "reject version payload with valid declarationSubmissionChannel and invalid external client id" in new SetUp {
 
-      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("NOTMATCH"),  FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
+      val validatedHeadersRequest = ValidatedHeadersRequest(conversationId, VersionOne, ClientId("NOTMATCH"), FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
 
-      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).left.get
+      val result = await(internalClientIdAction.refine(validatedHeadersRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSubmissionChannelInvalid)
     }

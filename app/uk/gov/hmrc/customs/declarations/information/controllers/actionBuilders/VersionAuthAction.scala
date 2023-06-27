@@ -26,7 +26,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
 
 /** Action builder that attempts to authorise request as a CSP or else NON CSP
  * <ul>
@@ -51,18 +50,19 @@ class VersionAuthAction @Inject()(customsAuthService: CustomsAuthService,
 
   override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val implicitIcir: InternalClientIdsRequest[A] = icir
+
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
-    authAsCspWithMandatoryAuthHeaders.flatMap{
+    authAsCspWithMandatoryAuthHeaders.flatMap {
       case Right(maybeAuthorisedAsCspWithIdentifierHeaders) =>
-        maybeAuthorisedAsCspWithIdentifierHeaders.fold{
-          customsAuthService.authAsNonCsp.map[Either[Result, AuthorisedRequest[A]]]{
+        maybeAuthorisedAsCspWithIdentifierHeaders.fold {
+          customsAuthService.authAsNonCsp.map[Either[Result, AuthorisedRequest[A]]] {
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
               Right(icir.toNonCspAuthorisedRequest(nonCspData.eori))
           }
-        }{ cspData =>
+        } { cspData =>
           Future.successful(Right(icir.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>

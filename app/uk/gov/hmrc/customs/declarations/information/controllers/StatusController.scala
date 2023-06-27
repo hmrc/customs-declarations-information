@@ -72,7 +72,7 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
 
         val appropriateResponse = if (s.valueTooLong) {
           ErrorResponse(BAD_REQUEST, BadRequestCode, "Search parameter too long")
-        } else if(s.valueTooShort) {
+        } else if (s.valueTooShort) {
           ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing search parameter")
         } else {
           ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid")

@@ -24,10 +24,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 /** Action builder that validates headers.
-  * <li/>INPUT - `ApiVersionRequest`
-  * <li/>OUTPUT - `ValidatedHeadersRequest`
-  * <li/>ERROR - 4XX Result if is a header validation error. This terminates the action builder pipeline.
-  */
+ * <li/>INPUT - `ApiVersionRequest`
+ * <li/>OUTPUT - `ValidatedHeadersRequest`
+ * <li/>ERROR - 4XX Result if is a header validation error. This terminates the action builder pipeline.
+ */
 @Singleton
 class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator)
                                                (implicit ec: ExecutionContext)
@@ -35,6 +35,7 @@ class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator)
   actionName =>
 
   override def executionContext: ExecutionContext = ec
+
   override def refine[A](avr: ApiVersionRequest[A]): Future[Either[Result, ValidatedHeadersRequest[A]]] = Future.successful {
     implicit val id: ApiVersionRequest[A] = avr
 

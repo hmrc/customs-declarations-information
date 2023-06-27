@@ -29,11 +29,12 @@ import util.UnitSpec
 import util.XmlOps.stringToXml
 
 import java.util.UUID
+import scala.concurrent.ExecutionContext
 
-class DeclarationFullCheckActionSpec extends UnitSpec  {
+class DeclarationFullCheckActionSpec extends UnitSpec {
 
   trait SetUp {
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
@@ -67,9 +68,9 @@ class DeclarationFullCheckActionSpec extends UnitSpec  {
 
     "accept version payload without declarationSubmissionChannel from external client id" in new SetUp {
 
-      val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None ,FakeRequest("GET", "/mrn/ABC/version"))
+      val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/mrn/ABC/version"))
 
-      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).right.get
+      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -77,7 +78,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec  {
 
       val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), declarationSubmissionChannel, FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly"))
 
-      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).right.get
+      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -85,7 +86,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec  {
 
       val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), declarationSubmissionChannel, FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly&declarationVersion=1"))
 
-      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).right.get
+      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -93,7 +94,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec  {
 
       val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), declarationSubmissionChannel, FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly&declarationVersion=-1"))
 
-      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).left.get
+      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationFullInvalid)
     }
@@ -102,7 +103,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec  {
 
       val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), declarationSubmissionChannel, FakeRequest("GET", "/mrn/ABC/version?declarationSubmissionChannel=AuthenticatedPartyOnly&declarationVersion=AA"))
 
-      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).left.get
+      val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationFullInvalid)
     }

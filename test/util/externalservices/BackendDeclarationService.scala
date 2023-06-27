@@ -83,7 +83,7 @@ trait BackendDeclarationService extends WireMockRunner {
   def verifyBackendDecServiceWasCalledWith(url: String = CustomsDeclarationsExternalServicesConfig.BackendStatusDeclarationServiceContextV1,
                                            requestBody: String,
                                            expectedAuthToken: String = ExternalServicesConfig.AuthToken,
-                                           maybeUnexpectedAuthToken: Option[String] = None) {
+                                           maybeUnexpectedAuthToken: Option[String] = None): Unit = {
     verify(1, postRequestedFor(urlMatching(url))
       .withHeader(CONTENT_TYPE, equalTo(XML + "; charset=utf-8"))
       .withHeader(ACCEPT, equalTo(XML))

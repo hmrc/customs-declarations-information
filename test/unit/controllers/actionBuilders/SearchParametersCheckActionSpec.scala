@@ -29,11 +29,12 @@ import util.XmlOps.stringToXml
 
 import java.time.LocalDate
 import java.util.UUID
+import scala.concurrent.ExecutionContext
 
-class SearchParametersCheckActionSpec extends UnitSpec  {
+class SearchParametersCheckActionSpec extends UnitSpec {
 
   trait SetUp {
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
@@ -42,15 +43,15 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
     protected val searchParametersCheckAction = new SearchParametersCheckAction(mockInformationLogger, mockInformationConfigService)
     protected val conversationId: ConversationId = ConversationId(UUID.fromString("4e2f2ec0-d82c-46d3-85d6-bac4ef4fc623"))
 
-    protected  def declarationSearchError(code: String, parameterName: String): String =
+    protected def declarationSearchError(code: String, parameterName: String): String =
       s"""<?xml version='1.0' encoding='UTF-8'?>
-        |<errorResponse>
-        |      <code>${code}</code>
-        |      <message>Invalid ${parameterName} parameter</message>
-        |</errorResponse>
+         |<errorResponse>
+         |      <code>${code}</code>
+         |      <message>Invalid ${parameterName} parameter</message>
+         |</errorResponse>
     """.stripMargin
 
-    protected  def declarationSearchDateError(code: String, parameterName: String): String =
+    protected def declarationSearchDateError(code: String, parameterName: String): String =
       s"""<?xml version='1.0' encoding='UTF-8'?>
          |<errorResponse>
          |      <code>${code}</code>
@@ -61,21 +62,21 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
   }
 
   "SearchParametersCheckAction" should {
-    
+
     "accept all valid parameters parameters" in new SetUp {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET",
         "/search?eori=GB123456789000&partyRole=submitter&declarationCategory=IM&goodsLocationCode=BELBELOB4&declarationStatus=all&dateFrom=2021-04-01&dateTo=2021-04-04&pageNumber=2"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
-    
+
     "accept a valid partyRole and declarationCategory parameters case insensitive" in new SetUp {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=iM"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -83,7 +84,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=consignee&declarationCategory=iM"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -91,7 +92,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=Ex"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -99,7 +100,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=CO"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -107,7 +108,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=All"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -116,7 +117,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=All&declarationStatus=cleARed"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -124,7 +125,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=All&declarationStatus=UNcleARed"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -132,7 +133,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=All&declarationStatus=rejecteD"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -140,7 +141,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=SuBmiTTer&declarationCategory=All&declarationStatus=ALL"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).right.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).toOption.get
       result.conversationId shouldBe conversationId
     }
 
@@ -148,7 +149,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?declarationCategory=iM"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60006", "partyRole"))
     }
@@ -157,7 +158,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=invalid&declarationCategory=iM"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60006", "partyRole"))
     }
@@ -166,7 +167,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?eori=invalid-eori-slightly-longer-than-fifty-characters-invalid&partyRole=declarant&declarationCategory=iM"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>BAD_REQUEST</code><message>Bad Request</message></errorResponse>")
     }
@@ -175,7 +176,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=submitter"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60008", "declarationCategory"))
     }
@@ -184,7 +185,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=AA"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60008", "declarationCategory"))
     }
@@ -193,7 +194,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&declarationStatus=invalid"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60007", "declarationStatus"))
     }
@@ -202,7 +203,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", s"/search?partyRole=submitter&declarationCategory=IM&dateFrom=${LocalDate.now().plusDays(1).toString}"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchDateError("CDS60009", "date"))
     }
@@ -211,7 +212,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", s"/search?partyRole=submitter&declarationCategory=IM&dateTo=${LocalDate.now().plusDays(1).toString}"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchDateError("CDS60009", "date"))
     }
@@ -223,7 +224,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", s"/search?partyRole=submitter&declarationCategory=IM&dateFrom=$dateFrom&dateTo=$dateTo"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchDateError("CDS60009", "date"))
     }
@@ -232,7 +233,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&goodsLocationCode=AB.,. defghijklmno"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60010", "goodsLocationCode"))
     }
@@ -241,7 +242,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&pageNumber=0"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60012", "pageNumber"))
     }
@@ -250,7 +251,7 @@ class SearchParametersCheckActionSpec extends UnitSpec  {
 
       private val internalClientIdsRequest = InternalClientIdsRequest(conversationId, VersionOne, ClientId("ABC123"), None, FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&pageNumber=A"))
 
-      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).left.get
+      private val result = await(searchParametersCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationSearchError("CDS60012", "pageNumber"))
     }

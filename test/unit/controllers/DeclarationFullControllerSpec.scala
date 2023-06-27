@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
-
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
@@ -46,10 +45,10 @@ import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationFullControllerSpec extends UnitSpec
-  with Matchers  with BeforeAndAfterEach {
+  with Matchers with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
 
@@ -65,7 +64,7 @@ class DeclarationFullControllerSpec extends UnitSpec
     protected val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])
     protected val mockErrorResponse: ErrorResponse = mock(classOf[ErrorResponse])
     protected val mockResult: Result = mock(classOf[Result])
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
     protected val stubHttpResponse = HttpResponse(Status.OK, VersionTestXMLData.validBackendVersionResponse.toString)
 
@@ -85,7 +84,7 @@ class DeclarationFullControllerSpec extends UnitSpec
       mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
-    protected val controller: DeclarationFullController = new DeclarationFullController (
+    protected val controller: DeclarationFullController = new DeclarationFullController(
       stubShutterCheckAction,
       stubValidateAndExtractHeadersAction,
       stubAuthStatusAction,

@@ -31,7 +31,7 @@ import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
 import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
-class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks  {
+class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks {
 
   private val extractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
 
@@ -78,7 +78,7 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks  {
           .withParamMatcher[HasConversationId](any[HasConversationId])
           .verify()
       }
-      
+
     }
     "in unhappy path, validation" should {
       "fail when request is missing X-Client-ID header" in new SetUp {

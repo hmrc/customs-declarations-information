@@ -123,15 +123,15 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
   val validNonCspRequestV2: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpoint = endpointAllValid, headers = ValidHeaders + ACCEPT_HMRC_XML_HEADER_V2).fromNonCsp
   val invalidPartyRoleRequest: FakeRequest[AnyContentAsEmpty.type] = createFakeRequest(endpointInvalidPartyRole).fromCsp
 
-  override protected def beforeAll() {
+  override def beforeAll(): Unit = {
     startMockServer()
   }
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     resetMockServer()
   }
 
-  override protected def afterAll() {
+  override protected def afterAll(): Unit = {
     stopMockServer()
   }
 
@@ -156,8 +156,8 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       And("the response body is empty")
       stringToXml(contentAsString(result)) shouldBe stringToXml(ServiceUnavailableError)
       schemaErrorV1.newValidator().validate(new StreamSource(new StringReader(ServiceUnavailableError)))
-      }
     }
+  }
 
   Feature("Declaration Information API authorises version requests from CSPs with v1.0 accept header") {
     Scenario("An authorised CSP successfully requests a search") {
@@ -175,7 +175,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid search xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -202,7 +202,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")
@@ -212,7 +212,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       eventually(verify(1, postRequestedFor(urlEqualTo(CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV1))))
     }
   }
-  
+
   Feature("Declaration Information API authorises version requests from non-CSPs with v2.0 accept header") {
     Scenario("An authorised non-CSP successfully requests search") {
       Given("A non-CSP wants the versions of a declaration")
@@ -229,7 +229,7 @@ class CustomsDeclarationSearchSpec extends ComponentTestSpec
       status(result) shouldBe OK
 
       And("the response body is a valid version xml")
-      contentAsString(result) shouldBe validResponse
+      contentAsString(result) shouldBe validResponse()
       schemaResponse.newValidator().validate(new StreamSource(new StringReader(contentAsString(result))))
 
       And("the request was authorised with AuthService")

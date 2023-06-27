@@ -29,11 +29,12 @@ import uk.gov.hmrc.customs.declarations.information.model.{ClientId, Csp, Versio
 import util.UnitSpec
 import util.TestData._
 
-class LoggingHelperSpec extends UnitSpec  {
+class LoggingHelperSpec extends UnitSpec {
 
   private def expectedMessage(message: String, maybeAuthorised: String = "") = s"[conversationId=${conversationId.toString}]" +
     "[clientId=some-client-id]" +
     s"[requestedApiVersion=1.0]$maybeAuthorised $message"
+
   private val requestMock = mock(classOf[Request[_]])
   private val conversationIdRequest =
     ConversationIdRequest(
@@ -71,7 +72,7 @@ class LoggingHelperSpec extends UnitSpec  {
     }
 
     "testFormatDebugFull" in {
-      LoggingHelper.formatDebugFull("Debug message.", conversationIdRequest) shouldBe s"[conversationId=$conversationIdValue] Debug message. headers=Map(Accept -> B, X-Client-ID -> D, Content-Type -> A, X-Conversation-ID -> C)"
+      LoggingHelper.formatDebugFull("Debug message.", conversationIdRequest) shouldBe s"[conversationId=$conversationIdValue] Debug message. headers=TreeMap(Accept -> B, X-Client-ID -> D, Content-Type -> A, X-Conversation-ID -> C)"
     }
   }
 

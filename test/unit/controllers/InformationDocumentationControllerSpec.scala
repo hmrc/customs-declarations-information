@@ -28,7 +28,7 @@ import play.api.test._
 import uk.gov.hmrc.customs.declarations.information.controllers.InformationDocumentationController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
-class InformationDocumentationControllerSpec extends PlaySpec  with Results with BeforeAndAfterEach {
+class InformationDocumentationControllerSpec extends PlaySpec with Results with BeforeAndAfterEach {
 
   private val mockService = mock(classOf[HttpErrorHandler])
   private val mockLogger = mock(classOf[InformationLogger])
@@ -41,7 +41,7 @@ class InformationDocumentationControllerSpec extends PlaySpec  with Results with
     new InformationDocumentationController(mock(classOf[Assets]), Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
       .definition()
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     reset(mockService)
   }
 
@@ -63,7 +63,7 @@ class InformationDocumentationControllerSpec extends PlaySpec  with Results with
 
   }
 
-  private def expectedJson(v1Enabled: Boolean  = true, v2Enabled: Boolean = true) =
+  private def expectedJson(v1Enabled: Boolean = true, v2Enabled: Boolean = true) =
     Json.parse(
       s"""
          |{

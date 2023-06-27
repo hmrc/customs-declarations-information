@@ -39,14 +39,14 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationStatusConnectorSpec extends UnitSpec  with BeforeAndAfterEach with Eventually {
+class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
 
   private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
   private val mockInformationConfigService = mock(classOf[InformationConfigService])
   private val mockBackendPayloadCreator = mock(classOf[BackendStatusPayloadCreator])
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
   private val actorSystem = ActorSystem("mockActorSystem")
@@ -55,9 +55,9 @@ class DeclarationStatusConnectorSpec extends UnitSpec  with BeforeAndAfterEach w
 
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
 
-  private implicit val asr = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
+  private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     reset(mockWsPost, mockServiceConfigProvider)
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)

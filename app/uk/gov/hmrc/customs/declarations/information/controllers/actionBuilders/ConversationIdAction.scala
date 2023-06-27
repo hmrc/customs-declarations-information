@@ -31,6 +31,7 @@ class ConversationIdAction @Inject()(val uniqueIdsService: UniqueIdsService,
   extends ActionTransformer[Request, ConversationIdRequest] {
 
   override def executionContext: ExecutionContext = ec
+
   override def transform[A](request: Request[A]): Future[ConversationIdRequest[A]] = {
 
     val r = ConversationIdRequest(uniqueIdsService.conversation, request)

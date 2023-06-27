@@ -17,21 +17,21 @@
 package unit.services
 
 import org.scalatest.Assertion
-
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.VersionResponseFilterService
-import util.VersionTestXMLData.{validBackendVersionResponse, defaultDateTime, generateDeclarationVersionResponse, generateDeclarationResponseContainingAllOptionalElements}
+import util.VersionTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationVersionResponse, validBackendVersionResponse}
 import util.UnitSpec
 
+import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-class DeclarationVersionResponseFilterServiceSpec extends UnitSpec  {
-  implicit val ec = Helpers.stubControllerComponents().executionContext
+class DeclarationVersionResponseFilterServiceSpec extends UnitSpec {
+  implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
+    new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
         case n => n
@@ -40,11 +40,13 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec  {
   }
 
   import ValidateXmlAgainstSchema._
+
   val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalVersionResponse.xsd")
+
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
-    implicit val service = new VersionResponseFilterService()
+    implicit val service: VersionResponseFilterService = new VersionResponseFilterService()
     val versionResponseWithAllValues: NodeSeq = service.transform(generateDeclarationVersionResponse(creationDate = defaultDateTime))
   }
 
@@ -112,13 +114,13 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec  {
 
     "no declarations found" in new SetUp {
       val zeroDeclarations = service.transform(generateDeclarationVersionResponse(0, defaultDateTime))
-      
+
       xmlValidationService.validate(zeroDeclarations) should be(false)
     }
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: VersionResponseFilterService): Assertion = {
-    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform( generateDeclarationVersionResponse(creationDate = defaultDateTime) )
+    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(generateDeclarationVersionResponse(creationDate = defaultDateTime))
     val versionResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
 
     xmlValidationService.validate(versionResponseWithMissingValues) should be(true)

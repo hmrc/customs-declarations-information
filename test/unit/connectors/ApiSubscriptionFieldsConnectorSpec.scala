@@ -20,10 +20,11 @@ import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
-
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, HttpReads}
@@ -34,7 +35,6 @@ import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
-
   with BeforeAndAfterEach
   with Eventually
   with ApiSubscriptionFieldsTestData {
@@ -44,15 +44,15 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val mockInformationConfigService = mock(classOf[InformationConfigService])
   private val mockInformationConfig = mock(classOf[InformationConfig])
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private implicit val vpr = TestData.TestCspAuthorisedRequest
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestCspAuthorisedRequest
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockInformationConfigService)
 
   private val badRequestException = new BadRequestException("Emulated 400 response from a web call")
   private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
 
-  override protected def beforeEach() {
+  override protected def beforeEach(): Unit = {
     reset(mockLogger, mockWSGetImpl, mockInformationConfigService)
 
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)

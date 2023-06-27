@@ -17,21 +17,21 @@
 package unit.services
 
 import org.scalatest.Assertion
-
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.SearchResponseFilterService
 import util.UnitSpec
 import util.SearchTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationSearchResponse, validBackendSearchResponse}
 
+import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-class DeclarationSearchResponseFilterServiceSpec extends UnitSpec  {
-  implicit val ec = Helpers.stubControllerComponents().executionContext
+class DeclarationSearchResponseFilterServiceSpec extends UnitSpec {
+  implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer( new RewriteRule {
+    new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
         case n => n
@@ -40,11 +40,13 @@ class DeclarationSearchResponseFilterServiceSpec extends UnitSpec  {
   }
 
   import ValidateXmlAgainstSchema._
+
   val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalSearchResponse.xsd")
+
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
-    implicit val service = new SearchResponseFilterService()
+    implicit val service: SearchResponseFilterService = new SearchResponseFilterService()
     val searchResponseWithAllValues: NodeSeq = service.transform(generateDeclarationSearchResponse(receivedDate = defaultDateTime))
   }
 
@@ -137,7 +139,7 @@ class DeclarationSearchResponseFilterServiceSpec extends UnitSpec  {
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: SearchResponseFilterService): Assertion = {
-    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform( generateDeclarationSearchResponse(receivedDate = defaultDateTime) )
+    val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(generateDeclarationSearchResponse(receivedDate = defaultDateTime))
     val searchResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
 
     xmlValidationService.validate(searchResponseWithMissingValues) should be(true)

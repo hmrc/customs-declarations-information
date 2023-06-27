@@ -38,6 +38,8 @@ import util.AuthConnectorStubbing
 import util.RequestHeaders.X_CONVERSATION_ID_NAME
 import util.TestData._
 
+import scala.concurrent.ExecutionContext
+
 class AuthActionSpec extends UnitSpec
 
   with TableDrivenPropertyChecks
@@ -45,7 +47,7 @@ class AuthActionSpec extends UnitSpec
 
   private lazy val validatedHeadersRequest: ValidatedHeadersRequest[AnyContentAsEmpty.type] = TestValidatedHeadersRequest
 
-  private implicit val ec = Helpers.stubControllerComponents().executionContext
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   private val errorResponseUnauthorisedGeneral =
     ErrorResponse(Status.UNAUTHORIZED, UnauthorizedCode, "Unauthorised request")
   private val errorResponseEoriNotFoundInCustomsEnrolment =
@@ -56,9 +58,9 @@ class AuthActionSpec extends UnitSpec
     errorBadRequest("Both X-Submitter-Identifier and X-Badge-Identifier headers are missing")
   private val errorResponseEoriIdentifierHeaderInvalid =
     errorBadRequest(s"X-Submitter-Identifier header is invalid")
-  
+
   trait SetUp extends AuthConnectorStubbing {
-    private val mockLogger= mock(classOf[InformationLogger])
+    private val mockLogger = mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockLogger)
     protected val headerValidator = new HeaderValidator(mockLogger)
@@ -185,7 +187,7 @@ class AuthActionSpec extends UnitSpec
         actual shouldBe Left(ErrorInternalServerError.XmlResult.withHeaders(X_CONVERSATION_ID_NAME -> conversationId.toString))
         verifyCspAuthorisationCalled(1)
       }
-      
+
     }
   }
 }

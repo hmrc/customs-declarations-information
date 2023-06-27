@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
-
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers.{header, _}
@@ -46,10 +45,10 @@ import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, SearchTestXMLData, UnitSpec}
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SearchControllerSpec extends UnitSpec
-  with Matchers  with BeforeAndAfterEach {
+  with Matchers with BeforeAndAfterEach {
 
   trait SetUp extends AuthConnectorStubbing {
 
@@ -65,7 +64,7 @@ class SearchControllerSpec extends UnitSpec
     protected val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])
     protected val mockErrorResponse: ErrorResponse = mock(classOf[ErrorResponse])
     protected val mockResult: Result = mock(classOf[Result])
-    protected implicit val ec = Helpers.stubControllerComponents().executionContext
+    protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
     protected val stubHttpResponse = HttpResponse(Status.OK, SearchTestXMLData.validBackendSearchResponse.toString)
 

@@ -25,7 +25,7 @@ import scala.xml.{NodeSeq, Text, TopScope}
 @Singleton
 class FullResponseFilterService @Inject()() extends ResponseFilterService {
 
-  override protected val NameSpaceP="http://gov.uk/customs/FullDeclarationDataRetrievalService"
+  override protected val NameSpaceP = "http://gov.uk/customs/FullDeclarationDataRetrievalService"
   override protected val rootElementLabel: String = "" // deliberately empty
   override protected val detailsElementLabel: String = "" // deliberately empty
 
@@ -50,7 +50,7 @@ class FullResponseFilterService @Inject()() extends ResponseFilterService {
     xmlns:p4={NameSpaceP4}
     xmlns:xsi={NameSpaceXsi}
     xsi:schemaLocation={NameSpaceP}>
-        {prefixReWriter.transform((declarationDetailsPath \ "FullDeclarationDataDetails").filter(node => inputPrefixToUriMap(node.prefix) == NameSpaceP))}
+      {prefixReWriter.transform((declarationDetailsPath \ "FullDeclarationDataDetails").filter(node => inputPrefixToUriMap(node.prefix) == NameSpaceP))}
     </p:DeclarationFullResponse>
   }
 }
@@ -58,7 +58,7 @@ class FullResponseFilterService @Inject()() extends ResponseFilterService {
 @Singleton
 class SearchResponseFilterService @Inject()() extends ResponseFilterService {
 
-  override protected val NameSpaceP="http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
+  override protected val NameSpaceP = "http://gov.uk/customs/declarationInformationRetrieval/declarationSummary/v1"
   override protected val rootElementLabel: String = "DeclarationSearchResponse"
   override protected val detailsElementLabel: String = "DeclarationSearchDetails"
 
@@ -76,16 +76,16 @@ class SearchResponseFilterService @Inject()() extends ResponseFilterService {
     val noResultsReturned = endNodesPath \\ "NoResultsReturned"
 
     Seq(rule.transform(currentPageNumber).head, Text(newLineAndIndentation),
-        rule.transform(totalResultsAvailable).head, Text(newLineAndIndentation),
-        rule.transform(totalPagesAvailable).head, Text(newLineAndIndentation),
-        rule.transform(noResultsReturned).head)
+      rule.transform(totalResultsAvailable).head, Text(newLineAndIndentation),
+      rule.transform(totalPagesAvailable).head, Text(newLineAndIndentation),
+      rule.transform(noResultsReturned).head)
   }
 }
 
 @Singleton
 class VersionResponseFilterService @Inject()() extends ResponseFilterService {
 
-  override protected val NameSpaceP="http://gov.uk/customs/retrieveDeclarationVersion"
+  override protected val NameSpaceP = "http://gov.uk/customs/retrieveDeclarationVersion"
   override protected val rootElementLabel: String = "DeclarationVersionResponse"
   override protected val detailsElementLabel: String = "DeclarationVersionDetails"
 
@@ -98,7 +98,7 @@ class VersionResponseFilterService @Inject()() extends ResponseFilterService {
 @Singleton
 class StatusResponseFilterService @Inject()() extends ResponseFilterService {
 
-  override protected val NameSpaceP="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
+  override protected val NameSpaceP = "http://gov.uk/customs/declarationInformationRetrieval/status/v2"
   override protected val rootElementLabel: String = "DeclarationStatusResponse"
   override protected val detailsElementLabel: String = "DeclarationStatusDetails"
 
@@ -111,11 +111,11 @@ class StatusResponseFilterService @Inject()() extends ResponseFilterService {
 abstract class ResponseFilterService() {
 
   protected val NameSpaceP: String
-  protected val NameSpaceP1="urn:wco:datamodel:WCO:Response_DS:DMS:2"   //wco response elements definition name space
-  protected val NameSpaceP2="urn:wco:datamodel:WCO:DEC-DMS:2"           //wco Declaration elements definition name space
-  protected val NameSpaceP3="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"//wco Declaration complex type definition
-  protected val NameSpaceP4="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
-  protected val NameSpaceXsi="http://www.w3.org/2001/XMLSchema-instance"
+  protected val NameSpaceP1 = "urn:wco:datamodel:WCO:Response_DS:DMS:2" //wco response elements definition name space
+  protected val NameSpaceP2 = "urn:wco:datamodel:WCO:DEC-DMS:2" //wco Declaration elements definition name space
+  protected val NameSpaceP3 = "urn:wco:datamodel:WCO:Declaration_DS:DMS:2" //wco Declaration complex type definition
+  protected val NameSpaceP4 = "urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+  protected val NameSpaceXsi = "http://www.w3.org/2001/XMLSchema-instance"
 
   protected val rootElementLabel: String
   protected val detailsElementLabel: String
@@ -139,9 +139,9 @@ abstract class ResponseFilterService() {
     xmlns:xsi={NameSpaceXsi}
     xsi:schemaLocation={NameSpaceP}>
       {declarationDetailsPath.map{ node =>
-        val declarations = node \ "Declaration"
-        val mdgDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == NameSpaceP)
-        val wcoDeclaration = declarations.filter( node => inputPrefixToUriMap(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
+      val declarations = node \ "Declaration"
+      val mdgDeclaration = declarations.filter(node => inputPrefixToUriMap(node.prefix) == NameSpaceP)
+      val wcoDeclaration = declarations.filter(node => inputPrefixToUriMap(node.prefix) == "urn:wco:datamodel:WCO:DEC-DMS:2")
 
         <p:details>
           {prefixReWriter.transform(mdgDeclaration)}

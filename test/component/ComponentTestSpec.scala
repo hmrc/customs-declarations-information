@@ -32,13 +32,13 @@ import util.{CustomsDeclarationsExternalServicesConfig, ExternalServicesConfig}
 import java.time.{Instant, ZoneId, ZonedDateTime}
 
 trait ComponentTestSpec extends AnyFeatureSpec
-    with GivenWhenThen
-    with GuiceOneAppPerSuite
-    with BeforeAndAfterAll
-    with BeforeAndAfterEach
-    with Eventually {
+  with GivenWhenThen
+  with GuiceOneAppPerSuite
+  with BeforeAndAfterAll
+  with BeforeAndAfterEach
+  with Eventually {
 
-  private val mockDateTimeService =  mock(classOf[DateTimeService])
+  private val mockDateTimeService = mock(classOf[DateTimeService])
 
   val dateTime = 1546344000000L // 01/01/2019 12:00:00
 

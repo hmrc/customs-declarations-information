@@ -31,7 +31,7 @@ import util.UnitSpec
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
-class BackendStatusPayloadCreatorSpec extends UnitSpec  {
+class BackendStatusPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
@@ -42,9 +42,13 @@ class BackendStatusPayloadCreatorSpec extends UnitSpec  {
 
   "BackendStatusPayloadCreator" should {
     implicit val implicitAr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
+
     def createMrnPayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))
+
     def createDucrPayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, ducr, Some(apiSubscriptionFieldsResponse))
+
     def createUcrPayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, ucr, Some(apiSubscriptionFieldsResponse))
+
     def createInventoryReferencePayload(): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, inventoryReference, Some(apiSubscriptionFieldsResponse))
 
     "sample MRN request passes schema validation" in {

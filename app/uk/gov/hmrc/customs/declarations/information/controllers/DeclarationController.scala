@@ -28,7 +28,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.Authori
 trait DeclarationController {
 
   def validateMrn(mrn: Mrn, logger: InformationLogger)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
-    if(mrn.validValue) {
+    if (mrn.validValue) {
       Right((): Unit)
     } else {
       val appropriateResponse = if (mrn.valueTooLong) {

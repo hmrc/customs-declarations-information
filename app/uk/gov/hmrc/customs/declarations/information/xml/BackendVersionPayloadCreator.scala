@@ -31,7 +31,7 @@ class BackendVersionPayloadCreator() extends BackendPayloadCreator {
                          date: DateTime,
                          searchType: SearchType,
                          maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-  (implicit asr: AuthorisedRequest[A]): NodeSeq = {
+                        (implicit asr: AuthorisedRequest[A]): NodeSeq = {
 
     val searchTypeAsType = searchType.asInstanceOf[Mrn]
 
