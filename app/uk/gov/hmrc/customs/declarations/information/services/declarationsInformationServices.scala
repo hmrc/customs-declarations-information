@@ -211,11 +211,8 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
       returnErrorResult(asr, (XML.loadString(e.response.body) \ "errorCode").text)
 
-    case e: Non2xxResponseException if e.responseCode == FORBIDDEN && config.informationConfig.payloadForbiddenEnabled =>
-      returnErrorResult(asr, e, FORBIDDEN, ErrorPayloadForbidden)
-
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
-      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
+      returnErrorResult(asr, e, FORBIDDEN, ErrorPayloadForbidden)
 
     case e: HttpException if e.responseCode == NOT_FOUND =>
       returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, customNotFoundResponse)

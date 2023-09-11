@@ -36,7 +36,6 @@ class InformationConfigServiceSpec extends UnitSpec {
       |circuitBreaker.unavailablePeriodDurationInMillis=1000
       |circuitBreaker.unstablePeriodDurationInMillis=1000
       |declarationStatus.requestDaysLimit=60
-      |payloadForbidden.enable=false
     """.stripMargin)
 
   private val emptyAppConfig: Config = ConfigFactory.parseString("")
@@ -65,7 +64,6 @@ class InformationConfigServiceSpec extends UnitSpec {
           |Could not find config key 'api-subscription-fields.host'
           |Service configuration not found for key: api-subscription-fields.context
           |Could not find config key 'declarationStatus.requestDaysLimit'
-          |Could not find config key 'payloadForbidden.enable'
           |Could not find config key 'circuitBreaker.numberOfCallsToTriggerStateChange'
           |Could not find config key 'circuitBreaker.unavailablePeriodDurationInMillis'
           |Could not find config key 'circuitBreaker.unstablePeriodDurationInMillis'""".stripMargin

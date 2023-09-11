@@ -38,7 +38,7 @@ class SearchParametersCheckActionSpec extends UnitSpec {
     private val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
-    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123"), false))
+    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123")))
 
     protected val searchParametersCheckAction = new SearchParametersCheckAction(mockInformationLogger, mockInformationConfigService)
     protected val conversationId: ConversationId = ConversationId(UUID.fromString("4e2f2ec0-d82c-46d3-85d6-bac4ef4fc623"))

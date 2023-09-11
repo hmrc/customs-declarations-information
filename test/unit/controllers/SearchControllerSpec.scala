@@ -54,7 +54,7 @@ class SearchControllerSpec extends UnitSpec
 
     protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
-    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq(), false))
+    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq()))
 
     protected val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
@@ -113,7 +113,7 @@ class SearchControllerSpec extends UnitSpec
   "Declaration Search Controller" should {
     "process CSP request when call is authorised for CSP" in new SetUp() {
       authoriseCsp()
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
 
       private val result = awaitSubmitSearch(FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromCsp)
 
@@ -123,7 +123,7 @@ class SearchControllerSpec extends UnitSpec
 
     "process CSP request when call is authorised for CSP and declarationSubmissionChannel is set and is internal clientId" in new SetUp() {
       authoriseCsp()
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
       val result: Future[Result] = submitSearch(FakeRequest("GET", "/search?partyRole=submitter&declarationCategory=IM&declarationSubmissionChannel=AuthenticatedPartyOnly").withHeaders(ValidHeaders.toSeq: _*).fromCsp)
       status(result) shouldBe OK
       verifyCspAuthorisationCalled(numberOfTimes = 1)
@@ -183,7 +183,7 @@ class SearchControllerSpec extends UnitSpec
     "process non-CSP request when call is authorised for non-CSP with declarationSubmissionChannel set" in new SetUp() {
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
       awaitSubmitSearch(ValidNonCspDeclarationSearchWithSubChannelRequest)
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
