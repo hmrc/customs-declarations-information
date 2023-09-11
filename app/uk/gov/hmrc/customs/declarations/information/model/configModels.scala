@@ -18,8 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.model
 
 case class InformationConfig(apiSubscriptionFieldsBaseUrl: String,
                              declarationStatusRequestDaysLimit: Int,
-                             internalClientIds: Seq[String],
-                             payloadForbiddenEnabled: Boolean)
+                             internalClientIds: Seq[String])
 
 case class InformationShutterConfig(v1Shuttered: Option[Boolean],
                                     v2Shuttered: Option[Boolean])

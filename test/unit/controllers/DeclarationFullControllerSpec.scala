@@ -54,7 +54,7 @@ class DeclarationFullControllerSpec extends UnitSpec
 
     protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
-    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq(), false))
+    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq()))
 
     protected val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
@@ -126,7 +126,7 @@ class DeclarationFullControllerSpec extends UnitSpec
 
     "process CSP request when call is authorised for CSP and declarationSubmissionChannel is set and is internal clientId" in new SetUp() {
       authoriseCsp()
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
       val result: Future[Result] = submitMrn(ValidCspDeclarationVersionRequestWithDeclarationSubmissionChannel, None, Some("AuthenticatedPartyOnly"))
       status(result) shouldBe OK
       verifyCspAuthorisationCalled(numberOfTimes = 1)
@@ -233,7 +233,7 @@ class DeclarationFullControllerSpec extends UnitSpec
     "process non-CSP request when call is authorised for non-CSP with declarationSubmissionChannel set" in new SetUp() {
       unauthoriseCsp()
       authoriseNonCsp(Some(declarantEori))
-      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID"), false))
+      when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("SOME_X_CLIENT_ID")))
       awaitSubmitMrn(ValidNonCspDeclarationVersionRequestWithDeclarationSubmissionChannel)
 
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)

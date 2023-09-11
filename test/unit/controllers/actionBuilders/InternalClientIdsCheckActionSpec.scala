@@ -37,7 +37,7 @@ class InternalClientIdsCheckActionSpec extends UnitSpec {
     private val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[InformationConfigService])
 
-    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123"), false))
+    when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123")))
 
     val request = FakeRequest()
     val internalClientIdAction = new InternalClientIdsCheckAction(mockInformationLogger, mockInformationConfigService)

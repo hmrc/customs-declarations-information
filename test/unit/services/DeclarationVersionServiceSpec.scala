@@ -209,19 +209,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error").XmlResult.withConversationId)
     }
 
-    "return 500 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationVersionConnector.send(any[DateTime],
-        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
-        any[ApiVersion],
-        any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
-      val result: Either[Result, HttpResponse] = send()
-
-      result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-    }
-
-    "return 403 error response when backend call fails with 403 and payloadForbidden flag is on" in new SetUp() {
-      when(mockInformationConfig.payloadForbiddenEnabled).thenReturn(true)
+    "return 403 error response when backend call fails with 403" in new SetUp() {
       when(mockDeclarationVersionConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
