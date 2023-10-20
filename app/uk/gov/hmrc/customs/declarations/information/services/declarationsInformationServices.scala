@@ -212,13 +212,13 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
       returnErrorResult(asr, (XML.loadString(e.response.body) \ "errorCode").text)
 
     case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
-      returnErrorResult(asr, e, FORBIDDEN, ErrorPayloadForbidden)
+      returnErrorResult(asr, e, ErrorPayloadForbidden)
 
     case e: HttpException if e.responseCode == NOT_FOUND =>
-      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, customNotFoundResponse)
+      returnErrorResult(asr, e, customNotFoundResponse)
 
     case e: HttpException =>
-      returnErrorResult(asr, e, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
+      returnErrorResult(asr, e, ErrorInternalServerError)
 
     case _: CircuitBreakerOpenException =>
       returnErrorResult(asr, errorResponseServiceUnavailable, "unhealthy state entered so returning 500 to consumer with message service unavailable", null)
@@ -227,8 +227,8 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
       returnErrorResult(asr, ErrorInternalServerError, s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
   }
 
-  private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, returnCode: Int, errorResponse: ErrorResponse): Left[Result, Nothing] = {
-    logger.warn(s"declaration [$endpointName] call failed with backend http status code of [${e.responseCode}]: [${e.getMessage}] so returning [$returnCode] to consumer")
+  private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, errorResponse: ErrorResponse): Left[Result, Nothing] = {
+    logger.warn(s"declaration [$endpointName] call failed with backend http status code of [${e.responseCode}]: [${e.getMessage}] so returning [${errorResponse.httpStatusCode}] to consumer")
     Left(errorResponse.XmlResult.withConversationId)
   }
 

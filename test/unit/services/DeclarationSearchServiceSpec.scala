@@ -35,7 +35,7 @@ import uk.gov.hmrc.customs.declarations.information.xml.BackendSearchPayloadCrea
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
 import util.TestData._
-import util.UnitSpec
+import util.{UnitSpec, VerifyLogging}
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +47,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   protected lazy val mockSearchResponseFilterService: SearchResponseFilterService = mock(classOf[SearchResponseFilterService])
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock(classOf[ApiSubscriptionFieldsConnector])
-  protected lazy val mockLogger: InformationLogger = mock(classOf[InformationLogger])
+  implicit protected lazy val mockLogger: InformationLogger = mock(classOf[InformationLogger])
   protected lazy val mockDeclarationSearchConnector: DeclarationSearchConnector = mock(classOf[DeclarationSearchConnector])
   protected lazy val mockPayloadDecorator: BackendSearchPayloadCreator = mock(classOf[BackendSearchPayloadCreator])
   protected lazy val mockDateTimeProvider: DateTimeService = mock(classOf[DateTimeService])
@@ -369,6 +369,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, NotFoundCode, "Declaration not found").XmlResult.withConversationId)
+      VerifyLogging.verifyInformationLoggerWarn("declaration [search] call failed with backend http status code of [404]: [Received a non 2XX response] so returning [404] to consumer")
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
