@@ -127,11 +127,11 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
-              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
+              searchType: SearchType)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[HttpResponse] = {
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
-    val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
+    val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken)) ++ hc.headers(List("Accept", "Gov-Test-Scenario"))
 
     val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
     withCircuitBreaker(post(declarationPayload, config.url, headers))
