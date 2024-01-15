@@ -15,6 +15,7 @@ import scala.language.postfixOps
 name := "customs-declarations-information"
 scalaVersion := "2.13.11"
 targetJvm := "jvm-11"
+//Test / fork := false
 
 lazy val ComponentTest = config("component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
