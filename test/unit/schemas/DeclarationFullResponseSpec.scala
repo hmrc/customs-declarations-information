@@ -31,7 +31,7 @@ class DeclarationFullResponseSpec extends UnitSpec with BeforeAndAfterEach {
 
   import ValidateXmlAgainstSchema._
 
-  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
+  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/FullDeclarationDataRetrievalResponse.xsd")
 
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
