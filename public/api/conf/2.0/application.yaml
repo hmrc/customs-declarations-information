@@ -353,7 +353,7 @@ paths:
             application/xml:
               examples:
                 objectExample:
-                  externalValue: './examples/annotated_XML_samples/TT_IM083a/Full_DIS_Query.xml'
+                  externalValue: './examples/annotated_XML_samples/TT_IM044b/DIS_Report/TT_IM044b_DIS_Report_Full.xml'
       security:
         - userRestricted: [ "write:customs-declarations-information" ]
       deprecated: false
