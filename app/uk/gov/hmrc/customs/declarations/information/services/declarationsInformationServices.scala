@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,21 @@
 
 package uk.gov.hmrc.customs.declarations.information.services
 
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
-import akka.pattern.CircuitBreakerOpenException
-import play.api.http.{HttpEntity, Status}
+import play.api.http.HttpEntity
 import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorPayloadForbidden, NotFoundCode, errorInternalServerError}
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorPayloadForbidden, errorInternalServerError}
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, HttpResponse}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 import scala.xml.{Elem, XML}
 
 @Singleton
@@ -201,7 +197,6 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
               val filteredResponse = filterResponse(response, XML.loadString(response.body))
               Right(filteredResponse)
             case Left(Non2xxResponseError(status, body)) =>
-              logger.warn(s"Call to $endpointName failed, returning status=[$status]")
               status match {
                 case INTERNAL_SERVER_ERROR =>
                   val errorCodeText = (XML.loadString(body) \ "errorCode").text
@@ -213,7 +208,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                   logger.warn(s"declaration [$endpointName] call failed with backend http status code of [403] so returning to consumer [403]")
                   Left(ErrorPayloadForbidden.XmlResult.withConversationId)
                 case unexpectedStatus =>
-                  logger.error(s"declaration [$endpointName] call failed with backend http status code of [$unexpectedStatus] so returning to consumer [500]")
+                  logger.error(s"declaration [$endpointName] call failed with unexpected backend http status code of [$unexpectedStatus] so returning to consumer [500]")
                   Left(ErrorInternalServerError.XmlResult.withConversationId)
               }
             case Left(RetryError) =>

@@ -22,26 +22,20 @@ import com.google.inject._
 import org.joda.time.DateTime
 import play.api.http.HeaderNames._
 import play.api.http.{MimeTypes, Status}
-import play.api.libs.json.Json
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector.RetryError
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.{BackendFullPayloadCreator, BackendPayloadCreator, BackendSearchPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.customs.declarations.information.xml._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http._
 
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.NodeSeq
-import scala.util.control.{NoStackTrace, NonFatal}
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 
 @Singleton
 class DeclarationStatusConnector @Inject()(http: HttpClient,

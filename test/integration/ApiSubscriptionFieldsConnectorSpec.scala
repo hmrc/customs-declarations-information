@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
 
       val response = await(getApiSubscriptionFields)
 
-      response shouldBe apiSubscriptionFieldsResponse
+      response shouldBe Some(apiSubscriptionFieldsResponse)
       verifyGetSubscriptionFieldsCalled()
     }
 
@@ -130,7 +130,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
 
   }
 
-  private def getApiSubscriptionFields(implicit vpr: AuthorisedRequest[_]): Future[ApiSubscriptionFieldsResponse] = {
+  private def getApiSubscriptionFields(implicit vpr: AuthorisedRequest[_]): Future[Option[ApiSubscriptionFieldsResponse]] = {
     connector.getSubscriptionFields(apiSubscriptionKey)
   }
 }
