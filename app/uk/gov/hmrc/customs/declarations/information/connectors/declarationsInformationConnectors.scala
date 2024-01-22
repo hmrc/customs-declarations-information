@@ -140,25 +140,25 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
 
     val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
 
+    case class Non2xxResponseException(status: Int, responseBody: String) extends Throwable
     withCircuitBreaker {
       logger.debug(s"Sending request to ${}url. Headers $headers Payload: ${declarationPayload.toString()}")
       implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
-
       http.POSTString(url, declarationPayload.toString(), headers).map { response =>
         logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
 
         response.status match {
           case status if Status.isSuccessful(status) =>
             Right(response)
-          case BAD_REQUEST | NOT_FOUND =>
-            Left(Non2xxResponseError(response.status, response.body))
-          case _ => // Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
-            throw new Throwable()
+          case status => // Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
+            throw Non2xxResponseException(status, response.body)
         }
       }
     }.recover {
       case _: CircuitBreakerOpenException =>
         Left(RetryError)
+      case Non2xxResponseException(status, responseBody) =>
+        Left(Non2xxResponseError(status, responseBody))
       case t: Throwable =>
         Left(UnexpectedError(t))
     }

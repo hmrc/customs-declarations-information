@@ -206,12 +206,15 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                 case INTERNAL_SERVER_ERROR =>
                   val errorCodeText = (XML.loadString(body) \ "errorCode").text
                   val errorResponse: ErrorResponse = matchErrorCode(errorCodeText)
-                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of 500 and error: [${errorResponse.errorCode}] so returning to consumer " +
+                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of [500] and error: [${errorResponse.errorCode}] so returning to consumer " +
                     s"[${errorResponse.httpStatusCode}] and response body: [${errorResponse.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}]")
                   Left(errorResponse.XmlResult.withConversationId)
                 case FORBIDDEN =>
-                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of 403 so returning to consumer 403")
+                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of [403] so returning to consumer [403]")
                   Left(ErrorPayloadForbidden.XmlResult.withConversationId)
+                case unexpectedStatus =>
+                  logger.error(s"declaration [$endpointName] call failed with backend http status code of [$unexpectedStatus] so returning to consumer [500]")
+                  Left(ErrorInternalServerError.XmlResult.withConversationId)
               }
             case Left(RetryError) =>
               logger.error("Unhealthy state entered so returning 500 to consumer with message service unavailable")
