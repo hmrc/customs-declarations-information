@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.customs.declarations.information.services
 
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import akka.pattern.CircuitBreakerOpenException
-import play.api.http.HttpEntity
+import play.api.http.{HttpEntity, Status}
 import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
@@ -54,7 +55,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
       case "cds60001" => backendCDS60001NotFoundResponse
       case "cds60002" => backendCDS60002SearchInvalidResponse
       case "cds60003" => backendCDS60003InternalServerErrorResponse
-      case _          => ErrorInternalServerError
+      case _ => ErrorInternalServerError
     }
   }
 
@@ -84,7 +85,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
       case "cds60002" => backendCDS60002MrnInvalidResponse
       case "cds60003" => backendCDS60003InternalServerErrorResponse
       case "cds60011" => backendCDS60011SubmissionChannelInvalidResponse
-      case _          => ErrorInternalServerError
+      case _ => ErrorInternalServerError
     }
   }
 
@@ -127,7 +128,7 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
       case "cds60010" => backendCDS60010GoodsLocationCodeInvalidResponse
       case "cds60011" => backendCDS60011SubmissionChannelInvalidResponse
       case "cds60012" => backendCDS60012PageNumberInvalidResponse
-      case _          => ErrorInternalServerError
+      case _ => ErrorInternalServerError
     }
   }
 
@@ -156,7 +157,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
       case "cds60002" => backendCDS60002MrnInvalidResponse
       case "cds60003" => backendCDS60003InternalServerErrorResponse
       case "cds60011" => backendCDS60011SubmissionChannelInvalidResponse
-      case _          => ErrorInternalServerError
+      case _ => ErrorInternalServerError
     }
   }
 
@@ -181,7 +182,6 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
   protected val endpointName: String
 
   protected val errorResponseServiceUnavailable: ErrorResponse = errorInternalServerError("This service is currently unavailable")
-  protected val customNotFoundResponse: ErrorResponse = ErrorResponse(NOT_FOUND, NotFoundCode, "Declaration not found")
   protected val backendCDS60001NotFoundResponse: ErrorResponse = ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found")
   protected val backendCDS60002MrnInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
   protected val backendCDS60002SearchInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid")
@@ -196,56 +196,30 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     futureApiSubFieldsId(asr.clientId) flatMap {
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
-          .map(response => {
-            val filteredResponse = filterResponse(response, XML.loadString(response.body))
-            logFilteringDuration(LocalDateTime.now)
-            Right(filteredResponse)
-          })
-          .recover(recoverException(asr))
-      case Left(result) =>
-        Future.successful(Left(result))
+          .map {
+            case Right(response) =>
+              val filteredResponse = filterResponse(response, XML.loadString(response.body))
+              Right(filteredResponse)
+            case Left(Non2xxResponseError(status, body)) =>
+              logger.warn(s"Call to $endpointName failed, returning status=[$status]")
+              status match {
+                case INTERNAL_SERVER_ERROR =>
+                  val errorCodeText = (XML.loadString(body) \ "errorCode").text
+                  val errorResponse: ErrorResponse = matchErrorCode(errorCodeText)
+                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of 500 and error: [${errorResponse.errorCode}] so returning to consumer " +
+                    s"[${errorResponse.httpStatusCode}] and response body: [${errorResponse.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}]")
+                  Left(errorResponse.XmlResult.withConversationId)
+                case FORBIDDEN =>
+                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of 403 so returning to consumer 403")
+                  Left(ErrorPayloadForbidden.XmlResult.withConversationId)
+              }
+            case Left(RetryError) =>
+              logger.error("Unhealthy state entered so returning 500 to consumer with message service unavailable")
+              Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
+            case Left(UnexpectedError(t)) =>
+              logger.error(s"declaration [$endpointName] call failed: [${t.getMessage}] so returning 500 to consumer", t)
+              Left(ErrorInternalServerError.XmlResult.withConversationId)
+          }
     }
-  }
-
-  private def recoverException[A](implicit asr: AuthorisedRequest[A]): PartialFunction[Throwable, Either[Result, HttpResponse]] = {
-    case e: Non2xxResponseException if e.responseCode == INTERNAL_SERVER_ERROR =>
-      returnErrorResult(asr, (XML.loadString(e.response.body) \ "errorCode").text)
-
-    case e: Non2xxResponseException if e.responseCode == FORBIDDEN =>
-      returnErrorResult(asr, e, ErrorPayloadForbidden)
-
-    case e: HttpException if e.responseCode == NOT_FOUND =>
-      returnErrorResult(asr, e, customNotFoundResponse)
-
-    case e: HttpException =>
-      returnErrorResult(asr, e, ErrorInternalServerError)
-
-    case _: CircuitBreakerOpenException =>
-      returnErrorResult(asr, errorResponseServiceUnavailable, "unhealthy state entered so returning 500 to consumer with message service unavailable", null)
-
-    case NonFatal(e) =>
-      returnErrorResult(asr, ErrorInternalServerError, s"declaration [$endpointName] call failed: [${e.getMessage}] so returning 500 to consumer", e)
-  }
-
-  private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], e: HttpException, errorResponse: ErrorResponse): Left[Result, Nothing] = {
-    logger.warn(s"declaration [$endpointName] call failed with backend http status code of [${e.responseCode}]: [${e.getMessage}] so returning [${errorResponse.httpStatusCode}] to consumer")
-    Left(errorResponse.XmlResult.withConversationId)
-  }
-
-  private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], errorCodeText: String): Left[Result, Nothing] = {
-    val errorResponse: ErrorResponse = matchErrorCode(errorCodeText)
-    logger.warn(s"declaration [$endpointName] call failed with backend http status code of 500 and error: [${errorResponse.errorCode}] so returning to consumer response status " +
-      s"[${errorResponse.httpStatusCode}] and response body: [${errorResponse.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}]")
-    Left(errorResponse.XmlResult.withConversationId)
-  }
-
-  private def returnErrorResult[A](implicit asr: AuthorisedRequest[A], errorResponse: ErrorResponse, errorMessage: String, e: Throwable): Left[Result, Nothing] = {
-    if (e == null) logger.error(errorMessage) else logger.error(errorMessage, e);
-    Left(errorResponse.XmlResult.withConversationId)
-  }
-
-  private def logFilteringDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit = {
-    val duration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
-    logger.info(s"Xml declaration filtering was [$duration] ms")
   }
 }

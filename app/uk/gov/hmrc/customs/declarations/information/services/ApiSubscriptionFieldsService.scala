@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.customs.declarations.information.services
 
-import java.net.URLEncoder
-
 import play.api.mvc.Result
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
@@ -28,9 +26,8 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.net.URLEncoder
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
-import scala.util.control.NonFatal
 
 trait ApiSubscriptionFieldsService {
 
@@ -46,29 +43,20 @@ trait ApiSubscriptionFieldsService {
                              (implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, Option[ApiSubscriptionFieldsResponse]]] = {
     asr.authorisedAs match {
       case Csp(_, _) =>
-        (apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion)) map { response =>
-          if (validAuthenticatedEori(response.fields.authenticatedEori)) {
-            Right(Some(response))
-          } else {
-            val msg = "Missing authenticated eori in service lookup"
-            logger.warn(msg)
-            Left(errorInternalServerError(msg).XmlResult.withConversationId)
+        apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion))
+          .map {
+            case Some(response) =>
+              if (response.fields.authenticatedEori.exists(_.nonEmpty)) {
+                Right(Some(response))
+              } else {
+                val msg = "Missing authenticated eori in service lookup"
+                logger.warn(msg)
+                Left(errorInternalServerError(msg).XmlResult.withConversationId)
+              }
+            case None =>
+              Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
           }
-        }).recover {
-          case NonFatal(e) =>
-            logger.error(s"Subscriptions fields lookup call failed: ${e.getMessage}", e)
-            Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)
-        }
       case NonCsp(_) => Future.successful(Right(None))
-    }
-
-  }
-
-  private def validAuthenticatedEori(authenticatedEori: Option[String]): Boolean = {
-    if (authenticatedEori.isDefined && !authenticatedEori.get.trim.isEmpty) {
-      true
-    } else {
-      false
     }
   }
 }
