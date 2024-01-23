@@ -137,7 +137,7 @@ The version endpoint returns a response that can contain the following fields:
 
 **Full Declaration Endpoint**
 
-See the schema file, FullDeclarationDataRetrievalResponse.xsd, in the download zip for the documentation on the fields returned in the response.
+See the schema file, DeclarationInformationRetrievalFullResponse.xsd, in the download zip for the documentation on the fields returned in the response.
 
 **Search Declarations Endpoint**
 

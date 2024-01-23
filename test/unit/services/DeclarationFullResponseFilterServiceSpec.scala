@@ -41,7 +41,7 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec {
 
   import ValidateXmlAgainstSchema._
 
-  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/FullDeclarationDataRetrievalResponse.xsd")
+  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
 
   def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
