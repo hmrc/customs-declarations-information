@@ -17,15 +17,15 @@
 package integration
 
 import org.mockito.Mockito._
+import org.scalatest.Inside.inside
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
-import play.api.test.Helpers._
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector.UnexpectedError
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationSearchConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
-import uk.gov.hmrc.http._
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
@@ -87,7 +87,8 @@ class DeclarationSearchConnectorSpec extends IntegrationTestSpec
 
     "return a failed future when fail to connect the external service" in {
       stopMockServer()
-      intercept[BadGatewayException](await(sendValidXml())).responseCode shouldBe BAD_GATEWAY
+      val response = await(sendValidXml())
+      inside(response) { case Left(UnexpectedError(_)) => succeed }
       startMockServer()
     }
   }

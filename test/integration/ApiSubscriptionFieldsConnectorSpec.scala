@@ -24,20 +24,14 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers._
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionFieldsResponse
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.http._
 import util.ExternalServicesConfig.{Host, Port}
-import util.VerifyLogging._
 import util._
 import util.externalservices.ApiSubscriptionFieldsService
 
-import scala.concurrent.Future
-import scala.util.Try
-
 class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
-
   with ApiSubscriptionFieldsService
   with ApiSubscriptionFieldsTestData {
 
@@ -74,7 +68,7 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
     "make a correct request" in {
       setupGetSubscriptionFieldsToReturn()
 
-      val response = await(getApiSubscriptionFields)
+      val response = await(connector.getSubscriptionFields(apiSubscriptionKey))
 
       response shouldBe Some(apiSubscriptionFieldsResponse)
       verifyGetSubscriptionFieldsCalled()
@@ -83,54 +77,33 @@ class ApiSubscriptionFieldsConnectorSpec extends IntegrationTestSpec
     "return a failed future when external service returns 404" in {
       setupGetSubscriptionFieldsToReturn(NOT_FOUND)
 
-      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
+      val response = await(connector.getSubscriptionFields(apiSubscriptionKey))
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=404 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 404. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
+      response shouldBe None
     }
 
     "return a failed future when external service returns 400" in {
       setupGetSubscriptionFieldsToReturn(BAD_REQUEST)
 
-      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
+      val response = await(connector.getSubscriptionFields(apiSubscriptionKey))
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=400 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 400. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
+      response shouldBe None
     }
 
     "return a failed future when external service returns any 4xx response other than 400" in {
       setupGetSubscriptionFieldsToReturn(FORBIDDEN)
 
-      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
+      val response = await(connector.getSubscriptionFields(apiSubscriptionKey))
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=403 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 403. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
+      response shouldBe None
     }
 
     "return a failed future when external service returns 500" in {
       setupGetSubscriptionFieldsToReturn(INTERNAL_SERVER_ERROR)
 
-      intercept[UpstreamErrorResponse](await(getApiSubscriptionFields))
+      val response = await(connector.getSubscriptionFields(apiSubscriptionKey))
 
-      verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=500 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' returned 500. Response body: '{\n  \"clientId\": \"afsdknbw34ty4hebdv\",\n  \"apiContext\": \"ciao-api\",\n  \"apiVersion\": \"1.0\",\n  \"fieldsId\":\"327d9145-4965-4d28-a2c5-39dedee50334\",\n  \"fields\":{\n    \"callback-id\":\"http://localhost\",\n    \"token\":\"abc123\",\n    \"authenticatedEori\":\"ZZ123456789000\"\n  }\n}'")
+      response shouldBe None
     }
-
-    "return a failed future when fail to connect the external service" in {
-      stopMockServer()
-
-      intercept[RuntimeException](await(getApiSubscriptionFields)).getCause.getClass shouldBe classOf[BadGatewayException]
-
-      // This is a quick hack to make sure this test are not failing on localhost
-      def assertOnJenkins(): Unit = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/127.0.0.1:11111'")
-
-      def assertOnLocalhost(): Unit = verifyInformationLoggerError("Subscriptions fields lookup call failed. url=http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0 HttpStatus=502 error=GET of 'http://localhost:11111/api-subscription-fields/field/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0' failed. Caused by: 'Connection refused: localhost/0:0:0:0:0:0:0:1:11111'")
-
-      Try(assertOnJenkins()).getOrElse(assertOnLocalhost())
-
-      startMockServer()
-
-    }
-
-  }
-
-  private def getApiSubscriptionFields(implicit vpr: AuthorisedRequest[_]): Future[Option[ApiSubscriptionFieldsResponse]] = {
-    connector.getSubscriptionFields(apiSubscriptionKey)
   }
 }

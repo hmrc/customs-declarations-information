@@ -59,7 +59,7 @@
 
     <logger name="customs-declarations-information" level="DEBUG"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="FILE"/>
         <appender-ref ref="FILE_JSON"/>
         <appender-ref ref="STDOUT"/>
