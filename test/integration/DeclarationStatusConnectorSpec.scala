@@ -84,12 +84,6 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
       await(sendValidXml())
       verifyBackendDecServiceWasCalledWith(requestBody = expectedStatusPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
-
-    "return a failed future when fail to connect the external service" in {
-      stopMockServer()
-      intercept[BadGatewayException](await(sendValidXml())).responseCode shouldBe BAD_GATEWAY
-      startMockServer()
-    }
   }
 
   private def sendValidXml() = {

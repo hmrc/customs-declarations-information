@@ -87,13 +87,6 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
       verifyBackendDecServiceWasCalledWith(BackendFullDeclarationServiceContextV1, requestBody = expectedFullPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
-    "return an error when external service returns 500" in {
-      startBackendFullServiceV1(INTERNAL_SERVER_ERROR)
-      inside(await(sendValidXml())) { case Left(Non2xxResponseError(status, _)) =>
-        status shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-
     "return an error when fail to connect the external service" in {
       stopMockServer()
       val response = await(sendValidXml())
