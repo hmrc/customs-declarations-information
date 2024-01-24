@@ -9,8 +9,6 @@
 
     <logger name="customs-declarations-information" level="${logger.customs-declarations-information:-INFO}"/>
 
-    <logger name="org.asynchttpclient.netty.handler" level="${logger.asynchttpclient:-WARN}"/>
-
     <root level="${logger.application:-INFO}">
         <appender-ref ref="STDOUT"/>
     </root>
