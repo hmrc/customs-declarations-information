@@ -26,7 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.connectors._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.SearchType
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -198,11 +198,9 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
               val filteredResponse = filterResponse(response, XML.loadString(response.body))
               Right(filteredResponse)
             case Left(RetryError) =>
-              logger.error("Unhealthy state entered so returning 500 to consumer with message service unavailable")
-              Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
+              handleError("Unhealthy state entered", INTERNAL_SERVER_ERROR, errorResponseServiceUnavailable)
             case Left(UnexpectedError(t)) =>
-              logger.error(s"declaration [$endpointName] call failed: [${t.getMessage}] so returning 500 to consumer", t)
-              Left(ErrorInternalServerError.XmlResult.withConversationId)
+              handleError(t.getMessage, INTERNAL_SERVER_ERROR, ErrorInternalServerError)
             case Left(Non2xxResponseError(status, body)) =>
               status match {
                 case INTERNAL_SERVER_ERROR =>
@@ -215,10 +213,14 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                   logger.warn(s"declaration [$endpointName] call failed with backend http status code of [403] so returning to consumer [403]")
                   Left(ErrorPayloadForbidden.XmlResult.withConversationId)
                 case unexpectedStatus =>
-                  logger.error(s"declaration [$endpointName] call failed with unexpected backend http status code of [$unexpectedStatus] so returning to consumer [500]")
-                  Left(ErrorInternalServerError.XmlResult.withConversationId)
+                  handleError(s"unexpected backend http status code of [$unexpectedStatus]", INTERNAL_SERVER_ERROR, ErrorInternalServerError)
               }
           }
     }
+  }
+
+  private def handleError(message: String, statusToReturn: Int, errorResponse: ErrorResponse)(implicit r: HasConversationId) = {
+    logger.error(s"declaration[$endpointName] call failed: $message, returning status code [$statusToReturn]")
+    Left(errorResponse.XmlResult.withConversationId)
   }
 }
