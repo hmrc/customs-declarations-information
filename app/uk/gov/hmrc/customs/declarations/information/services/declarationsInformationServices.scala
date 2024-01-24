@@ -39,10 +39,9 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
                                          override val logger: InformationLogger,
                                          connector: DeclarationStatusConnector,
                                          dateTimeProvider: DateTimeService,
-                                         uniqueIdsService: UniqueIdsService,
-                                         config: InformationConfigService)
+                                         uniqueIdsService: UniqueIdsService)
                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
 
   protected val endpointName: String = "status"
 
@@ -71,7 +70,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
                                           uniqueIdsService: UniqueIdsService,
                                           config: InformationConfigService)
                                          (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
 
   protected val endpointName: String = "version"
 
@@ -100,7 +99,7 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
                                          uniqueIdsService: UniqueIdsService,
                                          config: InformationConfigService)
                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
 
   protected val endpointName: String = "search"
   protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60005", "pageNumber parameter out of bounds")
@@ -143,7 +142,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
                                        uniqueIdsService: UniqueIdsService,
                                        config: InformationConfigService)
                                       (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService, config) {
+  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
 
   protected val endpointName: String = "declaration-full"
 
@@ -167,8 +166,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                                             override val logger: InformationLogger,
                                             connector: DeclarationConnector,
                                             dateTimeProvider: DateTimeService,
-                                            uniqueIdsService: UniqueIdsService,
-                                            config: InformationConfigService)
+                                            uniqueIdsService: UniqueIdsService)
                                            (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse
@@ -189,13 +187,22 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     val dateTime = dateTimeProvider.nowUtc()
     val correlationId = uniqueIdsService.correlation
 
-    futureApiSubFieldsId(asr.clientId) flatMap {
+    futureApiSubFieldsId(asr.clientId).flatMap {
+      case Left(result) =>
+        Future.successful(Left(result))
       case Right(sfId) =>
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map {
             case Right(response) =>
+              logger.warn(s"Response is ${response.body}")
               val filteredResponse = filterResponse(response, XML.loadString(response.body))
               Right(filteredResponse)
+            case Left(RetryError) =>
+              logger.error("Unhealthy state entered so returning 500 to consumer with message service unavailable")
+              Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
+            case Left(UnexpectedError(t)) =>
+              logger.error(s"declaration [$endpointName] call failed: [${t.getMessage}] so returning 500 to consumer", t)
+              Left(ErrorInternalServerError.XmlResult.withConversationId)
             case Left(Non2xxResponseError(status, body)) =>
               status match {
                 case INTERNAL_SERVER_ERROR =>
@@ -211,12 +218,6 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                   logger.error(s"declaration [$endpointName] call failed with unexpected backend http status code of [$unexpectedStatus] so returning to consumer [500]")
                   Left(ErrorInternalServerError.XmlResult.withConversationId)
               }
-            case Left(RetryError) =>
-              logger.error("Unhealthy state entered so returning 500 to consumer with message service unavailable")
-              Left(errorResponseServiceUnavailable.XmlResult.withConversationId)
-            case Left(UnexpectedError(t)) =>
-              logger.error(s"declaration [$endpointName] call failed: [${t.getMessage}] so returning 500 to consumer", t)
-              Left(ErrorInternalServerError.XmlResult.withConversationId)
           }
     }
   }

@@ -46,7 +46,7 @@ trait ApiSubscriptionFieldsService {
         apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion))
           .map {
             case Some(response) =>
-              if (response.fields.authenticatedEori.exists(_.nonEmpty)) {
+              if (response.fields.authenticatedEori.exists(!_.isBlank)) {
                 Right(Some(response))
               } else {
                 val msg = "Missing authenticated eori in service lookup"

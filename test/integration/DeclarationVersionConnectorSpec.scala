@@ -22,7 +22,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
-import uk.gov.hmrc.customs.declarations.information.connectors.{DeclarationVersionConnector, Non2xxResponseException}
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.http._
@@ -83,21 +83,6 @@ class DeclarationVersionConnectorSpec extends IntegrationTestSpec
       startBackendVersionServiceV1()
       await(sendValidXml())
       verifyBackendDecServiceWasCalledWith(BackendVersionDeclarationServiceContextV1, requestBody = expectedVersionPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
-    }
-
-    "return a failed future when external service returns 404" in {
-      startBackendVersionServiceV1(NOT_FOUND)
-      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe NOT_FOUND
-    }
-
-    "return a failed future when external service returns 400" in {
-      startBackendVersionServiceV1(BAD_REQUEST)
-      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe BAD_REQUEST
-    }
-
-    "return a failed future when external service returns 500" in {
-      startBackendVersionServiceV1(INTERNAL_SERVER_ERROR)
-      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe INTERNAL_SERVER_ERROR
     }
 
     "return a failed future when fail to connect the external service" in {
