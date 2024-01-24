@@ -59,20 +59,20 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec {
     "ensure element CreatedDateTime is present" in new SetUp {
       val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "CreatedDateTime" \ "DateTimeString"
 
-      node.text shouldBe "20190702110757Z"
+      node.text shouldBe "20240111115536Z"
       node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
     "ensure element LRN is present" in new SetUp {
       val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "LRN"
 
-      node.text shouldBe "20GBAKZ81EQJ2WXYZ"
+      node.text shouldBe "SK383RefTC181788"
     }
 
     "ensure element VersionID is present" in new SetUp {
       val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "VersionID"
 
-      node.text shouldBe "4"
+      node.text shouldBe "1"
     }
 
     "handle missing VersionID element in backend response" in new SetUp {
