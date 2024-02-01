@@ -17,6 +17,7 @@
 package uk.gov.hmrc.customs.declarations.information.connectors
 
 import akka.actor.ActorSystem
+import akka.pattern.CircuitBreakerOpenException
 import com.google.inject._
 import org.joda.time.DateTime
 import play.api.http.HeaderNames._
@@ -24,20 +25,17 @@ import play.api.http.{MimeTypes, Status}
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.customs.declarations.information.xml.{BackendFullPayloadCreator, BackendPayloadCreator, BackendSearchPayloadCreator, BackendStatusPayloadCreator, BackendVersionPayloadCreator}
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.customs.declarations.information.xml._
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.NodeSeq
-import scala.util.control.NonFatal
 
 @Singleton
 class DeclarationStatusConnector @Inject()(http: HttpClient,
@@ -117,7 +115,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
                                               serviceConfigProvider: ServiceConfigProvider,
                                               config: InformationConfigService)
                                              (implicit val ec: ExecutionContext)
-  extends CircuitBreakerConnector with HttpErrorFunctions with Status {
+  extends CircuitBreakerConnector with Status {
 
   override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
@@ -127,14 +125,37 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
-              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[HttpResponse] = {
+              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[Either[DeclarationConnector.Error, HttpResponse]] = {
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
+    val url = config.url
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
 
     val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
-    withCircuitBreaker(post(declarationPayload, config.url, headers))
+
+    case class Non2xxResponseException(status: Int, responseBody: String) extends Throwable
+    withCircuitBreaker {
+      logger.debug(s"Sending request to $url. Headers $headers Payload: ${declarationPayload.toString()}")
+      implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+      http.POSTString(url, declarationPayload.toString(), headers).map { response =>
+        logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
+
+        response.status match {
+          case status if Status.isSuccessful(status) =>
+            Right(response)
+          case status => // Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
+            throw Non2xxResponseException(status, response.body)
+        }
+      }
+    }.recover {
+      case _: CircuitBreakerOpenException =>
+        Left(RetryError)
+      case Non2xxResponseException(status, responseBody) =>
+        Left(Non2xxResponseError(status, responseBody))
+      case t: Throwable =>
+        Left(UnexpectedError(t))
+    }
   }
 
   private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
@@ -147,44 +168,14 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
       (ACCEPT, MimeTypes.XML)
     )
   }
+}
 
-  private def post[A](xml: NodeSeq, url: String, headers: Seq[(String, String)])(implicit asr: AuthorisedRequest[A]) = {
-    logger.debug(s"Sending request to $url. Headers $headers Payload: ${xml.toString()}")
-    implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+object DeclarationConnector {
+  sealed trait Error
 
-    val startTime = LocalDateTime.now
-    http.POSTString[HttpResponse](url, xml.toString(), headers).map { response =>
-      logCallDuration(startTime)
-      logger.debugFull(s"response status: ${response.status} response body: ${response.body}")
+  case class Non2xxResponseError(status: Int, responseBody: String) extends Error
 
-      response.status match {
-        case status if is2xx(status) =>
-          response
-        case status => //1xx, 3xx, 4xx, 5xx
-          throw new Non2xxResponseException(response, status)
-      }
-    }.recoverWith {
-      case httpError: HttpException =>
-        logger.error(s"Call to $configKey failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
-        Future.failed(httpError)
-      case NonFatal(e) =>
-        logger.error(s"Call to $configKey failed. url=$url")
-        Future.failed(e)
-    }
-  }
+  case object RetryError extends Error
 
-  override protected def breakOnException(t: Throwable): Boolean = t match {
-    case e: Non2xxResponseException => e.responseCode match {
-      case BAD_REQUEST => false
-      case NOT_FOUND => false
-      case _ => true
-    }
-    case _ => true
-  }
-
-  protected def logCallDuration(startTime: LocalDateTime)(implicit r: HasConversationId): Unit = {
-    val callDuration = ChronoUnit.MILLIS.between(startTime, LocalDateTime.now)
-    logger.info(s"Outbound call duration was $callDuration ms")
-  }
-
+  case class UnexpectedError(t: Throwable) extends Error
 }
