@@ -29,7 +29,6 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.VersionController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
@@ -101,9 +100,9 @@ class VersionControllerSpec extends UnitSpec
       controller.list(mrnValue, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
-    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
@@ -283,7 +282,7 @@ class VersionControllerSpec extends UnitSpec
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
         meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
-        .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
+        .thenReturn(Future.failed(emulatedServiceFailure))
 
       authoriseCsp()
 

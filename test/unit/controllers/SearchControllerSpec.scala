@@ -23,7 +23,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc._
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import play.api.test.Helpers.{header, _}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core.AuthConnector
@@ -103,9 +102,9 @@ class SearchControllerSpec extends UnitSpec
       controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
-    when(mockSearchConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockSearchConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(stubHttpResponse))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
-    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponse))
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
@@ -224,7 +223,7 @@ class SearchControllerSpec extends UnitSpec
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
         any[StatusSearchType])(any[AuthorisedRequest[_]]))
-        .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
+        .thenReturn(Future.failed(emulatedServiceFailure))
 
       authoriseCsp()
 

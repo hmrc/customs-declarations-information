@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.customs.declarations.information.model
 
-import play.api.libs.json.{Format, Json}
-
 import java.util.UUID
+
+import play.api.libs.json.{Format, Json}
 
 case class ApiSubscriptionFieldsResponse(fieldsId: UUID, fields: ApiSubscriptionFieldsResponseFields)
 

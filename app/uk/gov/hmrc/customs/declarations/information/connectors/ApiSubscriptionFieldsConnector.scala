@@ -16,17 +16,13 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
-import play.api.http.Status
-import play.api.libs.json.Json
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionFieldsResponse.format
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiSubscriptionKey}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, UpstreamErrorResponse}
 
-import java.net.URL
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,26 +32,25 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
                                                config: InformationConfigService)
                                               (implicit ec: ExecutionContext) {
 
-  def getSubscriptionFields(apiSubsKey: ApiSubscriptionKey)
-                           (implicit hci: HasConversationId, hc: HeaderCarrier): Future[Option[ApiSubscriptionFieldsResponse]] = {
-    val url = new URL(ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey))
+  def getSubscriptionFields[A](apiSubsKey: ApiSubscriptionKey)(implicit hci: HasConversationId, hc: HeaderCarrier): Future[ApiSubscriptionFieldsResponse] = {
+    val url = ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey)
+    get(url)
+  }
+
+  private def get[A](url: String)(implicit hci: HasConversationId, hc: HeaderCarrier): Future[ApiSubscriptionFieldsResponse] = {
     logger.debug(s"Getting fields id from api subscription fields service. url=$url")
 
-    http.GET(url)
-      .map { response =>
-        response.status match {
-          case status if Status.isSuccessful(status) =>
-            Json.parse(response.body).asOpt[ApiSubscriptionFieldsResponse] match {
-              case Some(value) =>
-                Some(value)
-              case None =>
-                logger.error(s"Could not parse subscription fields response. url=$url")
-                None
-            }
-          case status =>
-            logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=$status")
-            None
-        }
+    http.GET[ApiSubscriptionFieldsResponse](url)
+      .recoverWith {
+        case upstreamErrorResponse: UpstreamErrorResponse =>
+          logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${upstreamErrorResponse.statusCode} error=${upstreamErrorResponse.getMessage}")
+          Future.failed(upstreamErrorResponse)
+        case httpError: HttpException =>
+          logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=${httpError.responseCode} error=${httpError.getMessage}")
+          Future.failed(new RuntimeException(httpError))
+        case e: Throwable =>
+          logger.error(s"Call to subscription information service failed. url=$url")
+          Future.failed(e)
       }
   }
 }
