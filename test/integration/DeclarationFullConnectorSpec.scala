@@ -17,14 +17,12 @@
 package integration
 
 import org.mockito.Mockito._
-import org.scalatest.Inside
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers._
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
+import uk.gov.hmrc.customs.declarations.information.connectors.{DeclarationFullConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
 import uk.gov.hmrc.http._
@@ -38,7 +36,7 @@ import util.externalservices.BackendDeclarationService
 
 class DeclarationFullConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
-  with Inside
+
   with BackendDeclarationService {
 
   private lazy val connector = app.injector.instanceOf[DeclarationFullConnector]
@@ -87,10 +85,24 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
       verifyBackendDecServiceWasCalledWith(BackendFullDeclarationServiceContextV1, requestBody = expectedFullPayloadRequest.toString(), maybeUnexpectedAuthToken = Some(incomingAuthToken))
     }
 
-    "return an error when fail to connect the external service" in {
+    "return a failed future when external service returns 404" in {
+      startBackendFullServiceV1(NOT_FOUND)
+      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe NOT_FOUND
+    }
+
+    "return a failed future when external service returns 400" in {
+      startBackendFullServiceV1(BAD_REQUEST)
+      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe BAD_REQUEST
+    }
+
+    "return a failed future when external service returns 500" in {
+      startBackendFullServiceV1(INTERNAL_SERVER_ERROR)
+      intercept[Non2xxResponseException](await(sendValidXml())).responseCode shouldBe INTERNAL_SERVER_ERROR
+    }
+
+    "return a failed future when fail to connect the external service" in {
       stopMockServer()
-      val response = await(sendValidXml())
-      inside(response) { case Left(UnexpectedError(_)) => succeed }
+      intercept[BadGatewayException](await(sendValidXml())).responseCode shouldBe BAD_GATEWAY
       startMockServer()
     }
   }

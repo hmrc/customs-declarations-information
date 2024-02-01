@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
+
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
@@ -34,7 +35,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.StatusTestXMLData.expectedStatusPayloadRequest
 import util.TestData._
-import util.{ApiSubscriptionFieldsTestData, UnitSpec}
+import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,9 +66,9 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
 
   private val successfulResponse = HttpResponse(200, "")
 
-  "DeclarationStatusConnector" when {
+  "DeclarationStatusConnector" can {
 
-    "making a successful request" should {
+    "when making a successful request" should {
 
       "pass URL from config" in {
         returnResponseForRequest(Future.successful(successfulResponse))
@@ -96,7 +97,18 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
       }
     }
 
-    "configuration is absent" should {
+    "when making an failing request" should {
+      "propagate an underlying error when service call fails with a non-http exception" in {
+        returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))
+
+        val caught = intercept[TestData.EmulatedServiceFailure] {
+          awaitRequest
+        }
+        caught shouldBe TestData.emulatedServiceFailure
+      }
+    }
+
+    "when configuration is absent" should {
       "throw an exception when no config is found for given api and version combination" in {
         when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(null)
 

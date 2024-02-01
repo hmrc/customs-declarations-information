@@ -20,22 +20,18 @@ import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
-import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
-import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.InformationConfig
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient, HttpReads}
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
 import util.ExternalServicesConfig._
 import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
-import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
@@ -44,11 +40,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   with ApiSubscriptionFieldsTestData {
 
   private val mockWSGetImpl = mock(classOf[HttpClient])
-  private val mockLogger = {
-    val mockServicesConfig = mock(classOf[ServicesConfig])
-    when(mockServicesConfig.getString(any[String])).thenReturn("customs-declarations-information")
-    new InformationLogger(new CdsLogger(mockServicesConfig))
-  }
+  private val mockLogger = mock(classOf[InformationLogger])
   private val mockInformationConfigService = mock(classOf[InformationConfigService])
   private val mockInformationConfig = mock(classOf[InformationConfig])
   private implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -57,10 +49,11 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
 
   private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockInformationConfigService)
 
-  private val expectedUrl = new URL(s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0")
+  private val badRequestException = new BadRequestException("Emulated 400 response from a web call")
+  private val expectedUrl = s"http://$Host:$Port$ApiSubscriptionFieldsContext/application/SOME_X_CLIENT_ID/context/some/api/context/version/1.0"
 
   override protected def beforeEach(): Unit = {
-    reset(mockWSGetImpl, mockInformationConfigService)
+    reset(mockLogger, mockWSGetImpl, mockInformationConfigService)
 
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
     when(mockInformationConfig.apiSubscriptionFieldsBaseUrl).thenReturn(s"http://$Host:$Port$ApiSubscriptionFieldsContext")
@@ -69,31 +62,44 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   "ApiSubscriptionFieldsConnector" can {
     "when making a successful request" should {
       "use the correct URL for valid path parameters and config" in {
-        val futureResponse = Future.successful(HttpResponse(OK, responseJsonString))
-        when(mockWSGetImpl.GET[HttpResponse](ameq(expectedUrl))(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(futureResponse)
+        val futureResponse = Future.successful(apiSubscriptionFieldsResponse)
+        when(mockWSGetImpl.GET[ApiSubscriptionFieldsResponse](ameq(expectedUrl), any[Seq[(String, String)]], any[Seq[(String, String)]])
+          (any[HttpReads[ApiSubscriptionFieldsResponse]], any[HeaderCarrier], any[ExecutionContext])).thenReturn(futureResponse)
 
-        awaitRequest() shouldBe Some(apiSubscriptionFieldsResponse)
+        awaitRequest shouldBe apiSubscriptionFieldsResponse
       }
     }
 
     "when making an failing request" should {
+      "propagate an underlying error when api subscription fields call fails with a non-http exception" in {
+        returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))
+
+        val caught = intercept[TestData.EmulatedServiceFailure] {
+          awaitRequest
+        }
+
+        caught shouldBe TestData.emulatedServiceFailure
+      }
 
       "wrap an underlying error when api subscription fields call fails with a bad request exception" in {
-        returnResponseForRequest(Future.successful(Future.successful(HttpResponse(BAD_REQUEST, ""))))
+        returnResponseForRequest(Future.failed(badRequestException))
 
-        awaitRequest() shouldBe None
+        val caught = intercept[RuntimeException] {
+          awaitRequest
+        }
+
+        caught.getCause shouldBe badRequestException
       }
     }
   }
 
-  private def awaitRequest() = {
+  private def awaitRequest = {
     await(connector.getSubscriptionFields(apiSubscriptionKey))
   }
 
-  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
-    when(mockWSGetImpl.GET[HttpResponse](any[URL]())(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(eventualResponse)
+  private def returnResponseForRequest(eventualResponse: Future[ApiSubscriptionFieldsResponse]) = {
+    when(mockWSGetImpl.GET[ApiSubscriptionFieldsResponse](anyString(), any[Seq[(String, String)]], any[Seq[(String, String)]])
+      (any[HttpReads[ApiSubscriptionFieldsResponse]](), any[HeaderCarrier](), any[ExecutionContext])).thenReturn(eventualResponse)
   }
 
 }

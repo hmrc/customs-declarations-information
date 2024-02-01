@@ -20,14 +20,12 @@ import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status.OK
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers
-import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.mvc.Http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{NotFoundCode, errorInternalServerError}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector, Non2xxResponseException}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -37,7 +35,7 @@ import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCre
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
 import util.TestData._
-import util.UnitSpec
+import util.{UnitSpec, VerifyLogging}
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +51,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
   protected lazy val mockDeclarationFullConnector: DeclarationFullConnector = mock(classOf[DeclarationFullConnector])
   protected lazy val mockPayloadDecorator: BackendVersionPayloadCreator = mock(classOf[BackendVersionPayloadCreator])
   protected lazy val mockDateTimeProvider: DateTimeService = mock(classOf[DateTimeService])
-  protected lazy val mockHttpResponse: HttpResponse = HttpResponse(OK, "<xml>some xml</xml>")
+  protected lazy val mockHttpResponse: HttpResponse = mock(classOf[HttpResponse])
   protected lazy val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
   protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
   protected val mrn = Mrn("theMrn")
@@ -65,10 +63,12 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
     when(mockDeclarationFullConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
-      .thenReturn(Future.successful(Right(mockHttpResponse)))
-    when(mockFullResponseFilterService.transform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
+      .thenReturn(Future.successful(mockHttpResponse))
+    when(mockHttpResponse.body).thenReturn("<xml>some xml</xml>")
+    when(mockHttpResponse.headers).thenReturn(any[Map[String, Seq[String]]])
+    when(mockFullResponseFilterService.transform(<xml>backendXml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier]))
-      .thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+      .thenReturn(Future.successful(apiSubscriptionFieldsResponse))
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
 
     protected lazy val service: DeclarationFullService = new DeclarationFullService(mockFullResponseFilterService, mockApiSubscriptionFieldsConnector,
@@ -80,7 +80,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationFullConnector, mockFullResponseFilterService)
+    reset(mockDateTimeProvider, mockDeclarationFullConnector, mockHttpResponse, mockFullResponseFilterService)
   }
 
   "Business Service" should {
@@ -99,19 +99,19 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
-      when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponseWithNoEori)))
+      when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponseWithNoEori))
       val result: Either[Result, HttpResponse] = send()
       result shouldBe Left(missingEoriResult)
     }
 
     "return 500 with detailed message when call to api-subscription field returns empty eori" in new SetUp() {
-      when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponseWithEmptyEori)))
+      when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(apiSubscriptionFieldsResponseWithEmptyEori))
       val result: Either[Result, HttpResponse] = send()
       result shouldBe Left(missingEoriResult)
     }
 
     "return 404 error response when backend call fails with 500 and errorCode CDS60001" in new SetUp() {
-      val declarationsResponseBody =
+      when(mockHttpResponse.body).thenReturn(
         """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
           |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
           |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -119,18 +119,19 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Declaration Not Found</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
+      )
       when(mockDeclarationFullConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
     }
 
     "return 400 error response when backend call fails with 500 and errorCode CDS60002" in new SetUp() {
-      val declarationsResponseBody =
+      when(mockHttpResponse.body).thenReturn(
         """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
           |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
           |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -138,20 +139,19 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Search parameter invalid</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
-
-
+      )
       when(mockDeclarationFullConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid").XmlResult.withConversationId)
     }
 
     "return 400 error response when backend call fails with 500 and errorCode CDS60011" in new SetUp() {
-      val declarationsResponseBody =
+      when(mockHttpResponse.body).thenReturn(
         """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
           |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
           |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -159,20 +159,19 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Invalid Declaration Submission Channel</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
-
-
+      )
       when(mockDeclarationFullConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode CDS60003" in new SetUp() {
-      val declarationsResponseBody =
+      when(mockHttpResponse.body).thenReturn(
         """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
           |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
           |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -180,20 +179,19 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Internal server error</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
-
-
+      )
       when(mockDeclarationFullConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
     }
 
     "return 500 error response when backend call fails with 500 and errorCode not CDS60003" in new SetUp() {
-      val declarationsResponseBody =
+      when(mockHttpResponse.body).thenReturn(
         """<cds:errorDetail xmlns:cds="http://www.hmrc.gsi.gov.uk/cds">
           |        <cds:timestamp>2016-08-30T14:11:47Z</cds:timestamp>
           |        <cds:correlationId>05c97e0f-1336-4850-9008-b992a373f2fg</cds:correlationId>
@@ -201,13 +199,12 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Internal server error</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
-
-
+      )
       when(mockDeclarationFullConnector.send(any[DateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 500)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error").XmlResult.withConversationId)
@@ -218,10 +215,22 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(FORBIDDEN, mockHttpResponse.body))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mockHttpResponse, 403)))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorPayloadForbidden.XmlResult.withConversationId)
+    }
+
+    "return 404 error response when backend call fails with 404" in new SetUp() {
+      when(mockDeclarationFullConnector.send(any[DateTime],
+        meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+        any[ApiVersion],
+        any[Option[ApiSubscriptionFieldsResponse]],
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(new Non2xxResponseException(mock(classOf[HttpResponse]), 404)))
+      val result: Either[Result, HttpResponse] = send()
+
+      result shouldBe Left(ErrorResponse(NOT_FOUND, NotFoundCode, "Declaration not found").XmlResult.withConversationId)
+      VerifyLogging.verifyInformationLoggerWarn("declaration [declaration-full] call failed with backend http status code of [404]: [Received a non 2XX response] so returning [404] to consumer")
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
@@ -229,7 +238,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.failed(emulatedServiceFailure))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)

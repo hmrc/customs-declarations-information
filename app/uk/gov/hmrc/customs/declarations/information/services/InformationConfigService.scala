@@ -55,16 +55,15 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
     (validatedInformationConfig,
       validatedDeclarationsShutterConfig,
       validatedInformationCircuitBreakerConfig
-    ).mapN(CustomsConfigHolder)
-      .fold(
-        fe = { nel =>
-          // error case exposes nel (a NotEmptyList)
-          val errorMsg = nel.toList.mkString("\n", "\n", "")
-          logger.errorWithoutRequestContext(errorMsg)
-          throw new IllegalStateException(errorMsg)
-        },
-        fa = identity
-      )
+    ) mapN CustomsConfigHolder fold(
+      fe = { nel =>
+        // error case exposes nel (a NotEmptyList)
+        val errorMsg = nel.toList.mkString("\n", "\n", "")
+        logger.errorWithoutRequestContext(errorMsg)
+        throw new IllegalStateException(errorMsg)
+      },
+      fa = identity
+    )
 
   val informationConfig: InformationConfig = customsConfigHolder.informationConfig
 
