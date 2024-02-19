@@ -16,13 +16,13 @@
                 <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
             </p:CreatedDateTime>
             <p:AcceptanceDateTime>
-                <p1:DateTimeString formatCode="304">20190702110757Z</p1:DateTimeString>
+                <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
             </p:AcceptanceDateTime>
             <p:FinalisedDateTime>
                 <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
             </p:FinalisedDateTime>
         </p:HighLevelSummaryDetails>
-        <p:GeneratedConsigmentDetails>
+        <p:GeneratedConsignmentDetails>
             <p:ROE>6</p:ROE>
             <p:InventoryReference>02223305</p:InventoryReference>
             <p:StatusOfEntry-ICS>3</p:StatusOfEntry-ICS>
@@ -37,11 +37,11 @@
             <p:DateOfExit>
                 <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
             </p:DateOfExit>
-        </p:GeneratedConsigmentDetails>
+        </p:GeneratedConsignmentDetails>
         <p:FullDeclarationObject>
             <p:Declaration>
                 <p:AcceptanceDateTime>
-                    <p3:DateTimeString formatCode="304">20190702110757Z</p3:DateTimeString>
+                    <p:DateTimeString formatCode="304">20190702110757Z</p:DateTimeString>
                 </p:AcceptanceDateTime>
                 <p:FunctionCode>9</p:FunctionCode>
                 <p:FunctionalReferenceID>eamonn2217</p:FunctionalReferenceID>
