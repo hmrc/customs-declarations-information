@@ -50,7 +50,7 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
       case "cds60001" => backendCDS60001NotFoundResponse
       case "cds60002" => backendCDS60002SearchInvalidResponse
       case "cds60003" => backendCDS60003InternalServerErrorResponse
-      case _ => ErrorInternalServerError
+      case _          => ErrorInternalServerError
     }
   }
 
@@ -80,7 +80,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
       case "cds60002" => backendCDS60002MrnInvalidResponse
       case "cds60003" => backendCDS60003InternalServerErrorResponse
       case "cds60011" => backendCDS60011SubmissionChannelInvalidResponse
-      case _ => ErrorInternalServerError
+      case _          => ErrorInternalServerError
     }
   }
 
@@ -123,7 +123,7 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
       case "cds60010" => backendCDS60010GoodsLocationCodeInvalidResponse
       case "cds60011" => backendCDS60011SubmissionChannelInvalidResponse
       case "cds60012" => backendCDS60012PageNumberInvalidResponse
-      case _ => ErrorInternalServerError
+      case _          => ErrorInternalServerError
     }
   }
 
@@ -152,7 +152,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
       case "cds60002" => backendCDS60002MrnInvalidResponse
       case "cds60003" => backendCDS60003InternalServerErrorResponse
       case "cds60011" => backendCDS60011SubmissionChannelInvalidResponse
-      case _ => ErrorInternalServerError
+      case _          => ErrorInternalServerError
     }
   }
 
@@ -206,11 +206,11 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
                 case INTERNAL_SERVER_ERROR =>
                   val errorCodeText = (XML.loadString(body) \ "errorCode").text
                   val errorResponse: ErrorResponse = matchErrorCode(errorCodeText)
-                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of [500] and error: [${errorResponse.errorCode}] so returning to consumer " +
+                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of [$INTERNAL_SERVER_ERROR] and error: [${errorResponse.errorCode}] so returning to consumer " +
                     s"[${errorResponse.httpStatusCode}] and response body: [${errorResponse.XmlResult.body.asInstanceOf[HttpEntity.Strict].data.utf8String}]")
                   Left(errorResponse.XmlResult.withConversationId)
                 case FORBIDDEN =>
-                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of [403] so returning to consumer [403]")
+                  logger.warn(s"declaration [$endpointName] call failed with backend http status code of [$FORBIDDEN] so returning to consumer [$FORBIDDEN]")
                   Left(ErrorPayloadForbidden.XmlResult.withConversationId)
                 case unexpectedStatus =>
                   handleError(s"unexpected backend http status code of [$unexpectedStatus]", INTERNAL_SERVER_ERROR, ErrorInternalServerError)
