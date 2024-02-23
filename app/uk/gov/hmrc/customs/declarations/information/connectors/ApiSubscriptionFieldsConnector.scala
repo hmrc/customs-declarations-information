@@ -49,11 +49,11 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
               case Some(value) =>
                 Some(value)
               case None =>
-                logger.error(s"Could not parse subscription fields response. url=$url")
+                logger.error(s"Could not parse subscription fields response. url=[$url]")
                 None
             }
           case status =>
-            logger.error(s"Subscriptions fields lookup call failed. url=$url HttpStatus=$status")
+            logger.error(s"Subscriptions fields lookup call failed. url=[$url] HttpStatus=[$status]")
             None
         }
       }
