@@ -39,7 +39,7 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
   def getSubscriptionFields(apiSubsKey: ApiSubscriptionKey)
                            (implicit hci: HasConversationId, hc: HeaderCarrier): Future[Option[ApiSubscriptionFieldsResponse]] = {
     val url = new URL(ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey))
-    logger.debug(s"Getting fields id from api subscription fields service. url=$url")
+    logger.debug(s"Getting fields id from api subscription fields service. url=[$url]")
 
     http.GET(url)
       .map { response =>
