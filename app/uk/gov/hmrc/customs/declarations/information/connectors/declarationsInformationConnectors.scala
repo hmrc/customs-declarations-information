@@ -139,7 +139,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
       logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
       implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
       http.POSTString(url, declarationPayload.toString(), headers).map { response =>
-        logger.debugFull(s"response status: [${response.status}] response body: ${response.body}")
+        logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
 
         response.status match {
           case status if Status.isSuccessful(status) =>
