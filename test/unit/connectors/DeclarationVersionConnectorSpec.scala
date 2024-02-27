@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
-
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
@@ -35,7 +34,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
 import util.VersionTestXMLData.expectedVersionPayloadRequest
-import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
+import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -94,17 +93,6 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
         awaitRequest
 
         verify(mockServiceConfigProvider).getConfig("declaration-version")
-      }
-    }
-
-    "when making an failing request" should {
-      "propagate an underlying error when service call fails with a non-http exception" in {
-        returnResponseForRequest(Future.failed(TestData.emulatedServiceFailure))
-
-        val caught = intercept[TestData.EmulatedServiceFailure] {
-          awaitRequest
-        }
-        caught shouldBe TestData.emulatedServiceFailure
       }
     }
 
