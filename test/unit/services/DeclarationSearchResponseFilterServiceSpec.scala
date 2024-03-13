@@ -20,8 +20,8 @@ import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.SearchResponseFilterService
-import util.UnitSpec
 import util.SearchTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationSearchResponse, validBackendSearchResponse}
+import util.UnitSpec
 
 import scala.concurrent.ExecutionContext
 import scala.xml._

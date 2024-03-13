@@ -16,13 +16,14 @@
 
 package unit.services
 
-import java.util.UUID
-import org.mockito.Mockito.{mock, reset, times, verify, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
+
+import java.util.UUID
 
 class UniqueIdsServiceTest extends AnyWordSpec with Matchers with BeforeAndAfterEach {
 

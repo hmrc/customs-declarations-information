@@ -25,9 +25,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{HeaderValidator, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ValidatedHeadersRequest}
-import util.UnitSpec
-import util.RequestHeaders
 import util.TestData._
+import util.{RequestHeaders, UnitSpec}
 
 import scala.concurrent.ExecutionContext
 
