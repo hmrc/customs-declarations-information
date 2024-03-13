@@ -23,7 +23,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class ServiceConfigProvider @Inject()(servicesConfig: ServicesConfig) {
 
-  val default = "default"
+  private val default = "default"
 
   private val serviceOverrides = scala.collection.mutable.Map[String, String]()
 
