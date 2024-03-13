@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.customs.declarations.information.services
 
-import java.time.{Clock, ZoneId, ZonedDateTime}
-
 import org.joda.time.{DateTime, DateTimeZone}
+
+import java.time.{Clock, ZoneId, ZonedDateTime}
 
 class DateTimeService {
   val UtcZoneId: ZoneId = ZoneId.of("UTC")

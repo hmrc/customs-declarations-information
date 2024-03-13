@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
 
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.Headers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
@@ -24,6 +23,8 @@ import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderName
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders._
 import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ClientId, Eori}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {

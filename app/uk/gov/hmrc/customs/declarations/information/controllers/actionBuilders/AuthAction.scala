@@ -27,7 +27,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
 
 abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
                                     headerValidator: HeaderValidator,
