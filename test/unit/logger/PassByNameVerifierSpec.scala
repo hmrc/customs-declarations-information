@@ -49,7 +49,7 @@ class PassByNameVerifierSpec extends UnitSpec with MockitoSugar with Matchers {
       }
 
       "verify String pass by name parameters and implicit Header Carrier" in new SetUp {
-        implicit val hc = HeaderCarrier()
+        implicit val hc: HeaderCarrier = HeaderCarrier()
 
         mockLogger.error("ERROR")
 
