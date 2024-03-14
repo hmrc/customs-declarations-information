@@ -5,7 +5,7 @@
         <encoder class="uk.gov.hmrc.play.logging.JsonEncoder"/>
     </appender>
 
-    <logger name="customs-declarations-information" level="${logger.customs-declarations-information:-INFO}"/>
+    <logger name="customs-declarations-information" level="INFO"/>
 
     <logger name="org.asynchttpclient.netty.handler" level="${logger.asynchttpclient:-WARN}"/>
 
