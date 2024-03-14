@@ -9,7 +9,7 @@
 
     <logger name="org.asynchttpclient.netty.handler" level="WARN"/>
 
-    <root level="${logger.application:-INFO}">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
