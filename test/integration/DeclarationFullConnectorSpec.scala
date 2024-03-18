@@ -22,12 +22,10 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
-import play.api.test.Helpers._
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
-import uk.gov.hmrc.http._
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}

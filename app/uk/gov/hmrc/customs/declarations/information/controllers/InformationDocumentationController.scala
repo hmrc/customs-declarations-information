@@ -17,12 +17,13 @@
 package uk.gov.hmrc.customs.declarations.information.controllers
 
 import controllers.Assets
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.http.MimeTypes
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.customs.api.common.controllers.DocumentationController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class InformationDocumentationController @Inject()(assets: Assets,

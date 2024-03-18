@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import javax.inject.Singleton
 import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
+import javax.inject.Singleton
 import scala.xml.{NodeSeq, Text}
 
 @Singleton

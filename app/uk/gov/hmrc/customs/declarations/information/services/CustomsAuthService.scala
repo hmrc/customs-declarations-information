@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.customs.declarations.information.services
 
-import javax.inject.{Inject, Singleton}
 import play.api.http.Status
 import play.api.http.Status.UNAUTHORIZED
 import uk.gov.hmrc.auth.core.AuthProvider.{GovernmentGateway, PrivilegedApplication}
@@ -29,8 +28,8 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConv
 import uk.gov.hmrc.customs.declarations.information.model.{Eori, NonCsp}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
 import scala.util.control.NonFatal
 
 @Singleton

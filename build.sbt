@@ -1,4 +1,3 @@
-import AppDependencies._
 import com.typesafe.sbt.web.PathMapping
 import com.typesafe.sbt.web.pipeline.Pipeline
 import sbt.Keys._
@@ -86,15 +85,11 @@ def unitTestFilter(name: String): Boolean = name startsWith "unit"
 
 scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
-val compileDependencies = Seq(customsApiCommon)
-
-val testDependencies = Seq(scalaTestPlusPlay, wireMock, mockito, customsApiCommonTests, flexmark)
-
 Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
 Test / unmanagedResourceDirectories += baseDirectory.value / "test" / "resources"
 (Runtime / managedClasspath) += (Assets / packageBin).value
 
-libraryDependencies ++= compileDependencies ++ testDependencies
+libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
 
 // Task to create a ZIP file containing all WCO XSDs for each version, under the version directory
 val zipWcoXsds = taskKey[Pipeline.Stage]("Zips up all WCO status XSDs and example messages")

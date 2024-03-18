@@ -17,11 +17,12 @@
 package uk.gov.hmrc.customs.declarations.information.logging
 
 import com.google.inject.Inject
-import javax.inject.Singleton
 import play.api.mvc.Request
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.logging.LoggingHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
+
+import javax.inject.Singleton
 
 @Singleton
 class InformationLogger @Inject()(logger: CdsLogger) {

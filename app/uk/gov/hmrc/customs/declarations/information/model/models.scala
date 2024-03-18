@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.customs.declarations.information.model
 
-import java.util.UUID
-
 import play.api.libs.json.{JsString, Reads, Writes}
+
+import java.util.UUID
 
 case class RequestedVersion(versionNumber: String, configPrefix: Option[String])
 

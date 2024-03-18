@@ -17,8 +17,9 @@
 package uk.gov.hmrc.customs.declarations.information.services
 
 import com.google.inject.Singleton
-import javax.inject.Inject
 import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
+
+import javax.inject.Inject
 
 
 @Singleton

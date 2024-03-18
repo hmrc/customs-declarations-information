@@ -23,8 +23,8 @@ import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.C
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
 import uk.gov.hmrc.customs.declarations.information.services.DateTimeService
-import util.UnitSpec
 import util.TestData.{conversationId, stubUniqueIdsService}
+import util.UnitSpec
 
 import scala.concurrent.ExecutionContext
 

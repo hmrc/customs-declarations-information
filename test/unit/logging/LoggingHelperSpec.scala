@@ -26,8 +26,8 @@ import uk.gov.hmrc.customs.declarations.information.logging.LoggingHelper
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{ClientId, Csp, VersionOne}
-import util.UnitSpec
 import util.TestData._
+import util.UnitSpec
 
 class LoggingHelperSpec extends UnitSpec {
 

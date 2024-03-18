@@ -26,7 +26,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Left
 
 /** Action builder that attempts to authorise request as a CSP or else NON CSP
  * <ul>

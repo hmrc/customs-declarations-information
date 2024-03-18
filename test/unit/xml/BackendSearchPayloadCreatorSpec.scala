@@ -17,7 +17,6 @@
 package unit.xml
 
 import org.joda.time.{DateTime, DateTimeZone}
-
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
