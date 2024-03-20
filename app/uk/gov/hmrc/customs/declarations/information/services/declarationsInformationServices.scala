@@ -194,7 +194,6 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
         connector.send(dateTime, correlationId, asr.requestedApiVersion, sfId, searchType)
           .map {
             case Right(response) =>
-              logger.warn(s"Response is ${response.body}")
               val filteredResponse = filterResponse(response, XML.loadString(response.body))
               Right(filteredResponse)
             case Left(RetryError) =>
