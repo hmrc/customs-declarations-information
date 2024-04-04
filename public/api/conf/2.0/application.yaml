@@ -2,15 +2,13 @@ openapi: 3.0.3
 info:
   title: Customs Declarations Information
   description: |
-    # XML Schemas
+    # Schemas and examples
     
-    You can download XML schemas and examples for request and response payloads for all Customs Declarations API endpoints.
+    You can download the following zipped archive, which contains XML schemas and examples of the request and response payloads for each of the API endpoints:
 
-    [Customs Declarations API XML schemas and examples](/api-documentation/docs/api/download/customs-declarations-information/2.0/wco-status-schemas.zip)
+    [Schemas and example messages](/api-documentation/docs/api/download/customs-declarations-information/2.0/wco-status-schemas.zip)
 
     ZIP, 3.3MB last updated 21/03/2024
-
-    The ZIP file contains XML files. Open in your preferred file viewer.
   contact: {}
   version: '2.0'
 servers:
