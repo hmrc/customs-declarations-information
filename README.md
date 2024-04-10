@@ -1,84 +1,53 @@
 
 # Customs Declarations Information
 
-This API permits requesting the status and versions of a declaration.
+The Customs Declarations Information allows users tobe able to request the status and versions of a declaration.
 
 
-## GET Status Request 
+## Development Setup
+- Run locally: `sbt run` which runs on port `9834` by default
+- Run with test endpoints: `sbt 'run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes'`
 
-The user must supply an MRN, DUCR, UCR or inventory reference as a parameter in the request URL. The endpoint returns the latest set of status details.
+##  Service Manager Profiles
+The Customs Declarations Information service can be run locally from Service Manager, using the following profiles:
 
- ### `GET /mrn/{mrn}/status`
- ### `GET /ducr/{ducr}/status`
- ### `GET /ucr/{ucr}/status`
- ### `GET /inventory-reference/{inventoryReference}/status`
+| Profile Details                       | Command                                                           | Description                                                    |
+|---------------------------------------|:------------------------------------------------------------------|----------------------------------------------------------------|
+| CUSTOMS_DECLARATION_ALL               | sm2 --start CUSTOMS_DECLARATION_ALL                               | To run all CDS applications.                                   |
+| CUSTOMS_INVENTORY_LINKING_EXPORTS_ALL | sm2 --start CUSTOMS_INVENTORY_LINKING_EXPORTS_ALL                 | To run all CDS Inventory Linking Exports related applications. |
+| CUSTOMS_INVENTORY_LINKING_IMPORTS_ALL | sm2 --start CUSTOMS_INVENTORY_LINKING_IMPORTS_ALL                 | To run all CDS Inventory Linking Imports related applications. |
 
- ### curl command (using mrn as an example)
- ```
-  curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/status" \
-   -H 'Accept: application/vnd.hmrc.1.0+xml' \
-   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
-   -H 'X-Badge-Identifier: {Badge Id}' \
-   -H 'X-Submitter-Identifier: {Submitter Id}' \
-   -H 'X-Client-ID: {Valid Client Id}' \
-   -H 'cache-control: no-cache' 
+## Run Tests
+- Run Unit Tests: `sbt test`
+- Run Integration Tests: `sbt IntegrationTest/test`
+- Run Unit and Integration Tests: `sbt test IntegrationTest/test`
+- Run Unit and Integration Tests with coverage report: `./run_all_tests.sh`<br/> which runs `clean scalastyle coverage test it:test coverageReport dependencyUpdates"`
 
- ```
----
-## GET Version Request
+### Acceptance Tests
+This repository does not have any associated Acceptance Tests.
 
-The user must supply an MRN as a parameter in the request URL. The endpoint returns the latest versions of a declaration with the most recent first.
+### Performance Tests
+To run performance tests, see [here](https://github.com/hmrc/customs-notification-gateway-performance-test).
 
- ### `GET /mrn/{mrn}/version`
 
-### curl command
- ```
-  curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/version" \
-   -H 'Accept: application/vnd.hmrc.1.0+xml' \
-   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
-   -H 'X-Badge-Identifier: {Badge Id}' \
-   -H 'X-Submitter-Identifier: {Submitter Id}' \
-   -H 'X-Client-ID: {Valid Client Id}' \
-   -H 'cache-control: no-cache' 
+## API documentation
+For Customs Declarations API documentation, see [here](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/customs-declarations).
 
- ```
----
-## GET Full Request
+### Customs Declarations Information specific routes
+| Path                                                                             | Supported Methods |     | Description                                                                                                |
+|----------------------------------------------------------------------------------|:-----------------:|:----|------------------------------------------------------------------------------------------------------------|
+| `/mrn/{mrn}/status`                                                              |        GET        |     | Retrieves the latest set of status details by MRN.                                                         |
+| `/ducr/{ducr}/status`                                                            |        GET        |     | Retrieves the latest set of status details by DUCR.                                                        |
+| `/ucr/{ucr}/status`                                                              |        GET        |     | Retrieves the latest set of status details by UCR.                                                         |
+| `/inventory-reference/{inventoryReference}/status`                               |        GET        |     | Retrieves the latest set of status details by inventory reference.                                         |
+| `/mrn/{mrn}/version`                                                             |        GET        |     | Retrieves the latest versions of a declaration by MRN, with the most recent first.                         |
+| `/mrn/{mrn}/full`                                                                |        GET        |     | Retrieves the full declaration by MRN.                                                                     |
+| `/search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4` |        GET        |     | Retrieves matching declarations and returned in summary form.                                              |
 
-The user must supply an MRN as a parameter in the request URL. An optional declarationVersion query parameter can also be supplied. The full declaration is returned.
 
-### `GET /mrn/{mrn}/full`
+### Test-only specific routes
+This service does not have any specific test-only endpoints.
 
-### curl command
- ```
-  curl -v -X GET "http://localhost:9000/mrn/{valid mrn}/full" \
-   -H 'Accept: application/vnd.hmrc.1.0+xml' \
-   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
-   -H 'X-Badge-Identifier: {Badge Id}' \
-   -H 'X-Submitter-Identifier: {Submitter Id}' \
-   -H 'X-Client-ID: {Valid Client Id}' \
-   -H 'cache-control: no-cache' 
-
- ```
----
-## GET Search Request
-
-The user must supply a partyRole and a declarationCategory. All other parameters are optional. All matching declarations that the consumer is permissioned to view are returned in summary form.
-
-### `GET /search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4`
-
-### curl command
- ```
-  curl -v -X GET "http://localhost:9000/search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4" \
-   -H 'Accept: application/vnd.hmrc.1.0+xml' \
-   -H 'Authorization: Bearer {ADD VALID TOKEN}' \
-   -H 'X-Badge-Identifier: {Badge Id}' \
-   -H 'X-Submitter-Identifier: {Submitter Id}' \
-   -H 'X-Client-ID: {Valid Client Id}' \
-   -H 'cache-control: no-cache' 
-
- ```
----
 
 ### Lookup of `authenticatedEori` from `api-subscription-fields` service for CSPs only
 
@@ -168,7 +137,6 @@ that `default` configuration is declared directly inside the `customs-declaratio
       "url": "http://currenturl/customs-declarations-information"
       "bearerToken": "current token"
     }
-
 
 
 ### License
