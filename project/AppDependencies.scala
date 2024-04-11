@@ -3,7 +3,6 @@ import sbt._
 object AppDependencies {
 
   private val testScope = "test,it"
-  private val customsApiCommonVersion = "1.60.0"
   private val bootstrapVersion = "7.15.0"
 
   val compile = Seq(
