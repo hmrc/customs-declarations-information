@@ -1,7 +1,7 @@
 
 # Customs Declarations Information
 
-The Customs Declarations Information allows users tobe able to request the status and versions of a declaration.
+The Customs Declarations Information API can be used to request the status and versions of a declaration.
 
 
 ## Development Setup
