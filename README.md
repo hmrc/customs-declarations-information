@@ -34,15 +34,15 @@ To run performance tests, see [here](https://github.com/hmrc/customs-notificatio
 For Customs Declarations API documentation, see [here](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/customs-declarations).
 
 ### Customs Declarations Information specific routes
-| Path                                                                             | Supported Methods |     | Description                                                                                                |
-|----------------------------------------------------------------------------------|:-----------------:|:----|------------------------------------------------------------------------------------------------------------|
-| `/mrn/{mrn}/status`                                                              |        GET        |     | Retrieves the latest set of status details by MRN.                                                         |
-| `/ducr/{ducr}/status`                                                            |        GET        |     | Retrieves the latest set of status details by DUCR.                                                        |
-| `/ucr/{ucr}/status`                                                              |        GET        |     | Retrieves the latest set of status details by UCR.                                                         |
-| `/inventory-reference/{inventoryReference}/status`                               |        GET        |     | Retrieves the latest set of status details by inventory reference.                                         |
-| `/mrn/{mrn}/version`                                                             |        GET        |     | Retrieves the latest versions of a declaration by MRN, with the most recent first.                         |
-| `/mrn/{mrn}/full`                                                                |        GET        |     | Retrieves the full declaration by MRN.                                                                     |
-| `/search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4` |        GET        |     | Retrieves matching declarations and returned in summary form.                                              |
+| Path - internal routes prefixed by `/customs/declarations-information`           | Supported Methods |     | Description                                                                        |
+|----------------------------------------------------------------------------------|:-----------------:|:----|------------------------------------------------------------------------------------|
+| `/mrn/{mrn}/status`                                                              |        GET        |     | Retrieves the latest set of status details by MRN.                                 |
+| `/ducr/{ducr}/status`                                                            |        GET        |     | Retrieves the latest set of status details by DUCR.                                |
+| `/ucr/{ucr}/status`                                                              |        GET        |     | Retrieves the latest set of status details by UCR.                                 |
+| `/inventory-reference/{inventoryReference}/status`                               |        GET        |     | Retrieves the latest set of status details by inventory reference.                 |
+| `/mrn/{mrn}/version`                                                             |        GET        |     | Retrieves the latest versions of a declaration by MRN, with the most recent first. |
+| `/mrn/{mrn}/full`                                                                |        GET        |     | Retrieves the full declaration by MRN.                                             |
+| `/search?partyRole=submitter&declarationCategory=EX&goodsLocationCode=BELBELOB4` |        GET        |     | Retrieves matching declarations and returned in summary form.                      |
 
 
 ### Test-only specific routes
