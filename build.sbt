@@ -6,7 +6,7 @@ import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
 import uk.gov.hmrc.gitstamp.GitStampPlugin._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-
+import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import scala.language.postfixOps
@@ -44,6 +44,7 @@ lazy val microservice = (project in file("."))
     scoverageSettings
   )
   .settings(majorVersion := 0)
+  .settings(playDefaultPort := 9834)
 
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
