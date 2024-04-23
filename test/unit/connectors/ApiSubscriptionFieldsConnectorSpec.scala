@@ -25,7 +25,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
-import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.logging.{CdsLogger2, InformationLogger}
 import uk.gov.hmrc.customs.declarations.information.model.InformationConfig
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
@@ -47,7 +47,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private val mockLogger = {
     val mockServicesConfig = mock(classOf[ServicesConfig])
     when(mockServicesConfig.getString(any[String])).thenReturn("customs-declarations-information")
-    new InformationLogger(new CdsLogger(mockServicesConfig))
+    new InformationLogger(new CdsLogger2(mockServicesConfig))
   }
   private val mockInformationConfigService = mock(classOf[InformationConfigService])
   private val mockInformationConfig = mock(classOf[InformationConfig])

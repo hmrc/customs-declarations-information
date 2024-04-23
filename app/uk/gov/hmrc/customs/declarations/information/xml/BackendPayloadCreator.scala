@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import org.joda.time.DateTime
+import java.time.LocalDateTime
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
@@ -28,7 +28,7 @@ trait BackendPayloadCreator {
 
   def create[A](conversationId: ConversationId,
                 correlationId: CorrelationId,
-                date: DateTime,
+                date: LocalDateTime,
                 searchType: SearchType,
                 maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                (implicit asr: AuthorisedRequest[A]): NodeSeq
@@ -36,7 +36,7 @@ trait BackendPayloadCreator {
 
   def requestCommon[A](conversationId: ConversationId,
                        correlationId: CorrelationId,
-                       date: DateTime,
+                       date: LocalDateTime,
                        searchType: SearchType,
                        maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                       (implicit asr: AuthorisedRequest[A]): NodeSeq =
@@ -48,7 +48,7 @@ trait BackendPayloadCreator {
     {val as = asr.authorisedAs
     as match {
       case NonCsp(eori) => Seq[NodeSeq](
-        <n1:dateTimeStamp>{date.toString()}</n1:dateTimeStamp>, Text(newLineAndIndentation),
+        <n1:dateTimeStamp>{date.toString}</n1:dateTimeStamp>, Text(newLineAndIndentation),
         <n1:authenticatedPartyID>{eori.toString}</n1:authenticatedPartyID>)
       case Csp(_, badgeId) =>
         Seq[NodeSeq](

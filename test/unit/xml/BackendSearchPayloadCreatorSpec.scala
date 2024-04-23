@@ -16,30 +16,52 @@
 
 package unit.xml
 
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.Helpers
+import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, SearchParametersRequestOps, ValidatedHeadersRequestOps}
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest, ExtractedHeadersImpl, SearchParameters}
 import uk.gov.hmrc.customs.declarations.information.xml.BackendSearchPayloadCreator
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.SearchTestXMLData._
-import util.TestData._
-import util.UnitSpec
+import util.TestData2.conversationIdValue
+import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 import util.XmlOps.stringToXml
 
+import java.text.SimpleDateFormat
+import java.time.{LocalDateTime, Month}
+import java.util.UUID
+import java.util.UUID.fromString
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
 class BackendSearchPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
+//TODO delete when confirmed working
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
-  private val dateTime = new DateTime(instant, DateTimeZone.UTC)
+  private val dateTime = LocalDateTime.of(2017, Month.JUNE, 6, 8, 13, 55)
   private val payloadCreator = new BackendSearchPayloadCreator()
+
+  val conversationIdUuid: UUID = fromString(conversationIdValue)
+  val conversationId: ConversationId = ConversationId(conversationIdUuid)
+  val correlationIdValue = "e61f8eee-812c-4b8f-b193-06aedc60dca2"
+  val correlationIdUuid: UUID = fromString(correlationIdValue)
+  val correlationId = CorrelationId(correlationIdUuid)
+  val mrnValue = "theMrn"
+  val mrn = Mrn(mrnValue)
+  val TestFakeRequestV1 = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
+  val TestExtractedHeaders = ExtractedHeadersImpl(ApiSubscriptionFieldsTestData.clientId)
+  val sdf = new SimpleDateFormat("yyyy-MM-dd")
+  val searchParameters = SearchParameters(Some(Eori("GB123456789000")), PartyRole("submitter"), DeclarationCategory("IM"), Some(GoodsLocationCode("BELBELOB4")), Some(DeclarationStatus("all")), Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), Some(2))
+  val declarantEoriValue = "ZZ123456789000"
+  val declarantEori = Eori(declarantEoriValue)
+  val declarationSubmissionChannel = Some(DeclarationSubmissionChannel("AuthenticatedPartyOnly"))
+  val searchParametersMandatoryOnly = SearchParameters(None, PartyRole("submitter"), DeclarationCategory("IM"), None, None, None, None, None)
+  val searchParametersWithDate = SearchParameters(None, PartyRole("submitter"), DeclarationCategory("IM"), None, None, Some(sdf.parse("2021-04-01")), Some(sdf.parse("2021-04-04")), None)
+  val validBadgeIdentifierValue = "BADGEID123"
+  val badgeIdentifier: BadgeIdentifier = BadgeIdentifier(validBadgeIdentifierValue)
 
 
   def xmlSearchValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationSummaryDataRequest.xsd").get)

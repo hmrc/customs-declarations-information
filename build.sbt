@@ -10,11 +10,12 @@ import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import scala.language.postfixOps
+import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 name := "customs-declarations-information"
-scalaVersion := "2.13.11"
 targetJvm := "jvm-11"
-//Test / fork := false
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val ComponentTest = config("component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
@@ -53,6 +54,17 @@ lazy val unitTestSettings =
       Test / unmanagedSourceDirectories := Seq((Test / baseDirectory).value / "test"),
       addTestReportOption(Test, "test-reports")
     )
+
+lazy val it = (project in file("it"))
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(
+    itSettings(),
+    libraryDependencies ++=  AppDependencies.test,
+    parallelExecution := false,
+    fork := true
+  )
+  .settings(scoverageSettings: _*)
 
 lazy val integrationComponentTestSettings =
   inConfig(CdsIntegrationComponentTest)(Defaults.testTasks) ++

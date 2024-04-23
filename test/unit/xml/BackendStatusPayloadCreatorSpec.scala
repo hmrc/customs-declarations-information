@@ -16,7 +16,6 @@
 
 package unit.xml
 
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
@@ -27,14 +26,15 @@ import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
 import util.UnitSpec
 
+import java.time.{LocalDateTime, Month, ZoneId}
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
 class BackendStatusPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
+//TODO clean
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
-  private val dateTime = new DateTime(instant, DateTimeZone.UTC)
+  private val dateTime = LocalDateTime.of(2017, Month.JUNE, 8, 13, 55)
   private val payloadCreator = new BackendStatusPayloadCreator()
 
   def xmlStatusValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/queryDeclarationStatusRequest.xsd").get)

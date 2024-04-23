@@ -16,33 +16,21 @@
 
 package util
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, ZoneId}
 import scala.xml.{Elem, Node, NodeSeq, XML}
 
 object SearchTestXMLData {
-
-  val defaultDateTime = DateTime.now(DateTimeZone.UTC)
+  val defaultDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
     .withYear(2020)
-    .withMonthOfYear(6)
+    .withMonth(6)
     .withDayOfMonth(15)
-    .withHourOfDay(12)
-    .withMinuteOfHour(30)
-    .withSecondOfMinute(0)
-    .withMillisOfSecond(0)
+    .withHour(12)
+    .withMinute(30)
 
-  val dateTimeFormat = new DateTimeFormatterBuilder()
-    .appendYear(4, 4)
-    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-    .appendTimeZoneOffset("Z", false, 2, 2)
-    .toFormatter
+  val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-  val validNonCspSearchRequestPayload =
+  val validNonCspSearchRequestPayload: String =
     """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
@@ -69,7 +57,7 @@ object SearchTestXMLData {
       |          </n1:retrieveDeclarationSummaryDataRequest>
       |""".stripMargin
 
-  val validNonCspSearchRequestPayloadWithSubChannel =
+  val validNonCspSearchRequestPayloadWithSubChannel: String =
     """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
@@ -97,7 +85,7 @@ object SearchTestXMLData {
       |          </n1:retrieveDeclarationSummaryDataRequest>
       |""".stripMargin
 
-  val validNonCspSearchRequestPayloadWithMandatoryParametersOnly =
+  val validNonCspSearchRequestPayloadWithMandatoryParametersOnly: String =
     """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
@@ -116,7 +104,7 @@ object SearchTestXMLData {
       |          </n1:retrieveDeclarationSummaryDataRequest>
       |""".stripMargin
 
-  val validNonCspSearchRequestPayloadWithMandatoryParametersOnlyAndDate =
+  val validNonCspSearchRequestPayloadWithMandatoryParametersOnlyAndDate: String =
     """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
@@ -139,7 +127,7 @@ object SearchTestXMLData {
       |          </n1:retrieveDeclarationSummaryDataRequest>
       |""".stripMargin
 
-  val validCspSearchRequestPayload =
+  val validCspSearchRequestPayload: String =
       """<n1:retrieveDeclarationSummaryDataRequest
         |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         |          xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
@@ -169,7 +157,7 @@ object SearchTestXMLData {
         |          </n1:retrieveDeclarationSummaryDataRequest>
         |""".stripMargin
 
-  val validCspSearchRequestPayloadWithoutBadge =
+  val validCspSearchRequestPayloadWithoutBadge: String =
     """<n1:retrieveDeclarationSummaryDataRequest
       |          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       |          xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest retrieveDeclarationSummaryDataRequest.xsd"
@@ -198,7 +186,7 @@ object SearchTestXMLData {
       |          </n1:retrieveDeclarationSummaryDataRequest>
       |""".stripMargin
   
-  val expectedSearchPayloadRequest = {
+  val expectedSearchPayloadRequest: Elem = {
     <n1:retrieveDeclarationSummaryDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:n1="http://gov.uk/customs/retrieveDeclarationSummaryDataRequest"
@@ -227,7 +215,7 @@ object SearchTestXMLData {
     </n1:retrieveDeclarationSummaryDataRequest>
   }
 
-  val validBackendSearchResponse = {
+  val validBackendSearchResponse: NodeSeq = {
     <n1:retrieveDeclarationSummaryDataResponse
     xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
     xmlns:otnds="urn:wco:datamodel:WCO:Response_DS:DMS:2"
@@ -340,7 +328,7 @@ object SearchTestXMLData {
     </p:DeclarationSearchResponse>
   }
   
-  def generateDeclarationSearchResponse(noOfDeclarationSearchResults: Int = 1, receivedDate: DateTime): NodeSeq = {
+  def generateDeclarationSearchResponse(noOfDeclarationSearchResults: Int = 1, receivedDate: LocalDateTime): NodeSeq = {
     val items = noOfDeclarationSearchResults to 1 by -1
     val content = items.map(index => generateDeclarationSearchDetailsElement(generateHMRCDeclaration(receivedDate.plusMonths(index)), generateStandardResponseWCODeclaration()))
 
@@ -378,11 +366,11 @@ object SearchTestXMLData {
     </n1:DeclarationSummaryData>
 
 
-  private def generateHMRCDeclaration(receivedDate: DateTime) =
+  private def generateHMRCDeclaration(receivedDate: LocalDateTime) =
     <n1:Declaration>
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
       <n1:ReceivedDateTime>
-        <n1:DateTimeString formatCode="304">{receivedDate.toString(dateTimeFormat)}</n1:DateTimeString>
+        <n1:DateTimeString formatCode="304">{receivedDate.format(dateTimeFormat)}</n1:DateTimeString>
       </n1:ReceivedDateTime>
       <n1:ROE>6</n1:ROE>
       <n1:ICS>15</n1:ICS>
@@ -411,7 +399,7 @@ object SearchTestXMLData {
       </od:GoodsShipment>
     </od:Declaration>
 
-  def generateDeclarationResponseContainingAllOptionalElements(receivedDate: DateTime): NodeSeq = {
+  def generateDeclarationResponseContainingAllOptionalElements(receivedDate: LocalDateTime): NodeSeq = {
     val content = generateDeclarationSearchDetailsElement(generateHMRCDeclaration(receivedDate), getWcoDeclarationWithAllElementsPopulated)
 
     generateRootElements(content)

@@ -21,7 +21,7 @@ import org.mockito.Mockito.mock
 import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.logging.{CdsLogger2, InformationLogger}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
@@ -32,7 +32,7 @@ import util.UnitSpec
 class InformationLoggerSpec extends UnitSpec {
 
   trait SetUp {
-    val mockCdsLogger: CdsLogger = mock(classOf[CdsLogger])
+    val mockCdsLogger: CdsLogger2 = mock(classOf[CdsLogger2])
     val logger = new InformationLogger(mockCdsLogger)
     implicit val implicitVpr: AuthorisedRequest[AnyContentAsEmpty.type] = ApiVersionRequest(conversationId, VersionOne, FakeRequest()
       .withHeaders("Content-Type" -> "Some-Content-Type"))

@@ -18,11 +18,11 @@ package unit.logging
 
 import play.api.mvc.Request
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.logging.{CdsLogger2, InformationLogger}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 
 // Use purely to increase coverage
-class StubInformationLogger(logger: CdsLogger) extends InformationLogger(logger) {
+class StubInformationLogger(logger: CdsLogger2) extends InformationLogger(logger) {
 
   override def debug(s: => String)(implicit r: HasConversationId): Unit =
     println(s)

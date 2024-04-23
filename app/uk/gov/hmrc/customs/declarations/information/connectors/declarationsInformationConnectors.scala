@@ -16,10 +16,9 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
-import akka.actor.ActorSystem
-import akka.pattern.CircuitBreakerOpenException
 import com.google.inject._
-import org.joda.time.DateTime
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.pattern.CircuitBreakerOpenException
 import play.api.http.HeaderNames._
 import play.api.http.{MimeTypes, Status}
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
@@ -35,6 +34,8 @@ import uk.gov.hmrc.customs.declarations.information.xml._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -68,9 +69,9 @@ class DeclarationVersionConnector @Inject()(http: HttpClient,
 
   override val configKey = "declaration-version"
 
-  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 }
 
 @Singleton
@@ -121,7 +122,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
   override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
   override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
-  def send[A](date: DateTime,
+  def send[A](date: LocalDateTime,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
@@ -158,12 +159,14 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
     }
   }
 
-  private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
+  private def getHeaders(date: LocalDateTime, conversationId: ConversationId, correlationId: CorrelationId): Seq[(String, String)] = {
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z")
+
     Seq(
       (X_FORWARDED_HOST, "MDTP"),
       (XCorrelationIdHeaderName, correlationId.toString),
       (XConversationIdHeaderName, conversationId.toString),
-      (DATE, date.toString("EEE, dd MMM yyyy HH:mm:ss z")),
+      (DATE, date.format(dateTimeFormatter)),
       (CONTENT_TYPE, MimeTypes.XML + "; charset=utf-8"),
       (ACCEPT, MimeTypes.XML)
     )

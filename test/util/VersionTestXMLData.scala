@@ -16,33 +16,22 @@
 
 package util
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, ZoneId}
 import scala.xml.{Elem, Node, NodeSeq, XML}
 
 object VersionTestXMLData {
-
-  val defaultDateTime = DateTime.now(DateTimeZone.UTC)
+//TODO centralise the Zone id
+  val defaultDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
     .withYear(2020)
-    .withMonthOfYear(6)
+    .withMonth(6)
     .withDayOfMonth(15)
-    .withHourOfDay(12)
-    .withMinuteOfHour(30)
-    .withSecondOfMinute(0)
-    .withMillisOfSecond(0)
+    .withHour(12)
+    .withMinute(30)
 
-  val dateTimeFormat = new DateTimeFormatterBuilder()
-    .appendYear(4, 4)
-    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-    .appendTimeZoneOffset("Z", false, 2, 2)
-    .toFormatter
+  val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-  val validNonCspVersionRequestPayload =
+  val validNonCspVersionRequestPayload: String =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -62,7 +51,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validNonCspVersionRequestPayloadWithDeclarationSubmissionChannel =
+  val validNonCspVersionRequestPayloadWithDeclarationSubmissionChannel: String =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -83,7 +72,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validCspVersionRequestPayload =
+  val validCspVersionRequestPayload: String =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -105,7 +94,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validCspVersionRequestPayloadWithDeclarationSubmissionChannel =
+  val validCspVersionRequestPayloadWithDeclarationSubmissionChannel: String =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -128,7 +117,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val validCspVersionRequestWithoutBadgePayload =
+  val validCspVersionRequestWithoutBadgePayload: String =
     """<n1:retrieveDeclarationVersionRequest xsi:schemaLocation="http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -149,7 +138,7 @@ object VersionTestXMLData {
       |        </n1:retrieveDeclarationVersionRequest>
       |""".stripMargin
 
-  val expectedVersionPayloadRequest = {
+  val expectedVersionPayloadRequest: Elem = {
     <n1:retrieveDeclarationVersionRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:n1="http://gov.uk/customs/retrieveDeclarationVersion"
@@ -174,7 +163,7 @@ object VersionTestXMLData {
     </n1:retrieveDeclarationVersionRequest>
   }
 
-  val validBackendVersionResponse = {
+  val validBackendVersionResponse: NodeSeq = {
     <n1:retrieveDeclarationVersionResponse xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xmlns:Q1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
@@ -294,7 +283,7 @@ object VersionTestXMLData {
   }
   
 
-  def generateDeclarationVersionResponse(noOfDeclarationVersionResponses: Int = 1, creationDate: DateTime): NodeSeq = {
+  def generateDeclarationVersionResponse(noOfDeclarationVersionResponses: Int = 1, creationDate: LocalDateTime): NodeSeq = {
     val items = noOfDeclarationVersionResponses to 1 by -1
     val content = items.map(index => generateDeclarationVersionDetailsElement(generateHMRCDeclaration(creationDate.plusMonths(index), index), generateStandardResponseWCODeclaration()))
 
@@ -327,12 +316,12 @@ object VersionTestXMLData {
     </n1:RetrieveDeclarationVersionDetails>
 
 
-  private def generateHMRCDeclaration(creationDate: DateTime, versionId: Int) =
+  private def generateHMRCDeclaration(creationDate: LocalDateTime, versionId: Int) =
     <n1:Declaration>
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
       <n1:VersionID>{versionId}</n1:VersionID>
       <n1:CreatedDateTime>
-        <n1:DateTimeString formatCode="304">{creationDate.toString(dateTimeFormat)}</n1:DateTimeString>
+        <n1:DateTimeString formatCode="304">{creationDate.format(dateTimeFormat)}</n1:DateTimeString>
       </n1:CreatedDateTime>
       <n1:LRN>20GBAKZ81EQJ2WXYZ</n1:LRN>
     </n1:Declaration>
@@ -359,7 +348,7 @@ object VersionTestXMLData {
       </od:GoodsShipment>
     </od:Declaration>
 
-  def generateDeclarationResponseContainingAllOptionalElements(acceptanceOrCreationDate: DateTime): NodeSeq = {
+  def generateDeclarationResponseContainingAllOptionalElements(acceptanceOrCreationDate: LocalDateTime): NodeSeq = {
     val content = generateDeclarationVersionDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate, 1), getWcoDeclarationWithAllElementsPopulated)
 
     generateRootElements(content)

@@ -16,33 +16,21 @@
 
 package util
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-
-import scala.xml.Elem
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
+import java.time.{LocalDateTime, ZoneId}
+import scala.xml.{Elem, NodeSeq}
 
 object FullTestXMLData {
-
-  val defaultDateTime = DateTime.now(DateTimeZone.UTC)
+  val defaultDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
     .withYear(2020)
-    .withMonthOfYear(6)
+    .withMonth(6)
     .withDayOfMonth(15)
-    .withHourOfDay(12)
-    .withMinuteOfHour(30)
-    .withSecondOfMinute(0)
-    .withMillisOfSecond(0)
+    .withHour(12)
+    .withMinute(30)
 
-  val dateTimeFormat = new DateTimeFormatterBuilder()
-    .appendYear(4, 4)
-    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-    .appendTimeZoneOffset("Z", false, 2, 2)
-    .toFormatter
+  val dateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-  val validNonCspFullRequestPayload =
+  val validNonCspFullRequestPayload: String =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -59,7 +47,7 @@ object FullTestXMLData {
       |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
-  val validNonCspFullRequestPayloadWithoutDeclarationVersion =
+  val validNonCspFullRequestPayloadWithoutDeclarationVersion: String =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -76,7 +64,7 @@ object FullTestXMLData {
       |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
-  val validNonCspFullRequestPayloadWithDeclarationSubmissionChannel =
+  val validNonCspFullRequestPayloadWithDeclarationSubmissionChannel: String =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -94,7 +82,7 @@ object FullTestXMLData {
       |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
-  val validCspFullRequestPayload =
+  val validCspFullRequestPayload: String =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -113,7 +101,7 @@ object FullTestXMLData {
       |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
-  val validCspFullRequestPayloadWithDeclarationSubmissionChannel =
+  val validCspFullRequestPayloadWithDeclarationSubmissionChannel: String =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -133,7 +121,7 @@ object FullTestXMLData {
       |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
-  val validCspFullRequestWithoutBadgePayload =
+  val validCspFullRequestWithoutBadgePayload: String =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
       |xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       |          <n1:requestCommon>
@@ -151,7 +139,7 @@ object FullTestXMLData {
       |        </n1:retrieveFullDeclarationDataRequest>
       |""".stripMargin
 
-  val expectedFullPayloadRequest = {
+  val expectedFullPayloadRequest: Elem = {
     <n1:retrieveFullDeclarationDataRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService"
@@ -173,7 +161,7 @@ object FullTestXMLData {
     </n1:retrieveFullDeclarationDataRequest>
   }
 
-  val validBackendFullResponse = {
+  val validBackendFullResponse: NodeSeq = {
     <n1:retrieveDeclarationVersionResponse xmlns:od="urn:wco:datamodel:WCO:DEC-DMS:2"
                                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                                            xmlns:Q1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"

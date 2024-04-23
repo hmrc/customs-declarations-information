@@ -16,7 +16,6 @@
 
 package unit.services
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -29,7 +28,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalSer
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
-import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.logging.{CdsLogger2, InformationLogger}
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
@@ -41,11 +40,12 @@ import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSub
 import util.TestData._
 import util.UnitSpec
 
+import java.time.LocalDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
-  private val dateTime = new DateTime()
+  private val dateTime = LocalDateTime.now()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
@@ -54,7 +54,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
   private val mockServicesConfig: ServicesConfig = mock(classOf[ServicesConfig])
   implicit protected lazy val mockLogger: InformationLogger = {
     when(mockServicesConfig.getString(any[String])).thenReturn("customs-declarations-information")
-    new InformationLogger(new CdsLogger(mockServicesConfig))
+    new InformationLogger(new CdsLogger2(mockServicesConfig))
   }
   protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock(classOf[DeclarationStatusConnector])
   protected lazy val mockPayloadDecorator: BackendStatusPayloadCreator = mock(classOf[BackendStatusPayloadCreator])
@@ -67,7 +67,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
-    when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationStatusConnector.send(any[LocalDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
@@ -123,7 +123,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -143,7 +143,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
       
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -163,7 +163,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -183,7 +183,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -194,7 +194,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 403 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -205,7 +205,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

@@ -16,7 +16,7 @@
 
 package unit.controllers
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.mvc.Http.Status._
@@ -27,20 +27,17 @@ import scala.xml.Utility.trim
 import scala.xml.XML.loadString
 
 class ErrorResponseSpec extends HttpStatusCodeShortDescriptions with UnitSpec with MockitoSugar {
-
   private implicit val mockMaterializer: Materializer = mock[Materializer]
-
   private val someStatusCode = 123
-
   private val errCode = "123_code"
   private val errorMessage: String = "123 code message"
-
   private val errorResponseWithoutExtraErrors = ErrorResponse(someStatusCode, errCode, errorMessage)
-  val errorResponseWithExtraErrors = ErrorResponse(someStatusCode, errCode, errorMessage,
+
+  val errorResponseWithExtraErrors: ErrorResponse = ErrorResponse(someStatusCode, errCode, errorMessage,
     ResponseContents("first validation failure", "problem at some field /1"),
     ResponseContents("second validation failure", "problem at some field /101")
   )
-  val errorResponseWithExtraErrorsUsingBuilder = ErrorResponse(someStatusCode, errCode, errorMessage).withErrors(
+  val errorResponseWithExtraErrorsUsingBuilder: ErrorResponse = ErrorResponse(someStatusCode, errCode, errorMessage).withErrors(
     ResponseContents("first validation failure", "problem at some field /1"),
     ResponseContents("second validation failure", "problem at some field /101")
   )

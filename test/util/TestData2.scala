@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
+package util
 
-import java.time.LocalDateTime
+import play.api.test.FakeRequest
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeadersImpl, SearchParameters}
+import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ConversationId, CorrelationId, DeclarationCategory, DeclarationStatus, DeclarationSubmissionChannel, Eori, GoodsLocationCode, Mrn, PartyRole}
 
-import java.time.{Clock, ZoneId, ZonedDateTime}
 
-class DateTimeService {
-  val UtcZoneId: ZoneId = ZoneId.of("UTC")
+import java.text.SimpleDateFormat
+import java.util.UUID
+import java.util.UUID.fromString
 
-  //TODO check here
-  def nowUtc(): LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
+object TestData2 {
+  val conversationIdValue = "38400000-8cf0-11bd-b23e-10b96e4ef00d"
 
-  def zonedDateTimeUtc: ZonedDateTime = ZonedDateTime.now(UtcZoneId)
 }

@@ -16,16 +16,18 @@
 
 package unit.connectors
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
+import play.api.http.Status.OK
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
+import uk.gov.hmrc.customs.declarations.information.connectors.{DeclarationConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
@@ -39,21 +41,16 @@ import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
-
+  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
   private val mockInformationConfigService = mock(classOf[InformationConfigService])
   private val mockBackendPayloadCreator = mock(classOf[BackendStatusPayloadCreator])
-  private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
-  private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
+  private val informationCircuitBreakerConfig: InformationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
   private val actorSystem = ActorSystem("mockActorSystem")
-
   private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock(classOf[CdsLogger]), actorSystem)
-
   private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
-
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
   override protected def beforeEach(): Unit = {
@@ -63,7 +60,7 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
     when(mockBackendPayloadCreator.create(conversationId, correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
-  private val successfulResponse = HttpResponse(200, "")
+  private val successfulResponse: HttpResponse = HttpResponse(OK, "")
 
   "DeclarationStatusConnector" when {
 
@@ -108,11 +105,11 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
     }
   }
 
-  private def awaitRequest = {
+  private def awaitRequest: Either[DeclarationConnector.Error, HttpResponse] = {
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 
-  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
+  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]): OngoingStubbing[Future[HttpResponse]] = {
     when(mockWsPost.POSTString(anyString, anyString, any[SeqOfHeader])(
       any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
       .thenReturn(eventualResponse)

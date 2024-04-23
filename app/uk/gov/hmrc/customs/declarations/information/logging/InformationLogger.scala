@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConv
 import javax.inject.Singleton
 
 @Singleton
-class InformationLogger @Inject()(logger: CdsLogger) {
+class InformationLogger @Inject()(logger: CdsLogger2) {
 
   def debug(s: => String)(implicit r: HasConversationId): Unit =
     logger.debug(formatDebug(s, r))

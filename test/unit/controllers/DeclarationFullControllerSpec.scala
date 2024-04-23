@@ -16,7 +16,6 @@
 
 package unit.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -45,14 +44,12 @@ import util.TestData._
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 
+import java.time.LocalDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationFullControllerSpec extends UnitSpec
-  with Matchers with BeforeAndAfterEach {
-
+class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach {
   trait SetUp extends AuthConnectorStubbing {
-
     protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq()))
@@ -67,12 +64,12 @@ class DeclarationFullControllerSpec extends UnitSpec
     protected val mockResult: Result = mock(classOf[Result])
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
-    protected val stubHttpResponse = HttpResponse(Status.OK, VersionTestXMLData.validBackendVersionResponse.toString)
+    protected val stubHttpResponse: HttpResponse = HttpResponse(Status.OK, VersionTestXMLData.validBackendVersionResponse.toString)
 
     protected val mockDeclarationFullConnector: DeclarationFullConnector = mock(classOf[DeclarationFullConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
     protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
-    protected val dateTime = new DateTime()
+    protected val dateTime = LocalDateTime.now()
 
     protected val stubAuthStatusAction: DeclarationFullAuthAction = new DeclarationFullAuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
@@ -104,7 +101,7 @@ class DeclarationFullControllerSpec extends UnitSpec
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockDeclarationFullConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockDeclarationFullConnector.send(any[LocalDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
@@ -281,7 +278,7 @@ class DeclarationFullControllerSpec extends UnitSpec
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

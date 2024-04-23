@@ -16,7 +16,6 @@
 
 package unit.services
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -39,11 +38,12 @@ import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSub
 import util.TestData._
 import util.UnitSpec
 
+import java.time.LocalDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
-  private val dateTime = new DateTime()
+  private val dateTime = LocalDateTime.now()
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
@@ -62,7 +62,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
-    when(mockDeclarationFullConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationFullConnector.send(any[LocalDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
@@ -119,7 +119,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Declaration Not Found</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -140,7 +140,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -161,7 +161,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -182,7 +182,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -203,7 +203,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -214,7 +214,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 403 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -225,7 +225,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[LocalDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

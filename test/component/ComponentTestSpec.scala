@@ -16,7 +16,6 @@
 
 package component
 
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.featurespec.AnyFeatureSpec
@@ -29,7 +28,7 @@ import uk.gov.hmrc.customs.declarations.information.services.{DateTimeService, U
 import util.TestData.stubUniqueIdsService
 import util.{CustomsDeclarationsExternalServicesConfig, ExternalServicesConfig}
 
-import java.time.{Instant, ZoneId, ZonedDateTime}
+import java.time.{Instant, LocalDateTime, Month, ZoneId, ZonedDateTime}
 
 trait ComponentTestSpec extends AnyFeatureSpec
   with GivenWhenThen
@@ -39,10 +38,9 @@ trait ComponentTestSpec extends AnyFeatureSpec
   with Eventually {
 
   private val mockDateTimeService = mock(classOf[DateTimeService])
-
   val dateTime = 1546344000000L // 01/01/2019 12:00:00
 
-  when(mockDateTimeService.nowUtc()).thenReturn(new DateTime(dateTime, DateTimeZone.UTC))
+  when(mockDateTimeService.nowUtc()).thenReturn(LocalDateTime.of(2019, Month.JANUARY, 1, 12, 0))
   when(mockDateTimeService.zonedDateTimeUtc).thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime), ZoneId.of("UTC")))
 
   protected val configMap: Map[String, Any] = Map(

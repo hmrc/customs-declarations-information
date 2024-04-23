@@ -21,7 +21,7 @@ import org.mockito.Mockito.{mock, reset}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play._
 import play.api.http.HttpErrorHandler
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test._
@@ -37,7 +37,7 @@ class InformationDocumentationControllerSpec extends PlaySpec with Results with 
     "api.access.version-1.0.enabled" -> "false",
     "api.access.version-2.0.enabled" -> "false")
 
-  private def getApiDefinitionWith(configMap: Map[String, Any]) =
+  private def getApiDefinitionWith(configMap: Map[String, Any]): Action[AnyContent] =
     new InformationDocumentationController(mock(classOf[Assets]), Helpers.stubControllerComponents(), play.api.Configuration.from(configMap), mockLogger)
       .definition()
 
@@ -63,7 +63,7 @@ class InformationDocumentationControllerSpec extends PlaySpec with Results with 
 
   }
 
-  private def expectedJson(v1Enabled: Boolean = true, v2Enabled: Boolean = true) =
+  private def expectedJson(v1Enabled: Boolean = true, v2Enabled: Boolean = true): JsValue =
     Json.parse(
       s"""
          |{
