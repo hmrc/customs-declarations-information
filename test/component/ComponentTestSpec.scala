@@ -39,8 +39,9 @@ trait ComponentTestSpec extends AnyFeatureSpec
 
   private val mockDateTimeService = mock(classOf[DateTimeService])
   val dateTime = 1546344000000L // 01/01/2019 12:00:00
-
-  when(mockDateTimeService.nowUtc()).thenReturn(LocalDateTime.of(2019, Month.JANUARY, 1, 12, 0))
+  val localDateTime = LocalDateTime.of(2019, Month.JANUARY, 1, 12, 0)
+  val date = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"))
+  when(mockDateTimeService.nowUtc()).thenReturn(date)
   when(mockDateTimeService.zonedDateTimeUtc).thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime), ZoneId.of("UTC")))
 
   protected val configMap: Map[String, Any] = Map(

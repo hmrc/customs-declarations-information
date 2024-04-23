@@ -34,7 +34,7 @@ import uk.gov.hmrc.customs.declarations.information.xml._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -81,8 +81,7 @@ class DeclarationSearchConnector @Inject()(http: HttpClient,
                                            serviceConfigProvider: ServiceConfigProvider,
                                            config: InformationConfigService,
                                            override val cdsLogger: CdsLogger,
-                                           override val actorSystem: ActorSystem)
-                                          (implicit override val ec: ExecutionContext)
+                                           override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
   extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
 
   override val configKey = "declaration-search"
@@ -122,18 +121,19 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
   override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
   override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
-  def send[A](date: LocalDateTime,
+  def send[A](date: ZonedDateTime,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
               searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[Either[DeclarationConnector.Error, HttpResponse]] = {
+    val x = ZonedDateTime.now()
 
     val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val url = config.url
     val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
-    val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
+    val headers: Seq[(String, String)] = getHeaders(x, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
 
-    val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
+    val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, x, searchType, maybeApiSubscriptionFieldsResponse)
 
     case class Non2xxResponseException(status: Int, responseBody: String) extends Throwable
     withCircuitBreaker {
@@ -159,7 +159,7 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
     }
   }
 
-  private def getHeaders(date: LocalDateTime, conversationId: ConversationId, correlationId: CorrelationId): Seq[(String, String)] = {
+  private def getHeaders(date: ZonedDateTime, conversationId: ConversationId, correlationId: CorrelationId): Seq[(String, String)] = {
     val dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z")
 
     Seq(

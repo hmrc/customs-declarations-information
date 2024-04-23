@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZonedDateTime}
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
@@ -28,7 +28,7 @@ trait BackendPayloadCreator {
 
   def create[A](conversationId: ConversationId,
                 correlationId: CorrelationId,
-                date: LocalDateTime,
+                date: ZonedDateTime,
                 searchType: SearchType,
                 maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                (implicit asr: AuthorisedRequest[A]): NodeSeq
@@ -36,7 +36,7 @@ trait BackendPayloadCreator {
 
   def requestCommon[A](conversationId: ConversationId,
                        correlationId: CorrelationId,
-                       date: LocalDateTime,
+                       date: ZonedDateTime,
                        searchType: SearchType,
                        maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                       (implicit asr: AuthorisedRequest[A]): NodeSeq =

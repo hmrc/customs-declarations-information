@@ -31,7 +31,7 @@ import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 import util.XmlOps.stringToXml
 
 import java.text.SimpleDateFormat
-import java.time.{LocalDateTime, Month}
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import java.util.UUID
 import java.util.UUID.fromString
 import scala.concurrent.ExecutionContext
@@ -41,7 +41,8 @@ class BackendSearchPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 //TODO delete when confirmed working
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
-  private val dateTime = LocalDateTime.of(2017, Month.JUNE, 6, 8, 13, 55)
+  private val localDateTime = LocalDateTime.of(2017, Month.JUNE, 6, 8, 13, 55)
+  private val dateTime = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"))
   private val payloadCreator = new BackendSearchPayloadCreator()
 
   val conversationIdUuid: UUID = fromString(conversationIdValue)

@@ -30,7 +30,7 @@ import util.UnitSpec
 import util.VersionTestXMLData._
 import util.XmlOps.stringToXml
 
-import java.time.{LocalDateTime, Month, ZoneId}
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
@@ -38,7 +38,8 @@ class BackendVersionPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 //TODO clean
   private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
-  private val dateTime = LocalDateTime.of(2017, Month.JUNE, 8, 13, 55)
+  private val localDateTime = LocalDateTime.of(2017, Month.JUNE, 8, 13, 55)
+  private val dateTime = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"))
   private val payloadCreator = new BackendVersionPayloadCreator()
 
   def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationVersionRequest.xsd").get)

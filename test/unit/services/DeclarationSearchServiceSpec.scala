@@ -37,12 +37,13 @@ import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSub
 import util.TestData._
 import util.UnitSpec
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
-  private val dateTime = LocalDateTime.now()
+  private val localDateTime = LocalDateTime.now()
+  private val dateTime = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"))
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
@@ -61,7 +62,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
 
   trait SetUp {
     when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
-    when(mockDeclarationSearchConnector.send(any[LocalDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
@@ -119,7 +120,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -140,7 +141,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -160,7 +161,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -180,7 +181,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -201,7 +202,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -222,7 +223,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -243,7 +244,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -264,7 +265,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -285,7 +286,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -306,7 +307,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -327,7 +328,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -348,7 +349,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -359,7 +360,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 403 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -370,7 +371,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationSearchConnector.send(any[LocalDateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

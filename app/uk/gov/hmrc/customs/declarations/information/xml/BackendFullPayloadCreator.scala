@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.xml
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZonedDateTime}
 import javax.inject.Singleton
 import scala.xml.NodeSeq
 
@@ -28,7 +28,7 @@ class BackendFullPayloadCreator() extends BackendPayloadCreator {
 
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
-                         date: LocalDateTime,
+                         date: ZonedDateTime,
                          searchType: SearchType,
                          maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
                         (implicit asr: AuthorisedRequest[A]): NodeSeq = {

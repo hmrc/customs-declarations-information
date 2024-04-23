@@ -32,7 +32,7 @@ import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME
 import util.TestData.declarantEori
 
 import java.text.SimpleDateFormat
-import java.time.{LocalDateTime, Month}
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import java.util.UUID
 import java.util.UUID.fromString
 
@@ -64,7 +64,8 @@ object TestData {
   val dateString = "2018-09-11T10:28:54.128Z"
   //TODO here
   //val date: LocalDateTime = LocalDateTime.parse("2018-09-11T10:28:54.128Z")
-  val date: LocalDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 11, 10, 28, 54, 128)
+  val localDateTime: LocalDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 11, 10, 28, 54, 128)
+  val date = ZonedDateTime.of(localDateTime, ZoneId.of("UTC"))
 
   val subscriptionFieldsIdString: String = "b82f31c6-2239-4253-b6f5-ed75e37ab7a5"
   val subscriptionFieldsIdUuid: UUID = fromString("b82f31c6-2239-4253-b6f5-ed75e37ab7a5")

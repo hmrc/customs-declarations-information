@@ -24,7 +24,7 @@ class DateTimeService {
   val UtcZoneId: ZoneId = ZoneId.of("UTC")
 
   //TODO check here
-  def nowUtc(): LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
+  def nowUtc(): ZonedDateTime = ZonedDateTime.now(UtcZoneId)
 
   def zonedDateTimeUtc: ZonedDateTime = ZonedDateTime.now(UtcZoneId)
 }
