@@ -25,8 +25,7 @@ import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, ConversationId, CorrelationId, SearchType}
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, AuthorisedRequest, ConversationId, CorrelationId, SearchType}
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 

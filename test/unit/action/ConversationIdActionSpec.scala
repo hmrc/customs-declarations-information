@@ -20,7 +20,7 @@ import org.mockito.Mockito.mock
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.declarations.information.action.ConversationIdAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
+import uk.gov.hmrc.customs.declarations.information.model.ConversationIdRequest
 import util.TestData.{conversationId, stubUniqueIdsService}
 import util.UnitSpec
 

@@ -23,9 +23,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorAcceptHeaderInvalid
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, VersionOne, VersionTwo}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, ApiVersionRequest, ConversationIdRequest, VersionOne, VersionTwo}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

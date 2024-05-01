@@ -35,7 +35,6 @@ import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionF
 import uk.gov.hmrc.customs.declarations.information.controllers.SearchController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationSearchService
 import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService

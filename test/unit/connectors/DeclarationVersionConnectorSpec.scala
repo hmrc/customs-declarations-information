@@ -28,7 +28,6 @@ import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.config.{InformationCircuitBreakerConfig, ConfigService}
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
@@ -74,7 +73,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[SeqOfHeader])(
+        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
           any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
@@ -83,7 +82,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[SeqOfHeader])(
+        verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[Seq[(String, String)]])(
           any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
@@ -113,7 +112,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
-    when(mockWsPost.POSTString(anyString, anyString, any[SeqOfHeader])(
+    when(mockWsPost.POSTString(anyString, anyString, any[Seq[(String, String)]])(
       any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
       .thenReturn(eventualResponse)
   }

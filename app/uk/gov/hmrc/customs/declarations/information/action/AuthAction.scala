@@ -20,8 +20,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, HasRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedAsCsp, BadgeIdentifier, Csp, Eori}
+import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedAsCsp, BadgeIdentifier, Csp, Eori, HasConversationId, HasRequest}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.http.HeaderCarrier
 

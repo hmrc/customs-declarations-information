@@ -24,8 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, Csp, VersionOne}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}

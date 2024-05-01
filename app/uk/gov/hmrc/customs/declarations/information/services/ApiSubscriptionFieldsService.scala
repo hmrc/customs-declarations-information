@@ -22,8 +22,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalSer
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import ActionBuilderModelHelper._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.net.URLEncoder

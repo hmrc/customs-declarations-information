@@ -24,8 +24,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
-import uk.gov.hmrc.customs.declarations.information.model.{Eori, NonCsp}
+import uk.gov.hmrc.customs.declarations.information.model.{Eori, HasConversationId, NonCsp}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import javax.inject.{Inject, Singleton}

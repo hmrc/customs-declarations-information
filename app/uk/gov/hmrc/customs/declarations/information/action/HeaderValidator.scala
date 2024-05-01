@@ -21,8 +21,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders._
-import uk.gov.hmrc.customs.declarations.information.model.{BadgeIdentifier, ClientId, Eori}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, BadgeIdentifier, ClientId, Eori, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId, HasRequest}
 
 import javax.inject.{Inject, Singleton}
 

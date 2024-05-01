@@ -20,7 +20,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.model.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.xml.BackendStatusPayloadCreator
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._

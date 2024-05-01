@@ -17,8 +17,8 @@
 package uk.gov.hmrc.customs.declarations.information.action
 
 import play.api.mvc._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, ValidatedHeadersRequest}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

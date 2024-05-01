@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.model.actionbuilders
+package uk.gov.hmrc.customs.declarations.information.model
 
 import play.api.mvc.{Request, Result, WrappedRequest}
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
-import uk.gov.hmrc.customs.declarations.information.model._
 
 import java.util.Date
 

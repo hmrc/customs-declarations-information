@@ -29,9 +29,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.customs.declarations.information.action.{HeaderValidator, SearchAuthAction}
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.XConversationIdHeaderName
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.Csp
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ValidatedHeadersRequest
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import util.RequestHeaders.X_CONVERSATION_ID_NAME
 import util.TestData._

@@ -19,7 +19,7 @@ package unit.logging
 import play.api.mvc.Request
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
+import uk.gov.hmrc.customs.declarations.information.model.HasConversationId
 
 // Use purely to increase coverage
 class StubInformationLogger(logger: CdsLogger) extends InformationLogger(logger) {

@@ -22,8 +22,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{BadRequestCode, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{DeclarationFullRequest, HasConversationId, InternalClientIdsRequest}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.{DeclarationFullRequest, HasConversationId, InternalClientIdsRequest}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

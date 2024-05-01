@@ -22,8 +22,7 @@ import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.declarations.information.action.SearchParametersCheckAction
 import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.InternalClientIdsRequest
-import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, InternalClientIdsRequest, VersionOne}
 import util.UnitSpec
 import util.XmlOps.stringToXml
 

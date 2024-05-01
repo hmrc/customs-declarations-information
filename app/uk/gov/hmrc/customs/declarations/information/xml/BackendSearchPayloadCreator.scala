@@ -17,7 +17,6 @@
 package uk.gov.hmrc.customs.declarations.information.xml
 
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime

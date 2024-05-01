@@ -24,7 +24,7 @@ import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.action.{HeaderValidator, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, ValidatedHeadersRequest}
 import util.TestData._
 import util.{RequestHeaders, UnitSpec}
 

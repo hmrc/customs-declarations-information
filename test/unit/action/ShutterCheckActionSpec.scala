@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorAcceptHeade
 import uk.gov.hmrc.customs.declarations.information.action.ShutterCheckAction
 import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
+import uk.gov.hmrc.customs.declarations.information.model.ConversationIdRequest
 import util.RequestHeaders.{ACCEPT_HEADER_INVALID, X_CONVERSATION_ID_NAME}
 import util.TestData._
 import util.UnitSpec

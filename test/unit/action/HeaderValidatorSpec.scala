@@ -25,8 +25,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.declarations.information.action.HeaderValidator
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, Eori, VersionOne, VersionTwo}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, ApiVersionRequest, Eori, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId, VersionOne, VersionTwo}
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
 import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}

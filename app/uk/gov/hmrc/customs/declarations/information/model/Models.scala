@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.model
 import play.api.libs.json.{JsString, Reads, Writes}
 
 import java.util.UUID
-
+case class ApiSubscriptionKey(clientId: ClientId, context: String, version: ApiVersion)
 case class RequestedVersion(versionNumber: String, configPrefix: Option[String])
 
 case class ClientId(value: String) extends AnyVal {

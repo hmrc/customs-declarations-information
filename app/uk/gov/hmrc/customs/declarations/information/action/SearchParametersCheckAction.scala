@@ -23,8 +23,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBad
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest}
+import ActionBuilderModelHelper._
 
 import java.text.{ParseException, SimpleDateFormat}
 import java.util.Date

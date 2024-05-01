@@ -18,7 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.action
 
 import play.api.mvc.{ActionTransformer, Request}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
+import uk.gov.hmrc.customs.declarations.information.model.ConversationIdRequest
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 
 import javax.inject.{Inject, Singleton}

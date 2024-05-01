@@ -24,8 +24,7 @@ import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest, ExtractedHeadersImpl, SearchParameters}
+import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}

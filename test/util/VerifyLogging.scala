@@ -18,7 +18,7 @@ package util
 
 import org.mockito.ArgumentMatchers._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
+import uk.gov.hmrc.customs.declarations.information.model.HasConversationId
 import util.MockitoPassByNameHelper.PassByNameVerifier
 
 object VerifyLogging {

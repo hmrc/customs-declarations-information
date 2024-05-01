@@ -22,9 +22,8 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, AuthorisedRequest, Csp, VersionOne}
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.TestData._
 import util.UnitSpec

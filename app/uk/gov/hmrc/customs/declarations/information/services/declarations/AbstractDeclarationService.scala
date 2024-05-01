@@ -24,9 +24,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.{Non2xxResponseError, RetryError, UnexpectedError}
 import uk.gov.hmrc.customs.declarations.information.connectors.{AbstractDeclarationConnector, ApiSubscriptionFieldsConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{CorrelationId, SearchType}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, CorrelationId, HasConversationId, SearchType}
 import uk.gov.hmrc.customs.declarations.information.services.{ApiSubscriptionFieldsService, UniqueIdsService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
