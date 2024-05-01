@@ -20,10 +20,10 @@ import org.mockito.Mockito.{mock, when}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.declarations.information.action.DeclarationFullCheckAction
+import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, InternalClientIdsRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, InformationConfig, VersionOne}
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
+import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationId, VersionOne}
 import util.TestData.declarationSubmissionChannel
 import util.UnitSpec
 import util.XmlOps.stringToXml
@@ -36,7 +36,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec {
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
-    private val mockInformationConfigService = mock(classOf[InformationConfigService])
+    private val mockInformationConfigService = mock(classOf[ConfigService])
 
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123")))
 

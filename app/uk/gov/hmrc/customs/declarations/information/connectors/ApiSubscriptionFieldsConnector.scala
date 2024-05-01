@@ -18,11 +18,11 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 
 import play.api.http.Status
 import play.api.libs.json.Json
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionFieldsResponse.format
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiSubscriptionKey}
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
                                                logger: InformationLogger,
-                                               config: InformationConfigService)(implicit ec: ExecutionContext) {
+                                               config: ConfigService)(implicit ec: ExecutionContext) {
   def getSubscriptionFields(apiSubsKey: ApiSubscriptionKey)(implicit hci: HasConversationId, hc: HeaderCarrier): Future[Option[ApiSubscriptionFieldsResponse]] = {
     val url: URL = new URL(ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey))
     logger.debug(s"Getting fields id from api subscription fields service. url=[$url]")

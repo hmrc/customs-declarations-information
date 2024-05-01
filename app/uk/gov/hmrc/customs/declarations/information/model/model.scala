@@ -17,7 +17,5 @@
 package uk.gov.hmrc.customs.declarations.information
 
 package object model {
-
   type SeqOfHeader = Seq[(String, String)]
-
 }

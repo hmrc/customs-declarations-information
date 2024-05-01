@@ -21,11 +21,11 @@ import org.mockito.Mockito.mock
 import play.api.http.HeaderNames._
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames
 import uk.gov.hmrc.customs.declarations.information.logging.LoggingHelper
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ConversationIdRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{ClientId, Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames
 import util.TestData._
 import util.UnitSpec
 

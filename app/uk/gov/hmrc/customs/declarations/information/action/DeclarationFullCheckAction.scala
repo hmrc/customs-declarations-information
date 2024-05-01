@@ -20,10 +20,10 @@ import play.api.http.HttpEntity
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{BadRequestCode, errorBadRequest}
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{DeclarationFullRequest, HasConversationId, InternalClientIdsRequest}
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 @Singleton
 class DeclarationFullCheckAction @Inject()(val logger: InformationLogger,
-                                           val configService: InformationConfigService)
+                                           val configService: ConfigService)
                                           (implicit ec: ExecutionContext) extends ActionRefiner[InternalClientIdsRequest, DeclarationFullRequest] {
   override def executionContext: ExecutionContext = ec
 

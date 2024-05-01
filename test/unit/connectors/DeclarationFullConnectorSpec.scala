@@ -25,10 +25,10 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.declarations.information.config.{InformationCircuitBreakerConfig, ConfigService}
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
@@ -43,7 +43,7 @@ class DeclarationFullConnectorSpec extends UnitSpec with BeforeAndAfterEach with
   private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
-  private val mockInformationConfigService = mock(classOf[InformationConfigService])
+  private val mockInformationConfigService = mock(classOf[ConfigService])
   private val mockBackendPayloadCreator = mock(classOf[BackendFullPayloadCreator])
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 

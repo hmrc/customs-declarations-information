@@ -23,10 +23,9 @@ import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorAcceptHeaderInvalid
 import uk.gov.hmrc.customs.declarations.information.action.ShutterCheckAction
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.InformationShutterConfig
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import util.RequestHeaders.{ACCEPT_HEADER_INVALID, X_CONVERSATION_ID_NAME}
 import util.TestData._
 import util.UnitSpec
@@ -37,7 +36,7 @@ class ShutterCheckActionSpec extends UnitSpec {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-    val mockConfigService = mock(classOf[InformationConfigService])
+    val mockConfigService = mock(classOf[ConfigService])
     val mockLogger = mock(classOf[InformationLogger])
     val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "Service unavailable").XmlResult
 

@@ -20,11 +20,11 @@ import play.api.http.HttpEntity
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBadRequest, errorBadRequest}
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest}
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import java.text.{ParseException, SimpleDateFormat}
 import java.util.Date
@@ -43,7 +43,7 @@ import scala.util.matching.Regex
  */
 @Singleton
 class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
-                                            val configService: InformationConfigService)(implicit ec: ExecutionContext)
+                                            val configService: ConfigService)(implicit ec: ExecutionContext)
   extends ActionRefiner[InternalClientIdsRequest, SearchParametersRequest] {
   override def executionContext: ExecutionContext = ec
   private val validDeclarationCategories = Seq("IM", "EX", "CO", "ALL")

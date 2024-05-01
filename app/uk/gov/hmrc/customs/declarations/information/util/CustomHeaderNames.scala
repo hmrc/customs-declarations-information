@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.controllers
+package uk.gov.hmrc.customs.declarations.information.util
+
 //TODO move to util
 object CustomHeaderNames {
   val XConversationIdHeaderName: String = "X-Conversation-ID"

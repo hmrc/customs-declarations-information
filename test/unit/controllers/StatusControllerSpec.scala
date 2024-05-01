@@ -29,6 +29,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, HeaderValidator, InternalClientIdsCheckAction, ShutterCheckAction, StatusAuthAction, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.Non2xxResponseError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.StatusController
@@ -56,7 +57,7 @@ class StatusControllerSpec extends UnitSpec
 
   trait SetUp extends AuthConnectorStubbing {
 
-    protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
+    protected val mockInformationConfigService: ConfigService = mock(classOf[ConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
 
     protected val mockInformationLogger: InformationLogger = mock(classOf[InformationLogger])

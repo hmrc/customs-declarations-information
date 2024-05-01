@@ -25,6 +25,7 @@ import play.api.test.Helpers
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
+import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -55,7 +56,7 @@ class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
   protected lazy val mockDeclarationFullConnector: DeclarationFullConnector = mock(classOf[DeclarationFullConnector])
   protected lazy val mockPayloadDecorator: BackendVersionPayloadCreator = mock(classOf[BackendVersionPayloadCreator])
   protected lazy val mockHttpResponse: HttpResponse = HttpResponse(OK, "<xml>some xml</xml>")
-  protected lazy val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
+  protected lazy val mockInformationConfigService: ConfigService = mock(classOf[ConfigService])
   protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
   protected val mrn = Mrn("theMrn")
   protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId

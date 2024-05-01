@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package unit.services
+package unit.config
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.mockito.Mockito.mock
 import play.api.Configuration
 import uk.gov.hmrc.customs.api.common.config.ConfigValidatedNelAdaptor
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.UnitSpec
 
-class InformationConfigServiceSpec extends UnitSpec {
+class ConfigServiceSpec extends UnitSpec {
   private val validAppConfig: Config = ConfigFactory.parseString(
     """
       |microservice.services.api-subscription-fields.host=some-host
@@ -46,7 +46,7 @@ class InformationConfigServiceSpec extends UnitSpec {
   private val mockLogger = mock(classOf[InformationLogger])
 
   private def customsConfigService(conf: Configuration) =
-    new InformationConfigService(new ConfigValidatedNelAdaptor(testServicesConfig(conf), conf), mockLogger)
+    new ConfigService(new ConfigValidatedNelAdaptor(testServicesConfig(conf), conf), mockLogger)
 
   "CustomsConfigService" should {
     "return config as object model when configuration is valid" in {

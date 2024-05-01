@@ -21,11 +21,11 @@ import play.api.http.Status.SERVICE_UNAVAILABLE
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorAcceptHeaderInvalid
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, VersionOne, VersionTwo}
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 @Singleton
 class ShutterCheckAction @Inject()(logger: InformationLogger,
-                                   config: InformationConfigService)(implicit ec: ExecutionContext) extends ActionRefiner[ConversationIdRequest, ApiVersionRequest] {
+                                   config: ConfigService)(implicit ec: ExecutionContext) extends ActionRefiner[ConversationIdRequest, ApiVersionRequest] {
   actionName =>
 
   private val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "Service unavailable").XmlResult

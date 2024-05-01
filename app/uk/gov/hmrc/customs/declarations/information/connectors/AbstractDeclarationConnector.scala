@@ -22,11 +22,11 @@ import play.api.http.HeaderNames.{ACCEPT, AUTHORIZATION, CONTENT_TYPE, DATE, X_F
 import play.api.http.{MimeTypes, Status}
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, ConversationId, CorrelationId, SearchType}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -41,7 +41,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
                                                       logger: InformationLogger,
                                                       backendPayloadCreator: BackendPayloadCreator,
                                                       serviceConfigProvider: ServiceConfigProvider,
-                                                      config: InformationConfigService)(implicit val ec: ExecutionContext) extends CircuitBreakerConnector with Status {
+                                                      config: ConfigService)(implicit val ec: ExecutionContext) extends CircuitBreakerConnector with Status {
   override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
   override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis

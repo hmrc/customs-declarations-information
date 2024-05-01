@@ -18,7 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.logging
 
 import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
 import play.api.mvc.Request
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasApiVersion, HasAuthorisedAs, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp}
 

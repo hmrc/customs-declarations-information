@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.model
+package uk.gov.hmrc.customs.declarations.information.config
 
 case class InformationConfig(apiSubscriptionFieldsBaseUrl: String,
                              declarationStatusRequestDaysLimit: Int,

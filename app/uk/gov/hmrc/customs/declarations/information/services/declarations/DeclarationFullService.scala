@@ -18,10 +18,11 @@ package uk.gov.hmrc.customs.declarations.information.services.declarations
 
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalServerError
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.filters.FullResponseFilterService
-import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UniqueIdsService}
+import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import uk.gov.hmrc.http.HttpResponse
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +35,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
                                        override val logger: InformationLogger,
                                        connector: DeclarationFullConnector,
                                        uniqueIdsService: UniqueIdsService,
-                                       config: InformationConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
+                                       config: ConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "declaration-full"
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {

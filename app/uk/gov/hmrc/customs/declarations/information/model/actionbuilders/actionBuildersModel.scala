@@ -17,7 +17,7 @@
 package uk.gov.hmrc.customs.declarations.information.model.actionbuilders
 
 import play.api.mvc.{Request, Result, WrappedRequest}
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.model._
 
 import java.util.Date

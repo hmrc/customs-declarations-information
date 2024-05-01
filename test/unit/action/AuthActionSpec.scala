@@ -27,7 +27,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.action.{HeaderValidator, SearchAuthAction}
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames.XConversationIdHeaderName
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.XConversationIdHeaderName
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._

@@ -20,8 +20,8 @@ import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendStatusPayloadCreator
 import uk.gov.hmrc.http.HttpClient
 
@@ -32,7 +32,7 @@ class DeclarationStatusConnector @Inject()(http: HttpClient,
                                            logger: InformationLogger,
                                            backendPayloadCreator: BackendStatusPayloadCreator,
                                            serviceConfigProvider: ServiceConfigProvider,
-                                           config: InformationConfigService,
+                                           config: ConfigService,
                                            override val cdsLogger: CdsLogger,
                                            override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
   extends AbstractDeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
