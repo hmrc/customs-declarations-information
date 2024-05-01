@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package unit.services
+package unit.services.filters
 
 import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
+import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
+import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService
 import util.SearchTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationSearchResponse, validBackendSearchResponse}
 import util.UnitSpec
 
+import javax.xml.validation.Schema
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
-import ValidateXmlAgainstSchema._
-import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService
 
-import javax.xml.validation.Schema
-import scala.util.Try
-
-class DeclarationSearchResponseFilterServiceSpec extends UnitSpec {
+class SearchResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   private val schemaFile: Try[Schema] = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalSearchResponse.xsd")
   private val xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)

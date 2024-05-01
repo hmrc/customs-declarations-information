@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.services
+package unit.services.filters
 
 import org.scalatest.Assertion
 import play.api.test.Helpers
@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-class DeclarationStatusResponseFilterServiceSpec extends UnitSpec {
+class StatusResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {

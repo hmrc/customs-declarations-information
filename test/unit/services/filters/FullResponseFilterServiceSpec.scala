@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package unit.services
+package unit.services.filters
 
 import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
+import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
+import uk.gov.hmrc.customs.declarations.information.services.filters.FullResponseFilterService
 import util.FullTestXMLData.backendDeclarationFullResponse
 import util.UnitSpec
 
@@ -27,10 +29,8 @@ import scala.concurrent.ExecutionContext
 import scala.util.Try
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
-import ValidateXmlAgainstSchema._
-import uk.gov.hmrc.customs.declarations.information.services.filters.FullResponseFilterService
 
-class DeclarationFullResponseFilterServiceSpec extends UnitSpec {
+class FullResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   val schemaFile: Try[Schema] = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
   val xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
