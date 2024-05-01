@@ -16,7 +16,6 @@
 
 package unit.services
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -41,11 +40,12 @@ import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSub
 import util.TestData._
 import util.UnitSpec
 
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
-  private val dateTime = new DateTime()
+  private val dateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
@@ -58,7 +58,6 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
   }
   protected lazy val mockDeclarationStatusConnector: DeclarationStatusConnector = mock(classOf[DeclarationStatusConnector])
   protected lazy val mockPayloadDecorator: BackendStatusPayloadCreator = mock(classOf[BackendStatusPayloadCreator])
-  protected lazy val mockDateTimeProvider: DateTimeService = mock(classOf[DateTimeService])
   protected lazy val mockHttpResponse: HttpResponse = HttpResponse(OK, "<xml>some xml</xml>")
   protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
   protected val searchType = Mrn("theMrn")
@@ -66,28 +65,26 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
   protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
-    when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
-    when(mockDeclarationStatusConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationStatusConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
-    when(mockStatusResponseFilterService.transform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
+    when(mockStatusResponseFilterService.findPathThenTransform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
 
     protected lazy val service: DeclarationStatusService = new DeclarationStatusService(mockStatusResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockLogger, mockDeclarationStatusConnector, mockDateTimeProvider, stubUniqueIdsService)
+      mockLogger, mockDeclarationStatusConnector, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
-      await(service.send(searchType)(vpr, hc))
+      await(service.send(searchType, dateTime)(vpr, hc))
     }
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationStatusConnector, mockStatusResponseFilterService)
+    reset(mockDeclarationStatusConnector, mockStatusResponseFilterService)
   }
 
   "Business Service" should {
-
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.toOption.get.body shouldBe "<xml>transformed</xml>"
@@ -123,7 +120,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -143,7 +140,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
       
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -163,7 +160,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -183,7 +180,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -194,7 +191,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 403 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -205,7 +202,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationStatusConnector.send(any[DateTime],
+      when(mockDeclarationStatusConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

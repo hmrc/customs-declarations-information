@@ -47,7 +47,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec {
 
   trait SetUp {
     implicit val service: StatusResponseFilterService = new StatusResponseFilterService()
-    val statusResponseWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime))
+    val statusResponseWithAllValues: NodeSeq = service.findPathThenTransform(generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime))
   }
 
   "Status Response Filter Service" should {
@@ -57,14 +57,14 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec {
     }
 
     "handle actual MDG response" in new SetUp {
-      val multuStatusResponsesWithAllValues: NodeSeq = service.transform(actualBackendStatusResponse)
+      val multuStatusResponsesWithAllValues: NodeSeq = service.findPathThenTransform(actualBackendStatusResponse)
 
       xmlValidationService.validate(multuStatusResponsesWithAllValues) should be(true)
     }
 
     "handle multiple DeclarationStatusDetails elements in MDG response" in new SetUp {
       val numberOfDecStatuses = 5
-      val multuStatusResponsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponse(numberOfDecStatuses, acceptanceOrCreationDate = defaultDateTime))
+      val multuStatusResponsesWithAllValues: NodeSeq = service.findPathThenTransform(generateDeclarationStatusResponse(numberOfDecStatuses, acceptanceOrCreationDate = defaultDateTime))
 
       xmlValidationService.validate(multuStatusResponsesWithAllValues) should be(true)
 
@@ -153,7 +153,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec {
     }
 
     "handle future extension where all optional fields are returned" in new SetUp {
-      val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationStatusResponseContainingAllOptionalElements(defaultDateTime))
+      val responsesWithAllValues: NodeSeq = service.findPathThenTransform(generateDeclarationStatusResponseContainingAllOptionalElements(defaultDateTime))
 
       xmlValidationService.validate(responsesWithAllValues) should be(true)
     }
@@ -161,7 +161,7 @@ class DeclarationStatusResponseFilterServiceSpec extends UnitSpec {
 
   private def testForMissingElement(missingElementName: String)(implicit service: StatusResponseFilterService): Assertion = {
     val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(generateDeclarationStatusResponse(acceptanceOrCreationDate = defaultDateTime))
-    val statusResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
+    val statusResponseWithMissingValues: NodeSeq = service.findPathThenTransform(missingElementSourceXml)
 
     xmlValidationService.validate(statusResponseWithMissingValues) should be(true)
 

@@ -43,22 +43,19 @@ import scala.util.matching.Regex
  */
 @Singleton
 class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
-                                            val configService: InformationConfigService)
-                                           (implicit ec: ExecutionContext)
+                                            val configService: InformationConfigService)(implicit ec: ExecutionContext)
   extends ActionRefiner[InternalClientIdsRequest, SearchParametersRequest] {
-
   override def executionContext: ExecutionContext = ec
-
   private val validDeclarationCategories = Seq("IM", "EX", "CO", "ALL")
   private val goodsLocationCodeRegex: Regex = "^[a-zA-Z0-9]{1,12}$".r
   private val looseEoriRegex: Regex = "^[a-zA-Z0-9]{1,50}$".r
   private val validDeclarationStatuses = Seq("CLEARED", "UNCLEARED", "REJECTED", "ALL")
-  private val validPartyRoles = Seq("SUBMITTER", "CONSIGNEE", "CONSIGNOR", "DECLARANT")
-  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+  private val validPartyRoles: Seq[String] = Seq("SUBMITTER", "CONSIGNEE", "CONSIGNOR", "DECLARANT")
+  //TODO homogenise dateFormatting
+  private val dateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
     implicit val id: InternalClientIdsRequest[A] = icr
-
     val maybeEori = icr.request.getQueryString("eori")
     val maybePartyRole = icr.request.getQueryString("partyRole")
     val maybeDeclarationCategory = icr.request.getQueryString("declarationCategory")
@@ -104,11 +101,9 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   }
 
   def validatePartyRole(partyRole: Option[String]): Either[ErrorResponse, PartyRole] = {
-
     partyRole.filter(pr => validPartyRoles.contains(pr.toUpperCase)).map(pr => PartyRole(pr))
       .toRight(errorBadRequest("Invalid partyRole parameter", "CDS60006"))
   }
-
 
   def validateDeclarationCategory(declarationCategory: Option[String]): Either[ErrorResponse, DeclarationCategory] = {
     declarationCategory.filter(dc => validDeclarationCategories.contains(dc.toUpperCase)).map(dc => DeclarationCategory(dc))
@@ -129,7 +124,6 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   }
 
   def validateDeclarationStatus(declarationStatus: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[DeclarationStatus]] = {
-
     declarationStatus match {
       case Some(ds) =>
         if (validDeclarationStatuses.contains(ds.toUpperCase)) {
@@ -151,7 +145,6 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   }
 
   def validateDate(date: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Date]] = {
-
     date match {
       case Some(d) => try {
         val dateAsDateType = dateFormat.parse(d)

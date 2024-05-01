@@ -34,17 +34,13 @@ import scala.util.control.NonFatal
 
 @Singleton
 class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
-                                   logger: InformationLogger)
-                                  (implicit ec: ExecutionContext) extends AuthorisedFunctions {
-
+                                   logger: InformationLogger)(implicit ec: ExecutionContext) extends AuthorisedFunctions {
   private val hmrcCustomsEnrolment = "HMRC-CUS-ORG"
   private val customsDeclarationEnrolment = "write:customs-declarations-information"
-
   private lazy val errorResponseEoriNotFoundInCustomsEnrolment =
     ErrorResponse(UNAUTHORIZED, UnauthorizedCode, "EORI number not found in Customs Enrolment")
   private val errorResponseUnauthorisedGeneral =
     ErrorResponse(Status.UNAUTHORIZED, UnauthorizedCode, "Unauthorised request")
-
   type IsCsp = Boolean
 
   /*

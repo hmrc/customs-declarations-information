@@ -16,7 +16,6 @@
 
 package unit.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -45,6 +44,7 @@ import util.TestData._
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, SearchTestXMLData, UnitSpec}
 
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,8 +71,7 @@ class SearchControllerSpec extends UnitSpec
 
     protected val mockSearchConnector: DeclarationSearchConnector = mock(classOf[DeclarationSearchConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
-    protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
-    protected val dateTime = new DateTime()
+    protected val dateTime = ZonedDateTime.now()
 
     protected val stubAuthStatusAction: SearchAuthAction = new SearchAuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
@@ -81,7 +80,7 @@ class SearchControllerSpec extends UnitSpec
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubSearchResponseFilterService: SearchResponseFilterService = new SearchResponseFilterService()
     protected val stubDeclarationSearchService = new DeclarationSearchService(stubSearchResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockSearchConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockSearchConnector, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: SearchController = new SearchController(
@@ -103,8 +102,7 @@ class SearchControllerSpec extends UnitSpec
       controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
-    when(mockSearchConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
+    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -219,7 +217,7 @@ class SearchControllerSpec extends UnitSpec
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
-      when(mockSearchConnector.send(any[DateTime],
+      when(mockSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

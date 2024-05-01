@@ -16,8 +16,6 @@
 
 package component
 
-import org.joda.time.{DateTime, DateTimeZone}
-import org.mockito.Mockito.{mock, when}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, GivenWhenThen}
@@ -25,11 +23,9 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.customs.declarations.information.services.{DateTimeService, UniqueIdsService}
+import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import util.TestData.stubUniqueIdsService
 import util.{CustomsDeclarationsExternalServicesConfig, ExternalServicesConfig}
-
-import java.time.{Instant, ZoneId, ZonedDateTime}
 
 trait ComponentTestSpec extends AnyFeatureSpec
   with GivenWhenThen
@@ -37,13 +33,7 @@ trait ComponentTestSpec extends AnyFeatureSpec
   with BeforeAndAfterAll
   with BeforeAndAfterEach
   with Eventually {
-
-  private val mockDateTimeService = mock(classOf[DateTimeService])
-
   val dateTime = 1546344000000L // 01/01/2019 12:00:00
-
-  when(mockDateTimeService.nowUtc()).thenReturn(new DateTime(dateTime, DateTimeZone.UTC))
-  when(mockDateTimeService.zonedDateTimeUtc).thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime), ZoneId.of("UTC")))
 
   protected val configMap: Map[String, Any] = Map(
     "xml.max-errors" -> 2,
@@ -83,7 +73,6 @@ trait ComponentTestSpec extends AnyFeatureSpec
   )
 
   def app(values: Map[String, Any] = configMap): Application = new GuiceApplicationBuilder()
-    .overrides(bind[DateTimeService].toInstance(mockDateTimeService))
     .overrides(bind[UniqueIdsService].toInstance(stubUniqueIdsService))
     .configure(values).build()
 

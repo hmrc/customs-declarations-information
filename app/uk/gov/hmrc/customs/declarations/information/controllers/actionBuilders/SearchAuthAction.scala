@@ -42,15 +42,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                  headerValidator: HeaderValidator,
-                                 logger: InformationLogger)
-                                (implicit ec: ExecutionContext)
+                                 logger: InformationLogger)(implicit ec: ExecutionContext)
   extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[SearchParametersRequest, AuthorisedRequest] {
-
   override protected[this] def executionContext: ExecutionContext = ec
 
   override def refine[A](spr: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val implicitIcir: SearchParametersRequest[A] = spr
-
+    //TODO ???
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap {
@@ -69,5 +67,4 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
         Future.successful(Left(result.XmlResult.withConversationId))
     }
   }
-
 }

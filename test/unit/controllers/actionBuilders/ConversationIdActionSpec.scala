@@ -22,7 +22,6 @@ import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.ConversationIdAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
-import uk.gov.hmrc.customs.declarations.information.services.DateTimeService
 import util.TestData.{conversationId, stubUniqueIdsService}
 import util.UnitSpec
 
@@ -33,7 +32,6 @@ class ConversationIdActionSpec extends UnitSpec {
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
     private val mockInformationLogger = mock(classOf[InformationLogger])
-    protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
 
     val request = FakeRequest()
     val conversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)

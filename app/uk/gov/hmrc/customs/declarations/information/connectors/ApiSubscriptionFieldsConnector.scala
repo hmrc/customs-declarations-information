@@ -33,12 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApiSubscriptionFieldsConnector @Inject()(http: HttpClient,
                                                logger: InformationLogger,
-                                               config: InformationConfigService)
-                                              (implicit ec: ExecutionContext) {
-
-  def getSubscriptionFields(apiSubsKey: ApiSubscriptionKey)
-                           (implicit hci: HasConversationId, hc: HeaderCarrier): Future[Option[ApiSubscriptionFieldsResponse]] = {
-    val url = new URL(ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey))
+                                               config: InformationConfigService)(implicit ec: ExecutionContext) {
+  def getSubscriptionFields(apiSubsKey: ApiSubscriptionKey)(implicit hci: HasConversationId, hc: HeaderCarrier): Future[Option[ApiSubscriptionFieldsResponse]] = {
+    val url: URL = new URL(ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey))
     logger.debug(s"Getting fields id from api subscription fields service. url=[$url]")
 
     http.GET(url)

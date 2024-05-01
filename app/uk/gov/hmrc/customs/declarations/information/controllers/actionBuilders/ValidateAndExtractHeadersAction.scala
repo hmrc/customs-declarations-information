@@ -29,9 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * <li/>ERROR - 4XX Result if is a header validation error. This terminates the action builder pipeline.
  */
 @Singleton
-class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator)
-                                               (implicit ec: ExecutionContext)
-  extends ActionRefiner[ApiVersionRequest, ValidatedHeadersRequest] {
+class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator)(implicit ec: ExecutionContext) extends ActionRefiner[ApiVersionRequest, ValidatedHeadersRequest] {
   actionName =>
 
   override def executionContext: ExecutionContext = ec

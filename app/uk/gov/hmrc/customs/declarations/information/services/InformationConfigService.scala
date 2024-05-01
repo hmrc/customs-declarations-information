@@ -25,32 +25,30 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelAdaptor, logger: InformationLogger) {
-
   private val root = configValidatedNel.root
   private val apiSubscriptionFieldsService = configValidatedNel.service("api-subscription-fields")
-
   private val numberOfCallsToTriggerStateChangeNel = root.int("circuitBreaker.numberOfCallsToTriggerStateChange")
   private val unavailablePeriodDurationInMillisNel = root.int("circuitBreaker.unavailablePeriodDurationInMillis")
   private val unstablePeriodDurationInMillisNel = root.int("circuitBreaker.unstablePeriodDurationInMillis")
   private val v1ShutteredNel = root.maybeBoolean("shutter.v1")
   private val v2ShutteredNel = root.maybeBoolean("shutter.v2")
-
   private val declarationStatusRequestDaysLimit = root.int("declarationStatus.requestDaysLimit")
-
   private val apiSubscriptionFieldsServiceUrlNel = apiSubscriptionFieldsService.serviceUrl
-
   private val internalClientIdsNel: CustomsValidatedNel[Seq[String]] = root.stringSeq("internal.clientIds")
 
   private val validatedInformationConfig: CustomsValidatedNel[InformationConfig] = (
-    apiSubscriptionFieldsServiceUrlNel, declarationStatusRequestDaysLimit, internalClientIdsNel) mapN InformationConfig
+    apiSubscriptionFieldsServiceUrlNel,
+    declarationStatusRequestDaysLimit,
+    internalClientIdsNel) mapN InformationConfig
 
   private val validatedDeclarationsShutterConfig: CustomsValidatedNel[InformationShutterConfig] = (
-    v1ShutteredNel, v2ShutteredNel
-  ) mapN InformationShutterConfig
+    v1ShutteredNel,
+    v2ShutteredNel) mapN InformationShutterConfig
 
   private val validatedInformationCircuitBreakerConfig: CustomsValidatedNel[InformationCircuitBreakerConfig] = (
-    numberOfCallsToTriggerStateChangeNel, unavailablePeriodDurationInMillisNel, unstablePeriodDurationInMillisNel
-  ) mapN InformationCircuitBreakerConfig
+    numberOfCallsToTriggerStateChangeNel,
+    unavailablePeriodDurationInMillisNel,
+    unstablePeriodDurationInMillisNel) mapN InformationCircuitBreakerConfig
 
   private val customsConfigHolder =
     (validatedInformationConfig,
@@ -64,13 +62,10 @@ class InformationConfigService @Inject()(configValidatedNel: ConfigValidatedNelA
           logger.errorWithoutRequestContext(errorMsg)
           throw new IllegalStateException(errorMsg)
         },
-        fa = identity
-      )
+        fa = identity)
 
   val informationConfig: InformationConfig = customsConfigHolder.informationConfig
-
   val informationShutterConfig: InformationShutterConfig = customsConfigHolder.informationShutterConfig
-
   val informationCircuitBreakerConfig: InformationCircuitBreakerConfig = customsConfigHolder.informationCircuitBreakerConfig
 
   private case class CustomsConfigHolder(informationConfig: InformationConfig,

@@ -23,7 +23,6 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import java.util.Date
 
 object ActionBuilderModelHelper {
-
   implicit class AddConversationId(val result: Result) extends AnyVal {
     def withConversationId(implicit c: HasConversationId): Result = {
       result.withHeaders(XConversationIdHeaderName -> c.conversationId.toString)

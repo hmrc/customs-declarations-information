@@ -42,10 +42,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DeclarationFullAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                           headerValidator: HeaderValidator,
-                                          logger: InformationLogger)
-                                         (implicit ec: ExecutionContext)
+                                          logger: InformationLogger)(implicit ec: ExecutionContext)
   extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[DeclarationFullRequest, AuthorisedRequest] {
-
   override protected[this] def executionContext: ExecutionContext = ec
 
   override def refine[A](fdvr: DeclarationFullRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
@@ -69,5 +67,4 @@ class DeclarationFullAuthAction @Inject()(customsAuthService: CustomsAuthService
         Future.successful(Left(result.XmlResult.withConversationId))
     }
   }
-
 }

@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
-
-import org.joda.time.{DateTime, DateTimeZone}
+package uk.gov.hmrc.customs.declarations.information.util
 
 import java.time.{Clock, ZoneId, ZonedDateTime}
 
-class DateTimeService {
-  val UtcZoneId: ZoneId = ZoneId.of("UTC")
-
-  def nowUtc(): DateTime = new DateTime(Clock.systemUTC().instant().toEpochMilli, DateTimeZone.UTC)
-
-  def zonedDateTimeUtc: ZonedDateTime = ZonedDateTime.now(UtcZoneId)
+object DateTimeGenerator {
+  //This class may seem pointless but it allows for testing
+  def getDateTime: ZonedDateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
 }

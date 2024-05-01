@@ -41,17 +41,12 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DeclarationFullCheckAction @Inject()(val logger: InformationLogger,
                                            val configService: InformationConfigService)
-                                          (implicit ec: ExecutionContext)
-  extends ActionRefiner[InternalClientIdsRequest, DeclarationFullRequest] {
-
+                                          (implicit ec: ExecutionContext) extends ActionRefiner[InternalClientIdsRequest, DeclarationFullRequest] {
   override def executionContext: ExecutionContext = ec
 
   override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, DeclarationFullRequest[A]]] = Future.successful {
-
     implicit val id: InternalClientIdsRequest[A] = icir
-
     val declarationVersion = icir.request.getQueryString("declarationVersion")
-
     logger.debug(s"path is ${icir.request.path} and declarationVersion is $declarationVersion")
 
     validateDeclarationVersion(declarationVersion) match {

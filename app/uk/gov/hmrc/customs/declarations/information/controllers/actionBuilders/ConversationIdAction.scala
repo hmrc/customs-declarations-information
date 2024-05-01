@@ -27,16 +27,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ConversationIdAction @Inject()(val uniqueIdsService: UniqueIdsService,
                                      val logger: InformationLogger)
-                                    (implicit ec: ExecutionContext)
-  extends ActionTransformer[Request, ConversationIdRequest] {
-
+                                    (implicit ec: ExecutionContext) extends ActionTransformer[Request, ConversationIdRequest] {
   override def executionContext: ExecutionContext = ec
 
   override def transform[A](request: Request[A]): Future[ConversationIdRequest[A]] = {
+    val conversationIdRequest = ConversationIdRequest(uniqueIdsService.generateUniqueConversationId, request)
+    logger.debugFull("In ConversationIdAction")(conversationIdRequest)
 
-    val r = ConversationIdRequest(uniqueIdsService.conversation, request)
-    logger.debugFull("In ConversationIdAction")(r)
-
-    Future.successful(r)
+    Future.successful(conversationIdRequest)
   }
 }

@@ -42,15 +42,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class StatusAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                  headerValidator: HeaderValidator,
-                                 logger: InformationLogger)
-                                (implicit ec: ExecutionContext)
+                                 logger: InformationLogger)(implicit ec: ExecutionContext)
   extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[ValidatedHeadersRequest, AuthorisedRequest] {
 
   override protected[this] def executionContext: ExecutionContext = ec
 
-  override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitVhr: ValidatedHeadersRequest[A] = vhr
-
+  override def refine[A](validatedHeadersRequest: ValidatedHeadersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitVhr: ValidatedHeadersRequest[A] = validatedHeadersRequest
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap {
@@ -60,10 +58,10 @@ class StatusAuthAction @Inject()(customsAuthService: CustomsAuthService,
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
-              Right(vhr.toNonCspAuthorisedRequest(nonCspData.eori))
+              Right(validatedHeadersRequest.toNonCspAuthorisedRequest(nonCspData.eori))
           }
         } { cspData =>
-          Future.successful(Right(vhr.toCspAuthorisedRequest(cspData)))
+          Future.successful(Right(validatedHeadersRequest.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>
         Future.successful(Left(result.XmlResult.withConversationId))

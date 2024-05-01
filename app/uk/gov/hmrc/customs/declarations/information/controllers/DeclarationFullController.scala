@@ -39,9 +39,7 @@ class DeclarationFullController @Inject()(val shutterCheckAction: ShutterCheckAc
                                           val declarationFullCheckAction: DeclarationFullCheckAction,
                                           val declarationFullService: DeclarationFullService,
                                           val cc: ControllerComponents,
-                                          val logger: InformationLogger)
-                                         (implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
-
+                                          val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
   def list(mrn: String, declarationVersion: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
   }
@@ -53,9 +51,7 @@ class DeclarationFullController @Inject()(val shutterCheckAction: ShutterCheckAc
       case Right(()) =>
         declarationFullService.send(mrn) map {
           case Right(res: HttpResponse) =>
-            new HasConversationId {
-              override val conversationId = asr.conversationId
-            }
+            new HasConversationId {override val conversationId: ConversationId = asr.conversationId}
             logger.info(s"Full declaration information version processed successfully.")
             logger.debug(s"Returning full declaration information version response with status code ${res.status} and body\n ${res.body}")
             Ok(res.body).withConversationId.as(ContentTypes.XML)

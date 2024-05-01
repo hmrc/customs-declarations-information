@@ -30,6 +30,7 @@ import java.net.URLEncoder
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ApiSubscriptionFieldsService {
+//TODO make vals
 
   def apiSubFieldsConnector: ApiSubscriptionFieldsConnector
 
@@ -39,8 +40,7 @@ trait ApiSubscriptionFieldsService {
 
   private val apiContextEncoded = URLEncoder.encode("customs/declarations-information", "UTF-8")
 
-  def futureApiSubFieldsId[A](c: ClientId)
-                             (implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, Option[ApiSubscriptionFieldsResponse]]] = {
+  def futureApiSubFieldsId[A](c: ClientId)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, Option[ApiSubscriptionFieldsResponse]]] = {
     asr.authorisedAs match {
       case Csp(_, _) =>
         apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion))

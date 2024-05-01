@@ -38,8 +38,7 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                   val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                   val declarationVersionService: DeclarationVersionService,
                                   val cc: ControllerComponents,
-                                  val logger: InformationLogger)
-                                 (implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
+                                  val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
 
   def list(mrn: String, declarationSubmissionChannel: Option[String] = None): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
@@ -52,9 +51,7 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
       case Right(()) =>
         declarationVersionService.send(mrn) map {
           case Right(res: HttpResponse) =>
-            new HasConversationId {
-              override val conversationId = asr.conversationId
-            }
+            new HasConversationId {override val conversationId: ConversationId = asr.conversationId}
             logger.info(s"Declaration information versions processed successfully.")
             logger.debug(s"Returning declaration information versions response with status code ${res.status} and body\n ${res.body}")
             Ok(res.body).withConversationId.as(ContentTypes.XML)

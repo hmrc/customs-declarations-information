@@ -43,14 +43,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class VersionAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                   headerValidator: HeaderValidator,
                                   logger: InformationLogger)
-                                 (implicit ec: ExecutionContext)
-  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[InternalClientIdsRequest, AuthorisedRequest] {
-
+                                 (implicit ec: ExecutionContext) extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[InternalClientIdsRequest, AuthorisedRequest] {
   override protected[this] def executionContext: ExecutionContext = ec
 
-  override def refine[A](icir: InternalClientIdsRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitIcir: InternalClientIdsRequest[A] = icir
-
+  override def refine[A](internalClientIdsRequest: InternalClientIdsRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitIcir: InternalClientIdsRequest[A] = internalClientIdsRequest
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap {
@@ -60,10 +57,10 @@ class VersionAuthAction @Inject()(customsAuthService: CustomsAuthService,
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
-              Right(icir.toNonCspAuthorisedRequest(nonCspData.eori))
+              Right(internalClientIdsRequest.toNonCspAuthorisedRequest(nonCspData.eori))
           }
         } { cspData =>
-          Future.successful(Right(icir.toCspAuthorisedRequest(cspData)))
+          Future.successful(Right(internalClientIdsRequest.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>
         Future.successful(Left(result.XmlResult.withConversationId))

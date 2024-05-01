@@ -16,7 +16,6 @@
 
 package unit.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -45,6 +44,7 @@ import util.TestData._
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,8 +71,7 @@ class VersionControllerSpec extends UnitSpec
 
     protected val mockVersionConnector: DeclarationVersionConnector = mock(classOf[DeclarationVersionConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
-    protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
-    protected val dateTime = new DateTime()
+    protected val dateTime = ZonedDateTime.now()
 
     protected val stubAuthStatusAction: VersionAuthAction = new VersionAuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
@@ -80,7 +79,7 @@ class VersionControllerSpec extends UnitSpec
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubVersionResponseFilterService: VersionResponseFilterService = new VersionResponseFilterService()
     protected val stubDeclarationVersionService = new DeclarationVersionService(stubVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockVersionConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockVersionConnector, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: VersionController = new VersionController(
@@ -101,8 +100,7 @@ class VersionControllerSpec extends UnitSpec
       controller.list(mrnValue, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockVersionConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
+    when(mockVersionConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -278,7 +276,7 @@ class VersionControllerSpec extends UnitSpec
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
-      when(mockVersionConnector.send(any[DateTime],
+      when(mockVersionConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

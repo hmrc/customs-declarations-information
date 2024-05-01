@@ -16,7 +16,6 @@
 
 package unit.services
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -38,11 +37,12 @@ import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSub
 import util.TestData._
 import util.UnitSpec
 
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
-  private val dateTime = new DateTime()
+  private val dateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
 
@@ -51,7 +51,6 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
   implicit protected lazy val mockLogger: InformationLogger = mock(classOf[InformationLogger])
   protected lazy val mockDeclarationSearchConnector: DeclarationSearchConnector = mock(classOf[DeclarationSearchConnector])
   protected lazy val mockPayloadDecorator: BackendSearchPayloadCreator = mock(classOf[BackendSearchPayloadCreator])
-  protected lazy val mockDateTimeProvider: DateTimeService = mock(classOf[DateTimeService])
   protected lazy val mockHttpResponse: HttpResponse = HttpResponse(OK, "<xml>some xml</xml>")
   protected lazy val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
   protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
@@ -60,29 +59,27 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
   protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
-    when(mockDateTimeProvider.nowUtc()).thenReturn(dateTime)
-    when(mockDeclarationSearchConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
-    when(mockSearchResponseFilterService.transform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
+    when(mockSearchResponseFilterService.findPathThenTransform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
 
     protected lazy val service: DeclarationSearchService = new DeclarationSearchService(mockSearchResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockLogger, mockDeclarationSearchConnector, mockDateTimeProvider, stubUniqueIdsService, mockInformationConfigService)
+      mockLogger, mockDeclarationSearchConnector, stubUniqueIdsService, mockInformationConfigService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
-      await(service.send(mrn)(vpr, hc))
+      await(service.send(mrn, dateTime)(vpr, hc))
     }
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDateTimeProvider, mockDeclarationSearchConnector, mockSearchResponseFilterService)
+    reset(mockDeclarationSearchConnector, mockSearchResponseFilterService)
   }
 
   "Business Service" should {
-
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.toOption.get.body shouldBe "<xml>transformed</xml>"
@@ -119,7 +116,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -140,7 +137,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -160,7 +157,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -180,7 +177,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -201,7 +198,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -222,7 +219,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -243,7 +240,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -264,7 +261,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -285,7 +282,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -306,7 +303,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -327,7 +324,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -348,7 +345,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -359,7 +356,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 403 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -370,7 +367,7 @@ class DeclarationSearchServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationSearchConnector.send(any[DateTime],
+      when(mockDeclarationSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

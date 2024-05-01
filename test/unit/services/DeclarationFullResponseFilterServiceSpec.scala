@@ -23,55 +23,41 @@ import uk.gov.hmrc.customs.declarations.information.services.FullResponseFilterS
 import util.FullTestXMLData.backendDeclarationFullResponse
 import util.UnitSpec
 
+import javax.xml.validation.Schema
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
+import ValidateXmlAgainstSchema._
 
 class DeclarationFullResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
-  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer(new RewriteRule {
-      override def transform(n: Node): Seq[Node] = n match {
-        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
-        case n => n
-      }
-    })
-  }
-
-  import ValidateXmlAgainstSchema._
-
-  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
-
-  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
+  val schemaFile: Try[Schema] = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalFullResponse.xsd")
+  val xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
     implicit val service: FullResponseFilterService = new FullResponseFilterService()
-    val fullResponseWithAllValues: NodeSeq = service.transform(backendDeclarationFullResponse)
+    val fullResponseWithAllValues: NodeSeq = service.findPathThenTransform(backendDeclarationFullResponse)
   }
 
   "Full Response Filter Service" should {
-
     "ensure output passes schema validation" in new SetUp {
       xmlValidationService.validate(fullResponseWithAllValues) should be(true)
     }
 
-    "ensure element CreatedDateTime is present" in new SetUp {
-      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "CreatedDateTime" \ "DateTimeString"
-
+    "ensure element CreatedDateTime is present and correct" in new SetUp {
+      val node: NodeSeq = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "CreatedDateTime" \ "DateTimeString"
       node.text shouldBe "20240111115536Z"
       node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
-    "ensure element LRN is present" in new SetUp {
-      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "LRN"
-
+    "ensure element LRN is present and correct" in new SetUp {
+      val node: NodeSeq = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "LRN"
       node.text shouldBe "SK383RefTC181788"
     }
 
-    "ensure element VersionID is present" in new SetUp {
-      val node = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "VersionID"
-
+    "ensure element VersionID is present and correct" in new SetUp {
+      val node: NodeSeq = fullResponseWithAllValues \ "FullDeclarationDataDetails" \ "HighLevelSummaryDetails" \ "VersionID"
       node.text shouldBe "1"
     }
 
@@ -85,14 +71,21 @@ class DeclarationFullResponseFilterServiceSpec extends UnitSpec {
 
   }
 
+  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
+    new RuleTransformer(new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
+        case n => n
+      }
+    })
+  }
+
   private def testForMissingElement(missingElementName: String)(implicit service: FullResponseFilterService): Assertion = {
     val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(backendDeclarationFullResponse)
-    val versionResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
-
+    val versionResponseWithMissingValues: NodeSeq = service.findPathThenTransform(missingElementSourceXml)
     xmlValidationService.validate(versionResponseWithMissingValues) should be(true)
 
     val node = commonPath(versionResponseWithMissingValues) \ missingElementName
-
     node.size shouldBe 0
   }
 

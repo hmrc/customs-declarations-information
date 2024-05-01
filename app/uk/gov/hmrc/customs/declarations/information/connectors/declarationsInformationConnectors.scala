@@ -19,10 +19,9 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 import akka.actor.ActorSystem
 import akka.pattern.CircuitBreakerOpenException
 import com.google.inject._
-import org.joda.time.DateTime
 import play.api.http.HeaderNames._
 import play.api.http.{MimeTypes, Status}
-import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
+import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
@@ -35,8 +34,12 @@ import uk.gov.hmrc.customs.declarations.information.xml._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.NodeSeq
 
+//TODO clean up
 @Singleton
 class DeclarationStatusConnector @Inject()(http: HttpClient,
                                            logger: InformationLogger,
@@ -44,15 +47,12 @@ class DeclarationStatusConnector @Inject()(http: HttpClient,
                                            serviceConfigProvider: ServiceConfigProvider,
                                            config: InformationConfigService,
                                            override val cdsLogger: CdsLogger,
-                                           override val actorSystem: ActorSystem)
-                                          (implicit override val ec: ExecutionContext)
+                                           override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
   extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
-
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
   override val configKey = "declaration-status"
-
-  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 }
 
 @Singleton
@@ -62,15 +62,12 @@ class DeclarationVersionConnector @Inject()(http: HttpClient,
                                             serviceConfigProvider: ServiceConfigProvider,
                                             config: InformationConfigService,
                                             override val cdsLogger: CdsLogger,
-                                            override val actorSystem: ActorSystem)
-                                           (implicit override val ec: ExecutionContext)
+                                            override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
   extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
-
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
   override val configKey = "declaration-version"
-
-  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 }
 
 @Singleton
@@ -80,15 +77,12 @@ class DeclarationSearchConnector @Inject()(http: HttpClient,
                                            serviceConfigProvider: ServiceConfigProvider,
                                            config: InformationConfigService,
                                            override val cdsLogger: CdsLogger,
-                                           override val actorSystem: ActorSystem)
-                                          (implicit override val ec: ExecutionContext)
+                                           override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
   extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
-
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
   override val configKey = "declaration-search"
-
-  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 }
 
 @Singleton
@@ -98,49 +92,48 @@ class DeclarationFullConnector @Inject()(http: HttpClient,
                                          serviceConfigProvider: ServiceConfigProvider,
                                          config: InformationConfigService,
                                          override val cdsLogger: CdsLogger,
-                                         override val actorSystem: ActorSystem)
-                                        (implicit override val ec: ExecutionContext)
+                                         override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
   extends DeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
-
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
   override val configKey = "declaration-full"
-
-  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 }
 
 abstract class DeclarationConnector @Inject()(http: HttpClient,
                                               logger: InformationLogger,
                                               backendPayloadCreator: BackendPayloadCreator,
                                               serviceConfigProvider: ServiceConfigProvider,
-                                              config: InformationConfigService)
-                                             (implicit val ec: ExecutionContext)
+                                              config: InformationConfigService)(implicit val ec: ExecutionContext)
   extends CircuitBreakerConnector with Status {
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
-  override lazy val numberOfCallsToTriggerStateChange = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
-
-  def send[A](date: DateTime,
+  def send[A](date: ZonedDateTime,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
               searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[Either[DeclarationConnector.Error, HttpResponse]] = {
-
-    val config = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
-    val url = config.url
-    val bearerToken = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
+    val config: ServiceConfig = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
+    val url: String = config.url
+    val bearerToken: String = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
     val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
-
-    val declarationPayload = backendPayloadCreator.create(asr.conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)
+    val declarationPayload: NodeSeq = backendPayloadCreator.create(
+      asr.conversationId,
+      correlationId,
+      date,
+      searchType,
+      maybeApiSubscriptionFieldsResponse)
 
     case class Non2xxResponseException(status: Int, responseBody: String) extends Throwable
+
     withCircuitBreaker {
-      logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
       implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+      logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
+
       http.POSTString(url, declarationPayload.toString(), headers).map { response =>
         logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
-
         response.status match {
           case status if Status.isSuccessful(status) =>
             Right(response)
@@ -158,12 +151,14 @@ abstract class DeclarationConnector @Inject()(http: HttpClient,
     }
   }
 
-  private def getHeaders(date: DateTime, conversationId: ConversationId, correlationId: CorrelationId) = {
+  private def getHeaders(date: ZonedDateTime, conversationId: ConversationId, correlationId: CorrelationId): Seq[(String, String)] = {
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z")
+
     Seq(
       (X_FORWARDED_HOST, "MDTP"),
       (XCorrelationIdHeaderName, correlationId.toString),
       (XConversationIdHeaderName, conversationId.toString),
-      (DATE, date.toString("EEE, dd MMM yyyy HH:mm:ss z")),
+      (DATE, date.format(dateTimeFormatter)),
       (CONTENT_TYPE, MimeTypes.XML + "; charset=utf-8"),
       (ACCEPT, MimeTypes.XML)
     )

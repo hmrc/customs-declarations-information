@@ -16,31 +16,20 @@
 
 package util
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import scala.xml.Elem
 
 object FullTestXMLData {
-
-  val defaultDateTime = DateTime.now(DateTimeZone.UTC)
-    .withYear(2020)
-    .withMonthOfYear(6)
-    .withDayOfMonth(15)
-    .withHourOfDay(12)
-    .withMinuteOfHour(30)
-    .withSecondOfMinute(0)
-    .withMillisOfSecond(0)
-
-  val dateTimeFormat = new DateTimeFormatterBuilder()
-    .appendYear(4, 4)
-    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-    .appendTimeZoneOffset("Z", false, 2, 2)
-    .toFormatter
+  val defaultDateTime: ZonedDateTime = LocalDateTime.of(2020, Month.JUNE, 15, 12, 30, 0, 0).atZone(ZoneId.of("UTC"))
+//  val dateTimeFormat = new DateTimeFormatterBuilder()
+//    .appendYear(4, 4)
+//    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
+//    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
+//    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
+//    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
+//    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
+//    .appendTimeZoneOffset("Z", false, 2, 2)
+//    .toFormatter
 
   val validNonCspFullRequestPayload =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"

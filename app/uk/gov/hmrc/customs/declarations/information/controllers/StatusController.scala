@@ -40,27 +40,22 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val conversationIdAction: ConversationIdAction,
                                  val declarationStatusService: DeclarationStatusService,
                                  val cc: ControllerComponents,
-                                 val logger: InformationLogger)
-                                (implicit val ec: ExecutionContext) extends BackendController(cc) {
+                                 val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc) {
 
   def getByMrn(mrn: String): Action[AnyContent] = actionPipeline.async {
-    val searchType = Mrn(mrn)
-    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
   }
 
   def getByDucr(ducr: String): Action[AnyContent] = actionPipeline.async {
-    val searchType = Ducr(ducr)
-    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    implicit asr: AuthorisedRequest[AnyContent] => search(Ducr(ducr))
   }
 
   def getByUcr(ucr: String): Action[AnyContent] = actionPipeline.async {
-    val searchType = Ucr(ucr)
-    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    implicit asr: AuthorisedRequest[AnyContent] => search(Ucr(ucr))
   }
 
   def getByInventoryReference(inventoryReference: String): Action[AnyContent] = actionPipeline.async {
-    val searchType = InventoryReference(inventoryReference)
-    implicit asr: AuthorisedRequest[AnyContent] => search(searchType)
+    implicit asr: AuthorisedRequest[AnyContent] => search(InventoryReference(inventoryReference))
   }
 
   private def search(searchType: StatusSearchType)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
@@ -70,7 +65,8 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
       case s: StatusSearchType if !s.validValue =>
         logger.warn(s"Invalid search for ${searchType.label}: ${searchType.value}")
 
-        val appropriateResponse = if (s.valueTooLong) {
+        val appropriateResponse: ErrorResponse =
+          if (s.valueTooLong) {
           ErrorResponse(BAD_REQUEST, BadRequestCode, "Search parameter too long")
         } else if (s.valueTooShort) {
           ErrorResponse(BAD_REQUEST, BadRequestCode, "Missing search parameter")
@@ -83,9 +79,7 @@ class StatusController @Inject()(val shutterCheckAction: ShutterCheckAction,
       case _: Mrn | _: Ducr | _: Ucr | _: InventoryReference =>
         declarationStatusService.send(searchType) map {
           case Right(res: HttpResponse) =>
-            new HasConversationId {
-              override val conversationId = asr.conversationId
-            }
+            new HasConversationId {override val conversationId: ConversationId = asr.conversationId}
             logger.info(s"Declaration information request by ${searchType.getClass.getSimpleName} processed successfully.")
             logger.debug(s"Returning filtered declaration status request with status code ${res.status} and body\n ${res.body}")
             Ok(res.body).withConversationId.as(ContentTypes.XML)

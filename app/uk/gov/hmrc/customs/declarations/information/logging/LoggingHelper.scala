@@ -74,12 +74,11 @@ object LoggingHelper {
     s"$conversationId$extractedHeaders$apiVersion$authorised"
   }
 
+  //TODO :<=====
   def formatMessageFull(msg: String, r: HasConversationId with Request[_]): String = {
-    def filteredHeaders = r.headers.toSimpleMap.filter(keyValTuple =>
+    def filteredHeaders: Map[String, String] = r.headers.toSimpleMap.filter(keyValTuple =>
       headerSet.contains(keyValTuple._1.toLowerCase))
 
     s"[conversationId=${r.conversationId.uuid}] $msg headers=$filteredHeaders"
   }
-
-
 }

@@ -16,26 +16,24 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
 import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
 import javax.inject.Singleton
 import scala.xml.NodeSeq
 
 @Singleton
 class BackendSearchPayloadCreator() extends BackendPayloadCreator {
-
-  private val sdf = new SimpleDateFormat("yyyy-MM-dd")
+  //TODO make or at least homogenise date formatter
+  private val sdf: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
-                         date: DateTime,
+                         date: ZonedDateTime,
                          searchType: SearchType,
-                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-  (implicit asr: AuthorisedRequest[A]): NodeSeq = {
-
+                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])(implicit asr: AuthorisedRequest[A]): NodeSeq = {
     val searchParameters = asr.searchParameters.get
 
     <n1:retrieveDeclarationSummaryDataRequest
@@ -61,6 +59,4 @@ class BackendSearchPayloadCreator() extends BackendPayloadCreator {
       </n1:requestDetail>
     </n1:retrieveDeclarationSummaryDataRequest>
   }
-
-
 }

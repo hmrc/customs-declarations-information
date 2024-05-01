@@ -30,12 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
                                     headerValidator: HeaderValidator,
-                                    logger: InformationLogger)
-                                   (implicit ec: ExecutionContext) {
-  protected def errorResponseMissingIdentifiers = errorBadRequest(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName headers are missing")
+                                    logger: InformationLogger)(implicit ec: ExecutionContext) {
+  protected def errorResponseMissingIdentifiers: ErrorResponse = errorBadRequest(s"Both $XSubmitterIdentifierHeaderName and $XBadgeIdentifierHeaderName headers are missing")
 
   protected def authAsCspWithMandatoryAuthHeaders[A](implicit vhr: HasRequest[A] with HasConversationId, hc: HeaderCarrier): Future[Either[ErrorResponse, Option[AuthorisedAsCsp]]] = {
-
     val eventualAuthWithIdentifierHeaders: Future[Either[ErrorResponse, Option[AuthorisedAsCsp]]] =
       customsAuthService.authAsCsp.map {
         case Right(isCsp) =>
@@ -71,5 +69,4 @@ abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
   protected def eitherBadgeIdentifier[A](allowNone: Boolean)(implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, Option[BadgeIdentifier]] = {
     headerValidator.eitherBadgeIdentifier(allowNone = allowNone)
   }
-
 }

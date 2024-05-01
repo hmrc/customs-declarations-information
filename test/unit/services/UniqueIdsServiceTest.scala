@@ -38,12 +38,12 @@ class UniqueIdsServiceTest extends AnyWordSpec with Matchers with BeforeAndAfter
   "UniqueIdsService" should {
 
     "return a correlationId" in {
-      uniqueIdsService.correlation shouldBe a[CorrelationId]
+      uniqueIdsService.generateUniqueCorrelationId shouldBe a[CorrelationId]
       verify(mockUuidService, times(1)).uuid()
     }
 
     "return a conversationId" in {
-      uniqueIdsService.conversation shouldBe a[ConversationId]
+      uniqueIdsService.generateUniqueConversationId shouldBe a[ConversationId]
       verify(mockUuidService, times(1)).uuid()
     }
   }

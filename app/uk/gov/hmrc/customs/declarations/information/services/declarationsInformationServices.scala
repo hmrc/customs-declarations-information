@@ -24,11 +24,13 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.SearchType
+import uk.gov.hmrc.customs.declarations.information.model.{CorrelationId, SearchType}
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.util.DateTimeGenerator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.{Elem, XML}
@@ -38,11 +40,8 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                          override val logger: InformationLogger,
                                          connector: DeclarationStatusConnector,
-                                         dateTimeProvider: DateTimeService,
                                          uniqueIdsService: UniqueIdsService)
-                                        (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
-
+                                        (implicit override val ec: ExecutionContext) extends DeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "status"
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {
@@ -55,10 +54,9 @@ class DeclarationStatusService @Inject()(statusResponseFilterService: StatusResp
   }
 
   def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
-    val responseXml = statusResponseFilterService.transform(xmlResponseBody).head
+    val responseXml = statusResponseFilterService.findPathThenTransform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
-
 }
 
 @Singleton
@@ -66,12 +64,8 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
                                           override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                           override val logger: InformationLogger,
                                           connector: DeclarationVersionConnector,
-                                          dateTimeProvider: DateTimeService,
                                           uniqueIdsService: UniqueIdsService,
-                                          config: InformationConfigService)
-                                         (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
-
+                                          config: InformationConfigService)(implicit override val ec: ExecutionContext) extends DeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "version"
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {
@@ -85,7 +79,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
   }
 
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
-    val responseXml = versionResponseFilterService.transform(xmlResponseBody).head
+    val responseXml = versionResponseFilterService.findPathThenTransform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
 }
@@ -95,12 +89,8 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                          override val logger: InformationLogger,
                                          connector: DeclarationSearchConnector,
-                                         dateTimeProvider: DateTimeService,
                                          uniqueIdsService: UniqueIdsService,
-                                         config: InformationConfigService)
-                                        (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
-
+                                         config: InformationConfigService)(implicit override val ec: ExecutionContext) extends DeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "search"
   protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60005", "pageNumber parameter out of bounds")
   protected val backendCDS60006PartyRoleInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60006", "Invalid partyRole parameter")
@@ -128,7 +118,7 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
   }
 
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
-    val responseXml = searchResponseFilterService.transform(xmlResponseBody).head
+    val responseXml = searchResponseFilterService.findPathThenTransform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
 }
@@ -138,12 +128,8 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
                                        override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                        override val logger: InformationLogger,
                                        connector: DeclarationFullConnector,
-                                       dateTimeProvider: DateTimeService,
                                        uniqueIdsService: UniqueIdsService,
-                                       config: InformationConfigService)
-                                      (implicit override val ec: ExecutionContext)
-  extends DeclarationService(apiSubFieldsConnector, logger, connector, dateTimeProvider, uniqueIdsService) {
-
+                                       config: InformationConfigService)(implicit override val ec: ExecutionContext) extends DeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "declaration-full"
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {
@@ -157,7 +143,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
   }
 
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
-    val responseXml = fullResponseFilterService.transform(xmlResponseBody).head
+    val responseXml = fullResponseFilterService.findPathThenTransform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
 }
@@ -165,16 +151,8 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
 abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                             override val logger: InformationLogger,
                                             connector: DeclarationConnector,
-                                            dateTimeProvider: DateTimeService,
-                                            uniqueIdsService: UniqueIdsService)
-                                           (implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
-
-  protected def matchErrorCode(errorCodeText: String): ErrorResponse
-
-  protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse
-
+                                            uniqueIdsService: UniqueIdsService)(implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
   protected val endpointName: String
-
   protected val errorResponseServiceUnavailable: ErrorResponse = errorInternalServerError("This service is currently unavailable")
   protected val backendCDS60001NotFoundResponse: ErrorResponse = ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found")
   protected val backendCDS60002MrnInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
@@ -182,10 +160,13 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
   protected val backendCDS60003InternalServerErrorResponse: ErrorResponse = ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", ErrorInternalServerError.message)
   protected val backendCDS60011SubmissionChannelInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter")
 
-  def send[A](searchType: SearchType)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
-
-    val dateTime = dateTimeProvider.nowUtc()
-    val correlationId = uniqueIdsService.correlation
+  protected def matchErrorCode(errorCodeText: String): ErrorResponse
+  protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse
+  //TODO hmm when did I add the below? should be able to just use the other method
+  private def getDateTime: ZonedDateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
+  //dateTime param allows for testing, never used functionally
+  def send[A](searchType: SearchType, dateTime: ZonedDateTime = getDateTime)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
+    val correlationId: CorrelationId = uniqueIdsService.generateUniqueCorrelationId
 
     futureApiSubFieldsId(asr.clientId).flatMap {
       case Left(result) =>
@@ -218,7 +199,7 @@ abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: 
     }
   }
 
-  private def handleError(message: String, statusToReturn: Int, errorResponse: ErrorResponse)(implicit r: HasConversationId) = {
+  private def handleError(message: String, statusToReturn: Int, errorResponse: ErrorResponse)(implicit r: HasConversationId): Left[Result, Nothing] = {
     logger.error(s"declaration[$endpointName] call failed: $message, returning status code [$statusToReturn]")
     Left(errorResponse.XmlResult.withConversationId)
   }

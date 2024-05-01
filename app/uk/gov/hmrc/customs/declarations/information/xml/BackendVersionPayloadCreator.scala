@@ -16,24 +16,21 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
+import java.time.ZonedDateTime
 import javax.inject.Singleton
 import scala.xml.NodeSeq
 
 @Singleton
 class BackendVersionPayloadCreator() extends BackendPayloadCreator {
-
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
-                         date: DateTime,
+                         date: ZonedDateTime,
                          searchType: SearchType,
-                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-                        (implicit asr: AuthorisedRequest[A]): NodeSeq = {
-
-    val searchTypeAsType = searchType.asInstanceOf[Mrn]
+                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])(implicit asr: AuthorisedRequest[A]): NodeSeq = {
+    val searchTypeAsType: Mrn = searchType.asInstanceOf[Mrn]
 
     <n1:retrieveDeclarationVersionRequest
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

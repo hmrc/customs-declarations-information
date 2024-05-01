@@ -28,18 +28,16 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {
-
   private lazy val xBadgeIdentifierRegex = "^[0-9A-Z]{6,12}$".r
   private lazy val xClientIdRegex = "^\\S+$".r
   private lazy val InvalidEoriHeaderRegex = "(^[\\s]*$|^.{18,}$)".r
-
-  private val errorResponseBadgeIdentifierHeaderMissing = errorBadRequest(s"$XBadgeIdentifierHeaderName header is missing or invalid")
-  private val errorResponseEoriIdentifierHeaderInvalid = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is invalid")
+  private val errorResponseBadgeIdentifierHeaderMissing: ErrorResponse = errorBadRequest(s"$XBadgeIdentifierHeaderName header is missing or invalid")
+  private val errorResponseEoriIdentifierHeaderInvalid: ErrorResponse = errorBadRequest(s"$XSubmitterIdentifierHeaderName header is invalid")
 
   def validateHeaders[A](implicit apiVersionRequest: ApiVersionRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
     implicit val headers: Headers = apiVersionRequest.headers
-
-    def hasXClientId = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
+      //TODO internal def
+    def hasXClientId: Either[ErrorResponse, String] = validateHeader(XClientIdHeaderName, xClientIdRegex.findFirstIn(_).nonEmpty, ErrorInternalServerError)
 
     val theResult: Either[ErrorResponse, ExtractedHeaders] = for {
       xClientIdValue <- hasXClientId
@@ -51,10 +49,11 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
     theResult
   }
 
-  private def validateHeader[A](headerName: String, rule: String => Boolean, errorResponse: ErrorResponse)
-                               (implicit apiVersionRequest: ApiVersionRequest[A], h: Headers): Either[ErrorResponse, String] = {
-    val left = Left(errorResponse)
-
+  private def validateHeader[A](headerName: String,
+                                rule: String => Boolean,
+                                errorResponse: ErrorResponse)(implicit apiVersionRequest: ApiVersionRequest[A], headers: Headers): Either[ErrorResponse, String] = {
+    val left: Left[ErrorResponse, Nothing] = Left(errorResponse)
+//TODO internal defs
     def leftWithLog(headerName: String) = {
       logger.error(s"Error - header '$headerName' not present")
       left
@@ -65,9 +64,10 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
       left
     }
 
-    h.get(headerName).fold[Either[ErrorResponse, String]] {
+    headers.get(headerName).fold[Either[ErrorResponse, String]] {
       leftWithLog(headerName)
     } {
+          //TODO what is v?
       v =>
         if (rule(v)) Right(v) else leftWithLogContainingValue(headerName, v)
     }
@@ -91,16 +91,6 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
     }
   }
 
-  private def validEori(eori: String) = InvalidEoriHeaderRegex.findFirstIn(eori).isEmpty
-
-  private def convertEmptyHeaderToNone(eori: Option[String]) = {
-    if (eori.isDefined && eori.get.trim.isEmpty) {
-      eori map (_.trim) filterNot (_.isEmpty)
-    } else {
-      eori
-    }
-  }
-
   def eoriMustBeValidIfPresent[A](implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, Option[Eori]] = {
     val maybeEoriHeader: Option[String] = vhr.request.headers.toSimpleMap.get(XSubmitterIdentifierHeaderName)
     logger.debug(s"maybeEori => $maybeEoriHeader")
@@ -117,6 +107,16 @@ class HeaderValidator @Inject()(logger: InformationLogger) {
       case None =>
         logger.info(s"$XSubmitterIdentifierHeaderName header not present or is empty")
         Right(None)
+    }
+  }
+
+  private def validEori(eori: String): Boolean = InvalidEoriHeaderRegex.findFirstIn(eori).isEmpty
+
+  private def convertEmptyHeaderToNone(eori: Option[String]): Option[String] = {
+    if (eori.isDefined && eori.get.trim.isEmpty) {
+      eori map (_.trim) filterNot (_.isEmpty)
+    } else {
+      eori
     }
   }
 }

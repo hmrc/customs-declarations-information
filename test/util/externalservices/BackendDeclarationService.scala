@@ -18,7 +18,6 @@ package util.externalservices
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.UrlPattern
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.test.Helpers._
 import util.FullTestXMLData.validBackendFullResponse
 import util.SearchTestXMLData.validBackendSearchResponse
@@ -26,6 +25,7 @@ import util.StatusTestXMLData.validBackendStatusResponse
 import util.VersionTestXMLData.validBackendVersionResponse
 import util._
 
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 import scala.xml.NodeSeq
 
 trait BackendDeclarationService extends WireMockRunner {
@@ -37,8 +37,7 @@ trait BackendDeclarationService extends WireMockRunner {
   private val searchUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV2)
   private val fullUrlV1 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV1)
   private val fullUrlV2 = urlMatching(CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV2)
-
-  val acceptanceDateVal = DateTime.now(DateTimeZone.UTC).minusDays(30)
+  val acceptanceDateVal: ZonedDateTime = LocalDateTime.now().atZone(ZoneId.of("UTC")).minusDays(30)
 
   def startBackendStatusServiceV1(status: Int = OK, body: NodeSeq = validBackendStatusResponse): Unit = {
     startBackendService(statusUrlV1, status, body)

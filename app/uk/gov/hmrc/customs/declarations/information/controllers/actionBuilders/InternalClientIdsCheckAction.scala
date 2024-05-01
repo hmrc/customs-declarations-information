@@ -39,12 +39,9 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 @Singleton
 class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
-                                             val configService: InformationConfigService)
-                                            (implicit ec: ExecutionContext)
+                                             val configService: InformationConfigService)(implicit ec: ExecutionContext)
   extends ActionRefiner[ValidatedHeadersRequest, InternalClientIdsRequest] {
-
   override def executionContext: ExecutionContext = ec
-
   val declarationSubmissionChannelErrorCode = "CDS60011"
 
   override def refine[A](vhr: ValidatedHeadersRequest[A]): Future[Either[Result, InternalClientIdsRequest[A]]] = Future.successful {
@@ -58,14 +55,15 @@ class InternalClientIdsCheckAction @Inject()(val logger: InformationLogger,
       logger.info(s"declarationSubmissionChannel parameter passed is invalid: $declarationSubmissionChannel")
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", declarationSubmissionChannelErrorCode).XmlResult.withConversationId)
 
-    } else if (declarationSubmissionChannel.isDefined && declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") == 0
-      && !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)) {
-
+    } else if (
+      declarationSubmissionChannel.isDefined &&
+      declarationSubmissionChannel.get.compareTo("AuthenticatedPartyOnly") == 0 &&
+      !configService.informationConfig.internalClientIds.contains(vhr.clientId.value)){
       logger.info(s"declarationSubmissionChannel parameter passed but clientId: ${vhr.clientId.value} is not an internal clientId")
+
       Left(errorBadRequest("Invalid declarationSubmissionChannel parameter", declarationSubmissionChannelErrorCode).XmlResult.withConversationId)
 
     } else {
-
       val decChannel: Option[DeclarationSubmissionChannel] = declarationSubmissionChannel match {
         case Some(dsc) => Some(DeclarationSubmissionChannel(dsc))
         case None => None

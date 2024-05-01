@@ -26,7 +26,6 @@ import javax.inject.Singleton
 
 @Singleton
 class InformationLogger @Inject()(logger: CdsLogger) {
-
   def debug(s: => String)(implicit r: HasConversationId): Unit =
     logger.debug(formatDebug(s, r))
 
@@ -54,5 +53,4 @@ class InformationLogger @Inject()(logger: CdsLogger) {
 
   def debugWithoutRequestContext(s: => String): Unit =
     logger.debug(s)
-
 }

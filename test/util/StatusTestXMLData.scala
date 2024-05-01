@@ -16,31 +16,13 @@
 
 package util
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.{DateTime, DateTimeFieldType, DateTimeZone}
-
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import scala.xml.{Elem, Node, NodeSeq, XML}
 
 object StatusTestXMLData {
-
-  val defaultDateTime = DateTime.now(DateTimeZone.UTC)
-    .withYear(2020)
-    .withMonthOfYear(6)
-    .withDayOfMonth(15)
-    .withHourOfDay(12)
-    .withMinuteOfHour(30)
-    .withSecondOfMinute(0)
-    .withMillisOfSecond(0)
-
-  val dateTimeFormat = new DateTimeFormatterBuilder()
-    .appendYear(4, 4)
-    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-    .appendTimeZoneOffset("Z", false, 2, 2)
-    .toFormatter
+  val defaultDateTime: ZonedDateTime = LocalDateTime.of(2020, Month.JUNE, 15, 12, 30, 0, 0).atZone(ZoneId.of("UTC"))
+  val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss'Z'")
 
   val expectedStatusPayloadRequest: Elem =
     <n1:queryDeclarationStatusRequest
@@ -191,7 +173,7 @@ object StatusTestXMLData {
       </n1:requestDetail>
     </n1:queryDeclarationInformationRequest>
 
-  def generateDeclarationStatusResponse(noOfDeclarationStatusResponses: Int = 1, acceptanceOrCreationDate: DateTime): NodeSeq = {
+  def generateDeclarationStatusResponse(noOfDeclarationStatusResponses: Int = 1, acceptanceOrCreationDate: ZonedDateTime): NodeSeq = {
     val items = 0 until noOfDeclarationStatusResponses
     val content = items.map(index => generateDeclarationStatusDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate.plusMonths(index)), generateStandardResponseWCODeclaration()))
 
@@ -225,21 +207,21 @@ object StatusTestXMLData {
     </n1:retrieveDeclarationStatusDetails>
 
 
-  private def generateHMRCDeclaration(acceptanceOrCreationDate: DateTime, withOptionalElements: Boolean = false): Elem =
+  private def generateHMRCDeclaration(acceptanceOrCreationDate: ZonedDateTime, withOptionalElements: Boolean = false): Elem =
     <n1:Declaration>
       <n1:AcceptanceDateTime>
-        <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+        <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.format(dateTimeFormatter)}</otnds:DateTimeString>
       </n1:AcceptanceDateTime>
       {if (withOptionalElements){
         <n1:CancellationDateTime>
-          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.format(dateTimeFormatter)}</otnds:DateTimeString>
         </n1:CancellationDateTime>
         <n1:FunctionalReferenceID>token</n1:FunctionalReferenceID>
       }}
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
       {if (withOptionalElements){
         <n1:RejectionDateTime>
-          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+          <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.format(dateTimeFormatter)}</otnds:DateTimeString>
         </n1:RejectionDateTime>
       }}
       <n1:VersionID>1</n1:VersionID>
@@ -249,7 +231,7 @@ object StatusTestXMLData {
             <n1:ReferenceID >token</n1:ReferenceID>
             <n1:TaxAssessedAmount currencyID="GBP">0.0</n1:TaxAssessedAmount>
             <n1:DueDateTime>
-              <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.toString(dateTimeFormat)}</otnds:DateTimeString>
+              <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.format(dateTimeFormatter)}</otnds:DateTimeString>
             </n1:DueDateTime>
             <n1:PaymentAmount currencyID="GBP">0.0</n1:PaymentAmount>
             <n1:ObligationGuarantee>
@@ -267,10 +249,10 @@ object StatusTestXMLData {
         </n1:GoodsShipment>
       }}
       <n1:ReceivedDateTime>
-        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(-1).toString(dateTimeFormat)}</n1:DateTimeString>
+        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(-1).format(dateTimeFormatter)}</n1:DateTimeString>
       </n1:ReceivedDateTime>
       <n1:GoodsReleasedDateTime>
-        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(1).toString(dateTimeFormat)}</n1:DateTimeString>
+        <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(1).format(dateTimeFormatter)}</n1:DateTimeString>
       </n1:GoodsReleasedDateTime>
       <n1:ROE>6</n1:ROE>
       <n1:ICS>15</n1:ICS>
@@ -301,7 +283,7 @@ object StatusTestXMLData {
       </od:GoodsShipment>
     </od:Declaration>
 
-  def generateDeclarationStatusResponseContainingAllOptionalElements(acceptanceOrCreationDate: DateTime): NodeSeq = {
+  def generateDeclarationStatusResponseContainingAllOptionalElements(acceptanceOrCreationDate: ZonedDateTime): NodeSeq = {
     val content = generateDeclarationStatusDetailsElement(generateHMRCDeclaration(acceptanceOrCreationDate, withOptionalElements = true), getWcoDeclarationWithAllElementsPopulated())
 
     generateRootElements(content)

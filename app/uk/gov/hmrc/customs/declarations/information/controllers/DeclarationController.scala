@@ -26,12 +26,12 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
 trait DeclarationController {
-
   def validateMrn(mrn: Mrn, logger: InformationLogger)(implicit asr: AuthorisedRequest[AnyContent]): Either[Result, Unit] = {
     if (mrn.validValue) {
       Right((): Unit)
     } else {
-      val appropriateResponse = if (mrn.valueTooLong) {
+      val appropriateResponse =
+        if (mrn.valueTooLong) {
         logger.info(s"MRN parameter is too long: $mrn")
         ErrorResponse(BAD_REQUEST, BadRequestCode, "MRN parameter too long")
       } else if (mrn.valueTooShort) {
@@ -41,10 +41,10 @@ trait DeclarationController {
         logger.info(s"MRN parameter is invalid: $mrn")
         ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid")
       }
+
       val response = appropriateResponse.XmlResult.withConversationId
       logger.debug(s"Full declaration MRN parameter validation failed sending response: $response")
       Left(response)
     }
   }
-
 }

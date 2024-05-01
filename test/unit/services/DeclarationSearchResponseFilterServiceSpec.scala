@@ -26,93 +26,75 @@ import util.UnitSpec
 import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
+import ValidateXmlAgainstSchema._
+
+import javax.xml.validation.Schema
+import scala.util.Try
 
 class DeclarationSearchResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
-  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer(new RewriteRule {
-      override def transform(n: Node): Seq[Node] = n match {
-        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
-        case n => n
-      }
-    })
-  }
-
-  import ValidateXmlAgainstSchema._
-
-  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalSearchResponse.xsd")
-
-  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
+  private val schemaFile: Try[Schema] = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalSearchResponse.xsd")
+  private val xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
     implicit val service: SearchResponseFilterService = new SearchResponseFilterService()
-    val searchResponseWithAllValues: NodeSeq = service.transform(generateDeclarationSearchResponse(receivedDate = defaultDateTime))
+    val declarationSearchResponse: NodeSeq = generateDeclarationSearchResponse(receivedDate = defaultDateTime)
+    val searchResponseWithAllValues: NodeSeq = service.findPathThenTransform(declarationSearchResponse)
   }
 
   "Search Response Filter Service" should {
-
     "ensure output passes schema validation" in new SetUp {
       xmlValidationService.validate(searchResponseWithAllValues) should be(true)
     }
 
     "handle actual backend response" in new SetUp {
-      val multiSearchResponsesWithAllValues: NodeSeq = service.transform(validBackendSearchResponse)
-
+      val multiSearchResponsesWithAllValues: NodeSeq = service.findPathThenTransform(validBackendSearchResponse)
       xmlValidationService.validate(multiSearchResponsesWithAllValues) should be(true)
     }
 
     "handle multiple DeclarationSearchDetails elements in backend response" in new SetUp {
       val numberOfDecVersions = 5
-      val multiSearchResponsesWithAllValues: NodeSeq = service.transform(generateDeclarationSearchResponse(numberOfDecVersions, receivedDate = defaultDateTime))
-
+      val declarationSearchResponseWithMultipleVersions: NodeSeq = generateDeclarationSearchResponse(numberOfDecVersions, receivedDate = defaultDateTime)
+      val multiSearchResponsesWithAllValues: NodeSeq = service.findPathThenTransform(declarationSearchResponseWithMultipleVersions)
       xmlValidationService.validate(multiSearchResponsesWithAllValues) should be(true)
 
-      val node = multiSearchResponsesWithAllValues \\ "DeclarationSearchDetails"
-
+      val node: NodeSeq = multiSearchResponsesWithAllValues \\ "DeclarationSearchDetails"
       node.size shouldBe numberOfDecVersions
     }
 
     "ensure element ReceivedDateTime is present" in new SetUp {
-      val node = commonDeclarationPath(searchResponseWithAllValues) \ "ReceivedDateTime" \ "DateTimeString"
-
+      val node: NodeSeq = getNodeFromXml(searchResponseWithAllValues, "ReceivedDateTime", "DateTimeString")
       node.text shouldBe "20200715123000Z"
       node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
     "ensure element LRN is present" in new SetUp {
-      val node = commonDeclarationPath(searchResponseWithAllValues) \ "LRN"
-
+      val node: NodeSeq = getNodeFromXml(searchResponseWithAllValues, "LRN")
       node.text shouldBe "20GBAKZ81EQJ2WXYZ"
     }
 
     "ensure element ID is present" in new SetUp {
-      val node = commonDeclarationPath(searchResponseWithAllValues) \ "ID"
-
+      val node: NodeSeq = getNodeFromXml(searchResponseWithAllValues, "ID")
       node.text shouldBe "18GB9JLC3CU1LFGVR2"
     }
 
     "ensure element ICS is present" in new SetUp {
-      val node = commonDeclarationPath(searchResponseWithAllValues) \ "ICS"
-
+      val node: NodeSeq = getNodeFromXml(searchResponseWithAllValues, "ICS")
       node.text shouldBe "15"
     }
 
     "ensure element CurrentPageNumber is present" in new SetUp {
-      val node = searchResponseWithAllValues \ "CurrentPageNumber"
-
+      val node: NodeSeq = searchResponseWithAllValues \ "CurrentPageNumber"
       node.text shouldBe "1"
     }
 
     "ensure element TotalResultsAvailable is present" in new SetUp {
-      val node = searchResponseWithAllValues \ "TotalResultsAvailable"
-
+      val node: NodeSeq = searchResponseWithAllValues \ "TotalResultsAvailable"
       node.text shouldBe "1"
     }
 
     "ensure element TotalPagesAvailable is present" in new SetUp {
-      val node = searchResponseWithAllValues \ "TotalPagesAvailable"
-
+      val node: NodeSeq = searchResponseWithAllValues \ "TotalPagesAvailable"
       node.text shouldBe "2"
     }
 
@@ -125,13 +107,12 @@ class DeclarationSearchResponseFilterServiceSpec extends UnitSpec {
     }
 
     "handle future extension where all optional fields are returned" in new SetUp {
-      val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationResponseContainingAllOptionalElements(defaultDateTime))
-
+      val responsesWithAllValues: NodeSeq = service.findPathThenTransform(generateDeclarationResponseContainingAllOptionalElements(defaultDateTime))
       xmlValidationService.validate(responsesWithAllValues) should be(true)
     }
 
     "no declarations found" in new SetUp {
-      val zeroDeclarations: NodeSeq = service.transform(generateDeclarationSearchResponse(0, defaultDateTime))
+      val zeroDeclarations: NodeSeq = service.findPathThenTransform(generateDeclarationSearchResponse(0, defaultDateTime))
 
       xmlValidationService.validate(zeroDeclarations) should be(true)
       (searchResponseWithAllValues \ "CurrentPageNumber").text shouldBe "1"
@@ -140,14 +121,23 @@ class DeclarationSearchResponseFilterServiceSpec extends UnitSpec {
 
   private def testForMissingElement(missingElementName: String)(implicit service: SearchResponseFilterService): Assertion = {
     val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(generateDeclarationSearchResponse(receivedDate = defaultDateTime))
-    val searchResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
-
+    val searchResponseWithMissingValues: NodeSeq = service.findPathThenTransform(missingElementSourceXml)
     xmlValidationService.validate(searchResponseWithMissingValues) should be(true)
 
-    val node = commonDeclarationPath(searchResponseWithMissingValues) \ missingElementName
-
+    val node = getNodeFromXml(searchResponseWithMissingValues, missingElementName)
     node.size shouldBe 0
   }
 
-  private def commonDeclarationPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationSearchDetails" \ "Declaration"
+  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
+    new RuleTransformer(new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
+        case n => n
+      }
+    })
+  }
+
+//TODO these are duplicated across multiple services :S
+  private def getNodeFromXml(xml: NodeSeq, nodeName: String): NodeSeq = xml \\ "DeclarationSearchDetails" \ "Declaration" \ nodeName
+  private def getNodeFromXml(xml: NodeSeq, nodeName1: String, nodeName2: String): NodeSeq = xml \\ "DeclarationSearchDetails" \ "Declaration" \ nodeName1 \ nodeName2
 }

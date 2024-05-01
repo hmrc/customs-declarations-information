@@ -18,6 +18,7 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 
 import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionKey
 
+//TODO does this warrant its own class?
 object ApiSubscriptionFieldsPath {
   def url(baseUrlAndContext: String, apiSubscriptionKey: ApiSubscriptionKey): String =
     s"$baseUrlAndContext/application/${apiSubscriptionKey.clientId}/context/${apiSubscriptionKey.context}/version/${apiSubscriptionKey.version}"

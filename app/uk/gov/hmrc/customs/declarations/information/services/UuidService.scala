@@ -20,9 +20,8 @@ import com.google.inject.Singleton
 
 import java.util.UUID
 
+//TODO lel
 @Singleton
 class UuidService {
-
   def uuid(): UUID = UUID.randomUUID()
-
 }

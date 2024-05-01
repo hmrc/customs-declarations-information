@@ -42,9 +42,16 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val logger: InformationLogger)
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
 
-  def list(eori: Option[String], partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String],
-           declarationStatus: Option[String], dateFrom: Option[String], dateTo: Option[String],
-           pageNumber: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
+  def list(eori: Option[String],
+           partyRole: Option[String],
+           declarationCategory: Option[String],
+           goodsLocationCode: Option[String],
+           declarationStatus: Option[String],
+           dateFrom: Option[String],
+           dateTo: Option[String],
+           pageNumber: Option[String],
+           declarationSubmissionChannel: Option[String]): Action[AnyContent] =
+    actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search()
   }
 
@@ -54,7 +61,7 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
     declarationSearchService.send(ParameterSearch()) map {
       case Right(res: HttpResponse) =>
         new HasConversationId {
-          override val conversationId = asr.conversationId
+          override val conversationId: ConversationId = asr.conversationId
         }
         logger.info(s"Declaration information search processed successfully.")
         logger.debug(s"Returning declaration information search response with status code ${res.status} and body\n ${res.body}")

@@ -22,79 +22,61 @@ import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.declarations.information.services.VersionResponseFilterService
 import util.UnitSpec
 import util.VersionTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationVersionResponse, validBackendVersionResponse}
-
+import javax.xml.validation.Schema
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
+import ValidateXmlAgainstSchema._
 
 class DeclarationVersionResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
-  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
-    new RuleTransformer(new RewriteRule {
-      override def transform(n: Node): Seq[Node] = n match {
-        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
-        case n => n
-      }
-    })
-  }
-
-  import ValidateXmlAgainstSchema._
-
-  val schemaFile = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalVersionResponse.xsd")
-
-  def xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
+  val schemaFile: Try[Schema] = getSchema("/api/conf/1.0/schemas/wco/declaration/DeclarationInformationRetrievalVersionResponse.xsd")
+  val xmlValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(schemaFile.get)
 
   trait SetUp {
-    implicit val service: VersionResponseFilterService = new VersionResponseFilterService()
-    val versionResponseWithAllValues: NodeSeq = service.transform(generateDeclarationVersionResponse(creationDate = defaultDateTime))
+    implicit val versionResponseFilterService: VersionResponseFilterService = new VersionResponseFilterService()
+    val declarationVersionResponse: NodeSeq = generateDeclarationVersionResponse(creationDate = defaultDateTime)
+    val versionResponseWithAllValues: NodeSeq = versionResponseFilterService.findPathThenTransform(declarationVersionResponse)
   }
 
   "Version Response Filter Service" should {
-
     "ensure output passes schema validation" in new SetUp {
       xmlValidationService.validate(versionResponseWithAllValues) should be(true)
     }
 
     "handle actual backend response" in new SetUp {
-      val multiVersionResponsesWithAllValues: NodeSeq = service.transform(validBackendVersionResponse)
-
+      val multiVersionResponsesWithAllValues: NodeSeq = versionResponseFilterService.findPathThenTransform(validBackendVersionResponse)
       xmlValidationService.validate(multiVersionResponsesWithAllValues) should be(true)
     }
 
     "handle multiple DeclarationVersionDetails elements in backend response" in new SetUp {
       val numberOfDecVersions = 5
-      val multiVersionResponsesWithAllValues: NodeSeq = service.transform(generateDeclarationVersionResponse(numberOfDecVersions, creationDate = defaultDateTime))
-
+      val multiVersionResponsesWithAllValues: NodeSeq = versionResponseFilterService.findPathThenTransform(generateDeclarationVersionResponse(numberOfDecVersions, creationDate = defaultDateTime))
       xmlValidationService.validate(multiVersionResponsesWithAllValues) should be(true)
 
-      val node = multiVersionResponsesWithAllValues \\ "DeclarationVersionDetails"
-
+      val node: NodeSeq = multiVersionResponsesWithAllValues \\ "DeclarationVersionDetails"
       node.size shouldBe numberOfDecVersions
     }
 
-    "ensure element CreatedDateTime is present" in new SetUp {
-      val node = commonPath(versionResponseWithAllValues) \ "CreatedDateTime" \ "DateTimeString"
-
+    "ensure element CreatedDateTime is present and correct" in new SetUp {
+      val node: NodeSeq = getNodeFromXml(versionResponseWithAllValues, "CreatedDateTime", "DateTimeString")
       node.text shouldBe "20200715123000Z"
       node.head.attribute("formatCode").get.text shouldBe "304"
     }
 
-    "ensure element LRN is present" in new SetUp {
-      val node = commonPath(versionResponseWithAllValues) \ "LRN"
-
+    "ensure element LRN is present and correct" in new SetUp {
+      val node: NodeSeq = getNodeFromXml(versionResponseWithAllValues, "LRN")
       node.text shouldBe "20GBAKZ81EQJ2WXYZ"
     }
 
-    "ensure element ID is present" in new SetUp {
-      val node = commonPath(versionResponseWithAllValues) \ "ID"
-
+    "ensure element ID is present and correct" in new SetUp {
+      val node: NodeSeq = getNodeFromXml(versionResponseWithAllValues, "ID")
       node.text shouldBe "18GB9JLC3CU1LFGVR2"
     }
 
-    "ensure element VersionID is present" in new SetUp {
-      val node = commonPath(versionResponseWithAllValues) \ "VersionID"
-
+    "ensure element VersionID is present and correct" in new SetUp {
+      val node: NodeSeq = getNodeFromXml(versionResponseWithAllValues, "VersionID")
       node.text shouldBe "1"
     }
 
@@ -107,28 +89,34 @@ class DeclarationVersionResponseFilterServiceSpec extends UnitSpec {
     }
 
     "handle future extension where all optional fields are returned" in new SetUp {
-      val responsesWithAllValues: NodeSeq = service.transform(generateDeclarationResponseContainingAllOptionalElements(defaultDateTime))
-
+      val responsesWithAllValues: NodeSeq = versionResponseFilterService.findPathThenTransform(generateDeclarationResponseContainingAllOptionalElements(defaultDateTime))
       xmlValidationService.validate(responsesWithAllValues) should be(true)
     }
 
     "no declarations found" in new SetUp {
-      val zeroDeclarations = service.transform(generateDeclarationVersionResponse(0, defaultDateTime))
-
+      val zeroDeclarations: NodeSeq = versionResponseFilterService.findPathThenTransform(generateDeclarationVersionResponse(0, defaultDateTime))
       xmlValidationService.validate(zeroDeclarations) should be(false)
     }
   }
 
   private def testForMissingElement(missingElementName: String)(implicit service: VersionResponseFilterService): Assertion = {
     val missingElementSourceXml = createElementFilter(missingElementName, "n1").transform(generateDeclarationVersionResponse(creationDate = defaultDateTime))
-    val versionResponseWithMissingValues: NodeSeq = service.transform(missingElementSourceXml)
-
+    val versionResponseWithMissingValues: NodeSeq = service.findPathThenTransform(missingElementSourceXml)
     xmlValidationService.validate(versionResponseWithMissingValues) should be(true)
 
-    val node = commonPath(versionResponseWithMissingValues) \ missingElementName
-
+    val node: NodeSeq = getNodeFromXml(versionResponseWithMissingValues, missingElementName)
     node.size shouldBe 0
   }
 
-  private def commonPath(xml: NodeSeq): NodeSeq = xml \\ "DeclarationVersionDetails" \ "Declaration"
+  private def createElementFilter(elementName: String, elementPrefix: String): RuleTransformer = {
+    new RuleTransformer(new RewriteRule {
+      override def transform(n: Node): Seq[Node] = n match {
+        case Elem(`elementPrefix`, `elementName`, _, _, _*) => NodeSeq.Empty
+        case n => n
+      }
+    })
+  }
+
+  private def getNodeFromXml(xml: NodeSeq, nodeName: String): NodeSeq = xml \\ "DeclarationVersionDetails" \ "Declaration" \ nodeName
+  private def getNodeFromXml(xml: NodeSeq, nodeName1: String, nodeName2: String): NodeSeq = xml \\ "DeclarationVersionDetails" \ "Declaration" \ nodeName1 \ nodeName2
 }

@@ -39,22 +39,16 @@ import scala.concurrent.{ExecutionContext, Future}
  */
 @Singleton
 class ShutterCheckAction @Inject()(logger: InformationLogger,
-                                   config: InformationConfigService)
-                                  (implicit ec: ExecutionContext)
-  extends ActionRefiner[ConversationIdRequest, ApiVersionRequest] {
+                                   config: InformationConfigService)(implicit ec: ExecutionContext) extends ActionRefiner[ConversationIdRequest, ApiVersionRequest] {
   actionName =>
 
   private val errorResponseVersionShuttered: Result = ErrorResponse(SERVICE_UNAVAILABLE, "SERVER_ERROR", "Service unavailable").XmlResult
-
   protected val versionsByAcceptHeader: Map[String, ApiVersion] = Map(
     "application/vnd.hmrc.1.0+xml" -> VersionOne,
-    "application/vnd.hmrc.2.0+xml" -> VersionTwo
-  )
-
+    "application/vnd.hmrc.2.0+xml" -> VersionTwo)
   protected val versionShuttered: Map[ApiVersion, Boolean] = Map(
     VersionOne -> config.informationShutterConfig.v1Shuttered.getOrElse(false),
-    VersionTwo -> config.informationShutterConfig.v2Shuttered.getOrElse(false)
-  )
+    VersionTwo -> config.informationShutterConfig.v2Shuttered.getOrElse(false))
 
   override def executionContext: ExecutionContext = ec
 
@@ -63,11 +57,11 @@ class ShutterCheckAction @Inject()(logger: InformationLogger,
     versionShuttered()
   }
 
-  def versionShuttered[A]()(implicit cir: ConversationIdRequest[A]): Either[Result, ApiVersionRequest[A]] = {
-    val acceptErrorResult = Left(ErrorAcceptHeaderInvalid.XmlResult.withConversationId)
-    val serviceUnavailableResult = Left(errorResponseVersionShuttered)
+  def versionShuttered[A]()(implicit conversationIdRequest: ConversationIdRequest[A]): Either[Result, ApiVersionRequest[A]] = {
+    val acceptErrorResult: Left[Result, Nothing] = Left(ErrorAcceptHeaderInvalid.XmlResult.withConversationId)
+    val serviceUnavailableResult: Left[Result, Nothing] = Left(errorResponseVersionShuttered)
 
-    cir.request.headers.get(ACCEPT) match {
+    conversationIdRequest.request.headers.get(ACCEPT) match {
       case None =>
         logger.error(s"Error - header '$ACCEPT' not present")
         acceptErrorResult
@@ -82,7 +76,7 @@ class ShutterCheckAction @Inject()(logger: InformationLogger,
             serviceUnavailableResult
           } else {
             logger.debug(s"$ACCEPT header passed validation with: $apiVersion")
-            Right(ApiVersionRequest(cir.conversationId, apiVersion, cir.request))
+            Right(ApiVersionRequest(conversationIdRequest.conversationId, apiVersion, conversationIdRequest.request))
           }
         }
     }
