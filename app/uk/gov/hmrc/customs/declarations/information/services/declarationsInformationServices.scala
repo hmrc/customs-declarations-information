@@ -21,7 +21,7 @@ import play.api.mvc.Result
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, ErrorPayloadForbidden, errorInternalServerError}
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
+import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{CorrelationId, SearchType}
@@ -150,7 +150,7 @@ class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFi
 
 abstract class DeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                             override val logger: InformationLogger,
-                                            connector: DeclarationConnector,
+                                            connector: AbstractDeclarationConnector,
                                             uniqueIdsService: UniqueIdsService)(implicit val ec: ExecutionContext) extends ApiSubscriptionFieldsService {
   protected val endpointName: String
   protected val errorResponseServiceUnavailable: ErrorResponse = errorInternalServerError("This service is currently unavailable")

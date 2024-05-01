@@ -22,7 +22,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector.UnexpectedError
+import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.UnexpectedError
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}

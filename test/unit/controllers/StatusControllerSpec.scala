@@ -23,12 +23,12 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
-import play.api.test.Helpers.{header, _}
+import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector.Non2xxResponseError
+import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.Non2xxResponseError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.StatusController
 import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
