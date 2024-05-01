@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.controllers.actionbuilders
+package unit.action
 
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.SERVICE_UNAVAILABLE
@@ -22,7 +22,7 @@ import play.api.mvc.Result
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorAcceptHeaderInvalid
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.ShutterCheckAction
+import uk.gov.hmrc.customs.declarations.information.action.ShutterCheckAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.InformationShutterConfig
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest

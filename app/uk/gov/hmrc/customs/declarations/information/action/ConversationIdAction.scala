@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
+package uk.gov.hmrc.customs.declarations.information.action
 
 import play.api.mvc.{ActionTransformer, Request}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger

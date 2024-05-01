@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
+package uk.gov.hmrc.customs.declarations.information.action
 
 import play.api.http.HttpEntity
 import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBadRequest, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{HasConversationId, InternalClientIdsRequest, SearchParameters, SearchParametersRequest}
-import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 
 import java.text.{ParseException, SimpleDateFormat}

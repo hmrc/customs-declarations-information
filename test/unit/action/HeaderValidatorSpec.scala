@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.controllers.actionBuilders
+package unit.action
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.mock
@@ -22,8 +22,8 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
+import uk.gov.hmrc.customs.declarations.information.action.HeaderValidator
 import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.HeaderValidator
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.model.{ApiVersion, Eori, VersionOne, VersionTwo}

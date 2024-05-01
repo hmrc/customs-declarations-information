@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package unit.controllers.actionBuilders
+package unit.action
 
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{HeaderValidator, StatusAuthAction}
+import uk.gov.hmrc.customs.declarations.information.action.{DeclarationFullAuthAction, HeaderValidator}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
@@ -31,7 +31,7 @@ import util.{AuthConnectorStubbing, UnitSpec}
 
 import scala.concurrent.ExecutionContext
 
-class StatusAuthActionSpec extends UnitSpec
+class DeclarationFullAuthActionSpec extends UnitSpec
 
   with TableDrivenPropertyChecks
   with BeforeAndAfterEach {
@@ -43,7 +43,7 @@ class StatusAuthActionSpec extends UnitSpec
     override val mockAuthConnector: AuthConnector = mock(classOf[AuthConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockLogger)
     protected val headerValidator = new HeaderValidator(mockLogger)
-    val authAction = new StatusAuthAction(customsAuthService, headerValidator, mockLogger)
+    val authAction = new DeclarationFullAuthAction(customsAuthService, headerValidator, mockLogger)
   }
 
   "AuthAction" can {
@@ -51,8 +51,8 @@ class StatusAuthActionSpec extends UnitSpec
       "authorise as CSP when authorised by auth API and both badge identifier and eori are supplied" in new SetUp {
         authoriseCsp()
 
-        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidBadgeIdEoriPair))
-        actual shouldBe Right(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None).toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier))))
+        private val actual = await(authAction.refine(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None).toDeclarationFullRequest(Some(1))))
+        actual shouldBe Right(TestValidatedHeadersRequestWithValidBadgeIdEoriPair.toInternalClientIdsRequest(None).toDeclarationFullRequest(Some(1)).toCspAuthorisedRequest(Csp(Some(declarantEori), Some(badgeIdentifier))))
         verifyNonCspAuthorisationNotCalled
       }
     }

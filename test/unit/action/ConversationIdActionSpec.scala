@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package unit.controllers.actionBuilders
-
+package unit.action
 
 import org.mockito.Mockito.mock
 import play.api.test.{FakeRequest, Helpers}
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.ConversationIdAction
+import uk.gov.hmrc.customs.declarations.information.action.ConversationIdAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ConversationIdRequest
 import util.TestData.{conversationId, stubUniqueIdsService}

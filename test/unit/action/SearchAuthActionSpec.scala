@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package unit.controllers.actionBuilders
+package unit.action
 
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders.{HeaderValidator, SearchAuthAction}
+import uk.gov.hmrc.customs.declarations.information.action.{HeaderValidator, SearchAuthAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._

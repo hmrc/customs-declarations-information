@@ -20,7 +20,7 @@ import play.api.http.ContentTypes
 import play.api.mvc._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
+import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, StatusAuthAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._

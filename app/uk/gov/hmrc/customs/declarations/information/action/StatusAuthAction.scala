@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders
+package uk.gov.hmrc.customs.declarations.information.action
 
 import play.api.mvc._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, SearchParametersRequest}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 /** Action builder that attempts to authorise request as a CSP or else NON CSP
  * <ul>
- * <li/>INPUT - `SearchParametersRequest`
+ * <li/>INPUT - `ValidatedHeadersRequest`
  * <li/>OUTPUT - `AuthorisedRequest` - authorised will be `AuthorisedAs.Csp` or `AuthorisedAs.NonCsp`
  * <li/>ERROR -
  * <ul>
@@ -40,15 +40,15 @@ import scala.concurrent.{ExecutionContext, Future}
  * </ul>
  */
 @Singleton
-class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
+class StatusAuthAction @Inject()(customsAuthService: CustomsAuthService,
                                  headerValidator: HeaderValidator,
                                  logger: InformationLogger)(implicit ec: ExecutionContext)
-  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[SearchParametersRequest, AuthorisedRequest] {
+  extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[ValidatedHeadersRequest, AuthorisedRequest] {
+
   override protected[this] def executionContext: ExecutionContext = ec
 
-  override def refine[A](spr: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitIcir: SearchParametersRequest[A] = spr
-    //TODO ???
+  override def refine[A](validatedHeadersRequest: ValidatedHeadersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitVhr: ValidatedHeadersRequest[A] = validatedHeadersRequest
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap {
@@ -58,13 +58,14 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
-              Right(spr.toNonCspAuthorisedRequest(nonCspData.eori))
+              Right(validatedHeadersRequest.toNonCspAuthorisedRequest(nonCspData.eori))
           }
         } { cspData =>
-          Future.successful(Right(spr.toCspAuthorisedRequest(cspData)))
+          Future.successful(Right(validatedHeadersRequest.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>
         Future.successful(Left(result.XmlResult.withConversationId))
     }
   }
+
 }
