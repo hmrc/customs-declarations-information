@@ -48,10 +48,6 @@ class DeclarationVersionConnectorSpec extends IntegrationTestSpec
     startMockServer()
   }
 
-  override protected def beforeEach(): Unit = {
-    when(mockUuidService.uuid()).thenReturn(correlationIdUuid)
-  }
-
   override protected def afterEach(): Unit = {
     resetMockServer()
   }

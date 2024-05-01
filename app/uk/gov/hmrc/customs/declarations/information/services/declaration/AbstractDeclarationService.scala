@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services.declarations
+package uk.gov.hmrc.customs.declarations.information.services.declaration
 
 import play.api.http.HttpEntity
 import play.api.mvc.Result

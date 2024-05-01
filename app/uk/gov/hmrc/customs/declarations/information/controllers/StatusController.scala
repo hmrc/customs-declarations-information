@@ -24,7 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationStatusService
+import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationStatusService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services.filters
+package uk.gov.hmrc.customs.declarations.information.services.filter
 
 import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils.extractNamespacesFromAllElements
 

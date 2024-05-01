@@ -24,7 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, BadgeIdentifier, ClientId, Eori, ExtractedHeaders, ExtractedHeadersImpl, HasConversationId, HasRequest}
 
 import javax.inject.{Inject, Singleton}
-
+//TODO should this be in this package?
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {
   private lazy val xBadgeIdentifierRegex = "^[0-9A-Z]{6,12}$".r

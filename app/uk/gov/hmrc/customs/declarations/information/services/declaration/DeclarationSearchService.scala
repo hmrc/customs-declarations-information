@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services.declarations
+package uk.gov.hmrc.customs.declarations.information.services.declaration
 
 import play.mvc.Http.Status.BAD_REQUEST
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalSer
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationSearchConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.services.filter.SearchResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import uk.gov.hmrc.http.HttpResponse
 

@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
+import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
 import util.TestData.declarantEori
@@ -90,21 +90,16 @@ object TestData {
 
   type EmulatedServiceFailure = UnsupportedOperationException
   val emulatedServiceFailure = new EmulatedServiceFailure("Emulated service failure.")
-
-  lazy val mockUuidService: UuidService = mock(classOf[UuidService])
-
   lazy val stubInformationLogger = new StubInformationLogger(mock(classOf[CdsLogger]))
 
   object TestModule extends AbstractModule {
-    override def configure(): Unit = {
-      bind(classOf[UuidService]) toInstance mockUuidService
-    }
+    override def configure(): Unit = {}
 
     def asGuiceableModule: GuiceableModule = GuiceableModule.guiceable(this)
   }
 
   // note we can not mock service methods that return value classes - however using a simple stub IMHO it results in cleaner code (less mocking noise)
-  lazy val stubUniqueIdsService: UniqueIdsService = new UniqueIdsService(mockUuidService) {
+  lazy val stubUniqueIdsService: UniqueIdsService = new UniqueIdsService() {
     override def generateUniqueConversationId: ConversationId = conversationId
 
     override def generateUniqueCorrelationId: CorrelationId = correlationId
@@ -162,7 +157,6 @@ object TestData {
 }
 
 object RequestHeaders {
-
   val X_CONVERSATION_ID_NAME = "X-Conversation-ID"
   lazy val X_CONVERSATION_ID_HEADER: (String, String) = X_CONVERSATION_ID_NAME -> TestData.conversationId.toString
 

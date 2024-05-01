@@ -16,8 +16,8 @@
 
 package unit.connectors
 
-import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsPath
 import uk.gov.hmrc.customs.declarations.information.model.VersionTwo
+import uk.gov.hmrc.customs.declarations.information.util.ApiSubscriptionFieldsPath
 import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 
 class ApiSubscriptionFieldsPathSpec extends UnitSpec with ApiSubscriptionFieldsTestData {

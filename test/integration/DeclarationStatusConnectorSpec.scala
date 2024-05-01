@@ -47,7 +47,7 @@ class DeclarationStatusConnectorSpec extends IntegrationTestSpec
   }
 
   override protected def beforeEach(): Unit = {
-    when(mockUuidService.uuid()).thenReturn(correlationIdUuid)
+    //when(mockUuidService.uuid()).thenReturn(correlationIdUuid)
   }
 
   override protected def afterEach(): Unit = {

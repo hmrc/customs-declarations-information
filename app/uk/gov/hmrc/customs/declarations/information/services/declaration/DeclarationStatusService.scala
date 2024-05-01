@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services.declarations
+package uk.gov.hmrc.customs.declarations.information.services.declaration
 
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
-import uk.gov.hmrc.customs.declarations.information.services.filters.StatusResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.services.filter.StatusResponseFilterService
 import uk.gov.hmrc.http.HttpResponse
 
 import javax.inject.{Inject, Singleton}

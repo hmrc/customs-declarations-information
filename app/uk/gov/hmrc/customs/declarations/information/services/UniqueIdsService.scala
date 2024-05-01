@@ -18,11 +18,13 @@ package uk.gov.hmrc.customs.declarations.information.services
 
 import com.google.inject.Singleton
 import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
+
+import java.util.UUID
 import javax.inject.Inject
 
-//TODO can be an object? and why not just call the uuidService directly?
+//TODO can be an object? for testing most likely but investigate
 @Singleton
-class UniqueIdsService @Inject()(uuidService: UuidService) {
-  def generateUniqueConversationId: ConversationId = ConversationId(uuidService.uuid())
-  def generateUniqueCorrelationId: CorrelationId = CorrelationId(uuidService.uuid())
+class UniqueIdsService @Inject()() {
+  def generateUniqueConversationId: ConversationId = ConversationId(UUID.randomUUID())
+  def generateUniqueCorrelationId: CorrelationId = CorrelationId(UUID.randomUUID())
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.connectors
+package uk.gov.hmrc.customs.declarations.information.util
 
 import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionKey
 

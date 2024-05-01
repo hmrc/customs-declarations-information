@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.services.declarations
+package unit.services.declaration
 
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -31,8 +31,8 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services._
-import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationSearchService
-import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationSearchService
+import uk.gov.hmrc.customs.declarations.information.services.filter.SearchResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendSearchPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}

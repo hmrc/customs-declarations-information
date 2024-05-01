@@ -48,7 +48,6 @@ class DeclarationFullAuthAction @Inject()(customsAuthService: CustomsAuthService
 
   override def refine[A](fdvr: DeclarationFullRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
     implicit val implicitVhr: DeclarationFullRequest[A] = fdvr
-
     implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
 
     authAsCspWithMandatoryAuthHeaders.flatMap {

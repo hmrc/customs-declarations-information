@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services.filters
+package uk.gov.hmrc.customs.declarations.information.services.filter
 
 import javax.inject.{Inject, Singleton}
 import scala.xml.transform.RuleTransformer

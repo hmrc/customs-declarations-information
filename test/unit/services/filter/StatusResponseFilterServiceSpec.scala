@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package unit.services.filters
+package unit.services.filter
 
 import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
-import uk.gov.hmrc.customs.declarations.information.services.filters.StatusResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.services.filter.StatusResponseFilterService
 import util.StatusTestXMLData.{actualBackendStatusResponse, defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
 import util.UnitSpec
 
