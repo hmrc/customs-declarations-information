@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
+package uk.gov.hmrc.customs.declarations.information.services.declarations
 
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalServerError
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.services.{FullResponseFilterService, InformationConfigService, UniqueIdsService}
 import uk.gov.hmrc.http.HttpResponse
 
 import javax.inject.{Inject, Singleton}
@@ -27,13 +28,13 @@ import scala.concurrent.ExecutionContext
 import scala.xml.Elem
 
 @Singleton
-class DeclarationVersionService @Inject()(versionResponseFilterService: VersionResponseFilterService,
-                                          override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
-                                          override val logger: InformationLogger,
-                                          connector: DeclarationVersionConnector,
-                                          uniqueIdsService: UniqueIdsService,
-                                          config: InformationConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
-  protected val endpointName: String = "version"
+class DeclarationFullService @Inject()(fullResponseFilterService: FullResponseFilterService,
+                                       override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
+                                       override val logger: InformationLogger,
+                                       connector: DeclarationFullConnector,
+                                       uniqueIdsService: UniqueIdsService,
+                                       config: InformationConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
+  protected val endpointName: String = "declaration-full"
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {
     errorCodeText.toLowerCase() match {
@@ -46,7 +47,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
   }
 
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse = {
-    val responseXml = versionResponseFilterService.findPathThenTransform(xmlResponseBody).head
+    val responseXml = fullResponseFilterService.findPathThenTransform(xmlResponseBody).head
     HttpResponse(response.status, responseXml.toString(), response.headers)
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package unit.services
+package unit.services.declarations
 
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -26,12 +26,13 @@ import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
-import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
+import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
+import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationFullService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
@@ -42,33 +43,35 @@ import java.time.{Clock, ZoneId, ZonedDateTime}
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
+class DeclarationFullServiceSpec extends UnitSpec with BeforeAndAfterEach {
   private val dateTime: ZonedDateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
   private val headerCarrier: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest
-  protected val mrn = Mrn("theMrn")
-  implicit protected lazy val mockLogger: InformationLogger = mock(classOf[InformationLogger])
-  protected lazy val mockVersionResponseFilterService: VersionResponseFilterService = mock(classOf[VersionResponseFilterService])
+
+  protected lazy val mockFullResponseFilterService: FullResponseFilterService = mock(classOf[FullResponseFilterService])
   protected lazy val mockApiSubscriptionFieldsConnector: ApiSubscriptionFieldsConnector = mock(classOf[ApiSubscriptionFieldsConnector])
-  protected lazy val mockDeclarationVersionConnector: DeclarationVersionConnector = mock(classOf[DeclarationVersionConnector])
+  implicit protected lazy val mockLogger: InformationLogger = mock(classOf[InformationLogger])
+  protected lazy val mockDeclarationFullConnector: DeclarationFullConnector = mock(classOf[DeclarationFullConnector])
   protected lazy val mockPayloadDecorator: BackendVersionPayloadCreator = mock(classOf[BackendVersionPayloadCreator])
   protected lazy val mockHttpResponse: HttpResponse = HttpResponse(OK, "<xml>some xml</xml>")
   protected lazy val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
   protected lazy val mockInformationConfig: InformationConfig = mock(classOf[InformationConfig])
+  protected val mrn = Mrn("theMrn")
   protected lazy val missingEoriResult = errorInternalServerError("Missing authenticated eori in service lookup").XmlResult.withConversationId
   protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
   trait SetUp {
-    when(mockDeclarationVersionConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
+    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
       meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
-    when(mockVersionResponseFilterService.findPathThenTransform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
-    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+    when(mockFullResponseFilterService.findPathThenTransform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
+    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier]))
+      .thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
 
-    protected lazy val service: DeclarationVersionService = new DeclarationVersionService(mockVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockLogger, mockDeclarationVersionConnector, stubUniqueIdsService, mockInformationConfigService)
+    protected lazy val service: DeclarationFullService = new DeclarationFullService(mockFullResponseFilterService, mockApiSubscriptionFieldsConnector,
+      mockLogger, mockDeclarationFullConnector, stubUniqueIdsService, mockInformationConfigService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
       await(service.send(mrn, dateTime)(vpr, hc))
@@ -76,22 +79,21 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   }
 
   override def beforeEach(): Unit = {
-    reset(mockDeclarationVersionConnector, mockVersionResponseFilterService)
+    reset(mockDeclarationFullConnector, mockFullResponseFilterService)
   }
 
   "Business Service" should {
-
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.toOption.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
+      verify(mockDeclarationFullConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
       implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
       result.toOption.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
+      verify(mockDeclarationFullConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
     }
 
     "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
@@ -115,9 +117,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |        <cds:errorMessage>Declaration Not Found</cds:errorMessage>
           |        <cds:source/>
           |      </cds:errorDetail>""".stripMargin
-
-
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -138,7 +138,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -159,7 +159,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -180,7 +180,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -201,7 +201,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
           |      </cds:errorDetail>""".stripMargin
 
 
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -212,7 +212,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 403 error response when backend call fails with 403" in new SetUp() {
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
@@ -223,7 +223,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     }
 
     "return 500 error response when backend call fails" in new SetUp() {
-      when(mockDeclarationVersionConnector.send(any[ZonedDateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

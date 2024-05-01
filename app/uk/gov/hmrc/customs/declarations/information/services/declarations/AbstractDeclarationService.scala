@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
+package uk.gov.hmrc.customs.declarations.information.services.declarations
 
 import play.api.http.HttpEntity
 import play.api.mvc.Result
@@ -24,15 +24,16 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalSe
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.{Non2xxResponseError, RetryError, UnexpectedError}
 import uk.gov.hmrc.customs.declarations.information.connectors.{AbstractDeclarationConnector, ApiSubscriptionFieldsConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{CorrelationId, SearchType}
+import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
+import uk.gov.hmrc.customs.declarations.information.model.{CorrelationId, SearchType}
+import uk.gov.hmrc.customs.declarations.information.services.{ApiSubscriptionFieldsService, UniqueIdsService}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import java.time.{Clock, ZoneId, ZonedDateTime}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.{Elem, XML}
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
 
 abstract class AbstractDeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                                     override val logger: InformationLogger,
