@@ -19,7 +19,7 @@ package unit.services
 import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
-import uk.gov.hmrc.customs.declarations.information.services.StatusResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.services.filters.StatusResponseFilterService
 import util.StatusTestXMLData.{actualBackendStatusResponse, defaultDateTime, generateDeclarationStatusResponse, generateDeclarationStatusResponseContainingAllOptionalElements}
 import util.UnitSpec
 

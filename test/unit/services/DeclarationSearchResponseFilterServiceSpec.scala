@@ -19,7 +19,6 @@ package unit.services
 import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
-import uk.gov.hmrc.customs.declarations.information.services.SearchResponseFilterService
 import util.SearchTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationSearchResponse, validBackendSearchResponse}
 import util.UnitSpec
 
@@ -27,6 +26,7 @@ import scala.concurrent.ExecutionContext
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 import ValidateXmlAgainstSchema._
+import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService
 
 import javax.xml.validation.Schema
 import scala.util.Try

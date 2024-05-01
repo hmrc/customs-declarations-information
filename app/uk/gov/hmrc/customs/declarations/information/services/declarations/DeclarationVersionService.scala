@@ -20,7 +20,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UniqueIdsService, VersionResponseFilterService}
+import uk.gov.hmrc.customs.declarations.information.services.filters.VersionResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.services.{InformationConfigService, UniqueIdsService}
 import uk.gov.hmrc.http.HttpResponse
 
 import javax.inject.{Inject, Singleton}

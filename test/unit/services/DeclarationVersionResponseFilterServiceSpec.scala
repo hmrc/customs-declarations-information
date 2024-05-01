@@ -19,7 +19,6 @@ package unit.services
 import org.scalatest.Assertion
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
-import uk.gov.hmrc.customs.declarations.information.services.VersionResponseFilterService
 import util.UnitSpec
 import util.VersionTestXMLData.{defaultDateTime, generateDeclarationResponseContainingAllOptionalElements, generateDeclarationVersionResponse, validBackendVersionResponse}
 import javax.xml.validation.Schema
@@ -28,6 +27,7 @@ import scala.util.Try
 import scala.xml._
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 import ValidateXmlAgainstSchema._
+import uk.gov.hmrc.customs.declarations.information.services.filters.VersionResponseFilterService
 
 class DeclarationVersionResponseFilterServiceSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext

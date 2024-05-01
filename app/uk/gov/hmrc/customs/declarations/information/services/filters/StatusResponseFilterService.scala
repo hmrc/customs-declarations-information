@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
+package uk.gov.hmrc.customs.declarations.information.services.filters
 
 import javax.inject.{Inject, Singleton}
 import scala.xml.NodeSeq
 
 @Singleton
-class VersionResponseFilterService @Inject()() extends AbstractResponseFilterService {
-  override protected val rootElementLabel: String = "DeclarationVersionResponse"
-  override protected val detailsElementLabel: String = "DeclarationVersionDetails"
-  override protected val NameSpaceP: String = "http://gov.uk/customs/retrieveDeclarationVersion"
+class StatusResponseFilterService @Inject()() extends AbstractResponseFilterService {
+  override protected val rootElementLabel: String = "DeclarationStatusResponse"
+  override protected val detailsElementLabel: String = "DeclarationStatusDetails"
+  override protected val NameSpaceP: String = "http://gov.uk/customs/declarationInformationRetrieval/status/v2"
 
   def findPathThenTransform(xml: NodeSeq): NodeSeq = {
-    val declarationDetailsPath: NodeSeq = xml \ "responseDetail" \ "RetrieveDeclarationVersionResponse" \ "RetrieveDeclarationVersionDetailsList" \\ "RetrieveDeclarationVersionDetails"
+    val declarationDetailsPath: NodeSeq = xml \ "responseDetail" \ "retrieveDeclarationStatusResponse" \ "retrieveDeclarationStatusDetailsList" \\ "retrieveDeclarationStatusDetails"
     transform(xml, declarationDetailsPath)
   }
 }

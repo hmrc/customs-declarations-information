@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
+package uk.gov.hmrc.customs.declarations.information.services.filters
 
 import uk.gov.hmrc.customs.declarations.information.xml.HelperXMLUtils.{createPrefixTransformer, extractNamespacesFromAllElements}
+
 import scala.xml.transform.RuleTransformer
 import scala.xml.{NodeSeq, TopScope}
 

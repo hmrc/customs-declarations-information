@@ -34,6 +34,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationStatusService
+import uk.gov.hmrc.customs.declarations.information.services.filters.StatusResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendStatusPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

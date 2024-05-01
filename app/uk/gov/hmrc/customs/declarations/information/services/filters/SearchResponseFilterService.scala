@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.services
+package uk.gov.hmrc.customs.declarations.information.services.filters
 
 import javax.inject.{Inject, Singleton}
-import scala.xml.{NodeSeq, Text}
 import scala.xml.transform.RuleTransformer
+import scala.xml.{NodeSeq, Text}
 
 @Singleton
 class SearchResponseFilterService @Inject()() extends AbstractResponseFilterService {

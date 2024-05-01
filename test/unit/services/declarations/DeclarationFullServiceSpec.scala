@@ -33,6 +33,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationFullService
+import uk.gov.hmrc.customs.declarations.information.services.filters.FullResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}

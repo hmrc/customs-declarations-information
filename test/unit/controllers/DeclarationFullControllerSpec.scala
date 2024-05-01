@@ -37,6 +37,7 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationFullService
+import uk.gov.hmrc.customs.declarations.information.services.filters.FullResponseFilterService
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FakeRequests._

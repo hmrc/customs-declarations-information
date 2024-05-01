@@ -32,6 +32,7 @@ import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionB
 import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
 import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.services.declarations.DeclarationSearchService
+import uk.gov.hmrc.customs.declarations.information.services.filters.SearchResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendSearchPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
