@@ -21,6 +21,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, InternalClientIdsRequest}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

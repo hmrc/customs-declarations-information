@@ -19,6 +19,7 @@ package uk.gov.hmrc.customs.declarations.information.action
 import play.api.mvc._
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +38,7 @@ class ValidateAndExtractHeadersAction @Inject()(validator: HeaderValidator)(impl
   override def refine[A](avr: ApiVersionRequest[A]): Future[Either[Result, ValidatedHeadersRequest[A]]] = Future.successful {
     implicit val id: ApiVersionRequest[A] = avr
 
-    validator.validateHeaders(avr) match {
+    validator.extractClientIdHeaderIfPresentAndValid(avr) match {
       case Left(result) =>
         Left(result.XmlResult.withConversationId)
       case Right(extracted) =>

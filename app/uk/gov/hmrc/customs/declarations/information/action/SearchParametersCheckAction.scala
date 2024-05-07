@@ -50,7 +50,6 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   private val looseEoriRegex: Regex = "^[a-zA-Z0-9]{1,50}$".r
   private val validDeclarationStatuses = Seq("CLEARED", "UNCLEARED", "REJECTED", "ALL")
   private val validPartyRoles: Seq[String] = Seq("SUBMITTER", "CONSIGNEE", "CONSIGNOR", "DECLARANT")
-  //TODO homogenise dateFormatting
   private val dateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {

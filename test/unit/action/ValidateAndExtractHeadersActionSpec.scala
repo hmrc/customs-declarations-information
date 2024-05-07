@@ -22,9 +22,10 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
-import uk.gov.hmrc.customs.declarations.information.action.{HeaderValidator, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.action.ValidateAndExtractHeadersAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, ValidatedHeadersRequest}
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import util.TestData._
 import util.{RequestHeaders, UnitSpec}
 
@@ -42,7 +43,7 @@ class ValidateAndExtractHeadersActionSpec extends UnitSpec with TableDrivenPrope
   "HeaderValidationAction when validation succeeds" should {
     "extract headers from incoming request and copy relevant values on to the ValidatedHeaderRequest" in new SetUp {
       val apiVersionRequestV1: ApiVersionRequest[AnyContentAsEmpty.type] = TestApiVersionRequestV1
-      when(mockHeaderStatusValidator.validateHeaders(any[ApiVersionRequest[_]])).thenReturn(Right(TestExtractedHeaders))
+      when(mockHeaderStatusValidator.extractClientIdHeaderIfPresentAndValid(any[ApiVersionRequest[_]])).thenReturn(Right(TestExtractedHeaders))
 
       val actualResult: Either[Result, ValidatedHeadersRequest[_]] = await(validateAndExtractHeadersAction.refine(apiVersionRequestV1))
 
@@ -53,7 +54,7 @@ class ValidateAndExtractHeadersActionSpec extends UnitSpec with TableDrivenPrope
   "HeaderValidationAction when validation fails" should {
     "return error with conversation Id in the headers" in new SetUp {
       val apiVersionRequestV1: ApiVersionRequest[AnyContentAsEmpty.type] = TestApiVersionRequestV1
-      when(mockHeaderStatusValidator.validateHeaders(any[ApiVersionRequest[_]])).thenReturn(Left(ErrorContentTypeHeaderInvalid))
+      when(mockHeaderStatusValidator.extractClientIdHeaderIfPresentAndValid(any[ApiVersionRequest[_]])).thenReturn(Left(ErrorContentTypeHeaderInvalid))
 
       val actualResult: Either[Result, ValidatedHeadersRequest[_]] = await(validateAndExtractHeadersAction.refine(apiVersionRequestV1))
 

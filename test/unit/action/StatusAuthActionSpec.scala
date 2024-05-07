@@ -21,11 +21,12 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.test.Helpers
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.customs.declarations.information.action.{HeaderValidator, StatusAuthAction}
+import uk.gov.hmrc.customs.declarations.information.action.StatusAuthAction
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.Csp
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import util.TestData._
 import util.{AuthConnectorStubbing, UnitSpec}
 

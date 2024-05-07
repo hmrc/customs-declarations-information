@@ -22,6 +22,7 @@ import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedAsCsp, BadgeIdentifier, Csp, Eori, HasConversationId, HasRequest}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

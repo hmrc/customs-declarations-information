@@ -21,6 +21,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, SearchParametersRequest}
 import uk.gov.hmrc.customs.declarations.information.services.CustomsAuthService
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -46,10 +47,9 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
   extends AuthAction(customsAuthService, headerValidator, logger) with ActionRefiner[SearchParametersRequest, AuthorisedRequest] {
   override protected[this] def executionContext: ExecutionContext = ec
 
-  override def refine[A](spr: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
-    implicit val implicitIcir: SearchParametersRequest[A] = spr
-    //TODO ???
-    implicit def hc(implicit rh: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(rh)
+  override def refine[A](searchParametersRequest: SearchParametersRequest[A]): Future[Either[Result, AuthorisedRequest[A]]] = {
+    implicit val implicitIcir: SearchParametersRequest[A] = searchParametersRequest
+    implicit def hc(implicit requestHeader: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequest(requestHeader)
 
     authAsCspWithMandatoryAuthHeaders.flatMap {
       case Right(maybeAuthorisedAsCspWithIdentifierHeaders) =>
@@ -58,10 +58,10 @@ class SearchAuthAction @Inject()(customsAuthService: CustomsAuthService,
             case Left(errorResponse) =>
               Left(errorResponse.XmlResult.withConversationId)
             case Right(nonCspData) =>
-              Right(spr.toNonCspAuthorisedRequest(nonCspData.eori))
+              Right(searchParametersRequest.toNonCspAuthorisedRequest(nonCspData.eori))
           }
         } { cspData =>
-          Future.successful(Right(spr.toCspAuthorisedRequest(cspData)))
+          Future.successful(Right(searchParametersRequest.toCspAuthorisedRequest(cspData)))
         }
       case Left(result) =>
         Future.successful(Left(result.XmlResult.withConversationId))
