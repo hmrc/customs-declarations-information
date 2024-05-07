@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
+//TODO this can be renamed and merged with SearchController as it seemingly does the same thing it just returns the full declaration
 @Singleton
 class DeclarationFullController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                           val validateAndExtractHeadersAction: ValidateAndExtractHeadersAction,

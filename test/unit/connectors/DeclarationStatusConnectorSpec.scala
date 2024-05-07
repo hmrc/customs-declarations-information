@@ -19,6 +19,7 @@ package unit.connectors
 import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.Eventually
 import play.api.mvc.{AnyContent, Request}
@@ -102,11 +103,11 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
     }
   }
 
-  private def awaitRequest: Either[AbstractDeclarationConnector.Error, HttpResponse] = {
+  private def awaitRequest: Either[ConnectionError, HttpResponse] = {
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 
-  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
+  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]): OngoingStubbing[Future[HttpResponse]] = {
     when(mockWsPost.POSTString(anyString, anyString, any[Seq[(String, String)]])(
       any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
       .thenReturn(eventualResponse)

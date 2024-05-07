@@ -30,7 +30,6 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, DeclarationFullAuthAction, DeclarationFullCheckAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService, InformationShutterConfig}
-import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.DeclarationFullController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger

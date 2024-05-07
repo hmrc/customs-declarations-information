@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, AuthorisedRequest, ConversationId, CorrelationId, SearchType}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, AuthorisedRequest, ConversationId, CorrelationId, Non2xxResponseError, Non2xxResponseException, RetryError, SearchType, UnexpectedError, ConnectionError}
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -33,9 +33,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
-import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-
+//TODO i would question the need for this as most of it can probably be done by a service
 abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
                                                       logger: InformationLogger,
                                                       backendPayloadCreator: BackendPayloadCreator,
@@ -49,7 +48,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
-              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[Either[AbstractDeclarationConnector.Error, HttpResponse]] = {
+              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[Either[ConnectionError, HttpResponse]] = {
     val config: ServiceConfig = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val url: String = config.url
     val bearerToken: String = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
@@ -61,9 +60,6 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
       searchType,
       maybeApiSubscriptionFieldsResponse)
 
-    //TODO remove/move this
-    case class Non2xxResponseException(status: Int, responseBody: String) extends Throwable
-
     withCircuitBreaker {
       implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
       logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
@@ -74,7 +70,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
         response.status match {
           case status if Status.isSuccessful(status) =>
             Right(response)
-          case status => // Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
+          case status => //TODO (comment was already here) Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
             throw Non2xxResponseException(status, response.body)
         }
       }
@@ -100,15 +96,4 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
       (ACCEPT, MimeTypes.XML)
     )
   }
-}
-
-//TODO hmmm?
-object AbstractDeclarationConnector {
-  sealed trait Error
-
-  case class Non2xxResponseError(status: Int, responseBody: String) extends Error
-
-  case object RetryError extends Error
-
-  case class UnexpectedError(t: Throwable) extends Error
 }

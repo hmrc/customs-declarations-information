@@ -25,12 +25,10 @@ import play.mvc.Http.Status._
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
 import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
-import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationSearchConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.services._
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationSearchService
 import uk.gov.hmrc.customs.declarations.information.services.filter.SearchResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendSearchPayloadCreator

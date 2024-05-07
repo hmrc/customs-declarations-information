@@ -107,7 +107,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
     }
   }
 
-  private def awaitRequest: Either[AbstractDeclarationConnector.Error, HttpResponse] = {
+  private def awaitRequest: Either[ConnectionError, HttpResponse] = {
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 

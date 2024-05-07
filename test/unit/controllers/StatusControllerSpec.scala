@@ -30,7 +30,6 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, StatusAuthAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationShutterConfig}
-import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.Non2xxResponseError
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationStatusConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.StatusController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
