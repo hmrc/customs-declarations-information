@@ -16,26 +16,14 @@
 
 package util
 
-import util.SearchTestXMLData.dateTimeFormatter
-
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import scala.xml.{Elem, Node, NodeSeq, XML}
 
 object SearchTestXMLData {
   val defaultDateTime: ZonedDateTime = LocalDateTime.of(2020, Month.JUNE, 15, 12, 30, 0, 0).atZone(ZoneId.of("UTC"))
-  //TODO duplication
+  //TODO investigate duplication of dates around the tests and test data in general. Should be consolidated in one place and not reused
   val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss'Z'")
-//TODO delete
-//  val dateTimeFormat = new DateTimeFormatterBuilder()
-//    .appendYear(4, 4)
-//    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-//    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-//    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-//    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-//    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-//    .appendTimeZoneOffset("Z", false, 2, 2)
-//    .toFormatter
 
   val validNonCspSearchRequestPayload: String =
     """<n1:retrieveDeclarationSummaryDataRequest
@@ -337,7 +325,7 @@ object SearchTestXMLData {
   
   def generateDeclarationSearchResponse(noOfDeclarationSearchResults: Int = 1, receivedDate: ZonedDateTime): NodeSeq = {
     val items = noOfDeclarationSearchResults to 1 by -1
-    //TODO sort this
+    //TODO try and refactor this
     val content = items.map(index => generateDeclarationSearchDetailsElement(generateHMRCDeclaration(receivedDate.plusMonths(index)), generateStandardResponseWCODeclaration()))
 
     generateRootElements(content, noOfDeclarationSearchResults)

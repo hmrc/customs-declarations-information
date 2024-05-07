@@ -278,7 +278,7 @@ object VersionTestXMLData {
 
   def generateDeclarationVersionResponse(noOfDeclarationVersionResponses: Int = 1, creationDate: ZonedDateTime): NodeSeq = {
     val items = noOfDeclarationVersionResponses to 1 by -1
-    //TODO :'(
+    //TODO this is just messy sure it can be refactored
     val content: Seq[NodeSeq] = items.map(
       index => generateDeclarationVersionDetailsElement(
         generateHMRCDeclaration(

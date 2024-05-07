@@ -51,17 +51,17 @@ object LoggingHelper {
   private def format(r: HasConversationId): String = {
     def conversationId = s"[conversationId=${r.conversationId}]"
 
-    def apiVersion = r match {
+    def apiVersion: String = r match {
       case a: HasApiVersion => s"[requestedApiVersion=${a.requestedApiVersion}]"
       case _ => ""
     }
 
-    def extractedHeaders = r match {
+    def extractedHeaders: String = r match {
       case h: ExtractedHeaders => s"[clientId=${h.clientId}]"
       case _ => ""
     }
 
-    def authorised = r match {
+    def authorised: String = r match {
       case a: HasAuthorisedAs =>
         a.authorisedAs match {
           case NonCsp(eori) => s"[authorisedAs=NonCsp($eori)]"
@@ -73,7 +73,6 @@ object LoggingHelper {
     s"$conversationId$extractedHeaders$apiVersion$authorised"
   }
 
-  //TODO :<=====
   def formatMessageFull(msg: String, r: HasConversationId with Request[_]): String = {
     def filteredHeaders: Map[String, String] = r.headers.toSimpleMap.filter(keyValTuple =>
       headerSet.contains(keyValTuple._1.toLowerCase))
