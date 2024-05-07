@@ -40,7 +40,7 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val cc: ControllerComponents,
                                  val logger: InformationLogger)
                                 (implicit val ec: ExecutionContext) extends BackendController(cc) {
-
+  //TODO just what is the point of this method, needs investigating and probably removal
   def list(eori: Option[String],
            partyRole: Option[String],
            declarationCategory: Option[String],
