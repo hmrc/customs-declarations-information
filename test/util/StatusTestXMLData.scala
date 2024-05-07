@@ -30,17 +30,17 @@ object StatusTestXMLData {
     xmlns:n1="http://gov.uk/customs/declarationInformationRetrieval/status/v2"
     xsi:schemaLocation="http://gov.uk/customs/declarationInformationRetrieval/status/v2 queryDeclarationStatusRequest.xsd">
       <n1:requestCommon>
-        <n1:clientID>327d9145-4965-4d28-a2c5-39dedee50334</n1:clientID>
+        <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
         <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>
         <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
         <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>
         <n1:dateTimeStamp>2018-09-11T10:28:54.128Z</n1:dateTimeStamp>
         <v1:authenticatedPartyID>ZZ123456789000</v1:authenticatedPartyID>
-        <v1:originatingPartyID>BADGEID123</v1:originatingPartyID>
+        <v1:originatingPartyID>ZZ123456789000</v1:originatingPartyID>
       </n1:requestCommon>
       <n1:requestDetail>
         <n1:retrieveDeclarationStatusRequest>
-          <n1:MRN>theMRN</n1:MRN>
+          <n1:MRN>theMrn</n1:MRN>
         </n1:retrieveDeclarationStatusRequest>
       </n1:requestDetail>
     </n1:queryDeclarationStatusRequest>

@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
-import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
+import org.apache.pekko.actor.ActorSystem
 import uk.gov.hmrc.customs.api.common.config.ServiceConfigProvider
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService

@@ -16,7 +16,7 @@
 
 package unit.connectors
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -25,8 +25,8 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.config.{InformationCircuitBreakerConfig, ConfigService}
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationCircuitBreakerConfig}
+import uk.gov.hmrc.customs.declarations.information.connectors.{AbstractDeclarationConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
@@ -107,7 +107,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
     }
   }
 
-  private def awaitRequest = {
+  private def awaitRequest: Either[AbstractDeclarationConnector.Error, HttpResponse] = {
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 

@@ -21,4 +21,3 @@ GET         /mrn/:mrn/full                                    @uk.gov.hmrc.custo
 
 GET         /search                                           @uk.gov.hmrc.customs.declarations.information.controllers.SearchController.list(eori: Option[String], partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String], declarationStatus: Option[String], dateFrom: Option[String], dateTo: Option[String], pageNumber: Option[String], declarationSubmissionChannel: Option[String])
 
-GET         /admin/metrics                                    @com.kenshoo.play.metrics.MetricsController.metrics

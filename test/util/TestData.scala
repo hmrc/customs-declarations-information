@@ -61,7 +61,7 @@ object TestData {
   val invalidInventoryReferenceTooLong = "theInventoryReferenceThatIsTooLongToBeAcceptableToThisServiceFarFarTooLongInFactToBeOfUse"
 
   val dateString = "2018-09-11T10:28:54.128Z"
-  val date: ZonedDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 11, 10, 28, 54, 128).atZone(ZoneId.of("UTC"))
+  val date: ZonedDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 11, 10, 28, 54, 128000000).atZone(ZoneId.of("UTC"))
 
   val subscriptionFieldsIdString: String = "b82f31c6-2239-4253-b6f5-ed75e37ab7a5"
   val subscriptionFieldsIdUuid: UUID = fromString("b82f31c6-2239-4253-b6f5-ed75e37ab7a5")

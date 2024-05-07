@@ -22,6 +22,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.xml.{NodeSeq, Text}
 
+//TODO this is nightmarish and the compiler doesn't like it. The way it is taking the actual implementation of create as a parameter stinks
 trait BackendPayloadCreator {
   private val newLineAndIndentation = "\n        "
 
@@ -39,6 +40,7 @@ trait BackendPayloadCreator {
                        maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])(implicit asr: AuthorisedRequest[A]): NodeSeq = {
     //TODO check this is all good
     val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    println("YYY" + date.toString)
     println("XXX" + date.format(dateTimeFormatter))
     //2017-06-08T13:55:00.000Z
 

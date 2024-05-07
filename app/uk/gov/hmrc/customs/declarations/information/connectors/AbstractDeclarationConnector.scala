@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.customs.declarations.information.connectors
 
-import akka.pattern.CircuitBreakerOpenException
 import com.google.inject.Inject
+import org.apache.pekko.pattern.CircuitBreakerOpenException
 import play.api.http.HeaderNames.{ACCEPT, AUTHORIZATION, CONTENT_TYPE, DATE, X_FORWARDED_HOST}
 import play.api.http.{MimeTypes, Status}
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
@@ -61,6 +61,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
       searchType,
       maybeApiSubscriptionFieldsResponse)
 
+    //TODO remove/move this
     case class Non2xxResponseException(status: Int, responseBody: String) extends Throwable
 
     withCircuitBreaker {
@@ -69,6 +70,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
 
       http.POSTString(url, declarationPayload.toString(), headers).map { response =>
         logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
+
         response.status match {
           case status if Status.isSuccessful(status) =>
             Right(response)

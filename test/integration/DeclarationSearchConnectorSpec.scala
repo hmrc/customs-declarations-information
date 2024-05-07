@@ -23,8 +23,9 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector.UnexpectedError
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationSearchConnector
+import uk.gov.hmrc.customs.declarations.information.connectors.{AbstractDeclarationConnector, DeclarationSearchConnector}
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, Csp, VersionOne}
+import uk.gov.hmrc.http.HttpResponse
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.CustomsDeclarationsExternalServicesConfig.BackendSearchDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
@@ -32,6 +33,8 @@ import util.SearchTestXMLData.expectedSearchPayloadRequest
 import util.TestData._
 import util._
 import util.externalservices.BackendDeclarationService
+
+import scala.concurrent.Future
 
 class DeclarationSearchConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
@@ -48,9 +51,7 @@ class DeclarationSearchConnectorSpec extends IntegrationTestSpec
     startMockServer()
   }
 
-  override protected def beforeEach(): Unit = {
-    //when(mockUuidService.uuid()).thenReturn(correlationIdUuid)
-  }
+  override protected def beforeEach(): Unit = {}
 
   override protected def afterEach(): Unit = {
     resetMockServer()
@@ -71,7 +72,6 @@ class DeclarationSearchConnectorSpec extends IntegrationTestSpec
     )).build()
 
   "DeclarationSearchConnector" should {
-
     "make a correct request for a CSP" in {
       startBackendSearchServiceV1()
       await(sendValidXml())
@@ -92,7 +92,7 @@ class DeclarationSearchConnectorSpec extends IntegrationTestSpec
     }
   }
 
-  private def sendValidXml() = {
+  private def sendValidXml(): Future[Either[AbstractDeclarationConnector.Error, HttpResponse]] = {
     connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)
   }
 }

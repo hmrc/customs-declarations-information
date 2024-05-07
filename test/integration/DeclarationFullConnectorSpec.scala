@@ -25,6 +25,7 @@ import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.customs.declarations.information.connectors.AbstractDeclarationConnector._
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, Csp, VersionOne}
+import uk.gov.hmrc.http.HttpResponse
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
@@ -32,6 +33,8 @@ import util.FullTestXMLData.expectedFullPayloadRequest
 import util.TestData._
 import util._
 import util.externalservices.BackendDeclarationService
+
+import scala.concurrent.Future
 
 class DeclarationFullConnectorSpec extends IntegrationTestSpec
   with GuiceOneAppPerSuite
@@ -49,7 +52,6 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
   }
 
   override protected def beforeEach(): Unit = {
-    //when(mockUuidService.uuid()).thenReturn(correlationIdUuid)
   }
 
   override protected def afterEach(): Unit = {
@@ -71,7 +73,6 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
     )).build()
 
   "DeclarationFullConnector" should {
-
     "make a correct request for a CSP" in {
       startBackendFullServiceV1()
       await(sendValidXml())
@@ -92,7 +93,7 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
     }
   }
 
-  private def sendValidXml() = {
+  private def sendValidXml(): Future[Either[Error, HttpResponse]] = {
     connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)
   }
 }
