@@ -26,6 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, CorrelationId, HasConversationId, Non2xxResponseError, RetryError, SearchType, UnexpectedError}
 import uk.gov.hmrc.customs.declarations.information.services.{ApiSubscriptionFieldsService, UniqueIdsService}
+import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils.getDateTime
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import java.time.{Clock, ZoneId, ZonedDateTime}
@@ -33,6 +34,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.{Elem, XML}
 
+//TODO may be able to not be an abstract class and just call the methods normally
 abstract class AbstractDeclarationService @Inject()(override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                                     override val logger: InformationLogger,
                                                     connector: AbstractDeclarationConnector,
@@ -47,9 +49,8 @@ abstract class AbstractDeclarationService @Inject()(override val apiSubFieldsCon
 
   protected def matchErrorCode(errorCodeText: String): ErrorResponse
   protected def filterResponse(response: HttpResponse, xmlResponseBody: Elem): HttpResponse
-  //TODO hmm when did I add the below? should be able to just use the other method
-  private def getDateTime: ZonedDateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
-  //dateTime param allows for testing, never used functionally
+
+  //dateTime param allows for testing, never used functionally so just leave as default
   def send[A](searchType: SearchType, dateTime: ZonedDateTime = getDateTime)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, HttpResponse]] = {
     val correlationId: CorrelationId = uniqueIdsService.generateUniqueCorrelationId
 

@@ -24,6 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
 import ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils
 
 import java.text.{ParseException, SimpleDateFormat}
 import java.util.Date
@@ -50,7 +51,6 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   private val looseEoriRegex: Regex = "^[a-zA-Z0-9]{1,50}$".r
   private val validDeclarationStatuses = Seq("CLEARED", "UNCLEARED", "REJECTED", "ALL")
   private val validPartyRoles: Seq[String] = Seq("SUBMITTER", "CONSIGNEE", "CONSIGNOR", "DECLARANT")
-  private val dateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   override def refine[A](icr: InternalClientIdsRequest[A]): Future[Either[Result, SearchParametersRequest[A]]] = Future.successful {
     implicit val id: InternalClientIdsRequest[A] = icr
@@ -145,7 +145,7 @@ class SearchParametersCheckAction @Inject()(val logger: InformationLogger,
   def validateDate(date: Option[String])(implicit request: HasConversationId): Either[ErrorResponse, Option[Date]] = {
     date match {
       case Some(d) => try {
-        val dateAsDateType = dateFormat.parse(d)
+        val dateAsDateType = DateTimeUtils.dateFormat.parse(d)
         if (dateAsDateType.compareTo(new Date()) <= 0) {
           Right(Some(dateAsDateType))
         } else {

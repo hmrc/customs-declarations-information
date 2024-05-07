@@ -31,7 +31,7 @@ abstract class AbstractResponseFilterService() {
   protected val NameSpaceP4: String = "urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
   protected val NameSpaceXsi: String = "http://www.w3.org/2001/XMLSchema-instance"
 
-  //TODO ???
+  //TODO no idea the point of this method, looks like it can be removed but requires investigation
   protected def endNodes(xml: NodeSeq, rule: RuleTransformer): NodeSeq = NodeSeq.Empty
 
   def transform(xml: NodeSeq, declarationDetailsPath: NodeSeq): NodeSeq = {

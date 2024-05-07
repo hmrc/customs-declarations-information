@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.customs.declarations.information.util
 
+import java.text.SimpleDateFormat
 import java.time.{Clock, ZoneId, ZonedDateTime}
 
-object DateTimeGenerator {
-  //This class may seem pointless but it allows for testing
+object DateTimeUtils {
+  val dateFormat: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
   def getDateTime: ZonedDateTime = ZonedDateTime.ofInstant(Clock.systemUTC().instant(), ZoneId.of("UTC"))
 }

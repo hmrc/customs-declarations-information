@@ -22,7 +22,7 @@ import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, Corre
 import java.util.UUID
 import javax.inject.Inject
 
-//TODO can be an object? for testing most likely but investigate
+//TODO can be an object? for testing most likely but investigate. Did try and remove it but it caused some issues. But still can be done I reckon.
 @Singleton
 class UniqueIdsService @Inject()() {
   def generateUniqueConversationId: ConversationId = ConversationId(UUID.randomUUID())

@@ -28,12 +28,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.net.URLEncoder
 import scala.concurrent.{ExecutionContext, Future}
 
+//TODO think they didn't really understand traits and this too can be refactored out
 trait ApiSubscriptionFieldsService {
-//TODO make vals
-
-  def apiSubFieldsConnector: ApiSubscriptionFieldsConnector
-
-  def logger: InformationLogger
+  val apiSubFieldsConnector: ApiSubscriptionFieldsConnector
+  val logger: InformationLogger
 
   implicit def ec: ExecutionContext
 

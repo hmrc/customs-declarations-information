@@ -38,11 +38,7 @@ trait BackendPayloadCreator {
                        date: ZonedDateTime,
                        searchType: SearchType,
                        maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])(implicit asr: AuthorisedRequest[A]): NodeSeq = {
-    //TODO check this is all good
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    println("YYY" + date.toString)
-    println("XXX" + date.format(dateTimeFormatter))
-    //2017-06-08T13:55:00.000Z
+    val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") //eg. 2017-06-08T13:55:00.000Z
 
     <n1:requestCommon>
     {Seq[NodeSeq](

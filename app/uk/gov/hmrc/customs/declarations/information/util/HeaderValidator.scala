@@ -25,6 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import javax.inject.{Inject, Singleton}
 import scala.util.matching.Regex
 
+//TODO probably can be an object too, just pass the logger into the method
 @Singleton
 class HeaderValidator @Inject()(logger: InformationLogger) {
   def extractClientIdHeaderIfPresentAndValid[A](implicit apiVersionRequest: ApiVersionRequest[A]): Either[ErrorResponse, ExtractedHeaders] = {
