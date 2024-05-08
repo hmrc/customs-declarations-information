@@ -35,16 +35,12 @@ import scala.xml.NodeSeq
 
 class BackendSearchPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
-  private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
   private val dateTime: ZonedDateTime = LocalDateTime.of(2017, Month.JUNE, 8, 13, 55, 0, 0).atZone(ZoneId.of("UTC"))
   private val payloadCreator = new BackendSearchPayloadCreator()
-
 
   def xmlSearchValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationSummaryDataRequest.xsd").get)
 
   "BackendSearchPayloadCreator" should {
-
     def createSearchPayload(ar: AuthorisedRequest[AnyContentAsEmpty.type]): NodeSeq = payloadCreator.create(conversationId, correlationId, dateTime, mrn, Some(apiSubscriptionFieldsResponse))(ar)
 
     "non csp search request is created correctly" in {

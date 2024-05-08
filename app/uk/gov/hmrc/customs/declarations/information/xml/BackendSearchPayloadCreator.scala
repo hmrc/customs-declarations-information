@@ -19,7 +19,6 @@ package uk.gov.hmrc.customs.declarations.information.xml
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils
 
-import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import javax.inject.Singleton
 import scala.xml.NodeSeq

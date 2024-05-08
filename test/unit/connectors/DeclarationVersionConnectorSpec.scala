@@ -26,7 +26,7 @@ import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationCircuitBreakerConfig}
-import uk.gov.hmrc.customs.declarations.information.connectors.{AbstractDeclarationConnector, DeclarationVersionConnector}
+import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}

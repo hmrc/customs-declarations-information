@@ -34,8 +34,7 @@ class DeclarationSearchConnector @Inject()(http: HttpClient,
                                            serviceConfigProvider: ServiceConfigProvider,
                                            config: ConfigService,
                                            override val cdsLogger: CdsLogger,
-                                           override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext)
-  extends AbstractDeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
+                                           override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext) extends AbstractDeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
   override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
   override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis

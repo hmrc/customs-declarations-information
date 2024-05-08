@@ -26,7 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils
 
-import java.text.{ParseException, SimpleDateFormat}
+import java.text.ParseException
 import java.util.Date
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

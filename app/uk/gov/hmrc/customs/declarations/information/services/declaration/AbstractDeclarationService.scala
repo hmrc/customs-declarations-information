@@ -29,7 +29,7 @@ import uk.gov.hmrc.customs.declarations.information.services.{ApiSubscriptionFie
 import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils.getDateTime
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
-import java.time.{Clock, ZoneId, ZonedDateTime}
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.{Elem, XML}

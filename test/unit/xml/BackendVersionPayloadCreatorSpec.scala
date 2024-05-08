@@ -29,7 +29,7 @@ import util.UnitSpec
 import util.VersionTestXMLData._
 import util.XmlOps.stringToXml
 
-import java.time.{Instant, LocalDateTime, Month, ZoneId, ZonedDateTime}
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 

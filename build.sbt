@@ -4,7 +4,7 @@ import sbt.Keys._
 import sbt.Tests.{Group, SubProcess}
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
-import uk.gov.hmrc.gitstamp.GitStampPlugin._
+import uk.gov.hmrc.gitstamp.GitStampPlugin.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import java.text.SimpleDateFormat

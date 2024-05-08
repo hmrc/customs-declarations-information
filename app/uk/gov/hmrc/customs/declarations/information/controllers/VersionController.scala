@@ -39,7 +39,6 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                   val declarationVersionService: DeclarationVersionService,
                                   val cc: ControllerComponents,
                                   val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc){
-
   def list(mrn: String, declarationSubmissionChannel: Option[String] = None): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
   }
