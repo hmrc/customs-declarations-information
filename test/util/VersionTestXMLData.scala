@@ -352,8 +352,4 @@ object VersionTestXMLData {
 
     generateRootElements(content)
   }
-
-//  private val getWcoDeclarationWithAllElementsPopulated: Node = {
-//    XML.loadFile("test/resources/xml/sample_wco_dec_containing_all_possible_elements.xml").head
-//  }
 }

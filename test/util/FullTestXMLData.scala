@@ -21,15 +21,6 @@ import scala.xml.Elem
 
 object FullTestXMLData {
   val defaultDateTime: ZonedDateTime = LocalDateTime.of(2020, Month.JUNE, 15, 12, 30, 0, 0).atZone(ZoneId.of("UTC"))
-//  val dateTimeFormat = new DateTimeFormatterBuilder()
-//    .appendYear(4, 4)
-//    .appendFixedDecimal(DateTimeFieldType.monthOfYear(), 2)
-//    .appendFixedDecimal(DateTimeFieldType.dayOfMonth(), 2)
-//    .appendFixedDecimal(DateTimeFieldType.hourOfDay, 2)
-//    .appendFixedDecimal(DateTimeFieldType.minuteOfHour, 2)
-//    .appendFixedDecimal(DateTimeFieldType.secondOfMinute, 2)
-//    .appendTimeZoneOffset("Z", false, 2, 2)
-//    .toFormatter
 
   val validNonCspFullRequestPayload =
     """<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd"
