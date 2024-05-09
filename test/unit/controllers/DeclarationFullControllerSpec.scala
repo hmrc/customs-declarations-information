@@ -16,7 +16,6 @@
 
 package unit.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -24,19 +23,21 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc._
 import play.api.test.Helpers
-import play.api.test.Helpers.{header, _}
+import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
+import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, DeclarationFullAuthAction, DeclarationFullCheckAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.DeclarationFullController
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services._
+import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationFullService
+import uk.gov.hmrc.customs.declarations.information.services.filter.FullResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FakeRequests._
@@ -45,15 +46,13 @@ import util.TestData._
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
 
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationFullControllerSpec extends UnitSpec
-  with Matchers with BeforeAndAfterEach {
-
+class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAndAfterEach {
   trait SetUp extends AuthConnectorStubbing {
-
-    protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
+    protected val mockInformationConfigService: ConfigService = mock(classOf[ConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq()))
 
@@ -71,8 +70,7 @@ class DeclarationFullControllerSpec extends UnitSpec
 
     protected val mockDeclarationFullConnector: DeclarationFullConnector = mock(classOf[DeclarationFullConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
-    protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
-    protected val dateTime = new DateTime()
+    protected val dateTime = ZonedDateTime.now()
 
     protected val stubAuthStatusAction: DeclarationFullAuthAction = new DeclarationFullAuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
@@ -82,7 +80,7 @@ class DeclarationFullControllerSpec extends UnitSpec
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubFullResponseFilterService: FullResponseFilterService = new FullResponseFilterService()
     protected val stubDeclarationFullService = new DeclarationFullService(stubFullResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockDeclarationFullConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockDeclarationFullConnector, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: DeclarationFullController = new DeclarationFullController(
@@ -104,8 +102,7 @@ class DeclarationFullControllerSpec extends UnitSpec
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockDeclarationFullConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
+    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -281,7 +278,7 @@ class DeclarationFullControllerSpec extends UnitSpec
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
-      when(mockDeclarationFullConnector.send(any[DateTime],
+      when(mockDeclarationFullConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

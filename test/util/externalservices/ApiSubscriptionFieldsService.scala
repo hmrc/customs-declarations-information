@@ -18,7 +18,7 @@ package util.externalservices
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import play.api.test.Helpers.OK
-import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsPath.url
+import uk.gov.hmrc.customs.declarations.information.util.ApiSubscriptionFieldsPath.url
 import uk.gov.hmrc.customs.declarations.information.model.ApiSubscriptionKey
 import util.{ApiSubscriptionFieldsTestData, CustomsDeclarationsExternalServicesConfig, WireMockRunner}
 

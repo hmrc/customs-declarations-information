@@ -22,25 +22,22 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalSer
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import ActionBuilderModelHelper._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.net.URLEncoder
 import scala.concurrent.{ExecutionContext, Future}
 
+//TODO think they didn't really understand traits and this too can be refactored out
 trait ApiSubscriptionFieldsService {
-
-  def apiSubFieldsConnector: ApiSubscriptionFieldsConnector
-
-  def logger: InformationLogger
+  val apiSubFieldsConnector: ApiSubscriptionFieldsConnector
+  val logger: InformationLogger
 
   implicit def ec: ExecutionContext
 
   private val apiContextEncoded = URLEncoder.encode("customs/declarations-information", "UTF-8")
 
-  def futureApiSubFieldsId[A](c: ClientId)
-                             (implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, Option[ApiSubscriptionFieldsResponse]]] = {
+  def futureApiSubFieldsId[A](c: ClientId)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[Result, Option[ApiSubscriptionFieldsResponse]]] = {
     asr.authorisedAs match {
       case Csp(_, _) =>
         apiSubFieldsConnector.getSubscriptionFields(ApiSubscriptionKey(c, apiContextEncoded, asr.requestedApiVersion))

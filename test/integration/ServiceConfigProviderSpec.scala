@@ -23,9 +23,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.DynamicServiceTestData
 
 class ServiceConfigProviderSpec extends IntegrationTestSpec with GuiceOneAppPerSuite with DynamicServiceTestData {
-
   private val serviceConfigProvider = new ServiceConfigProvider(app.injector.instanceOf[ServicesConfig])
-
   override implicit lazy val app: Application = configuredApplication
 
   override def beforeEach(): Unit = {

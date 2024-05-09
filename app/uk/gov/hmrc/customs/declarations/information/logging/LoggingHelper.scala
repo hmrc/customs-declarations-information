@@ -18,9 +18,8 @@ package uk.gov.hmrc.customs.declarations.information.logging
 
 import play.api.http.HeaderNames.{ACCEPT, CONTENT_TYPE}
 import play.api.mvc.Request
-import uk.gov.hmrc.customs.declarations.information.controllers.CustomHeaderNames._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ExtractedHeaders, HasApiVersion, HasAuthorisedAs, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, NonCsp}
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
+import uk.gov.hmrc.customs.declarations.information.model.{Csp, ExtractedHeaders, HasApiVersion, HasAuthorisedAs, HasConversationId, NonCsp}
 
 object LoggingHelper {
   private val headerSet = Set(CONTENT_TYPE.toLowerCase, ACCEPT.toLowerCase, XConversationIdHeaderName.toLowerCase, XClientIdHeaderName.toLowerCase, XBadgeIdentifierHeaderName.toLowerCase)
@@ -52,17 +51,17 @@ object LoggingHelper {
   private def format(r: HasConversationId): String = {
     def conversationId = s"[conversationId=${r.conversationId}]"
 
-    def apiVersion = r match {
+    def apiVersion: String = r match {
       case a: HasApiVersion => s"[requestedApiVersion=${a.requestedApiVersion}]"
       case _ => ""
     }
 
-    def extractedHeaders = r match {
+    def extractedHeaders: String = r match {
       case h: ExtractedHeaders => s"[clientId=${h.clientId}]"
       case _ => ""
     }
 
-    def authorised = r match {
+    def authorised: String = r match {
       case a: HasAuthorisedAs =>
         a.authorisedAs match {
           case NonCsp(eori) => s"[authorisedAs=NonCsp($eori)]"
@@ -75,11 +74,9 @@ object LoggingHelper {
   }
 
   def formatMessageFull(msg: String, r: HasConversationId with Request[_]): String = {
-    def filteredHeaders = r.headers.toSimpleMap.filter(keyValTuple =>
+    def filteredHeaders: Map[String, String] = r.headers.toSimpleMap.filter(keyValTuple =>
       headerSet.contains(keyValTuple._1.toLowerCase))
 
     s"[conversationId=${r.conversationId.uuid}] $msg headers=$filteredHeaders"
   }
-
-
 }

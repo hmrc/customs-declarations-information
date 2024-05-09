@@ -24,8 +24,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.HasConversationId
-import uk.gov.hmrc.customs.declarations.information.model.{Eori, NonCsp}
+import uk.gov.hmrc.customs.declarations.information.model.{Eori, HasConversationId, NonCsp}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 import javax.inject.{Inject, Singleton}
@@ -34,17 +33,13 @@ import scala.util.control.NonFatal
 
 @Singleton
 class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
-                                   logger: InformationLogger)
-                                  (implicit ec: ExecutionContext) extends AuthorisedFunctions {
-
+                                   logger: InformationLogger)(implicit ec: ExecutionContext) extends AuthorisedFunctions {
   private val hmrcCustomsEnrolment = "HMRC-CUS-ORG"
   private val customsDeclarationEnrolment = "write:customs-declarations-information"
-
   private lazy val errorResponseEoriNotFoundInCustomsEnrolment =
     ErrorResponse(UNAUTHORIZED, UnauthorizedCode, "EORI number not found in Customs Enrolment")
   private val errorResponseUnauthorisedGeneral =
     ErrorResponse(Status.UNAUTHORIZED, UnauthorizedCode, "Unauthorised request")
-
   type IsCsp = Boolean
 
   /*

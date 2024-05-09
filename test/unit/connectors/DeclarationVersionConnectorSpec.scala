@@ -16,7 +16,7 @@
 
 package unit.connectors
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -25,10 +25,9 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationCircuitBreakerConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
@@ -43,7 +42,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
   private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
-  private val mockInformationConfigService = mock(classOf[InformationConfigService])
+  private val mockInformationConfigService = mock(classOf[ConfigService])
   private val mockBackendPayloadCreator = mock(classOf[BackendVersionPayloadCreator])
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
 
@@ -74,7 +73,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[SeqOfHeader])(
+        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
           any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
@@ -83,7 +82,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[SeqOfHeader])(
+        verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[Seq[(String, String)]])(
           any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
@@ -108,12 +107,12 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
     }
   }
 
-  private def awaitRequest = {
+  private def awaitRequest: Either[ConnectionError, HttpResponse] = {
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
-    when(mockWsPost.POSTString(anyString, anyString, any[SeqOfHeader])(
+    when(mockWsPost.POSTString(anyString, anyString, any[Seq[(String, String)]])(
       any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
       .thenReturn(eventualResponse)
   }

@@ -16,14 +16,12 @@
 
 package unit.xml
 
-import org.joda.time.{DateTime, DateTimeZone}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, ValidatedHeadersRequestOps}
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, AuthorisedRequest}
-import uk.gov.hmrc.customs.declarations.information.model.{Csp, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, ValidatedHeadersRequestOps}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiVersionRequest, AuthorisedRequest, Csp, VersionOne}
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
@@ -31,14 +29,13 @@ import util.UnitSpec
 import util.VersionTestXMLData._
 import util.XmlOps.stringToXml
 
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import scala.concurrent.ExecutionContext
 import scala.xml.NodeSeq
 
 class BackendVersionPayloadCreatorSpec extends UnitSpec {
   implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-
-  private val instant = 1496930100000L // 2017-06-08T13:55:00.000Z
-  private val dateTime = new DateTime(instant, DateTimeZone.UTC)
+  private val dateTime: ZonedDateTime = LocalDateTime.of(2017, Month.JUNE, 8, 13, 55, 0, 0).atZone(ZoneId.of("UTC"))
   private val payloadCreator = new BackendVersionPayloadCreator()
 
   def xmlVersionValidationService: ValidateXmlAgainstSchema = new ValidateXmlAgainstSchema(getSchema("/api/conf/1.0/schemas/wco/declaration/retrieveDeclarationVersionRequest.xsd").get)

@@ -18,12 +18,11 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
+import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, SearchAuthAction, SearchParametersCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.services.DeclarationSearchService
+import ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationSearchService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -39,12 +38,18 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                  val declarationSearchService: DeclarationSearchService,
                                  val cc: ControllerComponents,
-                                 val logger: InformationLogger)
-                                (implicit val ec: ExecutionContext) extends BackendController(cc) {
-
-  def list(eori: Option[String], partyRole: Option[String], declarationCategory: Option[String], goodsLocationCode: Option[String],
-           declarationStatus: Option[String], dateFrom: Option[String], dateTo: Option[String],
-           pageNumber: Option[String], declarationSubmissionChannel: Option[String]): Action[AnyContent] = actionPipeline.async {
+                                 val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc) {
+  //TODO just what is the point of this method, needs investigating and probably removal
+  def list(eori: Option[String],
+           partyRole: Option[String],
+           declarationCategory: Option[String],
+           goodsLocationCode: Option[String],
+           declarationStatus: Option[String],
+           dateFrom: Option[String],
+           dateTo: Option[String],
+           pageNumber: Option[String],
+           declarationSubmissionChannel: Option[String]): Action[AnyContent] =
+    actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search()
   }
 
@@ -54,7 +59,7 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
     declarationSearchService.send(ParameterSearch()) map {
       case Right(res: HttpResponse) =>
         new HasConversationId {
-          override val conversationId = asr.conversationId
+          override val conversationId: ConversationId = asr.conversationId
         }
         logger.info(s"Declaration information search processed successfully.")
         logger.debug(s"Returning declaration information search response with status code ${res.status} and body\n ${res.body}")

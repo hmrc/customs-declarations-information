@@ -16,23 +16,19 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
 
+import java.time.ZonedDateTime
 import javax.inject.Singleton
 import scala.xml.NodeSeq
 
 @Singleton
 class BackendFullPayloadCreator() extends BackendPayloadCreator {
-
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
-                         date: DateTime,
+                         date: ZonedDateTime,
                          searchType: SearchType,
-                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-                        (implicit asr: AuthorisedRequest[A]): NodeSeq = {
-
+                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])(implicit authorisedRequest: AuthorisedRequest[A]): NodeSeq = {
     val searchTypeAsType = searchType.asInstanceOf[Mrn]
 
     <n1:retrieveFullDeclarationDataRequest
@@ -42,8 +38,8 @@ class BackendFullPayloadCreator() extends BackendPayloadCreator {
       {requestCommon(conversationId, correlationId, date, searchType, maybeApiSubscriptionFieldsResponse)}
       <n1:requestDetail>
             <n1:MRN>{searchTypeAsType}</n1:MRN>
-            {asr.declarationVersion.fold(NodeSeq.Empty)(dv => <n1:DeclarationVersionNumber>{dv}</n1:DeclarationVersionNumber>)}
-            {asr.declarationSubmissionChannel.fold(NodeSeq.Empty)(apo => <n1:DeclarationSubmissionChannel>{apo}</n1:DeclarationSubmissionChannel>)}
+            {authorisedRequest.declarationVersion.fold(NodeSeq.Empty)(declarationVersion => <n1:DeclarationVersionNumber>{declarationVersion}</n1:DeclarationVersionNumber>)}
+            {authorisedRequest.declarationSubmissionChannel.fold(NodeSeq.Empty)(declarationSubmissionChannel => <n1:DeclarationSubmissionChannel>{declarationSubmissionChannel}</n1:DeclarationSubmissionChannel>)}
       </n1:requestDetail>
     </n1:retrieveFullDeclarationDataRequest>
   }

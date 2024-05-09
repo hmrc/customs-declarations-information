@@ -16,26 +16,20 @@
 
 package uk.gov.hmrc.customs.declarations.information.xml
 
-import org.joda.time.DateTime
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
+import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils
 
-import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
 import javax.inject.Singleton
 import scala.xml.NodeSeq
 
 @Singleton
 class BackendSearchPayloadCreator() extends BackendPayloadCreator {
-
-  private val sdf = new SimpleDateFormat("yyyy-MM-dd")
-
   override def create[A](conversationId: ConversationId,
                          correlationId: CorrelationId,
-                         date: DateTime,
+                         date: ZonedDateTime,
                          searchType: SearchType,
-                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])
-  (implicit asr: AuthorisedRequest[A]): NodeSeq = {
-
+                         maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse])(implicit asr: AuthorisedRequest[A]): NodeSeq = {
     val searchParameters = asr.searchParameters.get
 
     <n1:retrieveDeclarationSummaryDataRequest
@@ -51,8 +45,8 @@ class BackendSearchPayloadCreator() extends BackendPayloadCreator {
         {searchParameters.goodsLocationCode.fold(NodeSeq.Empty)(glc => <n1:goodsLocationCode>{glc}</n1:goodsLocationCode>)}
         {if (searchParameters.dateFrom.isDefined || searchParameters.dateTo.isDefined) {
         <n1:dateRange>
-          {searchParameters.dateFrom.fold(NodeSeq.Empty)(df => <n1:dateFrom>{sdf.format(df)}</n1:dateFrom>) }
-          {searchParameters.dateTo.fold(NodeSeq.Empty)(df => <n1:dateTo>{sdf.format(df)}</n1:dateTo>) }
+          {searchParameters.dateFrom.fold(NodeSeq.Empty)(df => <n1:dateFrom>{DateTimeUtils.dateFormat.format(df)}</n1:dateFrom>) }
+          {searchParameters.dateTo.fold(NodeSeq.Empty)(df => <n1:dateTo>{DateTimeUtils.dateFormat.format(df)}</n1:dateTo>) }
         </n1:dateRange>
         }
         }
@@ -61,6 +55,4 @@ class BackendSearchPayloadCreator() extends BackendPayloadCreator {
       </n1:requestDetail>
     </n1:retrieveDeclarationSummaryDataRequest>
   }
-
-
 }

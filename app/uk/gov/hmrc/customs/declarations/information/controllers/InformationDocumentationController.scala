@@ -29,9 +29,7 @@ import javax.inject.{Inject, Singleton}
 class InformationDocumentationController @Inject()(assets: Assets,
                                                    cc: ControllerComponents,
                                                    configuration: Configuration,
-                                                   logger: InformationLogger)
-  extends DocumentationController(assets, cc) {
-
+                                                   logger: InformationLogger) extends DocumentationController(assets, cc) {
   private lazy val v1Enabled = configuration.getOptional[Boolean]("api.access.version-1.0.enabled").getOrElse(true)
   private lazy val v2Enabled = configuration.getOptional[Boolean]("api.access.version-2.0.enabled").getOrElse(true)
 

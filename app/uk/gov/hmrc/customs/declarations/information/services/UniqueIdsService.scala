@@ -19,13 +19,12 @@ package uk.gov.hmrc.customs.declarations.information.services
 import com.google.inject.Singleton
 import uk.gov.hmrc.customs.declarations.information.model.{ConversationId, CorrelationId}
 
+import java.util.UUID
 import javax.inject.Inject
 
-
+//TODO can be an object? for testing most likely but investigate. Did try and remove it but it caused some issues. But still can be done I reckon.
 @Singleton
-class UniqueIdsService @Inject()(uuidService: UuidService) {
-
-  def conversation: ConversationId = ConversationId(uuidService.uuid())
-
-  def correlation: CorrelationId = CorrelationId(uuidService.uuid())
+class UniqueIdsService @Inject()() {
+  def generateUniqueConversationId: ConversationId = ConversationId(UUID.randomUUID())
+  def generateUniqueCorrelationId: CorrelationId = CorrelationId(UUID.randomUUID())
 }

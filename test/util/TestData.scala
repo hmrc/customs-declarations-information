@@ -17,7 +17,6 @@
 package util
 
 import com.google.inject.AbstractModule
-import org.joda.time.DateTime
 import org.mockito.Mockito.mock
 import play.api.http.HeaderNames._
 import play.api.inject.guice.GuiceableModule
@@ -25,14 +24,14 @@ import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{ApiVersionRequest, ConversationIdRequest, ExtractedHeadersImpl, SearchParameters}
-import uk.gov.hmrc.customs.declarations.information.services.{UniqueIdsService, UuidService}
+import ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}
 import util.TestData.declarantEori
 
 import java.text.SimpleDateFormat
+import java.time.{LocalDateTime, Month, ZoneId, ZonedDateTime}
 import java.util.UUID
 import java.util.UUID.fromString
 
@@ -62,7 +61,7 @@ object TestData {
   val invalidInventoryReferenceTooLong = "theInventoryReferenceThatIsTooLongToBeAcceptableToThisServiceFarFarTooLongInFactToBeOfUse"
 
   val dateString = "2018-09-11T10:28:54.128Z"
-  val date: DateTime = DateTime.parse("2018-09-11T10:28:54.128Z")
+  val date: ZonedDateTime = LocalDateTime.of(2018, Month.SEPTEMBER, 11, 10, 28, 54, 128000000).atZone(ZoneId.of("UTC"))
 
   val subscriptionFieldsIdString: String = "b82f31c6-2239-4253-b6f5-ed75e37ab7a5"
   val subscriptionFieldsIdUuid: UUID = fromString("b82f31c6-2239-4253-b6f5-ed75e37ab7a5")
@@ -91,24 +90,19 @@ object TestData {
 
   type EmulatedServiceFailure = UnsupportedOperationException
   val emulatedServiceFailure = new EmulatedServiceFailure("Emulated service failure.")
-
-  lazy val mockUuidService: UuidService = mock(classOf[UuidService])
-
   lazy val stubInformationLogger = new StubInformationLogger(mock(classOf[CdsLogger]))
 
   object TestModule extends AbstractModule {
-    override def configure(): Unit = {
-      bind(classOf[UuidService]) toInstance mockUuidService
-    }
+    override def configure(): Unit = {}
 
     def asGuiceableModule: GuiceableModule = GuiceableModule.guiceable(this)
   }
 
   // note we can not mock service methods that return value classes - however using a simple stub IMHO it results in cleaner code (less mocking noise)
-  lazy val stubUniqueIdsService: UniqueIdsService = new UniqueIdsService(mockUuidService) {
-    override def conversation: ConversationId = conversationId
+  lazy val stubUniqueIdsService: UniqueIdsService = new UniqueIdsService() {
+    override def generateUniqueConversationId: ConversationId = conversationId
 
-    override def correlation: CorrelationId = correlationId
+    override def generateUniqueCorrelationId: CorrelationId = correlationId
   }
 
   val TestFakeRequestV1 = FakeRequest().withHeaders(("Accept", "application/vnd.hmrc.1.0+xml"))
@@ -163,7 +157,6 @@ object TestData {
 }
 
 object RequestHeaders {
-
   val X_CONVERSATION_ID_NAME = "X-Conversation-ID"
   lazy val X_CONVERSATION_ID_HEADER: (String, String) = X_CONVERSATION_ID_NAME -> TestData.conversationId.toString
 

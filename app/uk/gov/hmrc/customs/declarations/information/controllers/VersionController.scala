@@ -18,12 +18,12 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
+import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction, VersionAuthAction}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, HasConversationId}
-import uk.gov.hmrc.customs.declarations.information.services.DeclarationVersionService
+import ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationVersionService
+import uk.gov.hmrc.customs.declarations.information.util.MrnValidator
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -38,9 +38,7 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                   val internalClientIdsCheckAction: InternalClientIdsCheckAction,
                                   val declarationVersionService: DeclarationVersionService,
                                   val cc: ControllerComponents,
-                                  val logger: InformationLogger)
-                                 (implicit val ec: ExecutionContext) extends BackendController(cc) with DeclarationController {
-
+                                  val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc){
   def list(mrn: String, declarationSubmissionChannel: Option[String] = None): Action[AnyContent] = actionPipeline.async {
     implicit asr: AuthorisedRequest[AnyContent] => search(Mrn(mrn))
   }
@@ -48,13 +46,11 @@ class VersionController @Inject()(val shutterCheckAction: ShutterCheckAction,
   private def search(mrn: Mrn)(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
     logger.debug(s"Declaration information request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-    validateMrn(mrn, logger) match {
+    MrnValidator.validateMrn(mrn, logger) match {
       case Right(()) =>
         declarationVersionService.send(mrn) map {
           case Right(res: HttpResponse) =>
-            new HasConversationId {
-              override val conversationId = asr.conversationId
-            }
+            new HasConversationId {override val conversationId: ConversationId = asr.conversationId}
             logger.info(s"Declaration information versions processed successfully.")
             logger.debug(s"Returning declaration information versions response with status code ${res.status} and body\n ${res.body}")
             Ok(res.body).withConversationId.as(ContentTypes.XML)

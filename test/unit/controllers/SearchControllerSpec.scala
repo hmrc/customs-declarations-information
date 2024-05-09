@@ -16,27 +16,28 @@
 
 package unit.controllers
 
-import org.joda.time.DateTime
 import org.mockito.ArgumentMatchers.{eq => meq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.mvc._
-import play.api.test.Helpers.{header, _}
+import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationConnector._
+import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, SearchAuthAction, SearchParametersCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
+import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationSearchConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.SearchController
-import uk.gov.hmrc.customs.declarations.information.controllers.actionBuilders._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.{AuthorisedRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.services._
+import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationSearchService
+import uk.gov.hmrc.customs.declarations.information.services.filter.SearchResponseFilterService
+import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FakeRequests._
@@ -45,6 +46,7 @@ import util.TestData._
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, SearchTestXMLData, UnitSpec}
 
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,7 +55,7 @@ class SearchControllerSpec extends UnitSpec
 
   trait SetUp extends AuthConnectorStubbing {
 
-    protected val mockInformationConfigService: InformationConfigService = mock(classOf[InformationConfigService])
+    protected val mockInformationConfigService: ConfigService = mock(classOf[ConfigService])
     when(mockInformationConfigService.informationShutterConfig).thenReturn(InformationShutterConfig(Some(false), Some(false)))
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 1, Seq()))
 
@@ -71,8 +73,7 @@ class SearchControllerSpec extends UnitSpec
 
     protected val mockSearchConnector: DeclarationSearchConnector = mock(classOf[DeclarationSearchConnector])
     protected val customsAuthService = new CustomsAuthService(mockAuthConnector, mockInformationLogger)
-    protected val mockDateTimeService: DateTimeService = mock(classOf[DateTimeService])
-    protected val dateTime = new DateTime()
+    protected val dateTime = ZonedDateTime.now()
 
     protected val stubAuthStatusAction: SearchAuthAction = new SearchAuthAction(customsAuthService, headerValidator, mockInformationLogger)
     protected val stubShutterCheckAction: ShutterCheckAction = new ShutterCheckAction(mockInformationLogger, mockInformationConfigService)
@@ -81,7 +82,7 @@ class SearchControllerSpec extends UnitSpec
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubSearchResponseFilterService: SearchResponseFilterService = new SearchResponseFilterService()
     protected val stubDeclarationSearchService = new DeclarationSearchService(stubSearchResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockSearchConnector, mockDateTimeService, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockSearchConnector, stubUniqueIdsService, mockInformationConfigService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: SearchController = new SearchController(
@@ -103,8 +104,7 @@ class SearchControllerSpec extends UnitSpec
       controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
-    when(mockSearchConnector.send(any[DateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockDateTimeService.nowUtc()).thenReturn(dateTime)
+    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -219,7 +219,7 @@ class SearchControllerSpec extends UnitSpec
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
-      when(mockSearchConnector.send(any[DateTime],
+      when(mockSearchConnector.send(any[ZonedDateTime],
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],

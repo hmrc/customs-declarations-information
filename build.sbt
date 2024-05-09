@@ -1,10 +1,10 @@
 import com.typesafe.sbt.web.PathMapping
 import com.typesafe.sbt.web.pipeline.Pipeline
-import sbt.Keys._
+import sbt.Keys.*
 import sbt.Tests.{Group, SubProcess}
-import sbt._
+import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
-import uk.gov.hmrc.gitstamp.GitStampPlugin._
+import uk.gov.hmrc.gitstamp.GitStampPlugin.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import java.text.SimpleDateFormat
@@ -12,7 +12,7 @@ import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "2.13.11"
+scalaVersion := "2.13.13"
 targetJvm := "jvm-11"
 //Test / fork := false
 
@@ -67,12 +67,12 @@ lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(
-      "<empty>"
-      ,"Reverse.*"
-      ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
-      ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
-      ,".*(Reverse|AuthService|BuildInfo|Routes).*"
-    ).mkString(";"),
+    "<empty>"
+    ,"Reverse.*"
+    ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
+    ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
+    ,".*(Reverse|AuthService|BuildInfo|Routes).*"
+  ).mkString(";"),
   coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
@@ -121,6 +121,3 @@ zipWcoXsds := { mappings: Seq[PathMapping] =>
 }
 
 pipelineStages := Seq(zipWcoXsds)
-
-// To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
-libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

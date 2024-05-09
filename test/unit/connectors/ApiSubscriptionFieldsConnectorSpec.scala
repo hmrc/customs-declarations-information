@@ -24,11 +24,10 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.InformationConfig
-import uk.gov.hmrc.customs.declarations.information.model.actionbuilders.AuthorisedRequest
-import uk.gov.hmrc.customs.declarations.information.services.InformationConfigService
+import uk.gov.hmrc.customs.declarations.information.model.AuthorisedRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
@@ -49,7 +48,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
     when(mockServicesConfig.getString(any[String])).thenReturn("customs-declarations-information")
     new InformationLogger(new CdsLogger(mockServicesConfig))
   }
-  private val mockInformationConfigService = mock(classOf[InformationConfigService])
+  private val mockInformationConfigService = mock(classOf[ConfigService])
   private val mockInformationConfig = mock(classOf[InformationConfig])
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestCspAuthorisedRequest

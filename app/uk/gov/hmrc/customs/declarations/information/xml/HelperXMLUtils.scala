@@ -21,9 +21,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 import scala.xml.{Elem, NamespaceBinding, Node}
 
 object HelperXMLUtils {
-
-  def createPrefixTransformer(inputPrefixToOutputPrefixMap: Map[String, String],
-                              nsb: NamespaceBinding): RuleTransformer = {
+  def createPrefixTransformer(inputPrefixToOutputPrefixMap: Map[String, String], nsb: NamespaceBinding): RuleTransformer = {
     new RuleTransformer(new RewriteRule {
       override def transform(n: Node): Seq[Node] = n match {
         case e: Elem => {
