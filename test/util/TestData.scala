@@ -23,8 +23,8 @@ import play.api.inject.guice.GuiceableModule
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model._
-import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
 import unit.logging.StubInformationLogger
 import util.RequestHeaders.{X_BADGE_IDENTIFIER_NAME, X_SUBMITTER_IDENTIFIER_NAME}

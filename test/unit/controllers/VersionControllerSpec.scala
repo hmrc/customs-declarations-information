@@ -28,8 +28,8 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction, VersionAuthAction}
-import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService, InformationShutterConfig}
+import uk.gov.hmrc.customs.declarations.information.action._
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.VersionController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger

@@ -22,8 +22,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorGenericBadRequest, errorBadRequest}
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model._
-import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.util.DateTimeUtils
 
 import java.text.ParseException

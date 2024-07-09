@@ -20,8 +20,8 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema
 import uk.gov.hmrc.customs.api.common.xml.ValidateXmlAgainstSchema._
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, SearchParametersRequestOps, ValidatedHeadersRequestOps}
 import uk.gov.hmrc.customs.declarations.information.model._
-import ActionBuilderModelHelper.{ApiVersionRequestOps, InternalClientIdsRequestOps, SearchParametersRequestOps, ValidatedHeadersRequestOps}
 import uk.gov.hmrc.customs.declarations.information.xml.BackendSearchPayloadCreator
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.SearchTestXMLData._

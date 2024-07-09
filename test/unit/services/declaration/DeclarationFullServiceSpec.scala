@@ -25,11 +25,11 @@ import play.api.test.Helpers
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
-import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model._
-import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationFullService
 import uk.gov.hmrc.customs.declarations.information.services.filter.FullResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator

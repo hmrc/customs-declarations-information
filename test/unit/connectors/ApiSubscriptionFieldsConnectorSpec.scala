@@ -24,7 +24,7 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.AuthorisedRequest

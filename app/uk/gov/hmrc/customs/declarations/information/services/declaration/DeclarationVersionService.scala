@@ -21,8 +21,8 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalSer
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.services.filter.VersionResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
+import uk.gov.hmrc.customs.declarations.information.services.filter.VersionResponseFilterService
 import uk.gov.hmrc.http.HttpResponse
 
 import javax.inject.{Inject, Singleton}

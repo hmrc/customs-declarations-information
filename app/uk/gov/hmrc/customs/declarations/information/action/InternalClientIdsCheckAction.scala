@@ -20,8 +20,8 @@ import play.api.mvc.{ActionRefiner, Result}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorBadRequest
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{DeclarationSubmissionChannel, InternalClientIdsRequest, ValidatedHeadersRequest}
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
+import uk.gov.hmrc.customs.declarations.information.model.{DeclarationSubmissionChannel, InternalClientIdsRequest, ValidatedHeadersRequest}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

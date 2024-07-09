@@ -18,23 +18,23 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 
 import com.google.inject.Inject
 import org.apache.pekko.pattern.CircuitBreakerOpenException
-import play.api.http.HeaderNames.{ACCEPT, AUTHORIZATION, CONTENT_TYPE, DATE, X_FORWARDED_HOST}
+import play.api.http.HeaderNames._
 import play.api.http.{MimeTypes, Status}
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
-import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, AuthorisedRequest, ConnectionError, ConversationId, CorrelationId, Non2xxResponseError, Non2xxResponseException, RetryError, SearchType, UnexpectedError}
+import uk.gov.hmrc.customs.declarations.information.model._
+import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.util.HeaderUtil
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 //TODO i would question the need for this as most of it can probably be done by a service
 abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
                                                       logger: InformationLogger,
