@@ -104,7 +104,7 @@ class SearchControllerSpec extends UnitSpec
       controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
-    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -223,7 +223,7 @@ class SearchControllerSpec extends UnitSpec
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        any[StatusSearchType])(any[AuthorisedRequest[_]]))
+        any[StatusSearchType])(any[AuthorisedRequest[_]], any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
 
       authoriseCsp()

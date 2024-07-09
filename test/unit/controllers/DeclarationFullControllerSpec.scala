@@ -102,7 +102,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -282,7 +282,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
 
       authoriseCsp()

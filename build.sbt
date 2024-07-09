@@ -12,7 +12,7 @@ import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "2.13.13"
+scalaVersion := "2.13.14"
 targetJvm := "jvm-11"
 //Test / fork := false
 

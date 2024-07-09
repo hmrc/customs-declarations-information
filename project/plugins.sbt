@@ -7,7 +7,7 @@ addSbtPlugin("com.github.sbt"    %  "sbt-release"           % "1.0.15")
 addSbtPlugin("org.playframework" %  "sbt-plugin"            % "3.0.2")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-distributables"    % "2.5.0")
 addSbtPlugin("net.virtual-void"  %  "sbt-dependency-graph"  % "0.10.0-RC1")
-addSbtPlugin("org.scoverage"     %  "sbt-scoverage"         % "2.0.11")
+addSbtPlugin("org.scoverage"     %  "sbt-scoverage"         % "2.1.0")
 addSbtPlugin("org.scalastyle"    %% "scalastyle-sbt-plugin" % "1.0.0")
 addSbtPlugin("com.timushev.sbt"  %  "sbt-updates"           % "0.6.3")
 

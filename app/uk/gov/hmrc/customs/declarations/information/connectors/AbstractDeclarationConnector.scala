@@ -25,7 +25,8 @@ import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, AuthorisedRequest, ConversationId, CorrelationId, Non2xxResponseError, Non2xxResponseException, RetryError, SearchType, UnexpectedError, ConnectionError}
+import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFieldsResponse, ApiVersion, AuthorisedRequest, ConnectionError, ConversationId, CorrelationId, Non2xxResponseError, Non2xxResponseException, RetryError, SearchType, UnexpectedError}
+import uk.gov.hmrc.customs.declarations.information.util.HeaderUtil
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -39,7 +40,9 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
                                                       logger: InformationLogger,
                                                       backendPayloadCreator: BackendPayloadCreator,
                                                       serviceConfigProvider: ServiceConfigProvider,
-                                                      config: ConfigService)(implicit val ec: ExecutionContext) extends CircuitBreakerConnector with Status {
+                                                      config: ConfigService)(implicit val ec: ExecutionContext)
+  extends CircuitBreakerConnector with Status with HeaderUtil {
+
   override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
   override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
@@ -48,11 +51,11 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
               correlationId: CorrelationId,
               apiVersion: ApiVersion,
               maybeApiSubscriptionFieldsResponse: Option[ApiSubscriptionFieldsResponse],
-              searchType: SearchType)(implicit asr: AuthorisedRequest[A]): Future[Either[ConnectionError, HttpResponse]] = {
+              searchType: SearchType)(implicit asr: AuthorisedRequest[A], hc: HeaderCarrier): Future[Either[ConnectionError, HttpResponse]] = {
     val config: ServiceConfig = Option(serviceConfigProvider.getConfig(s"${apiVersion.configPrefix}$configKey")).getOrElse(throw new IllegalArgumentException("config not found"))
     val url: String = config.url
     val bearerToken: String = "Bearer " + config.bearerToken.getOrElse(throw new IllegalStateException("no bearer token was found in config"))
-    val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken))
+    val headers: Seq[(String, String)] = getHeaders(date, asr.conversationId, correlationId) ++ Seq((AUTHORIZATION, bearerToken)) ++ getCustomsApiStubExtraHeaders
     val declarationPayload: NodeSeq = backendPayloadCreator.create(
       asr.conversationId,
       correlationId,
@@ -61,10 +64,9 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
       maybeApiSubscriptionFieldsResponse)
 
     withCircuitBreaker {
-      implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
       logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
 
-      http.POSTString(url, declarationPayload.toString(), headers).map { response =>
+      http.POSTString(url, declarationPayload.toString(), headers)(readRaw, HeaderCarrier(), implicitly).map { response =>
         logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
 
         response.status match {

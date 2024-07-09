@@ -24,7 +24,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model.{AuthorisedRequest, ConnectionError, Csp, UnexpectedError, VersionOne}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.CustomsDeclarationsExternalServicesConfig.BackendFullDeclarationServiceContextV1
 import util.ExternalServicesConfig.{AuthToken, Host, Port}
@@ -93,6 +93,6 @@ class DeclarationFullConnectorSpec extends IntegrationTestSpec
   }
 
   private def sendValidXml(): Future[Either[ConnectionError, HttpResponse]] = {
-    connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)
+    connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(asr, HeaderCarrier())
   }
 }
