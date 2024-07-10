@@ -28,8 +28,8 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, SearchAuthAction, SearchParametersCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction}
-import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService, InformationShutterConfig}
+import uk.gov.hmrc.customs.declarations.information.action._
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationSearchConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.SearchController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -104,7 +104,7 @@ class SearchControllerSpec extends UnitSpec
       controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
-    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
@@ -223,7 +223,7 @@ class SearchControllerSpec extends UnitSpec
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        any[StatusSearchType])(any[AuthorisedRequest[_]]))
+        any[StatusSearchType])(any[AuthorisedRequest[_]], any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
 
       authoriseCsp()

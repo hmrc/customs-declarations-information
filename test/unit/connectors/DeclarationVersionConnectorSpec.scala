@@ -45,6 +45,7 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
   private val mockInformationConfigService = mock(classOf[ConfigService])
   private val mockBackendPayloadCreator = mock(classOf[BackendVersionPayloadCreator])
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
   private val actorSystem = ActorSystem("mockActorSystem")

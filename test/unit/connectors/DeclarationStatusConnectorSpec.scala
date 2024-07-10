@@ -40,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
   private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])

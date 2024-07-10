@@ -25,11 +25,11 @@ import play.api.test.Helpers
 import play.mvc.Http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalServerError
-import uk.gov.hmrc.customs.declarations.information.config.{InformationConfig, ConfigService}
+import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model._
-import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationVersionService
 import uk.gov.hmrc.customs.declarations.information.services.filter.VersionResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
@@ -61,7 +61,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
   trait SetUp {
     when(mockDeclarationVersionConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
-      meq[Mrn](mrn))(any[AuthorisedRequest[_]]))
+      meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
     when(mockVersionResponseFilterService.findPathThenTransform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
@@ -84,14 +84,14 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     "send xml to connector as CSP" in new SetUp() {
       val result: Either[Result, HttpResponse] = send()
       result.toOption.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest)
+      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn)(TestCspAuthorisedRequest, headerCarrier)
     }
 
     "send xml to connector as non-CSP" in new SetUp() {
       implicit val nonCspRequest: AuthorisedRequest[AnyContentAsEmpty.type] = TestInternalClientIdsRequest.toNonCspAuthorisedRequest(declarantEori)
       val result: Either[Result, HttpResponse] = send(nonCspRequest)
       result.toOption.get.body shouldBe "<xml>transformed</xml>"
-      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest)
+      verify(mockDeclarationVersionConnector).send(dateTime, correlationId, VersionOne, None, mrn)(nonCspRequest, headerCarrier)
     }
 
     "return 500 with detailed message when call to api-subscription field returns no eori" in new SetUp() {
@@ -121,7 +121,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
@@ -142,7 +142,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "MRN parameter invalid").XmlResult.withConversationId)
@@ -163,7 +163,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60011", "Invalid declarationSubmissionChannel parameter").XmlResult.withConversationId)
@@ -184,7 +184,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
@@ -205,7 +205,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error").XmlResult.withConversationId)
@@ -216,7 +216,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(Non2xxResponseError(FORBIDDEN, mockHttpResponse.body))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(FORBIDDEN, mockHttpResponse.body))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorPayloadForbidden.XmlResult.withConversationId)
@@ -227,7 +227,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]])).thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
+        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)

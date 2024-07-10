@@ -18,10 +18,10 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 
 import play.api.http.ContentTypes
 import play.api.mvc._
-import uk.gov.hmrc.customs.declarations.information.action.{ConversationIdAction, InternalClientIdsCheckAction, ShutterCheckAction, ValidateAndExtractHeadersAction, VersionAuthAction}
+import uk.gov.hmrc.customs.declarations.information.action._
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.model._
-import ActionBuilderModelHelper._
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationVersionService
 import uk.gov.hmrc.customs.declarations.information.util.MrnValidator
 import uk.gov.hmrc.http.HttpResponse

@@ -23,7 +23,7 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.customs.declarations.information.logging.LoggingHelper
 import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model.{ClientId, ConversationIdRequest, Csp, ValidatedHeadersRequest, VersionOne}
+import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames
 import util.TestData._
 import util.UnitSpec
