@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
@@ -39,7 +39,6 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
                                  val declarationSearchService: DeclarationSearchService,
                                  val cc: ControllerComponents,
                                  val logger: InformationLogger)(implicit val ec: ExecutionContext) extends BackendController(cc) {
-  //TODO just what is the point of this method, needs investigating and probably removal
   def list(eori: Option[String],
            partyRole: Option[String],
            declarationCategory: Option[String],
@@ -50,22 +49,20 @@ class SearchController @Inject()(val shutterCheckAction: ShutterCheckAction,
            pageNumber: Option[String],
            declarationSubmissionChannel: Option[String]): Action[AnyContent] =
     actionPipeline.async {
-    implicit asr: AuthorisedRequest[AnyContent] => search()
-  }
+    implicit asr: AuthorisedRequest[AnyContent] => {
+      logger.debug(s"Declaration information search request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
 
-  private def search()(implicit asr: AuthorisedRequest[AnyContent]): Future[Result] = {
-    logger.debug(s"Declaration information search request received. Path = ${asr.path} \nheaders = ${asr.headers.headers}")
-
-    declarationSearchService.send(ParameterSearch()) map {
-      case Right(res: HttpResponse) =>
-        new HasConversationId {
-          override val conversationId: ConversationId = asr.conversationId
-        }
-        logger.info(s"Declaration information search processed successfully.")
-        logger.debug(s"Returning declaration information search response with status code ${res.status} and body\n ${res.body}")
-        Ok(res.body).withConversationId.as(ContentTypes.XML)
-      case Left(errorResult) =>
-        errorResult
+      declarationSearchService.send(ParameterSearch()) map {
+        case Right(res: HttpResponse) =>
+          new HasConversationId {
+            override val conversationId: ConversationId = asr.conversationId
+          }
+          logger.info(s"Declaration information search processed successfully.")
+          logger.debug(s"Returning declaration information search response with status code ${res.status} and body\n ${res.body}")
+          Ok(res.body).withConversationId.as(ContentTypes.XML)
+        case Left(errorResult) =>
+          errorResult
+      }
     }
   }
 
