@@ -1,19 +1,20 @@
 import com.typesafe.sbt.web.PathMapping
 import com.typesafe.sbt.web.pipeline.Pipeline
+import play.sbt.PlayImport.PlayKeys.playDefaultPort
+import sbt.*
 import sbt.Keys.*
 import sbt.Tests.{Group, SubProcess}
-import sbt.*
-import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, targetJvm}
+import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 import uk.gov.hmrc.gitstamp.GitStampPlugin.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import play.sbt.PlayImport.PlayKeys.playDefaultPort
+
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
 scalaVersion := "2.13.14"
-targetJvm := "jvm-11"
+
 //Test / fork := false
 
 lazy val ComponentTest = config("component") extend Test
