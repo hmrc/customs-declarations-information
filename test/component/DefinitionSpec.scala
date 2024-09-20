@@ -49,13 +49,6 @@ class DefinitionSpec extends ComponentTestSpec
       contentAsJson(resultFuture) shouldBe Json.parse(
         """
           |{
-          |  "scopes": [
-          |    {
-          |      "key": "write:customs-declarations-information",
-          |      "name": "Request details of a declaration",
-          |      "description": "Search for and request details of a declaration"
-          |    }
-          |  ],
           |  "api": {
           |    "name": "Customs Declarations Information",
           |    "description": "Retrieve declaration information",
