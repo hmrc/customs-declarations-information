@@ -1,5 +1,6 @@
 digital-service: CDS
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
+description: The Customs Declarations Information API can be used to request the status and versions of a declaration.
 test-repositories:
   - customs-declaration-performance-test
   - customs-declarations-information-performance-test
