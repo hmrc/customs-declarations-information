@@ -23,12 +23,12 @@ import uk.gov.hmrc.customs.api.common.logging.CdsLogger
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DeclarationFullConnector @Inject()(http: HttpClient,
+class DeclarationFullConnector @Inject()(http: HttpClientV2,
                                          logger: InformationLogger,
                                          backendPayloadCreator: BackendFullPayloadCreator,
                                          serviceConfigProvider: ServiceConfigProvider,

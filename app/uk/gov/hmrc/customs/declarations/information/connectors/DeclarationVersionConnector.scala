@@ -24,11 +24,12 @@ import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DeclarationVersionConnector @Inject()(http: HttpClient,
+class DeclarationVersionConnector @Inject()(http: HttpClientV2,
                                             logger: InformationLogger,
                                             backendPayloadCreator: BackendVersionPayloadCreator,
                                             serviceConfigProvider: ServiceConfigProvider,
