@@ -30,17 +30,19 @@ import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, Infor
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FullTestXMLData.expectedFullPayloadRequest
 import util.TestData._
 import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 
+import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclarationFullConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
 
-  private val mockWsPost = mock(classOf[HttpClient])
+  private val mockWsPost = mock(classOf[HttpClientV2])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
   private val mockInformationConfigService = mock(classOf[ConfigService])
@@ -74,18 +76,26 @@ class DeclarationFullConnectorSpec extends UnitSpec with BeforeAndAfterEach with
         returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
-
-        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
-          any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
+//        httpClientV2
+//          .post(url"$wireMockUrl/create-user")
+//          .withBody(Json.toJson(User("me@mail.com", "John Smith")))
+//          .setHeader(hc.headers(Seq(hc.names.authorisation)): _*) // we have to explicitly copy the header over for external hosts
+//          .execute[HttpResponse]
+//          .futureValue
+        val url = ameq(v1Config.url).asInstanceOf[URL]
+        verify(mockWsPost).post(url).withBody(anyString).execute
+        //  verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
+         // any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
       "pass in the body" in {
         returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
-
-        verify(mockWsPost).POSTString(anyString, ameq(expectedFullPayloadRequest.toString()), any[Seq[(String, String)]])(
-          any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
+        val url = ameq(v1Config.url).asInstanceOf[URL]
+        verify(mockWsPost).post(url).withBody(ameq(expectedFullPayloadRequest.toString())).execute
+       // verify(mockWsPost).post(url = anyObject).withBody( ameq(expectedFullPayloadRequest.toString())), any[Seq[(String, String)]])(
+        //  any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
       "prefix the config key with the prefix if passed" in {
@@ -114,8 +124,8 @@ class DeclarationFullConnectorSpec extends UnitSpec with BeforeAndAfterEach with
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]): OngoingStubbing[Future[HttpResponse]] = {
-    when(mockWsPost.POSTString(anyString, anyString, any[Seq[(String, String)]])(
-      any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
-      .thenReturn(eventualResponse)
+    val url = ameq(v1Config.url).asInstanceOf[URL]
+    //verify(mockWsPost).post(url).withBody(anyString).execute
+    when(mockWsPost.post(url).withBody(anyString).execute) thenReturn (eventualResponse)
   }
 }

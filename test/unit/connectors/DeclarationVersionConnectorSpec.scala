@@ -20,7 +20,7 @@ import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.Eventually
+import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
@@ -29,17 +29,22 @@ import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, Infor
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationVersionConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.test.HttpClientV2Support
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.TestData._
 import util.VersionTestXMLData.expectedVersionPayloadRequest
 import util.{ApiSubscriptionFieldsTestData, UnitSpec}
+import play.api.libs.json.Json
 
+import java.net.URL
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
-
-  private val mockWsPost = mock(classOf[HttpClient])
+class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually with HttpClientV2Support with ScalaFutures {
+//  trait HttpClient extends HttpClientV2 with HttpClientV2Support
+  private val mockWsPost = mock(classOf[HttpClientV2],RETURNS_MOCKS)
+  private val mockRequestBuilder = mock(classOf[RequestBuilder], RETURNS_MOCKS)
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
   private val mockInformationConfigService = mock(classOf[ConfigService])
@@ -52,7 +57,11 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
 
   private val connector = new DeclarationVersionConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock(classOf[CdsLogger]), actorSystem)
 
-  private val v1Config = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
+  private val v1Config = ServiceConfig("https://localhost:3000/", Some("v1-bearer"), "v1-default")
+  private val url: URL = url"${v1Config.url}"
+
+  private val successfulResponse = HttpResponse(200, "")
+
 
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
@@ -61,34 +70,45 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
     when(mockServiceConfigProvider.getConfig("declaration-version")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
     when(mockBackendPayloadCreator.create(conversationId, correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedVersionPayloadRequest)
+    when(mockWsPost.post(any())(any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.execute[HttpResponse]).thenReturn(Future.successful(successfulResponse))
+
   }
 
-  private val successfulResponse = HttpResponse(200, "")
 
   "DeclarationVersionConnector" can {
 
     "when making a successful request" should {
 
       "pass URL from config" in {
-        returnResponseForRequest(Future.successful(successfulResponse))
+//        returnResponseForRequest(successfulResponse)
 
         awaitRequest
 
-        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
-          any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
+      verify(mockWsPost).post(url)(hc).withBody(Json.obj()).execute[HttpResponse]
+
+
+
+//        awaitRequest
+//        verify(mockWsPost).post(ameq(v1Config.url).asInstanceOf[URL]).withBody((Json.obj())).execute[HttpResponse]
+        //thenReturn  (eventualResponse)
+        //verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
+          //any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
       "pass in the body" in {
-        returnResponseForRequest(Future.successful(successfulResponse))
+//        returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
-
-        verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[Seq[(String, String)]])(
-          any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
+        val url:URL = ameq(v1Config.url).asInstanceOf[URL]
+        verify(mockWsPost).post(url).withBody(ameq(expectedVersionPayloadRequest.toString())).execute
+        //verify(mockWsPost).POSTString(anyString, ameq(expectedVersionPayloadRequest.toString()), any[Seq[(String, String)]])(
+          //any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
       }
 
       "prefix the config key with the prefix if passed" in {
-        returnResponseForRequest(Future.successful(successfulResponse))
+//        returnResponseForRequest(Future.successful(successfulResponse))
 
         awaitRequest
 
@@ -112,9 +132,17 @@ class DeclarationVersionConnectorSpec extends UnitSpec with BeforeAndAfterEach w
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
   }
 
-  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
-    when(mockWsPost.POSTString(anyString, anyString, any[Seq[(String, String)]])(
-      any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
-      .thenReturn(eventualResponse)
-  }
+//  private def returnResponseForRequest(response: HttpResponse) = {
+//    //val url:URL = ameq(v1Config.url).asInstanceOf[URL]
+//    //when(mockWsPost.post(ameq(v1Config.url).asInstanceOf[URL]).setHeader(any()).withBody(anyString()).execute) thenReturn (eventualResponse)
+////    when(mockWsPost.post(url"http://localhost:3000/").withBody(Json.obj()).execute) thenReturn(eventualResponse)
+////    httpClientV2.post(url"${v1Config.url}").withBody(Json.obj()).execute[HttpResponse]
+//
+//    when(mockWsPost
+//      .post(ameq(url))(ameq(hc))
+//      .withBody(Json.obj())
+//      .execute[HttpResponse]
+//
+//    ) thenReturn Future.successful(response)
+//  }
 }

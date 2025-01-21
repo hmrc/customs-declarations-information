@@ -28,7 +28,8 @@ import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, Infor
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.AuthorisedRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier,  HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
 import util.ExternalServicesConfig._
@@ -42,7 +43,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   with Eventually
   with ApiSubscriptionFieldsTestData {
 
-  private val mockWSGetImpl = mock(classOf[HttpClient])
+  private val mockWSGetImpl = mock(classOf[HttpClientV2])
   private val mockLogger = {
     val mockServicesConfig = mock(classOf[ServicesConfig])
     when(mockServicesConfig.getString(any[String])).thenReturn("customs-declarations-information")
@@ -69,9 +70,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
     "when making a successful request" should {
       "use the correct URL for valid path parameters and config" in {
         val futureResponse = Future.successful(HttpResponse(OK, responseJsonString))
-        when(mockWSGetImpl.GET[HttpResponse](ameq(expectedUrl))(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(futureResponse)
-
+        when(mockWSGetImpl.get(ameq(expectedUrl)).execute) thenReturn futureResponse
         awaitRequest() shouldBe Some(apiSubscriptionFieldsResponse)
       }
     }
@@ -91,8 +90,9 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
-    when(mockWSGetImpl.GET[HttpResponse](any[URL]())(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(eventualResponse)
+    //when(mockWSGetImpl.GET[HttpResponse](any[URL]())(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
+
+    when(mockWSGetImpl.get(any[URL]()).execute[HttpResponse]) thenReturn(eventualResponse)
   }
 
 }
