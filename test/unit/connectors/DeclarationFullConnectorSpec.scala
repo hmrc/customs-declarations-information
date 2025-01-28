@@ -67,7 +67,8 @@ class DeclarationFullConnectorSpec extends UnitSpec
 
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, Some(1), Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
-  private val successfulResponse = HttpResponse(200, "")
+  private val status = 200
+  private val successfulResponse = HttpResponse(status, "")
 
   override protected def beforeEach(): Unit = {
     reset(mockServiceConfigProvider)
@@ -90,10 +91,10 @@ class DeclarationFullConnectorSpec extends UnitSpec
             .withRequestBody(equalTo("<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation=\"http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd\" xmlns:n1=\"http://gov.uk/customs/FullDeclarationDataRetrievalService\" xmlns:xsi=\"http://gov.uk/customs/retrieveFullDeclarationDataRequest\">\n      <n1:requestCommon>\n        <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>\n        <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>\n        <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>\n        <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>\n        <n1:dateTimeStamp>2018-09-11T10:28:54.128Z</n1:dateTimeStamp>\n        <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>\n        <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>\n      </n1:requestCommon>\n      <n1:requestDetail>\n            <n1:MRN>theMrn</n1:MRN>\n            <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>\n      </n1:requestDetail>\n    </n1:retrieveFullDeclarationDataRequest>"))
             .willReturn(aResponse()
               .withBody("{}")
-              .withStatus(200)
+              .withStatus(status)
             )
         )
-        val res = await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
+        awaitRequest
         externalWireMockServer.verify(postRequestedFor(anyUrl()))
       }
 
@@ -104,7 +105,7 @@ class DeclarationFullConnectorSpec extends UnitSpec
             .withRequestBody(equalTo(expectedFullPayloadRequest.toString()))
             .willReturn(aResponse()
               .withBody("{}")
-              .withStatus(200)
+              .withStatus(status)
             )
         )
         awaitRequest
@@ -117,7 +118,7 @@ class DeclarationFullConnectorSpec extends UnitSpec
                   .withRequestBody(equalTo("<n1:retrieveFullDeclarationDataRequest xsi:schemaLocation=\"http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd\" xmlns:n1=\"http://gov.uk/customs/FullDeclarationDataRetrievalService\" xmlns:xsi=\"http://gov.uk/customs/retrieveFullDeclarationDataRequest\">\n      <n1:requestCommon>\n        <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>\n        <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>\n        <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>\n        <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>\n        <n1:dateTimeStamp>2018-09-11T10:28:54.128Z</n1:dateTimeStamp>\n        <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>\n        <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>\n      </n1:requestCommon>\n      <n1:requestDetail>\n            <n1:MRN>theMrn</n1:MRN>\n            <n1:DeclarationVersionNumber>1</n1:DeclarationVersionNumber>\n      </n1:requestDetail>\n    </n1:retrieveFullDeclarationDataRequest>"))
                   .willReturn(aResponse()
                     .withBody("{}")
-                    .withStatus(200)
+                    .withStatus(status)
                   )
               )
               awaitRequest

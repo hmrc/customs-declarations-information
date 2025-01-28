@@ -30,7 +30,6 @@ import uk.gov.hmrc.customs.declarations.information.util.HeaderUtil
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
-
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.ZonedDateTime
@@ -68,11 +67,10 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
     withCircuitBreaker {
       logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
 
-    //  http.POSTString(url, declarationPayload.toString(), headers)(readRaw, HeaderCarrier(), implicitly).map { response =>7
       http
         .post(url"$url")
-        .withBody(declarationPayload.toString())
         .setHeader(headers: _*)
+        .withBody(declarationPayload)
         .execute[HttpResponse]
         .map { response =>
           logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")

@@ -76,10 +76,10 @@ class DeclarationVersionConnectorSpec
 
   "DeclarationVersionConnector" can {
 
+    val status = 200
     "when making a successful request" should {
 
       "pass URL from config" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier()
 
         externalWireMockServer.stubFor(
           WireMock
@@ -94,7 +94,7 @@ class DeclarationVersionConnectorSpec
             .withRequestBody(equalTo("<n1:retrieveDeclarationVersionRequest xsi:schemaLocation=\"http://gov.uk/customs/retrieveDeclarationVersion retrieveDeclarationVersionRequest.xsd\" xmlns:n1=\"http://gov.uk/customs/retrieveDeclarationVersion\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n      <n1:requestCommon>\n        <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>\n        <n1:conversationID>38400000-8cf0-11bd-b23e-10b96e4ef00d</n1:conversationID>\n        <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>\n        <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>\n        <n1:dateTimeStamp>2018-09-11T10:28:54.128Z</n1:dateTimeStamp>\n        <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>\n        <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>\n      </n1:requestCommon>\n      <n1:requestDetail>\n        <n1:RetrieveDeclarationVersionRequest>\n          <n1:ServiceRequestParameters>\n            <n1:MRN>theMrn</n1:MRN>\n          </n1:ServiceRequestParameters>\n        </n1:RetrieveDeclarationVersionRequest>\n      </n1:requestDetail>\n    </n1:retrieveDeclarationVersionRequest>"))
             .willReturn(aResponse()
               .withBody("{}")
-              .withStatus(200)
+              .withStatus(status)
             )
         )
         awaitRequest
@@ -108,7 +108,7 @@ class DeclarationVersionConnectorSpec
           .withRequestBody(equalTo(expectedVersionPayloadRequest.toString()))
           .willReturn(aResponse()
             .withBody("{}")
-            .withStatus(200)
+            .withStatus(status)
           )
       )
       awaitRequest
