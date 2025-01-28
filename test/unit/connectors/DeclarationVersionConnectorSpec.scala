@@ -63,10 +63,7 @@ class DeclarationVersionConnectorSpec
 
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
-  private val successfulResponse = HttpResponse(200, "")
-  after {
-    org.slf4j.MDC.clear()
-  }
+
 
   override protected def beforeEach(): Unit = {
     reset(mockServiceConfigProvider)

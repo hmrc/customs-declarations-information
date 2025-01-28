@@ -83,13 +83,6 @@ class DeclarationStatusConnectorSpec extends UnitSpec
             )
         )
         val res = await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
-
-        res.fold((err) => {
-          println(err)
-        }, (result) => {
-          println(result)
-        })
-
         externalWireMockServer.verify(postRequestedFor(anyUrl()))
       }
 

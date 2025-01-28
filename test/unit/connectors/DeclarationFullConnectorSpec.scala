@@ -68,9 +68,6 @@ class DeclarationFullConnectorSpec extends UnitSpec
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, Some(1), Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
 
   private val successfulResponse = HttpResponse(200, "")
-  //  after {
-  //    org.slf4j.MDC.clear()
-  //  }
 
   override protected def beforeEach(): Unit = {
     reset(mockServiceConfigProvider)
@@ -97,11 +94,6 @@ class DeclarationFullConnectorSpec extends UnitSpec
             )
         )
         val res = await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
-        res.fold((err) => {
-          println(err)
-        }, (result) => {
-          println(result)
-        })
         externalWireMockServer.verify(postRequestedFor(anyUrl()))
       }
 
