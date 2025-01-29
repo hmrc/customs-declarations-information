@@ -16,12 +16,12 @@
 
 package unit.connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, anyUrl, equalTo, postRequestedFor}
 import org.apache.pekko.actor.ActorSystem
-import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
-import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.Eventually
+import org.scalatest.BeforeAndAfter
+import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.Helpers
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
@@ -30,64 +30,91 @@ import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, Infor
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationStatusConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendStatusPayloadCreator
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.test.{ExternalWireMockSupport, HttpClientV2Support}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.StatusTestXMLData.expectedStatusPayloadRequest
 import util.TestData._
 import util.{ApiSubscriptionFieldsTestData, UnitSpec}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach with Eventually {
+class DeclarationStatusConnectorSpec extends UnitSpec
+  with ScalaFutures
+  with HttpClientV2Support
+  with IntegrationPatience
+  with Eventually
+  with BeforeAndAfter
+  with ExternalWireMockSupport
+  {
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
   private implicit val hc: HeaderCarrier = HeaderCarrier()
-  private val mockWsPost = mock(classOf[HttpClient])
   private val mockLogger = stubInformationLogger
   private val mockServiceConfigProvider = mock(classOf[ServiceConfigProvider])
   private val mockInformationConfigService = mock(classOf[ConfigService])
   private val mockBackendPayloadCreator = mock(classOf[BackendStatusPayloadCreator])
   private val informationCircuitBreakerConfig: InformationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
   private val actorSystem = ActorSystem("mockActorSystem")
-  private val connector = new DeclarationStatusConnector(mockWsPost, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock(classOf[CdsLogger]), actorSystem)
-  private val v1Config: ServiceConfig = ServiceConfig("v1-url", Some("v1-bearer"), "v1-default")
+  private val connector = new DeclarationStatusConnector(httpClientV2, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock(classOf[CdsLogger]), actorSystem)
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
-
   override protected def beforeEach(): Unit = {
-    reset(mockWsPost, mockServiceConfigProvider)
+    reset(mockServiceConfigProvider)
+    val v1Config: ServiceConfig = ServiceConfig(externalWireMockUrl, Some("v1-bearer"), "v1-default")
     when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(v1Config)
     when(mockInformationConfigService.informationCircuitBreakerConfig).thenReturn(informationCircuitBreakerConfig)
     when(mockBackendPayloadCreator.create(conversationId, correlationId, date, mrn, Some(apiSubscriptionFieldsResponse))(asr)).thenReturn(expectedStatusPayloadRequest)
   }
 
-  private val successfulResponse = HttpResponse(200, "")
 
-  "DeclarationStatusConnector" when {
+    val status = 200
+    "DeclarationStatusConnector" when {
 
     "making a successful request" should {
 
       "pass URL from config" in {
-        returnResponseForRequest(Future.successful(successfulResponse))
-
+        externalWireMockServer.stubFor(
+          WireMock
+            .post("/")
+            .withHeader("X-Forwarded-Host" , equalTo("MDTP"))
+            .withHeader("X-Correlation-ID" , equalTo("e61f8eee-812c-4b8f-b193-06aedc60dca2"))
+            .withHeader("X-Conversation-ID" , equalTo("38400000-8cf0-11bd-b23e-10b96e4ef00d"))
+            .withHeader("Date" , equalTo("Tue, 11 Sept 2018 10:28:54 UTC"))
+            .withHeader("Content-Type" , equalTo("application/xml; charset=utf-8"))
+            .withHeader("Accept" , equalTo("application/xml"))
+            .withHeader("Authorization" , equalTo("Bearer v1-bearer"))
+            .withRequestBody(equalTo(expectedStatusPayloadRequest.toString()))
+            .willReturn(aResponse()
+              .withBody("{}")
+              .withStatus(status)
+            )
+        )
         awaitRequest
-
-        verify(mockWsPost).POSTString(ameq(v1Config.url), anyString, any[Seq[(String, String)]])(
-          any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
+        externalWireMockServer.verify(postRequestedFor(anyUrl()))
       }
 
       "pass in the body" in {
-        returnResponseForRequest(Future.successful(successfulResponse))
-
+        externalWireMockServer.stubFor(
+          WireMock
+            .post("/")
+            .withHeader("X-Forwarded-Host" , equalTo("MDTP"))
+            .withHeader("X-Correlation-ID" , equalTo("e61f8eee-812c-4b8f-b193-06aedc60dca2"))
+            .withHeader("X-Conversation-ID" , equalTo("38400000-8cf0-11bd-b23e-10b96e4ef00d"))
+            .withHeader("Date" , equalTo("Tue, 11 Sept 2018 10:28:54 UTC"))
+            .withHeader("Content-Type" , equalTo("application/xml; charset=utf-8"))
+            .withHeader("Accept" , equalTo("application/xml"))
+            .withHeader("Authorization" , equalTo("Bearer v1-bearer"))
+            .withRequestBody(equalTo(expectedStatusPayloadRequest.toString()))
+            .willReturn(aResponse()
+              .withBody("{}")
+              .withStatus(status)
+            )
+        )
         awaitRequest
-
-        verify(mockWsPost).POSTString(anyString, ameq(expectedStatusPayloadRequest.toString()), any[Seq[(String, String)]])(
-          any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext])
+        externalWireMockServer.verify(postRequestedFor(anyUrl()))
       }
 
       "prefix the config key with the prefix if passed" in {
-        returnResponseForRequest(Future.successful(successfulResponse))
-
         awaitRequest
-
         verify(mockServiceConfigProvider).getConfig("declaration-status")
       }
     }
@@ -95,7 +122,6 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
     "configuration is absent" should {
       "throw an exception when no config is found for given api and version combination" in {
         when(mockServiceConfigProvider.getConfig("declaration-status")).thenReturn(null)
-
         val caught = intercept[IllegalArgumentException] {
           await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
         }
@@ -106,11 +132,5 @@ class DeclarationStatusConnectorSpec extends UnitSpec with BeforeAndAfterEach wi
 
   private def awaitRequest: Either[ConnectionError, HttpResponse] = {
     await(connector.send(date, correlationId, VersionOne, Some(apiSubscriptionFieldsResponse), mrn))
-  }
-
-  private def returnResponseForRequest(eventualResponse: Future[HttpResponse]): OngoingStubbing[Future[HttpResponse]] = {
-    when(mockWsPost.POSTString(anyString, anyString, any[Seq[(String, String)]])(
-      any[HttpReads[HttpResponse]](), any[HeaderCarrier](), any[ExecutionContext]))
-      .thenReturn(eventualResponse)
   }
 }

@@ -1,7 +1,7 @@
 import sbt.*
 
 object AppDependencies {
-  private val bootstrapVersion = "8.6.0"
+  private val bootstrapVersion = "9.7.0"
   private val playVersion = "play-30"
 
   val compile = Seq(
@@ -10,6 +10,8 @@ object AppDependencies {
   )
 
   val test = Seq(
-    "uk.gov.hmrc"            %% s"bootstrap-test-$playVersion" % bootstrapVersion % Test
+    "uk.gov.hmrc"            %% s"bootstrap-test-$playVersion" % bootstrapVersion % Test,
+    "org.mockito"                   %% "mockito-scala-scalatest"         % "1.17.37"    % Test,
+    "org.wiremock"                   % "wiremock-standalone"             % "3.10.0"     % Test
   )
 }

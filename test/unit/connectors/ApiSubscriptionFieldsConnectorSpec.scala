@@ -19,7 +19,7 @@ package unit.connectors
 import org.mockito.ArgumentMatchers.{eq => ameq, _}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.concurrent.Eventually
+import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.Helpers
@@ -28,7 +28,9 @@ import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, Infor
 import uk.gov.hmrc.customs.declarations.information.connectors.ApiSubscriptionFieldsConnector
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.AuthorisedRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.test.HttpClientV2Support
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import util.CustomsDeclarationsExternalServicesConfig.ApiSubscriptionFieldsContext
 import util.ExternalServicesConfig._
@@ -40,9 +42,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   with BeforeAndAfterEach
   with Eventually
-  with ApiSubscriptionFieldsTestData {
+  with ApiSubscriptionFieldsTestData
+  with ScalaFutures
+  with HttpClientV2Support {
 
-  private val mockWSGetImpl = mock(classOf[HttpClient])
+  private val mockWSGetImpl = mock(classOf[HttpClientV2])
   private val mockLogger = {
     val mockServicesConfig = mock(classOf[ServicesConfig])
     when(mockServicesConfig.getString(any[String])).thenReturn("customs-declarations-information")
@@ -53,6 +57,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   private implicit val hc: HeaderCarrier = HeaderCarrier()
   private implicit val vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestData.TestCspAuthorisedRequest
   private implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
+  private val mockRequestBuilder = mock(classOf[RequestBuilder])
 
   private val connector = new ApiSubscriptionFieldsConnector(mockWSGetImpl, mockLogger, mockInformationConfigService)
 
@@ -60,7 +65,6 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
 
   override protected def beforeEach(): Unit = {
     reset(mockWSGetImpl, mockInformationConfigService)
-
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
     when(mockInformationConfig.apiSubscriptionFieldsBaseUrl).thenReturn(s"http://$Host:$Port$ApiSubscriptionFieldsContext")
   }
@@ -69,9 +73,8 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
     "when making a successful request" should {
       "use the correct URL for valid path parameters and config" in {
         val futureResponse = Future.successful(HttpResponse(OK, responseJsonString))
-        when(mockWSGetImpl.GET[HttpResponse](ameq(expectedUrl))(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(futureResponse)
-
+        when(mockWSGetImpl.get(ameq(expectedUrl))(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(futureResponse))
         awaitRequest() shouldBe Some(apiSubscriptionFieldsResponse)
       }
     }
@@ -91,8 +94,8 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
   }
 
   private def returnResponseForRequest(eventualResponse: Future[HttpResponse]) = {
-    when(mockWSGetImpl.GET[HttpResponse](any[URL]())(any[HttpReads[HttpResponse]], any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(eventualResponse)
+    when(mockWSGetImpl.get(any[URL]())(any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(eventualResponse)
   }
 
 }

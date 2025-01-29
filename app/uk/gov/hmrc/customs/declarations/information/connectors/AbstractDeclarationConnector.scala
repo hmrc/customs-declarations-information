@@ -29,19 +29,20 @@ import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XCon
 import uk.gov.hmrc.customs.declarations.information.util.HeaderUtil
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
 //TODO i would question the need for this as most of it can probably be done by a service
-abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
+abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
                                                       logger: InformationLogger,
                                                       backendPayloadCreator: BackendPayloadCreator,
                                                       serviceConfigProvider: ServiceConfigProvider,
                                                       config: ConfigService)(implicit val ec: ExecutionContext)
-  extends CircuitBreakerConnector with Status with HeaderUtil {
+  extends CircuitBreakerConnector with Status with HeaderUtil  {
 
   override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
@@ -66,15 +67,20 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClient,
     withCircuitBreaker {
       logger.debug(s"Sending request to [$url]. Headers: [$headers] Payload: [${declarationPayload.toString()}]")
 
-      http.POSTString(url, declarationPayload.toString(), headers)(readRaw, HeaderCarrier(), implicitly).map { response =>
-        logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
+      http
+        .post(url"$url")
+        .setHeader(headers: _*)
+        .withBody(declarationPayload)
+        .execute[HttpResponse]
+        .map { response =>
+          logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
 
-        response.status match {
-          case status if Status.isSuccessful(status) =>
-            Right(response)
-          case status => //TODO (comment was already here) Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
-            throw Non2xxResponseException(status, response.body)
-        }
+          response.status match {
+            case status if Status.isSuccessful(status) =>
+              Right(response)
+            case status => //TODO (comment was already here) Refactor out usage of exceptions 'eventually', but for now maintaining breakOnException() triggering behaviour
+              throw Non2xxResponseException(status, response.body)
+          }
       }
     }.recover {
       case _: CircuitBreakerOpenException =>
