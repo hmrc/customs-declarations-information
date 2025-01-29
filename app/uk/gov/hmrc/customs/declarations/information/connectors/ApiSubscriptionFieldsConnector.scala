@@ -25,7 +25,7 @@ import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFields
 import uk.gov.hmrc.customs.declarations.information.util.ApiSubscriptionFieldsPath
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.net.URL
 import javax.inject.{Inject, Singleton}

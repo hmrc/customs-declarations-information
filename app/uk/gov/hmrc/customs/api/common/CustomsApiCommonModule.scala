@@ -19,7 +19,7 @@ package uk.gov.hmrc.customs.api.common
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.play.bootstrap.http.{DefaultHttpClient, HttpClientV2Provider}
+import uk.gov.hmrc.play.bootstrap.http.{HttpClientV2Provider}
 
 class CustomsApiCommonModule extends Module {
 
