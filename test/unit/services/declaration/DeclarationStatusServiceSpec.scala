@@ -67,7 +67,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
   trait SetUp {
     when(mockDeclarationStatusConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
       any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]],
-      meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier]))
+      meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier]))
       .thenReturn(Future.successful(Right(mockHttpResponse)))
     when(mockStatusResponseFilterService.findPathThenTransform(<xml>some xml</xml>)).thenReturn(<xml>transformed</xml>)
     when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[HasConversationId], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
@@ -124,7 +124,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(NOT_FOUND, "CDS60001", "Declaration not found").XmlResult.withConversationId)
@@ -144,7 +144,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(BAD_REQUEST, "CDS60002", "Search parameter invalid").XmlResult.withConversationId)
@@ -164,7 +164,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "CDS60003", "Internal server error").XmlResult.withConversationId)
@@ -184,7 +184,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(INTERNAL_SERVER_ERROR, declarationsResponseBody))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error").XmlResult.withConversationId)
@@ -195,7 +195,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(FORBIDDEN, ""))))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Left(Non2xxResponseError(FORBIDDEN, ""))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorPayloadForbidden.XmlResult.withConversationId)
@@ -206,7 +206,7 @@ class DeclarationStatusServiceSpec extends UnitSpec with BeforeAndAfterEach {
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[StatusSearchType](searchType))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
+        meq[StatusSearchType](searchType))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
       val result: Either[Result, HttpResponse] = send()
 
       result shouldBe Left(ErrorResponse.ErrorInternalServerError.XmlResult.withConversationId)

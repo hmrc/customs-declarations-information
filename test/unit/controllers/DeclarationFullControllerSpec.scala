@@ -102,8 +102,8 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
@@ -282,7 +282,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier]))
+        meq[Mrn](mrn))(any[AuthorisedRequest[Any]], any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
 
       authoriseCsp()

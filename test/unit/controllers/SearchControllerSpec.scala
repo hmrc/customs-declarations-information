@@ -104,8 +104,8 @@ class SearchControllerSpec extends UnitSpec
       controller.list(None, None, None, None, None, None, None, None, None).apply(request)
     }
 
-    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+    when(mockSearchConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], any[ParameterSearch])(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
@@ -223,7 +223,7 @@ class SearchControllerSpec extends UnitSpec
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        any[StatusSearchType])(any[AuthorisedRequest[_]], any[HeaderCarrier]))
+        any[StatusSearchType])(any[AuthorisedRequest[Any]], any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
 
       authoriseCsp()

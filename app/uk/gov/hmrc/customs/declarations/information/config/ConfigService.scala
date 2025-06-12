@@ -38,16 +38,16 @@ class ConfigService @Inject()(configValidatedNel: ConfigValidatedNelAdaptor, log
   private val validatedInformationConfig: CustomsValidatedNel[InformationConfig] = (
     apiSubscriptionFieldsServiceUrlNel,
     declarationStatusRequestDaysLimit,
-    internalClientIdsNel) mapN InformationConfig
+    internalClientIdsNel) mapN InformationConfig.apply
 
   private val validatedDeclarationsShutterConfig: CustomsValidatedNel[InformationShutterConfig] = (
     v1ShutteredNel,
-    v2ShutteredNel) mapN InformationShutterConfig
+    v2ShutteredNel) mapN InformationShutterConfig.apply
 
   private val validatedInformationCircuitBreakerConfig: CustomsValidatedNel[InformationCircuitBreakerConfig] = (
     numberOfCallsToTriggerStateChangeNel,
     unavailablePeriodDurationInMillisNel,
-    unstablePeriodDurationInMillisNel) mapN InformationCircuitBreakerConfig
+    unstablePeriodDurationInMillisNel) mapN InformationCircuitBreakerConfig.apply
 
   private val customsConfigHolder =
     (validatedInformationConfig,

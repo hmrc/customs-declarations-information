@@ -38,7 +38,7 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks {
     val loggerMock: InformationLogger = mock(classOf[InformationLogger])
     val validator = new HeaderValidator(loggerMock)
 
-    def validate(avr: ApiVersionRequest[_]): Either[ErrorResponse, ExtractedHeaders] = {
+    def validate(avr: ApiVersionRequest[Any]): Either[ErrorResponse, ExtractedHeaders] = {
       validator.extractClientIdHeaderIfPresentAndValid(avr)
     }
   }
@@ -89,6 +89,6 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks {
     }
   }
 
-  private def apiVersionRequest(requestMap: Map[String, String], apiVersion: ApiVersion = VersionOne): ApiVersionRequest[_] =
+  private def apiVersionRequest(requestMap: Map[String, String], apiVersion: ApiVersion = VersionOne): ApiVersionRequest[Any] =
     ApiVersionRequest(TestData.conversationId, apiVersion, FakeRequest().withHeaders(requestMap.toSeq: _*))
 }

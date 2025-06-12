@@ -13,7 +13,7 @@ import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "2.13.16"
+scalaVersion := "3.3.5"
 
 //Test / fork := false
 
@@ -84,8 +84,6 @@ PlayKeys.devSettings := Seq("play.server.http.port" -> "9834")
 
 def integrationComponentTestFilter(name: String): Boolean = (name startsWith "integration") || (name startsWith "component")
 def unitTestFilter(name: String): Boolean = name startsWith "unit"
-
-scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
 Test / unmanagedResourceDirectories += baseDirectory.value / "test" / "resources"

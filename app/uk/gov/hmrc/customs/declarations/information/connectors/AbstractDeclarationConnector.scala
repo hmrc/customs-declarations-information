@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import org.apache.pekko.pattern.CircuitBreakerOpenException
 import play.api.http.HeaderNames._
 import play.api.http.{MimeTypes, Status}
+import play.api.libs.json.Json
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
@@ -36,6 +37,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
+import play.api.libs.ws.writeableOf_JsValue
 //TODO i would question the need for this as most of it can probably be done by a service
 abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
                                                       logger: InformationLogger,
@@ -44,9 +46,9 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
                                                       config: ConfigService)(implicit val ec: ExecutionContext)
   extends CircuitBreakerConnector with Status with HeaderUtil  {
 
-  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+  override val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
   def send[A](date: ZonedDateTime,
               correlationId: CorrelationId,
@@ -70,7 +72,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
       http
         .post(url"$url")
         .setHeader(headers: _*)
-        .withBody(declarationPayload)
+        .withBody(Json.toJson(declarationPayload.toString()))
         .execute[HttpResponse]
         .map { response =>
           logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")

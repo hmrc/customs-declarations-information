@@ -30,7 +30,7 @@ class StubInformationLogger(logger: CdsLogger) extends InformationLogger(logger)
   override def debug(s: => String, e: => Throwable)(implicit r: HasConversationId): Unit =
     println(s)
 
-  override def debugFull(s: => String)(implicit r: HasConversationId with Request[_]): Unit =
+  override def debugFull(s: => String)(implicit r: HasConversationId with Request[Any]): Unit =
     println(s)
 
   override def info(s: => String)(implicit r: HasConversationId): Unit =
