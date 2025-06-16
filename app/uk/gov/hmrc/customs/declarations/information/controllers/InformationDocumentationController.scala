@@ -19,7 +19,6 @@ package uk.gov.hmrc.customs.declarations.information.controllers
 import controllers.Assets
 import play.api.Configuration
 import play.api.http.MimeTypes
-import play.api.http.Writeable.wByteArray
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.customs.api.common.controllers.DocumentationController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
@@ -36,6 +35,7 @@ class InformationDocumentationController @Inject()(assets: Assets,
 
   def definition(): Action[AnyContent] = Action {
     logger.debugWithoutRequestContext("InformationDocumentationController definition endpoint has been called")
-    Ok.as(MimeTypes.JSON)
+    Ok(uk.gov.hmrc.customs.declarations.information.views.txt.definition(v1Enabled, v2Enabled)).as(MimeTypes.JSON)
   }
 }
+

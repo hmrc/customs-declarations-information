@@ -37,7 +37,7 @@ trait AuthConnectorStubbing extends UnitSpec  {
 
   def authoriseCsp(): Unit = {
     when(mockAuthConnector.authorise(ameq(cspAuthPredicate), ameq(EmptyRetrieval))(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(())
+      .thenReturn(Future.successful(()))
   }
 
   def authoriseCspError(): Unit = {
