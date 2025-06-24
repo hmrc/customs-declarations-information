@@ -46,9 +46,9 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
                                                       config: ConfigService)(implicit val ec: ExecutionContext)
   extends CircuitBreakerConnector with Status with HeaderUtil  {
 
-  override val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
 
   def send[A](date: ZonedDateTime,
               correlationId: CorrelationId,

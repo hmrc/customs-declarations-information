@@ -27,9 +27,9 @@ import scala.util.Try
 
 trait CircuitBreakerConnector {
   protected val configKey: String
-  protected val numberOfCallsToTriggerStateChange: Int
-  protected val unstablePeriodDurationInMillis: Int
-  protected val unavailablePeriodDurationInMillis: Int
+  protected lazy val numberOfCallsToTriggerStateChange: Int
+  protected lazy val unstablePeriodDurationInMillis: Int
+  protected lazy val unavailablePeriodDurationInMillis: Int
 
   protected val cdsLogger: CdsLogger
   protected val actorSystem: ActorSystem

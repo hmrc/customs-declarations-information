@@ -24,6 +24,7 @@ import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.ws.writeableOf_JsValue
 
 import scala.concurrent.ExecutionContext
 
@@ -35,8 +36,8 @@ class DeclarationVersionConnector @Inject()(http: HttpClientV2,
                                             config: ConfigService,
                                             override val cdsLogger: CdsLogger,
                                             override val actorSystem: ActorSystem)(implicit override val ec: ExecutionContext) extends AbstractDeclarationConnector(http, logger, backendPayloadCreator, serviceConfigProvider, config) {
-  override val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
-  override val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
-  override val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
+  override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
+  override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
+  override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
   override val configKey = "declaration-version"
 }

@@ -66,7 +66,7 @@ trait AuthConnectorStubbing extends UnitSpec  {
       Enrolment(customsEnrolmentName).withIdentifier(eoriIdentifier, eori.value)
     }
     when(mockAuthConnector.authorise(ameq(nonCspAuthPredicate), ameq(Retrievals.authorisedEnrolments))(any[HeaderCarrier], any[ExecutionContext]))
-      .thenReturn(Enrolments(Set(customsEnrolment)))
+      .thenReturn(Future.successful(Enrolments(Set(customsEnrolment))))
   }
 
   def verifyNonCspAuthorisationCalled(numberOfTimes: Int): Future[Enrolments] = {
