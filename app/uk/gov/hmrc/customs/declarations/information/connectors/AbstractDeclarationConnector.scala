@@ -18,14 +18,14 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 
 import com.google.inject.Inject
 import org.apache.pekko.pattern.CircuitBreakerOpenException
-import play.api.http.HeaderNames._
+import play.api.http.HeaderNames.*
 import play.api.http.{MimeTypes, Status}
-import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_String
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model._
+import uk.gov.hmrc.customs.declarations.information.model.*
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.util.HeaderUtil
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
@@ -37,7 +37,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.NodeSeq
-import play.api.libs.ws.writeableOf_JsValue
 //TODO i would question the need for this as most of it can probably be done by a service
 abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
                                                       logger: InformationLogger,
@@ -72,7 +71,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
       http
         .post(url"$url")
         .setHeader(headers: _*)
-        .withBody(Json.toJson(declarationPayload.toString()))
+        .withBody(declarationPayload.toString)
         .execute[HttpResponse]
         .map { response =>
           logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
