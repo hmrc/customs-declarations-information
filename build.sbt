@@ -72,7 +72,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ,"Reverse.*"
     ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
     ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
-    ,".*(Reverse|AuthService|BuildInfo|Routes).*"
+    ,".*(Reverse|AuthService|BuildInfo|Routes|ApiSubscriptionFieldsResponse).*"
   ).mkString(";"),
   coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,

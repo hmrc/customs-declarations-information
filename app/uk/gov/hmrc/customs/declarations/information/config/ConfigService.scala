@@ -53,7 +53,7 @@ class ConfigService @Inject()(configValidatedNel: ConfigValidatedNelAdaptor, log
     (validatedInformationConfig,
       validatedDeclarationsShutterConfig,
       validatedInformationCircuitBreakerConfig
-    ).mapN(CustomsConfigHolder)
+    ).mapN(this.CustomsConfigHolder.apply)
       .fold(
         fe = { nel =>
           // error case exposes nel (a NotEmptyList)

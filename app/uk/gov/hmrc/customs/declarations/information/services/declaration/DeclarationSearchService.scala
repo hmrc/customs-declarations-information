@@ -38,6 +38,7 @@ class DeclarationSearchService @Inject()(searchResponseFilterService: SearchResp
                                          uniqueIdsService: UniqueIdsService,
                                          config: ConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "search"
+  val _ = config
   protected val backendCDS60005PageOutOfBoundsResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60005", "pageNumber parameter out of bounds")
   protected val backendCDS60006PartyRoleInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60006", "Invalid partyRole parameter")
   protected val backendCDS60007DeclarationStatusInvalidResponse: ErrorResponse = ErrorResponse(BAD_REQUEST, "CDS60007", "Invalid declarationStatus parameter")

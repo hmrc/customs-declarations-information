@@ -37,7 +37,7 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
                                           uniqueIdsService: UniqueIdsService,
                                           config: ConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "version"
-
+  val _ = config
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {
     errorCodeText.toLowerCase() match {
       case "cds60001" => backendCDS60001NotFoundResponse
