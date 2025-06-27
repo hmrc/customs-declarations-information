@@ -42,6 +42,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FakeRequests._
 import util.RequestHeaders._
+import util.VerifyLogging
 import util.TestData._
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
@@ -136,6 +137,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Future[Result] = submitMrn(ValidCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel, None, Some("AuthenticatedPartyOnly1"))
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60011</code><message>Invalid declarationSubmissionChannel parameter</message></errorResponse>")
+      VerifyLogging.verifyInformationLogger("info","declarationSubmissionChannel parameter passed is invalid: Some(AuthenticatedPartyOnly1)")(mockInformationLogger)
     }
 
     "respond with status 200 and conversationId in header for a processed valid CSP request" in new SetUp() {
@@ -174,6 +176,8 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders(ValidCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       result shouldBe errorResultMissingIdentifiers
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("info","X-Badge-Identifier header empty and allowed")(mockInformationLogger)
+      VerifyLogging.verifyInformationLogger("error","Both X-Submitter-Identifier and X-Badge-Identifier are missing")(mockInformationLogger)
     }
 
     "respond with status 500 for a CSP request with a missing X-Client-ID" in new SetUp() {
@@ -191,6 +195,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
 
       result shouldBe errorResultBadgeIdentifier
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("error","X-Badge-Identifier invalid or not present for CSP")(mockInformationLogger)
     }
 
     "respond with status 400 for a request with an MRN value that is too long" in new SetUp() {
@@ -199,6 +204,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = controller.list(invalidMrnTooLong, None, None).apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
       result shouldBe errorResultMrnTooLong
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("info","MRN parameter is too long: theMrnThatIsTooLongToBeAcceptableToThisService")(mockInformationLogger)
     }
 
     "respond with status 400 for a request with an MRN value that is too short" in new SetUp() {
@@ -217,6 +223,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
 
       result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("info","MRN parameter is invalid: mrn withASpace")(mockInformationLogger)
     }
 
     "process non-CSP request when call is authorised for non-CSP" in new SetUp() {
@@ -257,6 +264,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
 
       status(result) shouldBe OK
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
+      VerifyLogging.verifyInformationLogger("info", "Full declaration information version processed successfully.")(mockInformationLogger)
     }
 
     "respond with status 200 for a non-CSP request with both a missing X-Badge-Identifier and a missing X-Submitter-Identifier" in new SetUp() {
@@ -266,6 +274,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       status(result) shouldBe OK
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
+      VerifyLogging.verifyInformationLogger("debug","Full declaration information request received. Path = / \nheaders = List((Host,localhost), (Accept,application/vnd.hmrc.1.0+xml), (X-Client-ID,SOME_X_CLIENT_ID), (Authorization,Bearer Software-House-Bearer-Token))")(mockInformationLogger)
     }
 
     "respond with status 500 for a non-CSP request with a missing X-Client-ID" in new SetUp() {
@@ -275,6 +284,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("error","Error - header 'X-Client-ID' not present")(mockInformationLogger)
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
