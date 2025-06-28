@@ -32,9 +32,10 @@ import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, Infor
 import uk.gov.hmrc.customs.declarations.information.connectors.DeclarationFullConnector
 import uk.gov.hmrc.customs.declarations.information.model._
 import uk.gov.hmrc.customs.declarations.information.xml.BackendFullPayloadCreator
-import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.http.test.{ExternalWireMockSupport, HttpClientV2Support}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
 import util.FullTestXMLData.expectedFullPayloadRequest
 import util.TestData._

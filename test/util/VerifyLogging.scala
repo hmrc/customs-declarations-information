@@ -31,7 +31,7 @@ object VerifyLogging {
     verifyInformationLogger("warn", message)
   }
 
-  private def verifyInformationLogger(method: String, message: String)(implicit logger: InformationLogger): Unit = {
+   def verifyInformationLogger(method: String, message: String)(implicit logger: InformationLogger): Unit = {
     PassByNameVerifier(logger, method)
       .withByNameParam(message)
       .withParamMatcher(any[HasConversationId])

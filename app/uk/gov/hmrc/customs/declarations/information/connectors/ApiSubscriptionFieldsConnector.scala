@@ -25,9 +25,8 @@ import uk.gov.hmrc.customs.declarations.information.model.{ApiSubscriptionFields
 import uk.gov.hmrc.customs.declarations.information.util.ApiSubscriptionFieldsPath
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
-import java.net.URL
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,10 +35,10 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClientV2,
                                                logger: InformationLogger,
                                                config: ConfigService)(implicit ec: ExecutionContext) {
   def getSubscriptionFields(apiSubsKey: ApiSubscriptionKey)(implicit hci: HasConversationId, hc: HeaderCarrier): Future[Option[ApiSubscriptionFieldsResponse]] = {
-    val url: URL = new URL(ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey))
-    logger.debug(s"Getting fields id from api subscription fields service. url=[$url]")
+    val urlPath: String =  ApiSubscriptionFieldsPath.url(config.informationConfig.apiSubscriptionFieldsBaseUrl, apiSubsKey)
+    logger.debug(s"Getting fields id from api subscription fields service. url=[$urlPath]")
 
-    http.get(url).execute
+    http.get(url"$urlPath").execute
       .map { response =>
         response.status match {
           case status if Status.isSuccessful(status) =>
@@ -47,11 +46,11 @@ class ApiSubscriptionFieldsConnector @Inject()(http: HttpClientV2,
               case Some(value) =>
                 Some(value)
               case None =>
-                logger.error(s"Could not parse subscription fields response. url=[$url]")
+                logger.error(s"Could not parse subscription fields response. url=[$urlPath]")
                 None
             }
           case status =>
-            logger.error(s"Subscriptions fields lookup call failed. url=[$url] HttpStatus=[$status]")
+            logger.error(s"Subscriptions fields lookup call failed. url=[$urlPath] HttpStatus=[$status]")
             None
         }
       }

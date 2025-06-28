@@ -48,7 +48,7 @@ abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
     eventualAuthWithIdentifierHeaders
   }
 
-  protected def eitherCspAuthData[A](implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, AuthorisedAsCsp] = {
+  private def eitherCspAuthData[A](implicit vhr: HasRequest[A] & HasConversationId): Either[ErrorResponse, AuthorisedAsCsp] = {
     val cpsAuth: Either[ErrorResponse, Csp] = for {
       maybeBadgeId <- eitherBadgeIdentifier(allowNone = true)
       maybeEori <- eitherEori
@@ -62,11 +62,11 @@ abstract class AuthAction @Inject()(customsAuthService: CustomsAuthService,
     }
   }
 
-  protected def eitherEori[A](implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, Option[Eori]] = {
+  private def eitherEori[A](implicit vhr: HasRequest[A] & HasConversationId): Either[ErrorResponse, Option[Eori]] = {
     headerValidator.eoriMustBeValidIfPresent
   }
 
-  protected def eitherBadgeIdentifier[A](allowNone: Boolean)(implicit vhr: HasRequest[A] with HasConversationId): Either[ErrorResponse, Option[BadgeIdentifier]] = {
+  private def eitherBadgeIdentifier[A](allowNone: Boolean)(implicit vhr: HasRequest[A] & HasConversationId): Either[ErrorResponse, Option[BadgeIdentifier]] = {
     headerValidator.eitherBadgeIdentifier(allowNone = allowNone)
   }
 }

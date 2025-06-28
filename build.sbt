@@ -13,7 +13,7 @@ import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "2.13.16"
+scalaVersion := "3.3.5"
 
 //Test / fork := false
 
@@ -72,7 +72,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
     ,"Reverse.*"
     ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.upload\\.model\\..*"
     ,"uk\\.gov\\.hmrc\\.customs\\.declarations\\.information\\.views\\..*"
-    ,".*(Reverse|AuthService|BuildInfo|Routes).*"
+    ,".*(Reverse|AuthService|BuildInfo|Routes|ApiSubscriptionFieldsResponse).*"
   ).mkString(";"),
   coverageMinimumStmtTotal := 96,
   coverageFailOnMinimum := true,
@@ -84,8 +84,6 @@ PlayKeys.devSettings := Seq("play.server.http.port" -> "9834")
 
 def integrationComponentTestFilter(name: String): Boolean = (name startsWith "integration") || (name startsWith "component")
 def unitTestFilter(name: String): Boolean = name startsWith "unit"
-
-scalastyleConfig := baseDirectory.value / "project" / "scalastyle-config.xml"
 
 Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
 Test / unmanagedResourceDirectories += baseDirectory.value / "test" / "resources"

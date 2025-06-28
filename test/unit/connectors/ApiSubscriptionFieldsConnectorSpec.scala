@@ -16,8 +16,8 @@
 
 package unit.connectors
 
-import org.mockito.ArgumentMatchers.{eq => ameq, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq as ameq}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import play.api.http.Status.{BAD_REQUEST, OK}
@@ -74,7 +74,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
       "use the correct URL for valid path parameters and config" in {
         val futureResponse = Future.successful(HttpResponse(OK, responseJsonString))
         when(mockWSGetImpl.get(ameq(expectedUrl))(any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(Future.successful(futureResponse))
+        when(mockRequestBuilder.execute[HttpResponse](any(), any())).thenReturn(futureResponse)
         awaitRequest() shouldBe Some(apiSubscriptionFieldsResponse)
       }
     }
@@ -82,7 +82,7 @@ class ApiSubscriptionFieldsConnectorSpec extends UnitSpec
     "when making an failing request" should {
 
       "wrap an underlying error when api subscription fields call fails with a bad request exception" in {
-        returnResponseForRequest(Future.successful(Future.successful(HttpResponse(BAD_REQUEST, ""))))
+        returnResponseForRequest(Future.successful(HttpResponse(BAD_REQUEST, "")))
 
         awaitRequest() shouldBe None
       }

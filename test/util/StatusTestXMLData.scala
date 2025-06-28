@@ -217,7 +217,7 @@ object StatusTestXMLData {
           <otnds:DateTimeString formatCode="304">{acceptanceOrCreationDate.format(dateTimeFormatter)}</otnds:DateTimeString>
         </n1:CancellationDateTime>
         <n1:FunctionalReferenceID>token</n1:FunctionalReferenceID>
-      }}
+      }else NodeSeq.Empty}
       <n1:ID>18GB9JLC3CU1LFGVR2</n1:ID>
       {if (withOptionalElements){
         <n1:RejectionDateTime>
@@ -247,7 +247,7 @@ object StatusTestXMLData {
             </n1:Commodity>
           </n1:GovernmentAgencyGoodsItem>
         </n1:GoodsShipment>
-      }}
+      }else NodeSeq.Empty}
       <n1:ReceivedDateTime>
         <n1:DateTimeString formatCode="304">{acceptanceOrCreationDate.plusMinutes(-1).format(dateTimeFormatter)}</n1:DateTimeString>
       </n1:ReceivedDateTime>
