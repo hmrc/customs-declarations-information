@@ -38,6 +38,6 @@ class DeclarationFullConnector @Inject()(http: HttpClientV2,
   override lazy val numberOfCallsToTriggerStateChange: Int = config.informationCircuitBreakerConfig.numberOfCallsToTriggerStateChange
   override lazy val unstablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unstablePeriodDurationInMillis
   override lazy val unavailablePeriodDurationInMillis: Int = config.informationCircuitBreakerConfig.unavailablePeriodDurationInMillis
-  override  val configKey = "declaration-full"
+  override val configKey = "declaration-full"
 }
 

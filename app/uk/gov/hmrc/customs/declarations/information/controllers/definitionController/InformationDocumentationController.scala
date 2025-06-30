@@ -38,4 +38,3 @@ class InformationDocumentationController @Inject()(assets: Assets,
     Ok(uk.gov.hmrc.customs.declarations.information.views.txt.definition(v1Enabled, v2Enabled)).as(MimeTypes.JSON)
   }
 }
-
