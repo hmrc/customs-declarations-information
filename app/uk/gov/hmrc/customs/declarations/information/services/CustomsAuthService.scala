@@ -18,14 +18,14 @@ package uk.gov.hmrc.customs.declarations.information.services
 
 import play.api.http.Status
 import play.api.http.Status.UNAUTHORIZED
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AuthProvider.{GovernmentGateway, PrivilegedApplication}
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.{ErrorInternalServerError, UnauthorizedCode}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.model.{Eori, HasConversationId, NonCsp}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,7 +76,7 @@ class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
       }
 
     eventualAuth.map { enrolments =>
-      val maybeEori: Option[Eori] = findEoriInCustomsEnrolment(enrolments, hc.authorization)
+      val maybeEori: Option[Eori] = findEoriInCustomsEnrolment(enrolments)
       logger.debug(s"eori from $hmrcCustomsEnrolment enrolment for non-CSP request: $maybeEori")
       maybeEori.fold[Either[ErrorResponse, NonCsp]] {
         logger.debug(s"No authorisation for non-CSP with $hmrcCustomsEnrolment enrolment due to no eori in $hmrcCustomsEnrolment enrolment")
@@ -95,9 +95,8 @@ class CustomsAuthService @Inject()(override val authConnector: AuthConnector,
     }
   }
 
-  private def findEoriInCustomsEnrolment[A](enrolments: Enrolments, authHeader: Option[Authorization])(implicit vhr: HasConversationId): Option[Eori] = {
+  private def findEoriInCustomsEnrolment[A](enrolments: Enrolments)(implicit vhr: HasConversationId): Option[Eori] = {
     val maybeCustomsEnrolment = enrolments.getEnrolment(hmrcCustomsEnrolment)
-    val _=authHeader
     if (maybeCustomsEnrolment.isEmpty) {
       logger.warn(s"$hmrcCustomsEnrolment enrolment not retrieved for non-CSP request")
     }

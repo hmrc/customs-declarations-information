@@ -81,7 +81,7 @@ class VersionControllerSpec extends UnitSpec
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubVersionResponseFilterService: VersionResponseFilterService = new VersionResponseFilterService()
     protected val stubDeclarationVersionService = new DeclarationVersionService(stubVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockVersionConnector, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockVersionConnector, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: VersionController = new VersionController(

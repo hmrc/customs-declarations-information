@@ -16,7 +16,7 @@
 
 package unit.services.declaration
 
-import org.mockito.ArgumentMatchers.{eq => meq, _}
+import org.mockito.ArgumentMatchers.{eq as meq, *}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.OK
@@ -28,14 +28,14 @@ import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.errorInternalSer
 import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper._
-import uk.gov.hmrc.customs.declarations.information.model._
+import uk.gov.hmrc.customs.declarations.information.model.*
+import uk.gov.hmrc.customs.declarations.information.model.ActionBuilderModelHelper.*
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationVersionService
 import uk.gov.hmrc.customs.declarations.information.services.filter.VersionResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.xml.BackendVersionPayloadCreator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.{apiSubscriptionFieldsResponse, apiSubscriptionFieldsResponseWithEmptyEori, apiSubscriptionFieldsResponseWithNoEori}
-import util.TestData._
+import util.TestData.*
 import util.UnitSpec
 
 import java.time.{Clock, ZoneId, ZonedDateTime}
@@ -68,7 +68,7 @@ class DeclarationVersionServiceSpec extends UnitSpec with BeforeAndAfterEach {
     when(mockInformationConfigService.informationConfig).thenReturn(mockInformationConfig)
 
     protected lazy val service: DeclarationVersionService = new DeclarationVersionService(mockVersionResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockLogger, mockDeclarationVersionConnector, stubUniqueIdsService, mockInformationConfigService)
+      mockLogger, mockDeclarationVersionConnector, stubUniqueIdsService)
 
     protected def send(vpr: AuthorisedRequest[AnyContentAsEmpty.type] = TestCspAuthorisedRequest, hc: HeaderCarrier = headerCarrier): Either[Result, HttpResponse] = {
       await(service.send(mrn, dateTime)(vpr, hc))

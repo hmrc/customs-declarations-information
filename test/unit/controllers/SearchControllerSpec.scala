@@ -16,33 +16,33 @@
 
 package unit.controllers
 
-import org.mockito.ArgumentMatchers.{eq => meq, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq as meq, *}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
-import play.api.mvc._
-import play.api.test.Helpers._
+import play.api.mvc.*
+import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.*
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.action._
+import uk.gov.hmrc.customs.declarations.information.action.*
 import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationSearchConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.SearchController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.services._
+import uk.gov.hmrc.customs.declarations.information.model.*
+import uk.gov.hmrc.customs.declarations.information.services.*
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationSearchService
 import uk.gov.hmrc.customs.declarations.information.services.filter.SearchResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
-import util.FakeRequests._
-import util.RequestHeaders._
-import util.TestData._
+import util.FakeRequests.*
+import util.RequestHeaders.*
+import util.TestData.*
 import util.XmlOps.stringToXml
 import util.{AuthConnectorStubbing, SearchTestXMLData, UnitSpec}
 
@@ -82,7 +82,7 @@ class SearchControllerSpec extends UnitSpec
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubSearchResponseFilterService: SearchResponseFilterService = new SearchResponseFilterService()
     protected val stubDeclarationSearchService = new DeclarationSearchService(stubSearchResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockSearchConnector, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockSearchConnector, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: SearchController = new SearchController(
