@@ -25,7 +25,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test._
-import uk.gov.hmrc.customs.declarations.information.controllers.InformationDocumentationController
+import uk.gov.hmrc.customs.declarations.information.controllers.definitionController.InformationDocumentationController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 
 class InformationDocumentationControllerSpec extends PlaySpec with Results with BeforeAndAfterEach {
