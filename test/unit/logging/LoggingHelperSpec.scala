@@ -34,7 +34,7 @@ class LoggingHelperSpec extends UnitSpec {
     "[clientId=some-client-id]" +
     s"[requestedApiVersion=1.0]$maybeAuthorised $message"
 
-  private val requestMock = mock(classOf[Request[_]])
+  private val requestMock = mock(classOf[Request[Any]])
   private val conversationIdRequest =
     ConversationIdRequest(
       conversationId,

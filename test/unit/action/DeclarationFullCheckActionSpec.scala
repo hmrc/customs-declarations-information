@@ -26,6 +26,7 @@ import uk.gov.hmrc.customs.declarations.information.model._
 import util.TestData.declarationSubmissionChannel
 import util.UnitSpec
 import util.XmlOps.stringToXml
+import util.VerifyLogging
 
 import java.util.UUID
 import scala.concurrent.ExecutionContext
@@ -34,7 +35,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec {
 
   trait SetUp {
     protected implicit val ec: ExecutionContext = Helpers.stubControllerComponents().executionContext
-    private val mockInformationLogger = mock(classOf[InformationLogger])
+    val mockInformationLogger = mock(classOf[InformationLogger])
     private val mockInformationConfigService = mock(classOf[ConfigService])
 
     when(mockInformationConfigService.informationConfig).thenReturn(InformationConfig("url", 30, Seq("ABC123")))
@@ -96,6 +97,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec {
       val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationFullInvalid)
+      VerifyLogging.verifyInformationLogger("info", "declarationVersion query parameter was invalid: -1")(mockInformationLogger)
     }
 
     "reject declarationVersion set to AA" in new SetUp {
@@ -105,6 +107,7 @@ class DeclarationFullCheckActionSpec extends UnitSpec {
       val result = await(fullDeclarationCheckAction.refine(internalClientIdsRequest)).swap.toOption.get
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml(declarationFullInvalid)
+      VerifyLogging.verifyInformationLogger("info", "declarationVersion query parameter was invalid: AA exception: java.lang.NumberFormatException: For input string: \"AA\"")(mockInformationLogger)
     }
   }
 }

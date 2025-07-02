@@ -60,7 +60,6 @@ class DeclarationVersionConnectorSpec
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val connector = new DeclarationVersionConnector(httpClientV2, mockLogger, mockBackendPayloadCreator, mockServiceConfigProvider, mockInformationConfigService, mock(classOf[CdsLogger]), actorSystem)
-
   private implicit val asr: AuthorisedRequest[AnyContent] = AuthorisedRequest(conversationId, VersionOne, ApiSubscriptionFieldsTestData.clientId, None, None, None, Csp(Some(declarantEori), Some(badgeIdentifier)), mock(classOf[Request[AnyContent]]))
   private val informationCircuitBreakerConfig = InformationCircuitBreakerConfig(50, 1000, 10000)
 

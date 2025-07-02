@@ -28,6 +28,7 @@ import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames._
 import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import util.MockitoPassByNameHelper.PassByNameVerifier
 import util.RequestHeaders._
+import util.VerifyLogging
 import util.{ApiSubscriptionFieldsTestData, TestData, UnitSpec}
 
 class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks {
@@ -38,7 +39,7 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks {
     val loggerMock: InformationLogger = mock(classOf[InformationLogger])
     val validator = new HeaderValidator(loggerMock)
 
-    def validate(avr: ApiVersionRequest[_]): Either[ErrorResponse, ExtractedHeaders] = {
+    def validate(avr: ApiVersionRequest[Any]): Either[ErrorResponse, ExtractedHeaders] = {
       validator.extractClientIdHeaderIfPresentAndValid(avr)
     }
   }
@@ -85,10 +86,11 @@ class HeaderValidatorSpec extends UnitSpec with TableDrivenPropertyChecks {
       }
       "fail when request has invalid X-Client-ID header" in new SetUp {
         validate(apiVersionRequest(ValidHeaders + X_CLIENT_ID_HEADER_INVALID)) shouldBe Left(ErrorInternalServerError)
+        VerifyLogging.verifyInformationLogger("error", "Error - header 'X-Client-ID' value 'This is not a UUID' is not valid")(loggerMock)
       }
     }
   }
 
-  private def apiVersionRequest(requestMap: Map[String, String], apiVersion: ApiVersion = VersionOne): ApiVersionRequest[_] =
+  private def apiVersionRequest(requestMap: Map[String, String], apiVersion: ApiVersion = VersionOne): ApiVersionRequest[Any] =
     ApiVersionRequest(TestData.conversationId, apiVersion, FakeRequest().withHeaders(requestMap.toSeq: _*))
 }

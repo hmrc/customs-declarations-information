@@ -18,7 +18,6 @@ package uk.gov.hmrc.customs.declarations.information.services.declaration
 
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.ErrorInternalServerError
-import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationVersionConnector}
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
 import uk.gov.hmrc.customs.declarations.information.services.UniqueIdsService
@@ -34,10 +33,8 @@ class DeclarationVersionService @Inject()(versionResponseFilterService: VersionR
                                           override val apiSubFieldsConnector: ApiSubscriptionFieldsConnector,
                                           override val logger: InformationLogger,
                                           connector: DeclarationVersionConnector,
-                                          uniqueIdsService: UniqueIdsService,
-                                          config: ConfigService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
+                                          uniqueIdsService: UniqueIdsService)(implicit override val ec: ExecutionContext) extends AbstractDeclarationService(apiSubFieldsConnector, logger, connector, uniqueIdsService) {
   protected val endpointName: String = "version"
-
   protected def matchErrorCode(errorCodeText: String): ErrorResponse = {
     errorCodeText.toLowerCase() match {
       case "cds60001" => backendCDS60001NotFoundResponse

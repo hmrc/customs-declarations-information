@@ -16,35 +16,35 @@
 
 package unit.controllers
 
-import org.mockito.ArgumentMatchers.{eq => meq, _}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{eq as meq, *}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.Helpers
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse
-import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse._
+import uk.gov.hmrc.customs.api.common.controllers.ErrorResponse.*
 import uk.gov.hmrc.customs.api.common.logging.CdsLogger
-import uk.gov.hmrc.customs.declarations.information.action._
+import uk.gov.hmrc.customs.declarations.information.action.*
 import uk.gov.hmrc.customs.declarations.information.config.{ConfigService, InformationConfig, InformationShutterConfig}
 import uk.gov.hmrc.customs.declarations.information.connectors.{ApiSubscriptionFieldsConnector, DeclarationFullConnector}
 import uk.gov.hmrc.customs.declarations.information.controllers.DeclarationFullController
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model._
-import uk.gov.hmrc.customs.declarations.information.services._
+import uk.gov.hmrc.customs.declarations.information.model.*
+import uk.gov.hmrc.customs.declarations.information.services.*
 import uk.gov.hmrc.customs.declarations.information.services.declaration.DeclarationFullService
 import uk.gov.hmrc.customs.declarations.information.services.filter.FullResponseFilterService
 import uk.gov.hmrc.customs.declarations.information.util.HeaderValidator
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import util.ApiSubscriptionFieldsTestData.apiSubscriptionFieldsResponse
-import util.FakeRequests._
-import util.RequestHeaders._
-import util.TestData._
+import util.FakeRequests.*
+import util.RequestHeaders.*
+import util.TestData.*
 import util.XmlOps.stringToXml
-import util.{AuthConnectorStubbing, UnitSpec, VersionTestXMLData}
+import util.{AuthConnectorStubbing, UnitSpec, VerifyLogging, VersionTestXMLData}
 
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -80,7 +80,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
     protected val stubValidateAndExtractHeadersAction: ValidateAndExtractHeadersAction = new ValidateAndExtractHeadersAction(new HeaderValidator(mockInformationLogger))
     protected val stubFullResponseFilterService: FullResponseFilterService = new FullResponseFilterService()
     protected val stubDeclarationFullService = new DeclarationFullService(stubFullResponseFilterService, mockApiSubscriptionFieldsConnector,
-      mockInformationLogger, mockDeclarationFullConnector, stubUniqueIdsService, mockInformationConfigService)
+      mockInformationLogger, mockDeclarationFullConnector, stubUniqueIdsService)
     protected val stubConversationIdAction = new ConversationIdAction(stubUniqueIdsService, mockInformationLogger)
 
     protected val controller: DeclarationFullController = new DeclarationFullController(
@@ -102,8 +102,8 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       controller.list(mrnValue, declarationVersion, declarationSubmissionChannel).apply(request)
     }
 
-    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
-    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[_]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
+    when(mockDeclarationFullConnector.send(any[ZonedDateTime], meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId], any[ApiVersion], any[Option[ApiSubscriptionFieldsResponse]], meq[Mrn](mrn))(any[AuthorisedRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Right(stubHttpResponse)))
+    when(mockApiSubscriptionFieldsConnector.getSubscriptionFields(any[ApiSubscriptionKey])(any[ValidatedHeadersRequest[Any]], any[HeaderCarrier])).thenReturn(Future.successful(Some(apiSubscriptionFieldsResponse)))
   }
 
   private val errorResultBadgeIdentifier = errorBadRequest("X-Badge-Identifier header is missing or invalid").XmlResult.withHeaders(X_CONVERSATION_ID_HEADER)
@@ -136,6 +136,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Future[Result] = submitMrn(ValidCspDeclarationVersionRequestWithInvalidDeclarationSubmissionChannel, None, Some("AuthenticatedPartyOnly1"))
       status(result) shouldBe BAD_REQUEST
       stringToXml(contentAsString(result)) shouldBe stringToXml("<errorResponse><code>CDS60011</code><message>Invalid declarationSubmissionChannel parameter</message></errorResponse>")
+      VerifyLogging.verifyInformationLogger("info","declarationSubmissionChannel parameter passed is invalid: Some(AuthenticatedPartyOnly1)")(mockInformationLogger)
     }
 
     "respond with status 200 and conversationId in header for a processed valid CSP request" in new SetUp() {
@@ -174,6 +175,8 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = awaitSubmitMrn(ValidCspDeclarationRequest.withHeaders(ValidCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       result shouldBe errorResultMissingIdentifiers
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("info","X-Badge-Identifier header empty and allowed")(mockInformationLogger)
+      VerifyLogging.verifyInformationLogger("error","Both X-Submitter-Identifier and X-Badge-Identifier are missing")(mockInformationLogger)
     }
 
     "respond with status 500 for a CSP request with a missing X-Client-ID" in new SetUp() {
@@ -191,6 +194,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
 
       result shouldBe errorResultBadgeIdentifier
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("error","X-Badge-Identifier invalid or not present for CSP")(mockInformationLogger)
     }
 
     "respond with status 400 for a request with an MRN value that is too long" in new SetUp() {
@@ -199,6 +203,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = controller.list(invalidMrnTooLong, None, None).apply(ValidCspDeclarationRequest.withHeaders(ValidHeaders.toSeq: _*))
       result shouldBe errorResultMrnTooLong
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("info","MRN parameter is too long: theMrnThatIsTooLongToBeAcceptableToThisService")(mockInformationLogger)
     }
 
     "respond with status 400 for a request with an MRN value that is too short" in new SetUp() {
@@ -217,6 +222,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
 
       result shouldBe errorResultCDS60002
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("info","MRN parameter is invalid: mrn withASpace")(mockInformationLogger)
     }
 
     "process non-CSP request when call is authorised for non-CSP" in new SetUp() {
@@ -257,6 +263,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
 
       status(result) shouldBe OK
       header(X_CONVERSATION_ID_NAME, result) shouldBe Some(conversationIdValue)
+      VerifyLogging.verifyInformationLogger("info", "Full declaration information version processed successfully.")(mockInformationLogger)
     }
 
     "respond with status 200 for a non-CSP request with both a missing X-Badge-Identifier and a missing X-Submitter-Identifier" in new SetUp() {
@@ -266,6 +273,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_BADGE_IDENTIFIER_NAME)))
       status(result) shouldBe OK
       verifyNonCspAuthorisationCalled(numberOfTimes = 1)
+      VerifyLogging.verifyInformationLogger("debug","Full declaration information request received. Path = / \nheaders = List((Host,localhost), (Accept,application/vnd.hmrc.1.0+xml), (X-Client-ID,SOME_X_CLIENT_ID), (Authorization,Bearer Software-House-Bearer-Token))")(mockInformationLogger)
     }
 
     "respond with status 500 for a non-CSP request with a missing X-Client-ID" in new SetUp() {
@@ -275,6 +283,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
       val result: Result = awaitSubmitMrn(ValidNonCspDeclarationRequest.withHeaders(ValidNonCspDeclarationRequest.headers.remove(X_CLIENT_ID_NAME)))
       status(result) shouldBe INTERNAL_SERVER_ERROR
       verifyNoMoreInteractions(mockDeclarationFullConnector)
+      VerifyLogging.verifyInformationLogger("error","Error - header 'X-Client-ID' not present")(mockInformationLogger)
     }
 
     "return the Internal Server error when connector returns a 500 " in new SetUp() {
@@ -282,7 +291,7 @@ class DeclarationFullControllerSpec extends UnitSpec with Matchers with BeforeAn
         meq[UUID](correlationId.uuid).asInstanceOf[CorrelationId],
         any[ApiVersion],
         any[Option[ApiSubscriptionFieldsResponse]],
-        meq[Mrn](mrn))(any[AuthorisedRequest[_]], any[HeaderCarrier]))
+        meq[Mrn](mrn))(any[AuthorisedRequest[Any]], any[HeaderCarrier]))
         .thenReturn(Future.successful(Left(UnexpectedError(emulatedServiceFailure))))
 
       authoriseCsp()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.customs.declarations.information.controllers
+package uk.gov.hmrc.customs.declarations.information.controllers.definitionController
 
 import controllers.Assets
 import play.api.Configuration

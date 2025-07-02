@@ -18,17 +18,18 @@ package uk.gov.hmrc.customs.declarations.information.connectors
 
 import com.google.inject.Inject
 import org.apache.pekko.pattern.CircuitBreakerOpenException
-import play.api.http.HeaderNames._
+import play.api.http.HeaderNames.*
 import play.api.http.{MimeTypes, Status}
+import play.api.libs.ws.writeableOf_String
 import uk.gov.hmrc.customs.api.common.config.{ServiceConfig, ServiceConfigProvider}
 import uk.gov.hmrc.customs.api.common.connectors.CircuitBreakerConnector
 import uk.gov.hmrc.customs.declarations.information.config.ConfigService
 import uk.gov.hmrc.customs.declarations.information.logging.InformationLogger
-import uk.gov.hmrc.customs.declarations.information.model._
+import uk.gov.hmrc.customs.declarations.information.model.*
 import uk.gov.hmrc.customs.declarations.information.util.CustomHeaderNames.{XConversationIdHeaderName, XCorrelationIdHeaderName}
 import uk.gov.hmrc.customs.declarations.information.util.HeaderUtil
 import uk.gov.hmrc.customs.declarations.information.xml.BackendPayloadCreator
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -70,7 +71,7 @@ abstract class AbstractDeclarationConnector @Inject()(http: HttpClientV2,
       http
         .post(url"$url")
         .setHeader(headers: _*)
-        .withBody(declarationPayload)
+        .withBody(declarationPayload.toString)
         .execute[HttpResponse]
         .map { response =>
           logger.debugFull(s"response status: [${response.status}] response body: [${response.body}]")
