@@ -92,7 +92,7 @@ class CdsLoggerSpec extends UnitSpec with MockitoSugar {
           exceptionMessage shouldBe exception.toString
           stacktrace foreach(_ should startWith("\tat "))
         case _ =>
-          fail(s"Expected at lesat 2 linesof output,but got: ${output.mkString("\n")}")
+          fail(s"Expected at least 2 lines of output,but got: ${output.mkString("\n")}")
       }
     }
 
@@ -127,7 +127,7 @@ class CdsLoggerSpec extends UnitSpec with MockitoSugar {
           exceptionMessage shouldBe exception.toString
           stacktrace foreach (_ should startWith("\tat "))
         case _ =>
-          fail(s"Expected at lesat 2 linesof output,but got: ${output.mkString("\n")}")
+          fail(s"Expected at least 2 lines of output,but got: ${output.mkString("\n")}")
       }
     }
 
@@ -162,7 +162,7 @@ class CdsLoggerSpec extends UnitSpec with MockitoSugar {
           exceptionMessage shouldBe exception.toString
           stacktrace foreach (_ should startWith("\tat "))
         case _ =>
-          fail(s"Expected at lesat 2 linesof output,but got: ${output.mkString("\n")}")
+          fail(s"Expected at least 2 lines of output,but got: ${output.mkString("\n")}")
       }
     }
 
@@ -197,7 +197,7 @@ class CdsLoggerSpec extends UnitSpec with MockitoSugar {
           exceptionMessage shouldBe exception.toString
           stacktrace foreach (_ should startWith("\tat "))
         case _ =>
-          fail(s"Expected at lesat 2 linesof output,but got: ${output.mkString("\n")}")
+          fail(s"Expected at least 2 lines of output,but got: ${output.mkString("\n")}")
       }
     }
   }
