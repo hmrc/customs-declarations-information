@@ -4,6 +4,7 @@ import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import sbt.*
 import sbt.Keys.*
 import sbt.Tests.{Group, SubProcess}
+import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 import uk.gov.hmrc.gitstamp.GitStampPlugin.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
@@ -14,10 +15,10 @@ import scala.language.postfixOps
 
 name := "customs-declarations-information"
 scalaVersion := "3.3.5"
-
+val currentScalaVersion= "3.3.5"
 //Test / fork := false
 
-lazy val ComponentTest = config("component") extend Test
+lazy val ComponentTest = config("it/test/component") extend Test
 lazy val CdsIntegrationComponentTest = config("it") extend Test
 
 val testConfig = Seq(ComponentTest, CdsIntegrationComponentTest, Test)
@@ -40,12 +41,13 @@ lazy val microservice = (project in file("."))
   .settings(
     commonSettings,
     unitTestSettings,
-    integrationComponentTestSettings,
     allTest,
     scoverageSettings
   )
   .settings(majorVersion := 0)
   .settings(playDefaultPort := 9834)
+  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
+  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
 
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
@@ -55,14 +57,13 @@ lazy val unitTestSettings =
       addTestReportOption(Test, "test-reports")
     )
 
-lazy val integrationComponentTestSettings =
-  inConfig(CdsIntegrationComponentTest)(Defaults.testTasks) ++
-    Seq(
-      CdsIntegrationComponentTest / testOptions := Seq(Tests.Filter(integrationComponentTestFilter)),
-      CdsIntegrationComponentTest / parallelExecution := false,
-      addTestReportOption(CdsIntegrationComponentTest, "int-comp-test-reports"),
-      CdsIntegrationComponentTest / testGrouping := forkedJvmPerTestConfig((Test / definedTests).value, "integration", "component")
-    )
+lazy val it = project.in(file("it"))
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings())
+  .enablePlugins(play.sbt.PlayScala)
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(majorVersion := 0)
+  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
 
 lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
 
@@ -82,7 +83,7 @@ lazy val scoverageSettings: Seq[Setting[_]] = Seq(
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9834")
 
-def integrationComponentTestFilter(name: String): Boolean = (name startsWith "integration") || (name startsWith "component")
+def integrationComponentTestFilter(name: String): Boolean = (name startsWith "it/test/integration") || (name startsWith "it/test/component")
 def unitTestFilter(name: String): Boolean = name startsWith "unit"
 
 Compile / unmanagedResourceDirectories += baseDirectory.value / "public"
