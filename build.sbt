@@ -14,8 +14,7 @@ import java.util.Calendar
 import scala.language.postfixOps
 
 name := "customs-declarations-information"
-scalaVersion := "3.3.5"
-val currentScalaVersion= "3.3.5"
+ThisBuild/scalaVersion := "3.3.5"
 //Test / fork := false
 
 lazy val ComponentTest = config("it/test/component") extend Test
@@ -61,7 +60,6 @@ lazy val it = project.in(file("it"))
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
   .enablePlugins(play.sbt.PlayScala)
-  .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 0)
   .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
 
