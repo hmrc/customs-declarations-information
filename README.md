@@ -19,9 +19,9 @@ The Customs Declarations Information service can be run locally from Service Man
 
 ## Run Tests
 - Run Unit Tests: `sbt test`
-- Run Integration Tests: `sbt IntegrationTest/test`
-- Run Unit and Integration Tests: `sbt test IntegrationTest/test`
-- Run Unit and Integration Tests with coverage report: `./run_all_tests.sh`<br/> which runs `clean scalastyle coverage test it:test coverageReport dependencyUpdates"`
+- Run Integration Tests: `sbt it/test`
+- Run Unit and Integration Tests: `sbt test it/test`
+- Run Unit and Integration Tests with coverage report: `./run_all_tests.sh`<br/> which runs `clean coverage test it:test coverageReport dependencyUpdates"`
 
 ### Acceptance Tests
 This repository does not have any associated Acceptance Tests.
