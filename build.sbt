@@ -45,8 +45,6 @@ lazy val microservice = (project in file("."))
   )
   .settings(majorVersion := 0)
   .settings(playDefaultPort := 9834)
-  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
-  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
 
 lazy val unitTestSettings =
   inConfig(Test)(Defaults.testTasks) ++
@@ -61,9 +59,11 @@ lazy val it = project.in(file("it"))
   .settings(DefaultBuildSettings.itSettings())
   .enablePlugins(play.sbt.PlayScala)
   .settings(majorVersion := 0)
-  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
 
 lazy val commonSettings: Seq[Setting[_]] = gitStampSettings
+
+ThisBuild/scalacOptions ++= Seq("-Wconf:src=routes/.*:s",
+  "-Wconf:msg=Flag.*repeatedly:s")
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
   coverageExcludedPackages := List(
