@@ -11,6 +11,6 @@ object AppDependencies {
 
   val test = Seq(
     "uk.gov.hmrc"            %% s"bootstrap-test-$playVersion" % bootstrapVersion % Test,
-    "org.wiremock"           % "wiremock-standalone"             % "3.10.0"     % Test
+    "org.wiremock"           % "wiremock-standalone"             % "3.13.1"     % Test
   )
 }

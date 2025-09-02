@@ -35,8 +35,8 @@ object StatusTestXMLData {
         <n1:correlationID>e61f8eee-812c-4b8f-b193-06aedc60dca2</n1:correlationID>
         <n1:badgeIdentifier>BADGEID123</n1:badgeIdentifier>
         <n1:dateTimeStamp>2018-09-11T10:28:54.128Z</n1:dateTimeStamp>
-        <v1:authenticatedPartyID>ZZ123456789000</v1:authenticatedPartyID>
-        <v1:originatingPartyID>ZZ123456789000</v1:originatingPartyID>
+        <n1:authenticatedPartyID>ZZ123456789000</n1:authenticatedPartyID>
+        <n1:originatingPartyID>ZZ123456789000</n1:originatingPartyID>
       </n1:requestCommon>
       <n1:requestDetail>
         <n1:retrieveDeclarationStatusRequest>
