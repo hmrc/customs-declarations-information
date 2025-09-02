@@ -133,8 +133,8 @@ object FullTestXMLData {
 
   val expectedFullPayloadRequest = {
     <n1:retrieveFullDeclarationDataRequest
-    xmlns:xsi="http://gov.uk/customs/retrieveFullDeclarationDataRequest"
-    xmlns:n1="http://gov.uk/customs/FullDeclarationDataRetrievalService"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:n1="http://gov.uk/customs/retrieveFullDeclarationDataRequest"
     xsi:schemaLocation="http://gov.uk/customs/FullDeclarationDataRetrievalService retrieveFullDeclarationDataRequest.xsd">
       <n1:requestCommon>
         <n1:clientID>99999999-9999-9999-9999-999999999999</n1:clientID>
