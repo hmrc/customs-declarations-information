@@ -1,7 +1,7 @@
 import sbt.*
 
 object AppDependencies {
-  private val bootstrapVersion = "10.1.0"
+  private val bootstrapVersion = "10.4.0"
   private val playVersion = "play-30"
 
   val compile = Seq(
@@ -11,6 +11,6 @@ object AppDependencies {
 
   val test = Seq(
     "uk.gov.hmrc"            %% s"bootstrap-test-$playVersion" % bootstrapVersion % Test,
-    "org.wiremock"           % "wiremock-standalone"             % "3.13.1"     % Test
+    "org.wiremock"           % "wiremock-standalone"             % "3.13.2"     % Test
   )
 }
