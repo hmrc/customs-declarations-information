@@ -59,9 +59,6 @@ class DefinitionSpec extends ComponentTestSpec
           |        "version": "1.0",
           |        "status": "BETA",
           |        "endpointsEnabled": true,
-          |        "access": {
-          |          "type": "PRIVATE"
-          |        },
           |        "fieldDefinitions": [
           |          {
           |            "name": "authenticatedEori",
@@ -76,9 +73,6 @@ class DefinitionSpec extends ComponentTestSpec
           |        "version": "2.0",
           |        "status": "BETA",
           |        "endpointsEnabled": true,
-          |        "access": {
-          |          "type": "PRIVATE"
-          |        },
           |        "fieldDefinitions": [
           |          {
           |            "name": "authenticatedEori",
