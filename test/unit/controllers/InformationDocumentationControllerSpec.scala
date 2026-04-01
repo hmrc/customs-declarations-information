@@ -77,9 +77,6 @@ class InformationDocumentationControllerSpec extends PlaySpec with Results with 
          |            "version":"1.0",
          |            "status":"BETA",
          |            "endpointsEnabled":$v1Enabled,
-         |            "access":{
-         |              "type":"PRIVATE"
-         |            },
          |            "fieldDefinitions":[
          |               {
          |                  "name": "authenticatedEori",
@@ -94,9 +91,6 @@ class InformationDocumentationControllerSpec extends PlaySpec with Results with 
          |            "version":"2.0",
          |            "status":"BETA",
          |            "endpointsEnabled":$v2Enabled,
-         |            "access":{
-         |               "type":"PRIVATE"
-         |            },
          |            "fieldDefinitions":[
          |               {
          |                  "name": "authenticatedEori",
